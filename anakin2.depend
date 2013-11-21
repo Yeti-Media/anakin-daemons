@@ -1,0 +1,70 @@
+# depslib dependency file v1.0
+1384194322 source:/home/nicolas/dev/projects/augmented_reality/anakin2/main.cpp
+	"ARDrawingContext.hpp"
+	"ARPipeline.hpp"
+	"DebugHelpers.hpp"
+	<opencv2/opencv.hpp>
+	<GL/gl.h>
+	<GL/glu.h>
+	"boost/filesystem.hpp"
+	<iostream>
+
+1383168684 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/ARDrawingContext.hpp
+	"GeometryTypes.hpp"
+	"CameraCalibration.hpp"
+	<opencv2/opencv.hpp>
+
+1383168684 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/GeometryTypes.hpp
+
+1383168684 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/CameraCalibration.hpp
+	<opencv2/opencv.hpp>
+
+1383871074 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/ARPipeline.hpp
+	"PatternDetector.hpp"
+	"CameraCalibration.hpp"
+	"GeometryTypes.hpp"
+
+1383873886 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/PatternDetector.hpp
+	"Pattern.hpp"
+	<opencv2/opencv.hpp>
+	<opencv2/nonfree/features2d.hpp>
+
+1383871573 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/Pattern.hpp
+	"GeometryTypes.hpp"
+	"CameraCalibration.hpp"
+	<opencv2/opencv.hpp>
+
+1383168684 /home/nicolas/dev/projects/augmented_reality/anakin2/includes/DebugHelpers.hpp
+	<string>
+	<sstream>
+
+1384194713 source:/home/nicolas/dev/projects/augmented_reality/anakin2/src/ARDrawingContext.cpp
+	"ARDrawingContext.hpp"
+	<GL/gl.h>
+	<GL/glu.h>
+
+1383873802 source:/home/nicolas/dev/projects/augmented_reality/anakin2/src/ARPipeline.cpp
+	"ARPipeline.hpp"
+
+1383168684 source:/home/nicolas/dev/projects/augmented_reality/anakin2/src/CameraCalibration.cpp
+	"CameraCalibration.hpp"
+
+1383168684 source:/home/nicolas/dev/projects/augmented_reality/anakin2/src/GeometryTypes.cpp
+	"GeometryTypes.hpp"
+
+1383871420 source:/home/nicolas/dev/projects/augmented_reality/anakin2/src/Pattern.cpp
+	"Pattern.hpp"
+
+1384192741 source:/home/nicolas/dev/projects/augmented_reality/anakin2/src/PatternDetector.cpp
+	"PatternDetector.hpp"
+	"DebugHelpers.hpp"
+	<cmath>
+	<iterator>
+	<iostream>
+	<iomanip>
+	<cassert>
+
+1383874325 source:/home/nicolas/dev/projects/augmented_reality/anakin2/tests/unit/pattern_detector.cpp
+	<boost/test/unit_test.hpp>
+	<opencv2/opencv.hpp>
+
