@@ -30,7 +30,7 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
  */
 void processVideo(std::vector<cv::Mat>& patternImage, CameraCalibration& calibration, cv::VideoCapture capture);
 
-void getImagesFromDirectory(std::string dir_path, std::vector<cv::Mat> images);
+void getImagesFromDirectory(std::string dir_path, std::vector<cv::Mat>& images);
 
 /**
  * Performs full detection routine on camera frame and draws the scene using drawing context.
@@ -42,20 +42,26 @@ bool processFrame(const cv::Mat& cameraFrame, ARPipeline& pipeline, ARDrawingCon
 int main(int argc, const char * argv[])
 {
     std::vector<cv::Mat> patterns;
-    std::string dir_path("/home/nicolas/dev/projects/augmented_reality/anakin2/tests/fixtures/images/");//argv[1];
+    boost::filesystem::path cwd = boost::filesystem::current_path();
+    std::cout << "Working directory : " << cwd.string() << "\n";
+    std::string dir_path("/tests/fixtures/images");//argv[1];
+    cwd /= dir_path;
+    std::cout << "Images directory : " << cwd.string() << "\n";
     // Change this calibration to yours:
     CameraCalibration calibration(526.58037684199849f, 524.65577209994706f, 318.41744018680112f, 202.96659047014398f);
 
-    cv::VideoCapture cap(0); // open the default camera
+    cv::VideoCapture cap(-1); // open the default camera
     if(!cap.isOpened())  // check if we succeeded
         return -1;
-    getImagesFromDirectory(dir_path, patterns);
+    getImagesFromDirectory(cwd.string(), patterns);
     processVideo(patterns, calibration, cap);
     return 0;
 }
 
 void processVideo(std::vector<cv::Mat>& patternImages, CameraCalibration& calibration, cv::VideoCapture capture)
 {
+    std::cout << "processVideo using " << patternImages.size() << " patterns\n";
+
     // Grab first frame to get the frame dimensions
     cv::Mat currentFrame;
     capture >> currentFrame;
@@ -86,20 +92,36 @@ void processVideo(std::vector<cv::Mat>& patternImages, CameraCalibration& calibr
     } while (!shouldQuit);
 }
 
-void getImagesFromDirectory(std::string dir_path, std::vector<cv::Mat> images)
+void getImagesFromDirectory(std::string dir_path, std::vector<cv::Mat>& images)
 {
   if(fs::exists( dir_path ))
   {
     fs::directory_iterator end_itr; // default construction yields past-the-end
     for (fs::directory_iterator itr( dir_path ); itr != end_itr; ++itr )
     {
+
+
       if (!fs::is_directory(itr->status()))
       {
-        std::cout << itr->path() << "\n";
-        images.push_back(cv::imread(itr->path().c_str()));
+        std::cout << "Loading image : " << itr->path().c_str() << "\n";
+        cv::Mat img = cv::imread(itr->path().c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+        if (!img.data) {
+            std::cout << "Error loading image : " << itr->path().c_str() << "\n";
+            exit(-1);
+        }
+        images.push_back(img);
       }
      }
+     std::cout << images.size() << " images loaded\n";
   }
+}
+
+int correctKeyValue(int original) {
+    if (original >= -1 && original <= 255) {
+        return original;
+    } else {
+        return original % 256;
+    }
 }
 
 
@@ -107,7 +129,6 @@ bool processFrame(const cv::Mat& cameraFrame, ARPipeline& pipeline, ARDrawingCon
 {
     // Clone image used for background (we will draw overlay on it)
     cv::Mat img = cameraFrame.clone();
-
     // Draw information:
     if (pipeline.m_patternDetector.enableHomographyRefinement)
         cv::putText(img, "Pose refinement: On   ('h' to switch off)", cv::Point(10,15), CV_FONT_HERSHEY_PLAIN, 1, CV_RGB(0,200,0));
@@ -122,6 +143,8 @@ bool processFrame(const cv::Mat& cameraFrame, ARPipeline& pipeline, ARDrawingCon
     // Find a pattern and update it's detection status:
     drawingCtx.isPatternPresent = pipeline.processFrame(cameraFrame);
 
+
+
     // Update a pattern pose:
     drawingCtx.patternPose = pipeline.getPatternLocation();
 
@@ -129,7 +152,8 @@ bool processFrame(const cv::Mat& cameraFrame, ARPipeline& pipeline, ARDrawingCon
     drawingCtx.updateWindow();
 
     // Read the keyboard input:
-    int keyCode = cv::waitKey(5);
+    int keyCode = correctKeyValue(cv::waitKey(5));
+    printf("key pressed: %d\n", keyCode);
 
     bool shouldQuit = false;
     if (keyCode == '+' || keyCode == '=')

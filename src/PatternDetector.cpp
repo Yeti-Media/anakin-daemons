@@ -22,6 +22,8 @@
 #include <iomanip>
 #include <cassert>
 
+#define _DEBUG 0
+
 PatternDetector::PatternDetector(cv::Ptr<cv::FeatureDetector> detector,
     cv::Ptr<cv::DescriptorExtractor> extractor,
     cv::Ptr<cv::DescriptorMatcher> matcher,
@@ -107,6 +109,7 @@ bool PatternDetector::findPattern(const cv::Mat& image)
   bool patternFound = false;
 
   getGray(image, m_grayImg);
+
   for(unsigned int x=0;x<m_patterns.size();x++)
   {
     Pattern pattern = m_patterns[x];
@@ -125,7 +128,6 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
     PatternTrackingInfo info = pattern.patternInfo;
     // Convert input image to gray
 
-
     // Extract feature points from input gray image
     extractFeatures(m_grayImg, m_queryKeypoints, m_queryDescriptors);
 
@@ -133,7 +135,7 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
     getMatches(m_queryDescriptors, m_matches);
 
 #if _DEBUG
-    cv::showAndSave("Raw matches", getMatchesImage(image, m_pattern.frame, m_queryKeypoints, m_pattern.keypoints, m_matches, 100));
+    cv::showAndSave("Raw matches", getMatchesImage(image, pattern.frame, m_queryKeypoints, pattern.keypoints, m_matches, 100));
 #endif
 
 #if _DEBUG
@@ -151,7 +153,7 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
     if (homographyFound)
     {
 #if _DEBUG
-        cv::showAndSave("Refined matches using RANSAC", getMatchesImage(image, m_pattern.frame, m_queryKeypoints, m_pattern.keypoints, m_matches, 100));
+        cv::showAndSave("Refined matches using RANSAC", getMatchesImage(image, pattern.frame, m_queryKeypoints, pattern.keypoints, m_matches, 100));
 #endif
         // If homography refinement enabled improve found transformation
         if (enableHomographyRefinement)
@@ -172,28 +174,30 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
             getMatches(m_queryDescriptors, refinedMatches);
 
             // Estimate new refinement homography
+
             homographyFound = refineMatchesWithHomography(
                 warpedKeypoints,
                 pattern.keypoints,
                 homographyReprojectionThreshold,
                 refinedMatches,
                 m_refinedHomography);
+
 #if _DEBUG
-            cv::showAndSave("MatchesWithRefinedPose", getMatchesImage(m_warpedImg, m_pattern.grayImg, warpedKeypoints, m_pattern.keypoints, refinedMatches, 100));
+            cv::showAndSave("MatchesWithRefinedPose", getMatchesImage(m_warpedImg, pattern.grayImg, warpedKeypoints, pattern.keypoints, refinedMatches, 100));
 #endif
             // Get a result homography as result of matrix product of refined and rough homographies:
             info.homography = m_roughHomography * m_refinedHomography;
 
-            // Transform contour with rough homography
+            //Transform contour with rough homography
 #if _DEBUG
-            cv::perspectiveTransform(m_pattern.points2d, info.points2d, m_roughHomography);
-            info.draw2dContour(tmp, CV_RGB(0,200,0));
+            cv::perspectiveTransform(pattern.points2d, info.points2d, m_roughHomography);
+            pattern.draw2dContour(tmp, CV_RGB(0,200,0));//info.draw2dContour(tmp, CV_RGB(0,200,0));
 #endif
-
             // Transform contour with precise homography
             cv::perspectiveTransform(pattern.points2d, info.points2d, info.homography);
+
 #if _DEBUG
-            info.draw2dContour(tmp, CV_RGB(200,0,0));
+            pattern.draw2dContour(tmp, CV_RGB(200,0,0));
 #endif
         }
         else
@@ -203,7 +207,7 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
             // Transform contour with rough homography
             cv::perspectiveTransform(pattern.points2d, info.points2d, m_roughHomography);
 #if _DEBUG
-            info.draw2dContour(tmp, CV_RGB(0,200,0));
+            pattern.draw2dContour(tmp, CV_RGB(0,200,0));
 #endif
         }
     }
@@ -211,7 +215,7 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
 #if _DEBUG
     if (1)
     {
-        cv::showAndSave("Final matches", getMatchesImage(tmp, m_pattern.frame, m_queryKeypoints, m_pattern.keypoints, m_matches, 100));
+        cv::showAndSave("Final matches", getMatchesImage(tmp, pattern.frame, m_queryKeypoints, pattern.keypoints, m_matches, 100));
     }
     std::cout << "Features:" << std::setw(4) << m_queryKeypoints.size() << " Matches: " << std::setw(4) << m_matches.size() << std::endl;
 #endif
@@ -257,7 +261,6 @@ void PatternDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv
         std::vector< std::vector<cv::DMatch> > m_knnMatches;
         // KNN match will return 2 nearest matches for each query descriptor
         m_matcher->knnMatch(queryDescriptors, m_knnMatches, 2);
-
         for (size_t i=0; i<m_knnMatches.size(); i++)
         {
             const cv::DMatch& bestMatch   = m_knnMatches[i][0];
@@ -277,6 +280,7 @@ void PatternDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv
     {
         // Perform regular match
         m_matcher->match(queryDescriptors, matches);
+
     }
 }
 

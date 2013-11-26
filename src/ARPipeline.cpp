@@ -30,9 +30,9 @@ ARPipeline::ARPipeline(const std::vector<cv::Mat>& patternImages, const CameraCa
 bool ARPipeline::processFrame(const cv::Mat& inputFrame)
 {
   bool patternFound = m_patternDetector.findPattern(inputFrame);
-
   if (patternFound)
   {
+    std::cout << "===============>Pattern found!<===============\n";
     m_patternDetector.patternMatched.computePose(m_calibration);
   }
 
