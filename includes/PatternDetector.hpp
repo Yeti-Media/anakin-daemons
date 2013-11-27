@@ -27,9 +27,9 @@ public:
      */
     PatternDetector
         (
-        cv::Ptr<cv::FeatureDetector>     detector  = new cv::ORB(1000),
-        cv::Ptr<cv::DescriptorExtractor> extractor = new cv::FREAK(false, false),
-        cv::Ptr<cv::DescriptorMatcher>   matcher   = new cv::BFMatcher(cv::NORM_HAMMING, true),
+        cv::Ptr<cv::FeatureDetector>     detector  = new cv::BRISK,
+        cv::Ptr<cv::DescriptorExtractor> extractor = new cv::BRISK,
+        cv::Ptr<cv::DescriptorMatcher>   matcher   = new cv::BFMatcher(cv::NORM_HAMMING, false),
         bool enableRatioTest                       = false
         );
 
@@ -55,6 +55,9 @@ public:
     bool enableHomographyRefinement;
     float homographyReprojectionThreshold;
     Pattern patternMatched;
+    std::vector<cv::KeyPoint> getQueryKeyPoints();
+    cv::Mat getRefinedHomography();
+    std::vector<cv::DMatch> getMatches();
 protected:
 
     bool extractFeatures(const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors) const;

@@ -37,7 +37,6 @@ PatternDetector::PatternDetector(cv::Ptr<cv::FeatureDetector> detector,
 {
 }
 
-
 void PatternDetector::train(const std::vector<Pattern>& patterns)
 {
     // Store the pattern object
@@ -107,13 +106,11 @@ void PatternDetector::buildPatternFromImage(const cv::Mat& image, Pattern& patte
 bool PatternDetector::findPattern(const cv::Mat& image)
 {
   bool patternFound = false;
-
   getGray(image, m_grayImg);
-
   for(unsigned int x=0;x<m_patterns.size();x++)
   {
     Pattern pattern = m_patterns[x];
-    patternFound = findPattern(image, pattern);
+    patternFound = findPattern(image, pattern); //<== current crash pos
     if (patternFound){
       patternMatched = pattern;
       break;
@@ -125,6 +122,7 @@ bool PatternDetector::findPattern(const cv::Mat& image)
 
 bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
 {
+
     PatternTrackingInfo info = pattern.patternInfo;
     // Convert input image to gray
 
@@ -132,7 +130,7 @@ bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
     extractFeatures(m_grayImg, m_queryKeypoints, m_queryDescriptors);
 
     // Get matches with current pattern
-    getMatches(m_queryDescriptors, m_matches);
+    getMatches(m_queryDescriptors, m_matches); //<== current crash pos
 
 #if _DEBUG
     cv::showAndSave("Raw matches", getMatchesImage(image, pattern.frame, m_queryKeypoints, pattern.keypoints, m_matches, 100));
@@ -253,7 +251,6 @@ void PatternDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv
 {
 
     matches.clear();
-
     if (enableRatioTest)
     {
         // To avoid NaN's when best match has zero distance we will use inversed ratio.
@@ -279,7 +276,7 @@ void PatternDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv
     else
     {
         // Perform regular match
-        m_matcher->match(queryDescriptors, matches);
+        m_matcher->match(queryDescriptors, matches); //<== current crash pos
 
     }
 }
@@ -325,4 +322,17 @@ bool PatternDetector::refineMatchesWithHomography
 
     matches.swap(inliers);
     return matches.size() > minNumberMatchesAllowed;
+}
+
+
+std::vector<cv::KeyPoint> PatternDetector::getQueryKeyPoints() {
+    return m_queryKeypoints;
+}
+
+cv::Mat PatternDetector::getRefinedHomography() {
+    return m_refinedHomography;
+}
+
+std::vector<cv::DMatch> PatternDetector::getMatches() {
+    return m_matches;
 }
