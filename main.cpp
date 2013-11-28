@@ -28,7 +28,11 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
  * Processes a recorded video or live view from web-camera and allows you to adjust homography refinement and
  * reprojection threshold in runtime.
  */
-bool process(std::vector<cv::Mat>& patternImages, cv::Mat scene);
+bool process(std::vector<Pattern>& patterns, cv::Mat scene, PatternDetector pd, int framesToSkip);
+
+void processCamera(std::vector<cv::Mat>& patternImages, cv::VideoCapture cap, PatternDetector pd);
+
+void processImage(std::vector<cv::Mat>& patternImages, std::string imagePath, PatternDetector pd);
 
 void getImagesFromDirectory(std::string dir_path, std::vector<cv::Mat>& images);
 
@@ -41,15 +45,14 @@ int main(int argc, const char * argv[]) {
     cwd /= dir_path;
     std::cout << "Images directory : " << cwd.string() << "\n";
 
-    cv::namedWindow( "Scenario", CV_WINDOW_AUTOSIZE );
-    cv::Mat scenario = cv::imread("scenario.jpg");
-
-//    cv::imshow("Scenario", scenario);
-//    cv::waitKey(0);
-
     getImagesFromDirectory(cwd.string(), patterns);
-    process(patterns, scenario);
-
+    PatternDetector pd;
+    cv::namedWindow("Cam", CV_WINDOW_AUTOSIZE);
+    cv::VideoCapture cap;
+    if (cap.open(-1)) {
+        processCamera(patterns, cap, pd);
+    }
+//    processImage(patterns, "scene.jpg", pd);
 
     return 0;
 }
@@ -82,69 +85,118 @@ void getImagesFromDirectory(std::string dir_path, std::vector<cv::Mat>& images)
   }
 }
 
-
-bool process(std::vector<cv::Mat>& patternImages, cv::Mat scene)
-{
-    cv::Mat sceneClone = scene.clone();
-    std::vector<Pattern> patternImages_asPatterns(patternImages.size());
-    std::vector<cv::Mat> pattern_keypoints(patternImages.size());
-
-    // Draw information:
-    PatternDetector pd;
-    for (int p = 0; p < patternImages.size(); p++) {
-//        cv::imshow("Pattern"+p, patternImages[p]);
-//        cv::waitKey(5);
-        pd.buildPatternFromImage(patternImages[p], patternImages_asPatterns[p]);
-
-        cv::drawKeypoints( patternImages[p], patternImages_asPatterns[p].keypoints, pattern_keypoints[p], cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
-        if (patternImages_asPatterns[p].keypoints.empty()) {
-            std::cout << "keypoints vacios!!!!\n";
-        }
-//        cv::imshow("Pattern with keypoints"+p, pattern_keypoints[p]);
-//        cv::waitKey(5);
-
+int correctKeyValue(int original) {
+    if (original >= -1 && original <= 255) {
+        return original;
+    } else {
+        return original % 256;
     }
+}
+
+void processImage(std::vector<cv::Mat>& patternImages, std::string imagePath, PatternDetector pd) {
+    std::vector<Pattern> patternImages_asPatterns(patternImages.size());
+    std::vector<cv::Mat> patternImages_keypoints(patternImages.size());
+
     pd.enableHomographyRefinement;
     pd.homographyReprojectionThreshold = 2;
+
+    for (int p = 0; p < patternImages.size(); p++) {
+        pd.buildPatternFromImage(patternImages[p], patternImages_asPatterns[p]);
+        if (patternImages_asPatterns[p].keypoints.empty()) {
+            std::cout << "empty keypoints!!!!\n";
+            //TODO: should discard patterns with empty keypoints
+        }
+    }
     pd.train(patternImages_asPatterns);
-    bool found = pd.findPattern(sceneClone); //<== current crash pos
-    if (found) {
-//        cv::Mat H = pd.getRefinedHomography();
-//
-//
-//
-//        //-- Get the corners from the image_1 ( the object to be "detected" )
-//        std::vector< cv::Point2f > obj_corners(4);
-//        obj_corners[0] = cvPoint(0,0); obj_corners[1] = cvPoint( pd.patternMatched.frame.cols, 0 );
-//        obj_corners[2] = cvPoint( pd.patternMatched.frame.cols, pd.patternMatched.frame.rows ); obj_corners[3] = cvPoint( 0, pd.patternMatched.frame.rows );
-//        std::vector< cv::Point2f > scene_corners(4);
-//
-//        cv::perspectiveTransform( obj_corners, scene_corners, H);
-//
-//        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-//        cv::line( sceneClone, scene_corners[0] , scene_corners[1], cv::Scalar( 255, 0, 0 ), 2 ); //TOP line
-//        cv::line( sceneClone, scene_corners[1] , scene_corners[2], cv::Scalar( 255, 0, 0 ), 2 );
-//        cv::line( sceneClone, scene_corners[2] , scene_corners[3], cv::Scalar( 255, 0, 0 ), 2 );
-//        cv::line( sceneClone, scene_corners[3] , scene_corners[0] , cv::Scalar( 255, 0, 0 ), 2 );
-//        cv::imshow("Scenario", sceneClone);
+    cv::Mat img = cv::imread(imagePath);
+    process(patternImages_asPatterns, img, pd, 0);
+    cv::waitKey(0);
+}
 
-        Pattern sceneAsPattern;
-        pd.buildPatternFromImage(sceneClone, sceneAsPattern);
-        cv::Mat img_matches;
-        cv::drawMatches(sceneClone, sceneAsPattern.keypoints, pd.patternMatched.frame, pd.patternMatched.keypoints,
-        pd.getMatches(), img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
-        std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
-        cv::imshow("Scenario", img_matches);
+void processCamera(std::vector<cv::Mat>& patternImages, cv::VideoCapture cap, PatternDetector pd) {
+    std::vector<Pattern> patternImages_asPatterns(patternImages.size());
+    std::vector<cv::Mat> patternImages_keypoints(patternImages.size());
 
-        std::cout << "Pattern found!\n";
-//        cv::Mat scene_keypoints;
-//        cv::drawKeypoints( sceneClone, pd.patternMatched.keypoints, scene_keypoints, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
-//        cv::imshow("Scenario", scene_keypoints);
-    } else {
-        cv::imshow("Scenario", sceneClone);
+    pd.enableHomographyRefinement;
+    pd.homographyReprojectionThreshold = 2;
+
+    for (int p = 0; p < patternImages.size(); p++) {
+        pd.buildPatternFromImage(patternImages[p], patternImages_asPatterns[p]);
+        if (patternImages_asPatterns[p].keypoints.empty()) {
+            std::cout << "empty keypoints!!!!\n";
+            //TODO: should discard patterns with empty keypoints
+        }
     }
 
-    cv::waitKey(0);
+    pd.train(patternImages_asPatterns);
+
+    bool quit = false;
+    while(!quit) {
+        cv::Mat frame;
+        cap >> frame;
+        quit = !process(patternImages_asPatterns, frame, pd, 45);
+    }
+}
+
+bool process(std::vector<Pattern>& patterns, cv::Mat scene, PatternDetector pd, int framesToSkip) {
+    static int frames = 1;
+    static bool patternsShowed = true;
+    int skipFrames = framesToSkip == 0 ? 1 : framesToSkip;
+    cv::Mat sceneClone = scene.clone();
+    cv::imshow("Cam", scene);
+    cv::waitKey(5);
+    std::cout << "MARK1\n";
+
+    cv::namedWindow("Scenario", CV_WINDOW_AUTOSIZE);
+    if (!patternsShowed) {
+        std::vector<cv::Mat> patternsKeypoints(patterns.size());
+        for (int p = 0; p < patterns.size(); p++) {
+            cv::namedWindow("pattern:"+p, CV_WINDOW_AUTOSIZE);
+            cv::drawKeypoints(patterns[p].frame, patterns[p].keypoints, patternsKeypoints[p], cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT);
+            cv::imshow("pattern:"+p, patternsKeypoints[p]);
+            cv::waitKey(5);
+        }
+        patternsShowed = true;
+    }
+
+
+    if (frames % skipFrames== 0) {
+        std::cout << "Frames: " << frames << " | searching patterns...\n";
+
+        Pattern framePattern;
+        cv::Mat sceneCloneClone = sceneClone.clone();
+        cv::Mat frameKeypoints;
+        pd.buildPatternFromImage(sceneClone, framePattern);
+        std::cout << "MARK2\n";
+        if (framePattern.keypoints.empty()) {
+            std::cout << "no keypoints in frame\n";
+            cv::imshow("Scenario", sceneCloneClone);
+        } else {
+            cv::drawKeypoints(sceneCloneClone, framePattern.keypoints, frameKeypoints, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT);
+            cv::imshow("Scenario", frameKeypoints);
+        }
+        cv::waitKey(5);
+        std::cout << "MARK3\n";
+        bool found = pd.findPattern(sceneClone); //<== current crash pos
+        std::cout << "MARK4\n";
+        if (found) {
+            std::cout << "Pattern found!\n";
+            Pattern sceneAsPattern;
+            pd.buildPatternFromImage(sceneClone, sceneAsPattern);
+            std::cout << "MARK5\n";
+            cv::Mat img_matches;
+            cv::drawMatches(sceneClone, sceneAsPattern.keypoints, pd.patternMatched.frame, pd.patternMatched.keypoints,
+            pd.getMatches(), img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
+            std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+            std::cout << "MARK6\n";
+            cv::imshow("Scenario", img_matches);
+            cv::waitKey(5);
+            std::cout << "MARK7\n";
+        }
+    }
+    frames++;
+    int keyCode = correctKeyValue(cv::waitKey(30));
+    if (keyCode == 27 || keyCode == 'q') return false;
     return true;
 }
 

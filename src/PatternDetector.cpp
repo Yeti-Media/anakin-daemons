@@ -103,35 +103,37 @@ void PatternDetector::buildPatternFromImage(const cv::Mat& image, Pattern& patte
 }
 
 
-bool PatternDetector::findPattern(const cv::Mat& image)
-{
-  bool patternFound = false;
-  getGray(image, m_grayImg);
-  for(unsigned int x=0;x<m_patterns.size();x++)
-  {
-    Pattern pattern = m_patterns[x];
-    patternFound = findPattern(image, pattern); //<== current crash pos
-    if (patternFound){
-      patternMatched = pattern;
-      break;
+bool PatternDetector::findPattern(const cv::Mat& image) {
+
+    std::cout << "MARK1_findPattern_1_1n";
+    bool patternFound = false;
+    getGray(image, m_grayImg);
+    std::cout << "MARK1_findPattern_1_2n";
+    for(unsigned int x=0;x<m_patterns.size();x++) {
+        Pattern pattern = m_patterns[x];
+        std::cout << "MARK1_findPattern_1_3n";
+        patternFound = findPattern(image, pattern); //<== current crash pos
+        if (patternFound){
+            patternMatched = pattern;
+            break;
+        }
     }
-  }
-  return patternFound;
+    return patternFound;
 }
 
 
 bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
 {
-
+    std::cout << "MARK1_findPattern_2_1n";
     PatternTrackingInfo info = pattern.patternInfo;
     // Convert input image to gray
 
     // Extract feature points from input gray image
     extractFeatures(m_grayImg, m_queryKeypoints, m_queryDescriptors);
-
+    std::cout << "MARK1_findPattern_2_2n";
     // Get matches with current pattern
     getMatches(m_queryDescriptors, m_matches); //<== current crash pos
-
+    std::cout << "MARK2_findPattern_2_3n";
 #if _DEBUG
     cv::showAndSave("Raw matches", getMatchesImage(image, pattern.frame, m_queryKeypoints, pattern.keypoints, m_matches, 100));
 #endif

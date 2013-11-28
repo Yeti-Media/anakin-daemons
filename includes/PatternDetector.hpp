@@ -27,10 +27,10 @@ public:
      */
     PatternDetector
         (
-        cv::Ptr<cv::FeatureDetector>     detector  = new cv::BRISK,
-        cv::Ptr<cv::DescriptorExtractor> extractor = new cv::BRISK,
+        cv::Ptr<cv::FeatureDetector>     detector  = new cv::ORB(1500),
+        cv::Ptr<cv::DescriptorExtractor> extractor = new cv::ORB(1500),
         cv::Ptr<cv::DescriptorMatcher>   matcher   = new cv::BFMatcher(cv::NORM_HAMMING, false),
-        bool enableRatioTest                       = false
+        bool enableRatioTest                       = true
         );
 
     /**
