@@ -50,11 +50,10 @@ void PatternDetector::train(const std::vector<Pattern>& patterns)
 
     // Then we add vector of descriptors (each descriptors matrix describe one image).
     // This allows us to perform search across multiple images:
-    for(unsigned int x=0; x < m_patterns.size(); x++)
-    {
-      std::vector<cv::Mat> descriptors(1);
-      descriptors[0] = m_patterns[x].descriptors.clone();
-      m_matcher->add(descriptors);
+    for(unsigned int x=0; x < m_patterns.size(); x++) {
+        std::vector<cv::Mat> descriptors(1);
+        descriptors[0] = m_patterns[x].descriptors.clone();
+        m_matcher->add(descriptors);
     }
     // After adding train data perform actual train:
     m_matcher->train();
@@ -104,14 +103,10 @@ void PatternDetector::buildPatternFromImage(const cv::Mat& image, Pattern& patte
 
 
 bool PatternDetector::findPattern(const cv::Mat& image) {
-
-    std::cout << "MARK1_findPattern_1_1n";
     bool patternFound = false;
     getGray(image, m_grayImg);
-    std::cout << "MARK1_findPattern_1_2n";
     for(unsigned int x=0;x<m_patterns.size();x++) {
         Pattern pattern = m_patterns[x];
-        std::cout << "MARK1_findPattern_1_3n";
         patternFound = findPattern(image, pattern); //<== current crash pos
         if (patternFound){
             patternMatched = pattern;
@@ -122,18 +117,13 @@ bool PatternDetector::findPattern(const cv::Mat& image) {
 }
 
 
-bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern)
-{
-    std::cout << "MARK1_findPattern_2_1n";
+bool PatternDetector::findPattern(const cv::Mat& image, Pattern& pattern) {
     PatternTrackingInfo info = pattern.patternInfo;
     // Convert input image to gray
-
     // Extract feature points from input gray image
     extractFeatures(m_grayImg, m_queryKeypoints, m_queryDescriptors);
-    std::cout << "MARK1_findPattern_2_2n";
     // Get matches with current pattern
     getMatches(m_queryDescriptors, m_matches); //<== current crash pos
-    std::cout << "MARK2_findPattern_2_3n";
 #if _DEBUG
     cv::showAndSave("Raw matches", getMatchesImage(image, pattern.frame, m_queryKeypoints, pattern.keypoints, m_matches, 100));
 #endif
@@ -249,34 +239,28 @@ bool PatternDetector::extractFeatures(const cv::Mat& image, std::vector<cv::KeyP
     return true;
 }
 
-void PatternDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches)
-{
+void PatternDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches) {
 
     matches.clear();
-    if (enableRatioTest)
-    {
+    if (enableRatioTest) {
         // To avoid NaN's when best match has zero distance we will use inversed ratio.
         const float minRatio = 1.f / 1.5f;
         std::vector< std::vector<cv::DMatch> > m_knnMatches;
         // KNN match will return 2 nearest matches for each query descriptor
         m_matcher->knnMatch(queryDescriptors, m_knnMatches, 2);
-        for (size_t i=0; i<m_knnMatches.size(); i++)
-        {
+        for (size_t i=0; i<m_knnMatches.size(); i++) {
+            if (m_knnMatches[i].empty()) continue;
             const cv::DMatch& bestMatch   = m_knnMatches[i][0];
             const cv::DMatch& betterMatch = m_knnMatches[i][1];
-
             float distanceRatio = bestMatch.distance / betterMatch.distance;
-
             // Pass only matches where distance ratio between
             // nearest matches is greater than 1.5 (distinct criteria)
-            if (distanceRatio < minRatio)
-            {
+            if (distanceRatio < minRatio) {
                 matches.push_back(bestMatch);
             }
         }
     }
-    else
-    {
+    else {
         // Perform regular match
         m_matcher->match(queryDescriptors, matches); //<== current crash pos
 
@@ -293,6 +277,8 @@ bool PatternDetector::refineMatchesWithHomography
     )
 {
     const int minNumberMatchesAllowed = 8;
+
+    std::cout << "matches: " << matches.size() << "\n";
 
     if (matches.size() < minNumberMatchesAllowed)
         return false;
@@ -333,6 +319,10 @@ std::vector<cv::KeyPoint> PatternDetector::getQueryKeyPoints() {
 
 cv::Mat PatternDetector::getRefinedHomography() {
     return m_refinedHomography;
+}
+
+cv::Mat PatternDetector::getRoughHomography() {
+    return m_roughHomography;
 }
 
 std::vector<cv::DMatch> PatternDetector::getMatches() {
