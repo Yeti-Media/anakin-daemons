@@ -12,9 +12,11 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-g" />
-					<Add directory="/home/nicolas/dev/projects/augmented_reality/anakin2/src" />
-					<Add directory="/home/nicolas/dev/projects/augmented_reality/anakin2/includes" />
+					<Add directory="src" />
+					<Add directory="includes" />
+					<Add directory="../../../../../usr/local/include/opencv2" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -24,6 +26,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-g" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -31,7 +35,13 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add option="-g" />
+			<Add option="-rdynamic" />
+			<Add directory="src" />
+			<Add directory="includes" />
+			<Add directory="/usr/local/include/opencv2" />
 		</Compiler>
 		<Linker>
 			<Add library="opencv_features2d" />
@@ -51,18 +61,43 @@
 		</Linker>
 		<Unit filename="includes/ARDrawingContext.hpp" />
 		<Unit filename="includes/ARPipeline.hpp" />
+		<Unit filename="includes/BasicCameraProcessor.hpp" />
+		<Unit filename="includes/BasicImageProcessor.hpp" />
 		<Unit filename="includes/CameraCalibration.hpp" />
+		<Unit filename="includes/CameraDataInput.hpp" />
+		<Unit filename="includes/DataInput.hpp" />
 		<Unit filename="includes/DebugHelpers.hpp" />
+		<Unit filename="includes/Detector.hpp" />
 		<Unit filename="includes/GeometryTypes.hpp" />
+		<Unit filename="includes/ImageDataInput.hpp" />
+		<Unit filename="includes/Img.hpp" />
+		<Unit filename="includes/JustShowCameraProcessor.hpp" />
+		<Unit filename="includes/JustShowImageProcessor.hpp" />
+		<Unit filename="includes/Match.hpp" />
 		<Unit filename="includes/Pattern.hpp" />
 		<Unit filename="includes/PatternDetector.hpp" />
+		<Unit filename="includes/PatternLoader.hpp" />
+		<Unit filename="includes/Processor.hpp" />
+		<Unit filename="includes/RichImg.hpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/ARDrawingContext.cpp" />
 		<Unit filename="src/ARPipeline.cpp" />
+		<Unit filename="src/BasicCameraProcessor.cpp" />
+		<Unit filename="src/BasicImageProcessor.cpp" />
 		<Unit filename="src/CameraCalibration.cpp" />
+		<Unit filename="src/CameraDataInput.cpp" />
+		<Unit filename="src/Detector.cpp" />
 		<Unit filename="src/GeometryTypes.cpp" />
+		<Unit filename="src/ImageDataInput.cpp" />
+		<Unit filename="src/Img.cpp" />
+		<Unit filename="src/JustShowCameraProcessor.cpp" />
+		<Unit filename="src/JustShowImageProcessor.cpp" />
+		<Unit filename="src/Match.cpp" />
 		<Unit filename="src/Pattern.cpp" />
 		<Unit filename="src/PatternDetector.cpp" />
+		<Unit filename="src/PatternLoader.cpp" />
+		<Unit filename="src/Processor.cpp" />
+		<Unit filename="src/RichImg.cpp" />
 		<Unit filename="tests/unit/pattern_detector.cpp" />
 		<Extensions>
 			<code_completion />
