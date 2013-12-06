@@ -30,6 +30,16 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
 #define DEFAULT_INPUT 0 //0 : cam | 1 : image
 #define DEFAULT_IMG "scene.jpg"
 
+#include <ImageDataInput.hpp>
+#include <CameraDataInput.hpp>
+#include <JustShowImageProcessor.hpp>
+#include <JustShowCameraProcessor.hpp>
+#include <Detector.hpp>
+#include <PatternLoader.hpp>
+#include <BasicCameraProcessor.hpp>
+#include <BasicImageProcessor.hpp>
+using namespace Anakin;
+
 /**
  * Processes a recorded video or live view from web-camera and allows you to adjust homography refinement and
  * reprojection threshold in runtime.
@@ -57,39 +67,63 @@ void handler(int sig) {
 
 int main(int argc, const char * argv[]) {
     signal(SIGSEGV, handler);
-    std::vector<cv::Mat> patterns;
+    //std::vector<cv::Mat> patterns;
     boost::filesystem::path cwd = boost::filesystem::current_path();
     std::cout << "Working directory : " << cwd.string() << "\n";
     std::string dir_path("/tests/fixtures/images");//argv[1];
     cwd /= dir_path;
     std::cout << "Images directory : " << cwd.string() << "\n";
 
-    bool useCam = false;
-    std::string imageToLoad = DEFAULT_IMG;
-    if (argc < 2) {
-        useCam = DEFAULT_INPUT == 0 ? true : false;
-    } else if (argc == 2) {
-        //input is 0 or != 0 to use or not camera
-        useCam = atoi(argv[1]) == 0 ? true : false;
-    } else if (argc == 3) {
-        //input is 0 or != 0 to use or not camera
-        //image to load
-        useCam = atoi(argv[1]) == 0 ? true : false;
-        imageToLoad = argv[2];
-    }
 
-    getImagesFromDirectory(cwd.string(), patterns);
-    PatternDetector pd;
-    cv::namedWindow("Cam", CV_WINDOW_AUTOSIZE);
+    cv::Ptr<cv::FeatureDetector>     fdetector  = new cv::ORB(1200);
+    cv::Ptr<cv::DescriptorExtractor> dextractor = new cv::ORB(1200);
+    cv::Ptr<cv::DescriptorMatcher>   matcher   = new cv::BFMatcher(cv::NORM_HAMMING, false);
 
-    if (useCam) {
-        cv::VideoCapture cap;
-        if (cap.open(-1)) {
-            processCamera(patterns, cap, pd);
-        }
-    } else {
-        processImage(patterns, imageToLoad, pd);
-    }
+    std::vector<RichImg> patterns;
+    DataInput* patternsDataInput = new ImageDataInput(cwd.string());
+    PatternLoader* patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
+    patternsLoader->load();
+    Detector *detector = new Detector(matcher, patterns);
+    detector->init();
+    DataInput* sceneFolderDataInput = new ImageDataInput("tests/fixtures/scenes");
+    BasicImageProcessor processor(sceneFolderDataInput, detector, fdetector, dextractor);
+    processor.start();
+
+//    DataInput* cameraDataInput = new CameraDataInput(0);
+//    BasicCameraProcessor processor(cameraDataInput, detector, fdetector, dextractor);
+//    processor.start();
+
+//    Detector *detector = NULL;
+//    DataInput *input = new CameraDataInput(0);
+//    JustShowCameraProcessor processor(input, detector);
+//    processor.start();
+
+//    bool useCam = false;
+//    std::string imageToLoad = DEFAULT_IMG;
+//    if (argc < 2) {
+//        useCam = DEFAULT_INPUT == 0 ? true : false;
+//    } else if (argc == 2) {
+//        //input is 0 or != 0 to use or not camera
+//        useCam = atoi(argv[1]) == 0 ? true : false;
+//    } else if (argc == 3) {
+//        //input is 0 or != 0 to use or not camera
+//        //image to load
+//        useCam = atoi(argv[1]) == 0 ? true : false;
+//        imageToLoad = argv[2];
+//    }
+//
+//    getImagesFromDirectory(cwd.string(), patterns);
+//    PatternDetector pd;
+//    cv::namedWindow("Cam", CV_WINDOW_AUTOSIZE);
+//
+//    if (useCam) {
+//        cv::VideoCapture cap;
+//        if (cap.open(-1)) {
+//            processCamera(patterns, cap, pd);
+//        }
+//    } else {
+//        processImage(patterns, imageToLoad, pd);
+//    }
 
     return 0;
 }
