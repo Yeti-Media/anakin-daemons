@@ -2,6 +2,7 @@
 #define ANAKINMATCH_HPP
 
 #include <RichImg.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace Anakin {
 
@@ -17,7 +18,12 @@ class Match {
         * param: std::vector<cv::DMatch>& : the matches between the scene and a pattern
         * param: cv::Mat : homography between the scene and a pattern
         */
-        Match(Anakin::RichImg* scene, Anakin::RichImg* pattern, std::vector<cv::DMatch>* matches, cv::Mat& homography);
+        Match(  Anakin::RichImg* scene,
+                Anakin::RichImg* pattern,
+                std::vector<cv::DMatch>* matches,
+                cv::Mat& homography,
+                cv::Point2f center,
+                std::vector<cv::KeyPoint> matchedKeypoints);
 
 
         /**
@@ -40,19 +46,18 @@ class Match {
         */
         cv::Mat& getHomography();
 
+        cv::Point2f getCenter();
+
+        std::vector<cv::KeyPoint> getMatchedKeypoints();
+
     protected:
     private:
         Anakin::RichImg* scene;
         Anakin::RichImg* pattern;
         std::vector<cv::DMatch>* matches;
+        cv::Point2f center;
+        std::vector<cv::KeyPoint> matchedKeypoints;
         cv::Mat homography;
-        std::vector<cv::Point2f>  points2d; //+ I need to know what these things mean
-        std::vector<cv::Point3f>  points3d; //* and for what they are used
-                                            //++++++++++++++++++++++++++++++++++++++++++++
-
-        //TODO: add the following code in a corresponding function
-        // Transform contour with precise homography
-        //cv::perspectiveTransform(pattern.points2d, info.points2d, info.homography);
 
 };
 

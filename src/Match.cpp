@@ -5,20 +5,23 @@ using namespace Anakin;
 Match::Match(   RichImg* scene,
                 RichImg* pattern,
                 std::vector<cv::DMatch>* matches,
-                cv::Mat& homography) {
+                cv::Mat& homography,cv::Point2f center,
+                std::vector<cv::KeyPoint> matchedKeypoints) {
 
     this->scene = scene;
     this->pattern = pattern;
     this->matches = matches;
     this->homography = homography;
+    this->center = center;
+    this->matchedKeypoints = matchedKeypoints;
 
 }
 
-Anakin::RichImg* Match::getScene() {
+RichImg* Match::getScene() {
     return this->scene;
 }
 
-Anakin::RichImg* Match::getPattern() {
+RichImg* Match::getPattern() {
     return this->pattern;
 }
 
@@ -28,4 +31,12 @@ std::vector<cv::DMatch>* Match::getMatches() {
 
 cv::Mat& Match::getHomography() {
     return this->homography;
+}
+
+cv::Point2f Match::getCenter() {
+    return this->center;
+}
+
+std::vector<cv::KeyPoint> Match::getMatchedKeypoints() {
+    return this->matchedKeypoints;
 }

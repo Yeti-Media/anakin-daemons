@@ -14,7 +14,7 @@ bool CameraDataInput::nextInput(Anakin::Img** output) {
     if (this->running) {
         cv::Mat nextMat;
         this->cap >> nextMat;
-        Img* nextImg = new Img(nextMat);
+        Img* nextImg = new Img(nextMat, "CameraInput");
         *output = nextImg;
         return true;
     }

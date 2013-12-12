@@ -8,6 +8,12 @@ RichImg::RichImg(Img *img, cv::Ptr<cv::FeatureDetector>& detector, cv::Ptr<cv::D
     this->extractor = extractor;
 }
 
+RichImg::RichImg(const RichImg& other) {
+    this->aimg = new Img(*(other.aimg));
+    this->detector = other.detector;
+    this->extractor = other.extractor;
+}
+
 RichImg* RichImg::makeNew(Img* img) {
     return new RichImg(img, this->detector, this->extractor);
 }
@@ -17,6 +23,24 @@ std::vector<cv::KeyPoint> RichImg::getKeypoints() {
         return this->keypoints;
     }
     return this->getFreshKeypoints();
+}
+
+void RichImg::recalculateFeatures(std::vector<int> mask) {
+    std::vector<cv::KeyPoint> newKeypoints;
+    int removedKeypoints = 0;
+    for (int i = 0; i < this->keypoints.size(); i++) {
+        if (mask[i] != 1) {
+            newKeypoints.push_back(this->keypoints[i]);
+        } else {
+            removedKeypoints++;
+        }
+    }
+    this->keypoints.clear();
+    for (int k = 0; k < newKeypoints.size(); k++) {
+        this->keypoints.push_back(newKeypoints[k]);
+    }
+    this->extractor->compute(this->aimg->getGrayImg(), this->keypoints, this->descriptors);
+    this->descriptorsCalculated = true;
 }
 
 std::vector<cv::KeyPoint> RichImg::getFreshKeypoints() {

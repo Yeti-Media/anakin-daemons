@@ -127,17 +127,17 @@
 	<boost/test/unit_test.hpp>
 	<opencv2/opencv.hpp>
 
-1386278115 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
-	"ARDrawingContext.hpp"
-	"ARPipeline.hpp"
-	"DebugHelpers.hpp"
+1386716391 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
 	<opencv2/opencv.hpp>
-	<GL/gl.h>
-	<GL/glu.h>
 	"boost/filesystem.hpp"
 	<iostream>
 	<execinfo.h>
 	<signal.h>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
 	<ImageDataInput.hpp>
 	<CameraDataInput.hpp>
 	<JustShowImageProcessor.hpp>
@@ -146,6 +146,7 @@
 	<PatternLoader.hpp>
 	<BasicCameraProcessor.hpp>
 	<BasicImageProcessor.hpp>
+	<BasicFlannDetector.hpp>
 
 1386031793 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
@@ -171,16 +172,17 @@
 	<DataInput.hpp>
 	<Detector.hpp>
 
-1386268869 /home/stein/Documents/ym/anakin-daemons/includes/Detector.hpp
+1386629354 /home/stein/Documents/ym/anakin-daemons/includes/Detector.hpp
 	<RichImg.hpp>
 	<Match.hpp>
 
-1386288222 /home/stein/Documents/ym/anakin-daemons/includes/RichImg.hpp
+1386715869 /home/stein/Documents/ym/anakin-daemons/includes/RichImg.hpp
 	<opencv2/opencv.hpp>
 	<Img.hpp>
 
-1386283755 /home/stein/Documents/ym/anakin-daemons/includes/Match.hpp
+1386718570 /home/stein/Documents/ym/anakin-daemons/includes/Match.hpp
 	<RichImg.hpp>
+	<opencv2/opencv.hpp>
 
 1386284192 source:/home/stein/Documents/ym/anakin-daemons/src/JustShowImageProcessor.cpp
 	<opencv2/opencv.hpp>
@@ -216,7 +218,7 @@
 	<opencv2/opencv.hpp>
 	<Processor.hpp>
 
-1386284272 source:/home/stein/Documents/ym/anakin-daemons/src/RichImg.cpp
+1386716041 source:/home/stein/Documents/ym/anakin-daemons/src/RichImg.cpp
 	<RichImg.hpp>
 
 1386274367 /home/stein/Documents/ym/anakin-daemons/includes/BasicCameraProcessor.hpp
@@ -227,18 +229,35 @@
 	"BasicCameraProcessor.hpp"
 	<Match.hpp>
 
-1386288639 source:/home/stein/Documents/ym/anakin-daemons/src/Detector.cpp
+1386718516 source:/home/stein/Documents/ym/anakin-daemons/src/Detector.cpp
 	<opencv2/opencv.hpp>
 	<Detector.hpp>
 
-1386283771 source:/home/stein/Documents/ym/anakin-daemons/src/Match.cpp
+1386718794 source:/home/stein/Documents/ym/anakin-daemons/src/Match.cpp
 	<Match.hpp>
 
 1386277003 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
 	<JustShowImageProcessor.hpp>
 
-1386290349 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
+1386717539 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
 	<opencv2/opencv.hpp>
 	"BasicImageProcessor.hpp"
 	<Match.hpp>
+
+1386636614 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
+	<Detector.hpp>
+
+1386719020 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
+	"BasicFlannDetector.hpp"
+
+1386633274 source:/home/stein/Documents/ym/anakin-daemons/src/Test.cpp
+	<stdio.h>
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	<Img.hpp>
+	<RichImg.hpp>
 

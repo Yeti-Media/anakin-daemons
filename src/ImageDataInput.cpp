@@ -6,6 +6,7 @@ namespace fs = boost::filesystem;
 using namespace Anakin;
 
 std::vector<cv::Mat> images(0);
+std::vector<std::string> labels(0);
 void loadImages(std::vector<cv::Mat>& images);
 
 ImageDataInput::ImageDataInput(std::string imagesFolder) {
@@ -16,8 +17,10 @@ ImageDataInput::ImageDataInput(std::string imagesFolder) {
 bool ImageDataInput::nextInput(Anakin::Img** output) {
     if (!images.empty()) {
         cv::Mat nextMat = images.back();
+        std::string label = labels.back();
         images.pop_back();
-        Img* nextImg = new Img(nextMat);
+        labels.pop_back();
+        Img* nextImg = new Img(nextMat, label);
         *output = nextImg;
         return true;
     }
@@ -38,9 +41,12 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
                     exit(-1);
                 }
                 images.push_back(img);
+                labels.push_back(itr->path().string());
             }
 
         }
 
+    } else {
+        std::cout << "directory : " << imagesFolder << " doesn't exist\n";
     }
 }

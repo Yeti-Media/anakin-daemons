@@ -1,82 +1,81 @@
 #include <opencv2/opencv.hpp>
 #include "BasicImageProcessor.hpp"
 #include <Match.hpp>
+#include <ResultWriter.hpp>
 
 using namespace Anakin;
+using namespace cv;
+using namespace std;
 
-BasicImageProcessor::BasicImageProcessor(   Anakin::DataInput* input,
-                                            Anakin::Detector* detector,
-                                            cv::Ptr<cv::FeatureDetector>& fdetector,
-                                            cv::Ptr<cv::DescriptorExtractor>& dextractor)
+BasicImageProcessor::BasicImageProcessor(   DataInput* input,
+                                            Detector* detector,
+                                            Ptr<FeatureDetector>& fdetector,
+                                            Ptr<DescriptorExtractor>& dextractor)
 : JustShowImageProcessor(input, detector)
 {
     this->fdetector = fdetector;
     this->dextractor = dextractor;
 }
 
-bool BasicImageProcessor::process(Anakin::Img& scene) {
+bool BasicImageProcessor::process(Img& scene) {
     bool skip = false;
-    cv::Mat procesedScene;
+    Mat procesedScene;
     if (!skip) {
         RichImg* scenario = new RichImg(&scene, this->fdetector, this->dextractor);
-        std::vector<Match>* matches = this->detector->findPatterns(scenario);
-        std::cout << "======matches: " << matches->size() << " ======\n";
-        cv::Mat originalScene = scene.getImage();
-        cv::Mat initialScene;
+        vector<Match>* matches = this->detector->findPatterns(scenario);
+        cout << "======matches: " << matches->size() << " ======\n";
+        Mat originalScene = scene.getImage();
+        Mat initialScene;
         if (matches->empty()) {
             procesedScene = originalScene;
         } else {
-            cv::drawKeypoints(originalScene, scenario->getKeypoints(), initialScene, cv::Scalar(255, 50, 0), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+            drawKeypoints(originalScene, scenario->getFreshKeypoints(), procesedScene, Scalar(255, 50, 0), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         }
         for (int m = 0; m < matches->size(); m++) {
-            cv::namedWindow("Warped Pattern found_"+m, CV_WINDOW_AUTOSIZE);
-            cv::namedWindow("Pattern found_"+m, CV_WINDOW_AUTOSIZE);
-
             Match match = (*matches)[m];
-            std::vector<cv::DMatch>* dmatches = match.getMatches();
-            std::vector<cv::KeyPoint> roiKeypoints(dmatches->size());
+            Mat patternImg = match.getPattern()->getImage()->getImage();
+            Mat sceneImg = match.getScene()->getImage()->getImage();
+            vector<cv::KeyPoint> patternKeypoints = match.getPattern()->getKeypoints();
+            vector<cv::KeyPoint> sceneKeypoints = match.getMatchedKeypoints();
+            vector<DMatch> sceneMatches = *(match.getMatches());
 
-            cv::Mat pattern = match.getPattern()->getImage()->getImage();
-            cv::Size patternSize = match.getPattern()->getImage()->getSize();
-            cv::Mat warpedPattern;
+            drawKeypoints(procesedScene, sceneKeypoints, procesedScene, Scalar(0,255,50), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+
+            vector<Point2f> obj_corners(4);
+            obj_corners[0] = cvPoint(0,0); obj_corners[1] = cvPoint( patternImg.cols, 0 );
+            obj_corners[2] = cvPoint( patternImg.cols, patternImg.rows ); obj_corners[3] = cvPoint( 0, patternImg.rows );
+            vector<Point2f> scene_corners(4);
+
+            perspectiveTransform( obj_corners, scene_corners, match.getHomography());
+
+            Point2f offset(0, 0);//Point2f offset(patternImg.cols, 0);
+
+            //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+            line( procesedScene, scene_corners[0] + offset, scene_corners[1] + offset, Scalar( 0, 255, 0), 4 );
+            line( procesedScene, scene_corners[1] + offset, scene_corners[2] + offset, Scalar( 0, 255, 0), 4 );
+            line( procesedScene, scene_corners[2] + offset, scene_corners[3] + offset, Scalar( 0, 255, 0), 4 );
+            line( procesedScene, scene_corners[3] + offset, scene_corners[0] + offset, Scalar( 0, 255, 0), 4 );
 
 
-            int k = 0;
-            for (int m = 0; m < dmatches->size(); m++) {
-                roiKeypoints[k] = match.getPattern()->getKeypoints()[(*dmatches)[m].queryIdx];
-                k++;
-            }
+            string text = match.getPattern()->getImage()->getLabel();
+            int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
+            double fontScale = 0.8;
+            int thickness = 2;
 
-            cv::drawKeypoints(initialScene, roiKeypoints, procesedScene, cv::Scalar(0, 255, 50), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-            initialScene = procesedScene;
-            cv::Mat H = match.getHomography();
+            int baseline=0;
+            Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
+            float centerx = match.getCenter().x - (textSize.width/2);
+            float centery = match.getCenter().y;
+            Point textOrg(centerx, centery);
+            putText(procesedScene, text, textOrg, fontFace, fontScale, Scalar(0, 0, 0), thickness, 8);
 
-            cv::warpPerspective(pattern, warpedPattern, H, patternSize, cv::INTER_CUBIC);//cv::WARP_NORMAL_MAP | cv::INTER_CUBIC);
 
-            cv::imshow("Warped Pattern found_"+m, warpedPattern);
-            cv::imshow("Pattern found_"+m, match.getPattern()->getImage()->getImage());
-            cv::waitKey();
-
-            cv::Point2f cenScenePattern(0,0);
-            for ( size_t i=0; i<roiKeypoints.size(); i++ ) {
-                cv::KeyPoint currentPoint = roiKeypoints[i];
-                cenScenePattern.x += currentPoint.pt.x;
-                cenScenePattern.y += currentPoint.pt.y;
-            }
-            cenScenePattern.x /= roiKeypoints.size();
-            cenScenePattern.y /= roiKeypoints.size();
-
-            std::cout << "Center of pattern: (" << cenScenePattern.x << ", " << cenScenePattern.y << ")\n";
-
-            cv::circle( procesedScene, cenScenePattern, std::max(patternSize.width, patternSize.height)/4, cv::Scalar( 0, 255, 5 ), 2, 1 );
-
-            cv::destroyWindow("Warped Pattern found_"+m);
-            cv::destroyWindow("Pattern found_"+m);
+            wcout << outputResult(match.getCenter(), match.getPattern()->getImage()->getLabel(), match.getMatchedKeypoints()) << "\n";
         }
     } else {
         procesedScene = scene.getImage();
     }
-    cv::imshow("Input", procesedScene);
-    cv::waitKey();
+    imshow("Input", procesedScene);
+    waitKey();
     return true;
 }
