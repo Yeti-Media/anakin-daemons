@@ -65,6 +65,7 @@
 		<Unit filename="includes/CameraDataInput.hpp" />
 		<Unit filename="includes/DataInput.hpp" />
 		<Unit filename="includes/Detector.hpp" />
+		<Unit filename="includes/HistogramComparator.hpp" />
 		<Unit filename="includes/ImageDataInput.hpp" />
 		<Unit filename="includes/Img.hpp" />
 		<Unit filename="includes/JSON.h" />
@@ -83,6 +84,7 @@
 		<Unit filename="src/BasicImageProcessor.cpp" />
 		<Unit filename="src/CameraDataInput.cpp" />
 		<Unit filename="src/Detector.cpp" />
+		<Unit filename="src/HistogramComparator.cpp" />
 		<Unit filename="src/ImageDataInput.cpp" />
 		<Unit filename="src/Img.cpp" />
 		<Unit filename="src/JSON.cpp" />

@@ -23,7 +23,7 @@ bool BasicImageProcessor::process(Img& scene) {
     if (!skip) {
         RichImg* scenario = new RichImg(&scene, this->fdetector, this->dextractor);
         vector<Match>* matches = this->detector->findPatterns(scenario);
-        cout << "======matches: " << matches->size() << " ======\n";
+        //cout << "======matches: " << matches->size() << " ======\n";
         Mat originalScene = scene.getImage();
         Mat initialScene;
         if (matches->empty()) {
@@ -75,7 +75,7 @@ bool BasicImageProcessor::process(Img& scene) {
     } else {
         procesedScene = scene.getImage();
     }
-    imshow("Input", procesedScene);
-    waitKey();
+    //imshow("Input", procesedScene);
+    //waitKey();
     return true;
 }

@@ -81,7 +81,7 @@ using namespace cv;
                 removedKeypoints++;
             }
         }
-        std::cout << "removed keypoints : " << removedKeypoints << "\n";
+        //std::cout << "removed keypoints : " << removedKeypoints << "\n";
         match->getScene()->recalculateFeatures(mask);
 
 

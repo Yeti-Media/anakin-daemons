@@ -39,6 +39,7 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
 #include <BasicImageProcessor.hpp>
 #include <BasicFlannDetector.hpp>
 #include <SingleImageDataInput.hpp>
+#include <HistogramComparator.hpp>
 
 using namespace Anakin;
 
@@ -71,10 +72,18 @@ int main(int argc, const char * argv[]) {
         patternsDir = argv[2];
     }
 
+//    if (true) {
+//        cv::Mat scene = cv::imread("scene.jpg");
+//        cv::Mat pattern = cv::imread("scene.jpg");
+//        Img* sceneImg = new Img(scene, "scene");
+//        Img* patternImg = new Img(pattern, "cocacola");
+//        HistogramComparator hcomp(sceneImg);
+//        std::cout << hcomp.compareUsingColor(patternImg, 2) << "%\n";
+//        return 0;
+//    }
 
-
-    std::cout << "Scenes directory : " << scenesDir << "\n";
-    std::cout << "Patterns directory : " << patternsDir << "\n";
+//    std::cout << "Scenes directory : " << scenesDir << "\n";
+//    std::cout << "Patterns directory : " << patternsDir << "\n";
 
     cv::Ptr<cv::FeatureDetector>     fdetector  = new cv::SurfFeatureDetector(400);
     cv::Ptr<cv::DescriptorExtractor> dextractor = new cv::SurfDescriptorExtractor();
