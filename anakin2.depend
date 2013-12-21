@@ -127,7 +127,7 @@
 	<boost/test/unit_test.hpp>
 	<opencv2/opencv.hpp>
 
-1386716391 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
+1387639554 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<iostream>
@@ -147,8 +147,11 @@
 	<BasicCameraProcessor.hpp>
 	<BasicImageProcessor.hpp>
 	<BasicFlannDetector.hpp>
+	<SingleImageDataInput.hpp>
+	<HistogramComparator.hpp>
+	<Flags.hpp>
 
-1386031793 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
+1387550254 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
@@ -159,10 +162,10 @@
 1386267079 /home/stein/Documents/ym/anakin-daemons/includes/DataInput.hpp
 	"Img.hpp"
 
-1386288412 /home/stein/Documents/ym/anakin-daemons/includes/Img.hpp
+1386804961 /home/stein/Documents/ym/anakin-daemons/includes/Img.hpp
 	<opencv2/opencv.hpp>
 
-1386288364 source:/home/stein/Documents/ym/anakin-daemons/src/Img.cpp
+1386805436 source:/home/stein/Documents/ym/anakin-daemons/src/Img.cpp
 	"Img.hpp"
 
 1386178221 /home/stein/Documents/ym/anakin-daemons/includes/JustShowImageProcessor.hpp
@@ -172,11 +175,11 @@
 	<DataInput.hpp>
 	<Detector.hpp>
 
-1386629354 /home/stein/Documents/ym/anakin-daemons/includes/Detector.hpp
+1386726269 /home/stein/Documents/ym/anakin-daemons/includes/Detector.hpp
 	<RichImg.hpp>
 	<Match.hpp>
 
-1386715869 /home/stein/Documents/ym/anakin-daemons/includes/RichImg.hpp
+1386806193 /home/stein/Documents/ym/anakin-daemons/includes/RichImg.hpp
 	<opencv2/opencv.hpp>
 	<Img.hpp>
 
@@ -199,7 +202,7 @@
 1386106535 /home/stein/Documents/ym/anakin-daemons/includes/JustShowCameraProcessor.hpp
 	<Processor.hpp>
 
-1386266129 source:/home/stein/Documents/ym/anakin-daemons/src/CameraDataInput.cpp
+1386725594 source:/home/stein/Documents/ym/anakin-daemons/src/CameraDataInput.cpp
 	"CameraDataInput.hpp"
 
 1386284168 source:/home/stein/Documents/ym/anakin-daemons/src/JustShowCameraProcessor.cpp
@@ -218,7 +221,7 @@
 	<opencv2/opencv.hpp>
 	<Processor.hpp>
 
-1386716041 source:/home/stein/Documents/ym/anakin-daemons/src/RichImg.cpp
+1386806212 source:/home/stein/Documents/ym/anakin-daemons/src/RichImg.cpp
 	<RichImg.hpp>
 
 1386274367 /home/stein/Documents/ym/anakin-daemons/includes/BasicCameraProcessor.hpp
@@ -229,25 +232,28 @@
 	"BasicCameraProcessor.hpp"
 	<Match.hpp>
 
-1386718516 source:/home/stein/Documents/ym/anakin-daemons/src/Detector.cpp
+1386726285 source:/home/stein/Documents/ym/anakin-daemons/src/Detector.cpp
 	<opencv2/opencv.hpp>
 	<Detector.hpp>
 
 1386718794 source:/home/stein/Documents/ym/anakin-daemons/src/Match.cpp
 	<Match.hpp>
 
-1386277003 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
+1387632794 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
 	<JustShowImageProcessor.hpp>
+	<JSON.h>
+	<JSONValue.h>
 
-1386717539 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
+1387632930 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
 	<opencv2/opencv.hpp>
 	"BasicImageProcessor.hpp"
 	<Match.hpp>
+	<ResultWriter.hpp>
 
 1386636614 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
 	<Detector.hpp>
 
-1386719020 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
+1387549950 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
 	"BasicFlannDetector.hpp"
 
 1386633274 source:/home/stein/Documents/ym/anakin-daemons/src/Test.cpp
@@ -260,4 +266,65 @@
 	"opencv2/nonfree/nonfree.hpp"
 	<Img.hpp>
 	<RichImg.hpp>
+
+1383446143 /home/stein/Documents/ym/anakin-daemons/includes/JSON.h
+	<vector>
+	<string>
+	<map>
+	<cstring>
+	<cstdlib>
+	<wctype.h>
+	<wchar.h>
+	"JSONValue.h"
+
+1383446143 /home/stein/Documents/ym/anakin-daemons/includes/JSONValue.h
+	<vector>
+	<string>
+	"JSON.h"
+
+1386796937 /home/stein/Documents/ym/anakin-daemons/includes/SingleImageDataInput.hpp
+	<DataInput.hpp>
+
+1387546698 /home/stein/Documents/ym/anakin-daemons/includes/HistogramComparator.hpp
+	<Img.hpp>
+
+1387639562 /home/stein/Documents/ym/anakin-daemons/includes/Flags.hpp
+	<map>
+	<vector>
+
+1387630613 /home/stein/Documents/ym/anakin-daemons/includes/ResultWriter.hpp
+	<JSON.h>
+	<JSONValue.h>
+	<opencv2/opencv.hpp>
+
+1387639427 source:/home/stein/Documents/ym/anakin-daemons/src/Flags.cpp
+	"Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1387556661 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramComparator.cpp
+	"HistogramComparator.hpp"
+
+1383446143 source:/home/stein/Documents/ym/anakin-daemons/src/JSON.cpp
+	"JSON.h"
+
+1383446143 source:/home/stein/Documents/ym/anakin-daemons/src/JSONValue.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<math.h>
+	"JSONValue.h"
+
+1387633257 source:/home/stein/Documents/ym/anakin-daemons/src/ResultWriter.cpp
+	<ResultWriter.hpp>
+
+1386797534 source:/home/stein/Documents/ym/anakin-daemons/src/SingleImageDataInput.cpp
+	"SingleImageDataInput.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
 

@@ -10,7 +10,7 @@ using namespace std;
 
 class Flags {
     public:
-        Flags(string input[]);
+        Flags(vector<string> *input);
         bool flagFound(string flag);
 
         //SETTERS
@@ -19,6 +19,7 @@ class Flags {
         bool setOverridingFlag(string flag);
         bool setNoValuesFlag(string flag);
         bool setDependence(string dependent, string dependence);
+        bool setIncompatibility(string flag1, string flag2);
         void setVerbose(bool b);
 
         //GETTERS
@@ -39,12 +40,14 @@ class Flags {
         bool isNoValueFlag(string flag);
         bool isOverridingFlag(string flag);
         bool checkDependencies(vector<string> flags);
+        bool checkIncompatibilities(vector<string> flags);
 
         //FIELDS
-        string* input;
+        vector<string> input;
         map<string, vector<string>*> optionalFlags;
         map<string, vector<string>*> requiredFlags;
         map<string, vector<string>*> flagsDependencies;
+        map<string, vector<string>*> incompatibleFlags;
         vector<string> noValuesFlags;
         vector<string> overridingFlags;
         vector<string> foundFlags;

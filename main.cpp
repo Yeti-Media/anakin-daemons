@@ -28,6 +28,7 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
                                   //  a namespace alias is preferred practice in real code
 
 #define CONSOLE 1 //1 : run from console, 0 : run from IDE
+#define VERBOSE 1
 
 #include <ImageDataInput.hpp>
 #include <CameraDataInput.hpp>
@@ -40,6 +41,7 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
 #include <BasicFlannDetector.hpp>
 #include <SingleImageDataInput.hpp>
 #include <HistogramComparator.hpp>
+#include <Flags.hpp>
 
 using namespace Anakin;
 
@@ -58,18 +60,91 @@ void handler(int sig) {
   exit(1);
 }
 
+void showHelp() {
+    cout << "Anakin - help\n";
+    cout << "usage: ./anakin2 -s <scene file path> -p <patterns folder path>\n";
+    cout << "usage: ./anakin2 -S <scenes folder path> -p <patterns folder path>\n";
+    cout << "usage: ./anakin2 -h\n";
+}
+
 int main(int argc, const char * argv[]) {
     signal(SIGSEGV, handler);
+    bool useScenePathAsDir = false;
+    bool sceneArgFound = false;
     std::string scenesDir = "tests/fixtures/images";
     std::string patternsDir = "tests/fixtures/scenes";
 
+    const char * argv_[] = {"anakin", "-s", "tests/fixtures/several.jpg", "-p", "tests/fixtures/images/"};
+    int argc_ = 5;
+    vector<string> *input = new vector<string>(0);
+    for (int i = 1; i < argc; i++) {
+        input->push_back(argv[i]);
+    }
+
     if (CONSOLE) {
-        if (argc < 3) {
-            std::cout << "wrong number of parameters, need scene path and patterns directory path\n";
+//        if (argc < 3) {
+//            std::cout << "wrong number of parameters, need scene path and patterns directory path\n";
+//            return -1;
+//        }
+//        scenesDir = argv[1];
+//        patternsDir = argv[2];
+        Flags* flags = new Flags(input);
+        flags->setRequiredFlag("p"); //patterns folder path
+        flags->setOptionalFlag("s"); //scene path
+        flags->setOptionalFlag("S"); //scene folder path
+        flags->setDependence("s", "p");
+        flags->setDependence("S", "p");
+        flags->setIncompatibility("s", "S");
+        flags->setOverridingFlag("h");
+        flags->setVerbose(VERBOSE);
+        if (flags->validateInput()) {
+            if (flags->flagFound("h")) {
+                showHelp();
+                return 0;
+            }
+            vector<string>* values;
+            values = flags->getFlagValues("p");
+            if (values->size() == 1) {
+                patternsDir = values->at(0);
+            } else {
+                cout << "param p need only one value\n";
+                showHelp();
+                return -1;
+            }
+            if (flags->flagFound("s")) {
+                useScenePathAsDir = false;
+                sceneArgFound = true;
+                values = flags->getFlagValues("s");
+                if (values->size() == 1) {
+                    scenesDir = values->at(0);
+                } else {
+                    cout << "param s need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("S")) {
+                useScenePathAsDir = true;
+                sceneArgFound = true;
+                values = flags->getFlagValues("S");
+                if (values->size() == 1) {
+                    scenesDir = values->at(0);
+                } else {
+                    cout << "param S need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (!sceneArgFound) {
+                cout << "missing parameter, need s or S\n";
+                showHelp();
+                return -1;
+            }
+        } else {
+            cout << "input error!\n";
+            showHelp();
             return -1;
         }
-        scenesDir = argv[1];
-        patternsDir = argv[2];
     }
 
 //    if (true) {
@@ -96,13 +171,20 @@ int main(int argc, const char * argv[]) {
     Detector *detector = new BasicFlannDetector(matcher, patterns);
     detector->init();
     DataInput* scenesDataInput;
-    if (CONSOLE) {
+    if (!useScenePathAsDir) {
         scenesDataInput = new SingleImageDataInput(scenesDir);
     } else {
         scenesDataInput = new ImageDataInput(scenesDir);
     }
     BasicImageProcessor processor(scenesDataInput, detector, fdetector, dextractor);
     processor.start();
+
+    vector<JSONValue*>* results = processor.getResults();
+    //dcout << "results size: " << results->size() << "\n";
+    for (int r = 0; r < results->size(); r++) {
+        JSONValue* current = results->at(r);
+        wcout << current->Stringify().c_str() << "\n";
+    }
 
     return 0;
 }

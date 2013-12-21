@@ -9,13 +9,17 @@ wstring Anakin::outputResult(Point2f center, string label, vector<KeyPoint> matc
     return resultAsJSONValue(center, label, matchedKeypoints)->Stringify().c_str();
 }
 
+wstring Anakin::outputResult(string label, vector<JSONValue*> values) {
+    return resultAsJSONValue(label, values)->Stringify().c_str();
+}
+
 JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
     /*  Result as JSONObject
 
         root    -> center   -> x (float)
                             -> y (float)
 
-                -> label (string)
+                -> pattern label (string)
 
                 -> keypoints (JSONArray)    -> pos      -> x (float)
                                                         -> y (float)
@@ -57,5 +61,30 @@ JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoi
 	// Create a value
 	JSONValue *value = new JSONValue(root);
 	return value;
+}
+
+JSONValue* Anakin::resultAsJSONValue(string label, vector<JSONValue*> jsonValues) {
+    /*  Result as JSONObject
+
+        root    -> scene label (string)
+
+                -> values (JSONArray)    -> <see function above>
+    */
+    JSONObject root;
+    wstringstream ws;
+    ws << label.c_str();
+	root[L"label"] = new JSONValue(ws.str());
+	JSONArray values;
+
+	for (int v = 0; v < jsonValues.size(); v++) {
+		values.push_back(jsonValues.at(v));
+    }
+
+	root[L"values"] = new JSONValue(values);
+
+    JSONValue *value = new JSONValue(root);
+	return value;
+
+	//wcout << root->Stringify().c_str() << "\n";
 }
 

@@ -11,7 +11,11 @@ namespace Anakin {
 
     wstring outputResult(Point2f center, string label, vector<KeyPoint> matchedKeypoints);
 
+    wstring outputResult(string label, vector<JSONValue*> values);
+
     JSONValue* resultAsJSONValue(Point2f center, string label, vector<KeyPoint> matchedKeypoints);
+
+    JSONValue* resultAsJSONValue(string label, vector<JSONValue*> values);
 
 }
 

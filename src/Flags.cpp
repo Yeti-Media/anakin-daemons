@@ -6,8 +6,8 @@
 using namespace Anakin;
 using namespace std;
 
-Flags::Flags(string* input) {
-    this->input = input;
+Flags::Flags(vector<string>* input) {
+    this->input = *input;
 }
 
 void Flags::setVerbose(bool b) {
@@ -81,7 +81,13 @@ bool Flags::setNoValuesFlag(string flag)  {
 
 bool Flags::setDependence(string dependent, string dependence)  {
     if (flagExist(dependent) && flagExist(dependence)) {
-        vector<string>* dependences = this->flagsDependencies.find(dependent)->second;
+        vector<string>* dependences;
+        if (findKey(this->flagsDependencies, dependent)) {
+            dependences  = this->flagsDependencies.find(dependent)->second;
+        } else {
+            dependences = new vector<string>(0);
+            this->flagsDependencies[dependent] = dependences;
+        }
         if (findInVector(*dependences, dependence)) {
             return false;
         }
@@ -91,7 +97,40 @@ bool Flags::setDependence(string dependent, string dependence)  {
     return false;
 }
 
+bool Flags::setIncompatibility(string flag1, string flag2) {
+    if (flagExist(flag1) && flagExist(flag2)) {
+        vector<string>* incompatibilities;
+        if (findKey(this->incompatibleFlags, flag1)) {
+            incompatibilities  = this->incompatibleFlags.find(flag1)->second;
+        } else {
+            incompatibilities = new vector<string>(0);
+            this->incompatibleFlags[flag1] = incompatibilities;
+        }
+        if (findInVector(*incompatibilities, flag2)) {
+            return false;
+        }
+        incompatibilities->push_back(flag2);
+        return true;
+    }
+    return false;
+}
+
 bool Flags::checkDependencies(vector<string> flags) {
+    for (int f = 0; f < flags.size(); f++) {
+        if (findKey(this->incompatibleFlags, flags[f])) {
+            vector<string> *incompatibilities = this->incompatibleFlags.find(flags[f])->second;
+            for (int d = 0; d < incompatibilities->size(); d++) {
+                if (findInVector(flags, incompatibilities->at(d))) {
+                    if (verbose) cout << "Incompatibility found, flag (" << flags[f] << ") is not compatible with (" << incompatibilities->at(d) << ")\n";
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool Flags::checkIncompatibilities(vector<string> flags) {
     for (int f = 0; f < flags.size(); f++) {
         if (findKey(this->flagsDependencies, flags[f])) {
             vector<string> *dependencies = this->flagsDependencies.find(flags[f])->second;
@@ -144,12 +183,89 @@ vector<string>* Flags::getFlagValues(string flag) {
 }
 
 bool Flags::validateInput() {
-    bool inspectingFlag = true;
-    for (int i = 0; i < this->input->size(); i++) {
-        string current = this->input[i];
-
+    bool expectingFlag = true;
+    bool valuesFound = false;
+    bool flagWasFound = false;
+    string flag;
+    string current;
+    int requiredFlagsFound = 0;
+    for (int i = 0; i < this->input.size(); i++) {
+        current = this->input[i];
+        if (this->isOverridingFlagFound()) {
+            if (this->verbose) cout << "Got overriding flag " << flag << " and received more than one flag or value\n";
+            return false;
+        }
+        if (current[0] == '-') {
+            //a flag
+            expectingFlag |= valuesFound;
+            flag = current.substr(1, string::npos);
+            if (flagExist(flag)) {
+                if (!expectingFlag) {
+                    if (this->verbose) cout << "expecting value, got (" << current << ") instead\n";
+                    return false;
+                }
+                if (isNoValueFlag(flag)) {
+                    expectingFlag = true;
+                } else {
+                    expectingFlag = false;
+                }
+                if (isOverridingFlag(flag)) {
+                    this->overridingFlagFound = true;
+                }
+                if (flagFound(flag)) {
+                    if (this->verbose) cout << "Duplicate flag " << flag <<"\n";
+                    return false;
+                }
+                if (isRequired(flag)) requiredFlagsFound++;
+                this->foundFlags.push_back(flag);
+                flagWasFound = true;
+                valuesFound = false;
+            } else {
+                if (this->verbose) cout << flag << " is not a valid flag\n";
+                return false;
+            }
+        } else {
+            //a value
+            if (!flagWasFound) {
+                if (this->verbose) cout << "expecting flag, got (" << current << ") instead\n";
+                return false;
+            }
+            if (isRequired(flag)) {
+                vector<string>* values = this->requiredFlags.find(flag)->second;
+                values->push_back(current);
+            }
+            if (isOptional(flag)) {
+                vector<string>* values = this->optionalFlags.find(flag)->second;
+                values->push_back(current);
+            }
+            if (isOverridingFlag(flag)) {
+                if (this->verbose) cout << "found value (" << current <<  ") for overriding flag " << flag << "\n";
+                return false;
+            }
+            if (isNoValueFlag(flag)) {
+                if (this->verbose) cout << "found value (" << current <<  ") for no value flag " << flag << "\n";
+                return false;
+            }
+            valuesFound = true;
+        }
     }
-    return checkDependencies(this->foundFlags);
+    if (!this->isOverridingFlagFound() && requiredFlagsFound < this->getRequiredFlags()->size()) {
+        if (this->verbose) {
+            cout << "missing required flags\nrequired flags are ";
+            vector<string> *requiredFlags = this->getRequiredFlags();
+            for (int f = 0; f < requiredFlags->size(); f++) {
+                cout << requiredFlags->at(f);
+                if (f + 1 < requiredFlags->size()) cout << ", ";
+            }
+            cout << "\n";
+        }
+        return false;
+    }
+    if (flagWasFound && !valuesFound && (isRequired(flag) || isOptional(flag))) {
+        if (this->verbose) cout << "flag " << flag << " needs at least one value\n";
+        return false;
+    }
+    return checkDependencies(this->foundFlags) && checkIncompatibilities(this->foundFlags);
 }
 
 bool Flags::isOverridingFlagFound() {
