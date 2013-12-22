@@ -19,6 +19,7 @@ class Flags {
         bool setOverridingFlag(string flag);
         bool setNoValuesFlag(string flag);
         bool setDependence(string dependent, string dependence);
+        bool setLooseDependencies(string dependent, vector<string>* dependencies);
         bool setIncompatibility(string flag1, string flag2);
         void setVerbose(bool b);
 
@@ -40,6 +41,7 @@ class Flags {
         bool isNoValueFlag(string flag);
         bool isOverridingFlag(string flag);
         bool checkDependencies(vector<string> flags);
+        bool checkLooseDependencies(vector<string> flags);
         bool checkIncompatibilities(vector<string> flags);
 
         //FIELDS
@@ -48,6 +50,7 @@ class Flags {
         map<string, vector<string>*> requiredFlags;
         map<string, vector<string>*> flagsDependencies;
         map<string, vector<string>*> incompatibleFlags;
+        map<string, vector<string>*> flagsLooseDependencies;
         vector<string> noValuesFlags;
         vector<string> overridingFlags;
         vector<string> foundFlags;

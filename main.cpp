@@ -42,6 +42,8 @@ namespace fs = boost::filesystem;          // for ease of tutorial presentation;
 #include <SingleImageDataInput.hpp>
 #include <HistogramComparator.hpp>
 #include <Flags.hpp>
+#include <HistMatch.hpp>
+#include <ResultWriter.hpp>
 
 using namespace Anakin;
 
@@ -67,7 +69,13 @@ void showHelp() {
     cout << "additional options: \n";
     cout << "-mr <value> : sets BasicFlanDetector minRatio value\n";
     cout << "-mma <value> : sets BasicFlanDetector min_matches_allowed value\n";
-    cout << "usage: ./anakin2 -h\n";
+    cout << "-h [[-min <value>] [-corr|-inter]] : will use histogram comparison (color, gray and hsv) and return matching percentage, if a min value is provided it will only return a percentage for matches above the minimum\n";
+    cout << "-hColor [[-min <value>] [-corr|-inter]] : will use color histogram comparison and return matching percentage, if a min value is provided it will only return a percentage for matches above the minimum\n";
+    cout << "-hGray [[-min <value>] [-corr|-inter]] : will use gray histogram comparison and return matching percentage, if a min value is provided it will only return a percentage for matches above the minimum\n";
+    cout << "-hHSV [[-min <value>] [-corr|-inter]] : will use hsv histogram comparison and return matching percentage, if a min value is provided it will only return a percentage for matches above the minimum\n";
+    cout << "-corr refers to the correlation method used to compare histograms\n";
+    cout << "-inter refers to the intersection method used to compare histograms\n";
+    cout << "usage: ./anakin2 -help\n";
 }
 
 int main(int argc, const char * argv[]) {
@@ -76,38 +84,75 @@ int main(int argc, const char * argv[]) {
     bool sceneArgFound = false;
     int mma = 8;
     float mr = 1.f / 1.5f;
+    char mode = 0;
+    bool useHistComparison = false;
+    float minHistPercentage = 0;
     std::string scenesDir = "tests/fixtures/images";
     std::string patternsDir = "tests/fixtures/scenes";
 
-    const char * argv_[] = {"anakin", "-s", "tests/fixtures/several.jpg", "-p", "tests/fixtures/images/"};
-    int argc_ = 5;
+    const char * argv_[] = {"anakin", "-S", "tests/fixtures/scenes", "-p", "tests/fixtures/images", "-h", "-min", "10.0"};
+    int argc_ = 8;
     vector<string> *input = new vector<string>(0);
     for (int i = 1; i < argc; i++) {
         input->push_back(argv[i]);
     }
 
     if (CONSOLE) {
-//        if (argc < 3) {
-//            std::cout << "wrong number of parameters, need scene path and patterns directory path\n";
-//            return -1;
-//        }
-//        scenesDir = argv[1];
-//        patternsDir = argv[2];
         Flags* flags = new Flags(input);
         flags->setRequiredFlag("p"); //patterns folder path
         flags->setOptionalFlag("s"); //scene path
         flags->setOptionalFlag("S"); //scene folder path
         flags->setOptionalFlag("mr");
         flags->setOptionalFlag("mma");
+        //histogram flags
+        flags->setNoValuesFlag("h");
+        flags->setNoValuesFlag("hColor");
+        flags->setNoValuesFlag("hGray");
+        flags->setNoValuesFlag("hHSV");
+        flags->setNoValuesFlag("corr");
+        flags->setNoValuesFlag("inter");
+        flags->setOptionalFlag("min");
+        flags->setIncompatibility("h", "hColor");
+        flags->setIncompatibility("h", "hGray");
+        flags->setIncompatibility("h", "hHSV");
+        flags->setIncompatibility("hColor", "hGray");
+        flags->setIncompatibility("hColor", "hHSV");
+        flags->setIncompatibility("hGray", "hHSV");
+        flags->setIncompatibility("h", "mr");
+        flags->setIncompatibility("h", "mma");
+        flags->setIncompatibility("hColor", "mr");
+        flags->setIncompatibility("hColor", "mma");
+        flags->setIncompatibility("hGray", "mr");
+        flags->setIncompatibility("hGray", "mma");
+        flags->setIncompatibility("hHSV", "mr");
+        flags->setIncompatibility("hHSV", "mma");
+        flags->setIncompatibility("corr", "inter");
+        flags->setDependence("min", "p");
+        flags->setDependence("h", "p");
+        flags->setDependence("hColor", "p");
+        flags->setDependence("hGray", "p");
+        flags->setDependence("hHSV", "p");
+        flags->setDependence("corr", "p");
+        flags->setDependence("inter", "p");
+        vector<string>* minLooseDeps = new vector<string>(0);
+        minLooseDeps->push_back("h");
+        minLooseDeps->push_back("hColor");
+        minLooseDeps->push_back("hGray");
+        minLooseDeps->push_back("hHSV");
+        flags->setLooseDependencies("min", minLooseDeps);
+        flags->setLooseDependencies("corr", minLooseDeps);
+        flags->setLooseDependencies("inter", minLooseDeps);
+
+
         flags->setDependence("s", "p");
         flags->setDependence("S", "p");
         flags->setDependence("mr", "p");
         flags->setDependence("mma", "p");
         flags->setIncompatibility("s", "S");
-        flags->setOverridingFlag("h");
+        flags->setOverridingFlag("help");
         flags->setVerbose(VERBOSE);
         if (flags->validateInput()) {
-            if (flags->flagFound("h")) {
+            if (flags->flagFound("help")) {
                 showHelp();
                 return 0;
             }
@@ -164,6 +209,44 @@ int main(int argc, const char * argv[]) {
                     return -1;
                 }
             }
+            if (flags->flagFound("h")) {
+                useHistComparison = true;
+                mode = mode | HistogramComparator::COLOR | HistogramComparator::GRAY | HistogramComparator::HSV;
+            }
+            if (flags->flagFound("hColor")) {
+                useHistComparison = true;
+                mode = mode | HistogramComparator::COLOR;
+            }
+            if (flags->flagFound("hGray")) {
+                useHistComparison = true;
+                mode = mode | HistogramComparator::GRAY;
+            }
+            if (flags->flagFound("hHSV")) {
+                useHistComparison = true;
+                mode = mode | HistogramComparator::HSV;
+            }
+            if (flags->flagFound("min")) {
+                values = flags->getFlagValues("min");
+                if (values->size() == 1) {
+                    minHistPercentage = stof(values->at(0));
+                } else {
+                    cout << "param min need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            bool comparisonModeFound = false;
+            if (flags->flagFound("corr")) {
+                mode = mode | HistogramComparator::CORRELATION;
+                comparisonModeFound = true;
+            }
+            if (flags->flagFound("inter")) {
+                mode = mode | HistogramComparator::INTERSECTION;
+                comparisonModeFound = true;
+            }
+            if (!comparisonModeFound) {
+                mode = mode | HistogramComparator::CORRELATION;
+            }
             if (!sceneArgFound) {
                 cout << "missing parameter, need s or S\n";
                 showHelp();
@@ -176,20 +259,6 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (!CONSOLE) {
-        cv::Mat scene = cv::imread("cocacola.jpg");
-//        cv::Mat pattern = cv::imread("scene.jpg");
-        Img* sceneImg = new Img(scene, "scene");
-//        Img* patternImg = new Img(pattern, "cocacola");
-        HistogramComparator hcomp(sceneImg);
-//        std::cout << "histogram comparison(color): " << hcomp.compareUsingColor(patternImg, 2) << "%\n";
-//        std::cout << "histogram comparison(grayscale): " << hcomp.compareUsingGray(patternImg, 2) << "%\n";
-//        std::cout << "histogram comparison(hsv): " << hcomp.compareUsingHSV(patternImg, 2) << "%\n";
-        DataInput* trainingSet = new ImageDataInput("landscapes/forest");
-        hcomp.train(trainingSet);
-        return 0;
-    }
-
 
     cv::Ptr<cv::FeatureDetector>     fdetector  = new cv::SurfFeatureDetector(400);
     cv::Ptr<cv::DescriptorExtractor> dextractor = new cv::SurfDescriptorExtractor();
@@ -199,23 +268,32 @@ int main(int argc, const char * argv[]) {
     DataInput* patternsDataInput = new ImageDataInput(patternsDir);
     PatternLoader* patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
     patternsLoader->load();
-    Detector *detector = new BasicFlannDetector(matcher, patterns, mr, mma);
-    detector->init();
     DataInput* scenesDataInput;
     if (!useScenePathAsDir) {
         scenesDataInput = new SingleImageDataInput(scenesDir);
     } else {
         scenesDataInput = new ImageDataInput(scenesDir);
     }
-    BasicImageProcessor processor(scenesDataInput, detector, fdetector, dextractor);
-    processor.start();
+    if (useHistComparison) {
+        HistogramComparator* hComparator = new HistogramComparator(scenesDataInput, patterns);
+        vector<HistMatch*>* results = hComparator->compareHistograms(minHistPercentage, mode);
+        wcout << outputResult(results) << "\n";
+    } else {
+        Detector *detector = new BasicFlannDetector(matcher, patterns, mr, mma);
+        detector->init();
 
-    vector<JSONValue*>* results = processor.getResults();
-    //dcout << "results size: " << results->size() << "\n";
-    for (int r = 0; r < results->size(); r++) {
-        JSONValue* current = results->at(r);
-        wcout << current->Stringify().c_str() << "\n";
+        BasicImageProcessor processor(scenesDataInput, detector, fdetector, dextractor);
+        processor.start();
+
+        vector<JSONValue*>* results = processor.getResults();
+        //dcout << "results size: " << results->size() << "\n";
+        for (int r = 0; r < results->size(); r++) {
+            JSONValue* current = results->at(r);
+            wcout << current->Stringify().c_str() << "\n";
+        }
     }
+
+
 
     return 0;
 }

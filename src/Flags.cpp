@@ -97,6 +97,27 @@ bool Flags::setDependence(string dependent, string dependence)  {
     return false;
 }
 
+bool Flags::setLooseDependencies(string dependent, vector<string>* dependencies) {
+    if (flagExist(dependent)) {
+        if (findKey(this->flagsLooseDependencies, dependent)) {
+            return false;
+        }
+        vector<string>* dependencies_ = new vector<string>(0);
+        for (int d = 0; d < dependencies->size(); d++) {
+            string current = dependencies->at(d);
+            if (!flagExist(current)) {
+                free(dependencies_);
+                return false;
+            } else {
+                dependencies_->push_back(current);
+            }
+        }
+        this->flagsLooseDependencies[dependent] = dependencies_;
+        return true;
+    }
+    return false;
+}
+
 bool Flags::setIncompatibility(string flag1, string flag2) {
     if (flagExist(flag1) && flagExist(flag2)) {
         vector<string>* incompatibilities;
@@ -117,11 +138,11 @@ bool Flags::setIncompatibility(string flag1, string flag2) {
 
 bool Flags::checkDependencies(vector<string> flags) {
     for (int f = 0; f < flags.size(); f++) {
-        if (findKey(this->incompatibleFlags, flags[f])) {
-            vector<string> *incompatibilities = this->incompatibleFlags.find(flags[f])->second;
-            for (int d = 0; d < incompatibilities->size(); d++) {
-                if (findInVector(flags, incompatibilities->at(d))) {
-                    if (verbose) cout << "Incompatibility found, flag (" << flags[f] << ") is not compatible with (" << incompatibilities->at(d) << ")\n";
+        if (findKey(this->flagsDependencies, flags[f])) {
+            vector<string> *dependencies = this->flagsDependencies.find(flags[f])->second;
+            for (int d = 0; d < dependencies->size(); d++) {
+                if (!findInVector(flags, dependencies->at(d))) {
+                    if (verbose) cout << "Dependency not met, have (" << flags[f] << ") need (" << dependencies->at(d) << ")\n";
                     return false;
                 }
             }
@@ -130,13 +151,42 @@ bool Flags::checkDependencies(vector<string> flags) {
     return true;
 }
 
+bool Flags::checkLooseDependencies(vector<string> flags) {
+    for (int f = 0; f < flags.size(); f++) {
+        if (findKey(this->flagsLooseDependencies, flags[f])) {
+            vector<string> *dependencies = this->flagsLooseDependencies.find(flags[f])->second;
+            bool found = dependencies->empty();
+            for (int d = 0; d < dependencies->size(); d++) {
+                if (findInVector(flags, dependencies->at(d))) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                if (verbose) {
+                    cout << "Dependency not met, have (" << flags[f] << ") need at least one of (";
+                    for (int d = 0; d < dependencies->size(); d++) {
+                        cout << dependencies->at(d);
+                        if (d + 1 < dependencies->size()) {
+                            cout << ", ";
+                        }
+                    }
+                    cout << ")\n";
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool Flags::checkIncompatibilities(vector<string> flags) {
     for (int f = 0; f < flags.size(); f++) {
-        if (findKey(this->flagsDependencies, flags[f])) {
-            vector<string> *dependencies = this->flagsDependencies.find(flags[f])->second;
-            for (int d = 0; d < dependencies->size(); d++) {
-                if (!findInVector(flags, dependencies->at(d))) {
-                    if (verbose) cout << "Dependency not met, have (" << flags[f] << ") need (" << dependencies->at(d) << ")\n";
+        if (findKey(this->incompatibleFlags, flags[f])) {
+            vector<string> *incompatibilities = this->incompatibleFlags.find(flags[f])->second;
+            for (int d = 0; d < incompatibilities->size(); d++) {
+                if (findInVector(flags, incompatibilities->at(d))) {
+                    if (verbose) cout << "Incompatibility found, flag (" << flags[f] << ") is not compatible with (" << incompatibilities->at(d) << ")\n";
                     return false;
                 }
             }
@@ -265,7 +315,7 @@ bool Flags::validateInput() {
         if (this->verbose) cout << "flag " << flag << " needs at least one value\n";
         return false;
     }
-    return checkDependencies(this->foundFlags) && checkIncompatibilities(this->foundFlags);
+    return checkDependencies(this->foundFlags) && checkIncompatibilities(this->foundFlags) && checkLooseDependencies(this->foundFlags);
 }
 
 bool Flags::isOverridingFlagFound() {

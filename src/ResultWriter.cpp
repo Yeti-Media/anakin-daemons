@@ -13,6 +13,10 @@ wstring Anakin::outputResult(string label, vector<JSONValue*> values) {
     return resultAsJSONValue(label, values)->Stringify().c_str();
 }
 
+wstring Anakin::outputResult(vector<HistMatch*>* histMatches) {
+    return resultAsJSONValue(histMatches)->Stringify().c_str();
+}
+
 JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
     /*  Result as JSONObject
 
@@ -83,6 +87,38 @@ JSONValue* Anakin::resultAsJSONValue(string label, vector<JSONValue*> jsonValues
 	root[L"values"] = new JSONValue(values);
 
     JSONValue *value = new JSONValue(root);
+	return value;
+
+	//wcout << root->Stringify().c_str() << "\n";
+}
+
+JSONValue* Anakin::resultAsJSONValue(vector<HistMatch*>* histMatches) {
+    /*  Result as JSONObject
+
+        root    -> matches (JSONArray)    -> scene label (string)
+                                          -> pattern label (string)
+                                          -> percentage (float)
+
+
+    */
+    JSONObject root;
+	JSONArray matches;
+	for (int v = 0; v < histMatches->size(); v++) {
+        wstringstream ws; wstringstream wp;
+		JSONObject matchJson;
+        HistMatch* match = histMatches->at(v);
+        ws << match->getScene()->getLabel().c_str();
+        matchJson[L"scene"] = new JSONValue(ws.str());
+        wp << match->getPattern()->getLabel().c_str();
+        matchJson[L"pattern"] = new JSONValue(wp.str());
+        matchJson[L"percentage"] = new JSONValue(match->getPercentage());
+        matches.push_back(new JSONValue(matchJson));
+    }
+
+	root[L"matches"] = new JSONValue(matches);
+
+    JSONValue *value = new JSONValue(root);
+
 	return value;
 
 	//wcout << root->Stringify().c_str() << "\n";

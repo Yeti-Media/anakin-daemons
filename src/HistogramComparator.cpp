@@ -5,8 +5,38 @@ using namespace Anakin;
 using namespace cv;
 using namespace std;
 
-HistogramComparator::HistogramComparator(Img* scene) {
-    this->scene = scene;
+HistogramComparator::HistogramComparator(Anakin::DataInput* input, std::vector<Anakin::RichImg> patterns) {
+    this->input = input;
+    this->patterns = patterns;
+}
+
+vector<HistMatch*>* HistogramComparator::compareHistograms(float minValue, char mode) {
+    vector<HistMatch*>*  result = new vector<HistMatch*>(0);
+    Img* image;
+    while (this->input->nextInput(&image)) {
+        for (int p = 0; p < this->patterns.size(); p++) {
+            Img* pattern = this->patterns.at(p).getImage();
+            int method = mode & this->CORRELATION ? CV_COMP_CORREL : CV_COMP_INTERSECT;
+            int matchPercentage = 0;
+            if (mode & this->COLOR) {
+                int colorRes = compareUsingColor(image, pattern, method);
+                if (colorRes > matchPercentage) matchPercentage = colorRes;
+            }
+            if (mode & this->GRAY) {
+                int grayRes = compareUsingGray(image, pattern, method);
+                if (grayRes > matchPercentage) matchPercentage = grayRes;
+            }
+            if (mode & this->HSV) {
+                int hsvRes = compareUsingHSV(image, pattern, method);
+                if (hsvRes > matchPercentage) matchPercentage = hsvRes;
+            }
+            if (matchPercentage >= minValue) {
+                HistMatch* match = new HistMatch(image, pattern, matchPercentage);
+                result->push_back(match);
+            }
+        }
+    }
+    return result;
 }
 
 Mat HistogramComparator::train(DataInput* input) {
@@ -61,22 +91,22 @@ Mat HistogramComparator::train(DataInput* input) {
         /// Draw for each channel
         for( int i = 1; i < histSize; i++ ) {
             float b_bin_val = result.at<float>(i, 0);
-            //b_bin_val = imgCount == 0? b_bin_val : b_bin_val / imgCount;
+            b_bin_val = imgCount == 0? b_bin_val : b_bin_val / imgCount;
 
             float g_bin_val = result.at<float>(i, 1);
-            //g_bin_val = imgCount == 0? g_bin_val : g_bin_val / imgCount;
+            g_bin_val = imgCount == 0? g_bin_val : g_bin_val / imgCount;
 
             float r_bin_val = result.at<float>(i, 2);
-            //r_bin_val = imgCount == 0? r_bin_val : r_bin_val / imgCount;
+            r_bin_val = imgCount == 0? r_bin_val : r_bin_val / imgCount;
 
             float b_bin_val_prev = result.at<float>(i-1, 0);
-            //b_bin_val_prev = imgCount == 0? b_bin_val_prev : b_bin_val_prev / imgCount;
+            b_bin_val_prev = imgCount == 0? b_bin_val_prev : b_bin_val_prev / imgCount;
 
             float g_bin_val_prev = result.at<float>(i-1, 1);;
-            //g_bin_val_prev = imgCount == 0? g_bin_val_prev : g_bin_val_prev / imgCount;
+            g_bin_val_prev = imgCount == 0? g_bin_val_prev : g_bin_val_prev / imgCount;
 
             float r_bin_val_prev = result.at<float>(i-1, 2);
-            //r_bin_val_prev = imgCount == 0? r_bin_val_prev : r_bin_val_prev / imgCount;
+            r_bin_val_prev = imgCount == 0? r_bin_val_prev : r_bin_val_prev / imgCount;
 
             line( histImage, Point( bin_w*(i-1), hist_h - cvRound(b_bin_val_prev) ) ,
                            Point( bin_w*(i), hist_h - cvRound(b_bin_val) ),
@@ -117,11 +147,54 @@ Mat HistogramComparator::train(DataInput* input) {
     }
 
 
+    for (int i = 0; i < histSize-1; i++) {
+            float b_bin_val = result.at<float>(i, 0);
+            float g_bin_val = result.at<float>(i, 1);
+            float r_bin_val = result.at<float>(i, 2);
+            result.at<float>(i, 0) += imgCount == 0? b_bin_val : b_bin_val/imgCount;
+            result.at<float>(i, 1) += imgCount == 0? g_bin_val : g_bin_val/imgCount;
+            result.at<float>(i, 2) += imgCount == 0? r_bin_val : r_bin_val/imgCount;
+    }
+
 
     return result;
 }
 
-double HistogramComparator::compareUsingColor(Img* pattern, int method) {
+void HistogramComparator::drawColorHistogram(Mat hist) {
+    int histSize = 256;
+    int hist_w = 512; int hist_h = 400;
+    int bin_w = cvRound( (double) hist_w/histSize );
+    Mat image(hist_h, hist_w, CV_8UC3, Scalar( 0,0,0));
+    /// Draw for each channel
+    for( int i = 1; i < histSize; i++ ) {
+        float b_bin_val = hist.at<float>(i, 0);
+
+        float g_bin_val = hist.at<float>(i, 1);
+
+        float r_bin_val = hist.at<float>(i, 2);
+
+        float b_bin_val_prev = hist.at<float>(i-1, 0);
+
+        float g_bin_val_prev = hist.at<float>(i-1, 1);;
+
+        float r_bin_val_prev = hist.at<float>(i-1, 2);
+
+        line( image, Point( bin_w*(i-1), hist_h - cvRound(b_bin_val_prev) ) ,
+                           Point( bin_w*(i), hist_h - cvRound(b_bin_val) ),
+                           Scalar( 255, 0, 0), 2, 8, 0  );
+        line( image, Point( bin_w*(i-1), hist_h - cvRound(g_bin_val_prev) ) ,
+                           Point( bin_w*(i), hist_h - cvRound(g_bin_val) ),
+                           Scalar( 0, 255, 0), 2, 8, 0  );
+        line( image, Point( bin_w*(i-1), hist_h - cvRound(r_bin_val_prev) ) ,
+                           Point( bin_w*(i), hist_h - cvRound(r_bin_val) ),
+                           Scalar( 0, 0, 255), 2, 8, 0  );
+    }
+    namedWindow("color histogram", CV_WINDOW_AUTOSIZE);
+    imshow("color histogram", image);
+    waitKey();
+}
+
+double HistogramComparator::compareUsingColor(Img* scene, Img* pattern, int method) {
     int histSize = 256;
 
     /// Set the ranges ( for B,G,R) )
@@ -136,7 +209,7 @@ double HistogramComparator::compareUsingColor(Img* pattern, int method) {
     /// Histograms
     MatND hist_scene;
     MatND hist_pattern;
-    Mat sceneImg = this->scene->getImage();
+    Mat sceneImg = scene->getImage();
     Mat patternImg = pattern->getImage();
 
     /// Calculate the histograms for the BGR images
@@ -146,8 +219,8 @@ double HistogramComparator::compareUsingColor(Img* pattern, int method) {
 
     double result = compareHist( hist_scene, hist_pattern, method );
 
-    if (method == 0) result *= 100;
-    else if (method == 2) {
+    if (method == CV_COMP_CORREL) result *= 100;
+    else if (method == CV_COMP_INTERSECT) {
         double maxVal = compareHist( hist_scene, hist_scene, method );
         result = (result * 100) / maxVal;
     }
@@ -155,7 +228,7 @@ double HistogramComparator::compareUsingColor(Img* pattern, int method) {
     return result;
 }
 
-double HistogramComparator::compareUsingGray(Img* pattern, int method) {
+double HistogramComparator::compareUsingGray(Img* scene, Img* pattern, int method) {
     int histSize = 256;
 
     /// Set the ranges ( for greyscale) )
@@ -170,7 +243,7 @@ double HistogramComparator::compareUsingGray(Img* pattern, int method) {
     /// Histograms
     MatND hist_scene;
     MatND hist_pattern;
-    Mat sceneImg = this->scene->getGrayImg();
+    Mat sceneImg = scene->getGrayImg();
     Mat patternImg = pattern->getGrayImg();
 
     /// Calculate the histograms for the grayscale images
@@ -180,8 +253,8 @@ double HistogramComparator::compareUsingGray(Img* pattern, int method) {
 
     double result = compareHist( hist_scene, hist_pattern, method );
 
-    if (method == 0) result *= 100;
-    else if (method == 2) {
+    if (method == CV_COMP_CORREL) result *= 100;
+    else if (method == CV_COMP_INTERSECT) {
         double maxVal = compareHist( hist_scene, hist_scene, method );
         result = (result * 100) / maxVal;
     }
@@ -189,7 +262,7 @@ double HistogramComparator::compareUsingGray(Img* pattern, int method) {
     return result;
 }
 
-double HistogramComparator::compareUsingHSV(Img* pattern, int method) {
+double HistogramComparator::compareUsingHSV(Img* scene, Img* pattern, int method) {
     int h_bins = 50; int s_bins = 32;
     int histSize[] = { h_bins, s_bins };
 
@@ -208,7 +281,7 @@ double HistogramComparator::compareUsingHSV(Img* pattern, int method) {
     MatND hist_pattern;
     Mat sceneImg;
     Mat patternImg;
-    cvtColor( this->scene->getImage(), sceneImg, CV_BGR2HSV );
+    cvtColor( scene->getImage(), sceneImg, CV_BGR2HSV );
     cvtColor( pattern->getImage(), patternImg, CV_BGR2HSV );
 
     /// Calculate the histograms for the grayscale images
@@ -220,8 +293,8 @@ double HistogramComparator::compareUsingHSV(Img* pattern, int method) {
 
     double result = compareHist( hist_scene, hist_pattern, method );
 
-    if (method == 0) result *= 100;
-    else if (method == 2) {
+    if (method == CV_COMP_CORREL) result *= 100;
+    else if (method == CV_COMP_INTERSECT) {
         double maxVal = compareHist( hist_scene, hist_scene, method );
         result = (result * 100) / maxVal;
     }
@@ -229,6 +302,4 @@ double HistogramComparator::compareUsingHSV(Img* pattern, int method) {
     return result;
 }
 
-HistogramComparator::~HistogramComparator() {
-    delete this->scene;
-}
+HistogramComparator::~HistogramComparator() {}
