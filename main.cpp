@@ -62,8 +62,11 @@ void handler(int sig) {
 
 void showHelp() {
     cout << "Anakin - help\n";
-    cout << "usage: ./anakin2 -s <scene file path> -p <patterns folder path>\n";
-    cout << "usage: ./anakin2 -S <scenes folder path> -p <patterns folder path>\n";
+    cout << "usage: ./anakin2 -s <scene file path> -p <patterns folder path> [aditional options]\n";
+    cout << "usage: ./anakin2 -S <scenes folder path> -p <patterns folder path> [aditional options]\n";
+    cout << "additional options: \n";
+    cout << "-mr <value> : sets BasicFlanDetector minRatio value\n";
+    cout << "-mma <value> : sets BasicFlanDetector min_matches_allowed value\n";
     cout << "usage: ./anakin2 -h\n";
 }
 
@@ -71,6 +74,8 @@ int main(int argc, const char * argv[]) {
     signal(SIGSEGV, handler);
     bool useScenePathAsDir = false;
     bool sceneArgFound = false;
+    int mma = 8;
+    float mr = 1.f / 1.5f;
     std::string scenesDir = "tests/fixtures/images";
     std::string patternsDir = "tests/fixtures/scenes";
 
@@ -92,8 +97,12 @@ int main(int argc, const char * argv[]) {
         flags->setRequiredFlag("p"); //patterns folder path
         flags->setOptionalFlag("s"); //scene path
         flags->setOptionalFlag("S"); //scene folder path
+        flags->setOptionalFlag("mr");
+        flags->setOptionalFlag("mma");
         flags->setDependence("s", "p");
         flags->setDependence("S", "p");
+        flags->setDependence("mr", "p");
+        flags->setDependence("mma", "p");
         flags->setIncompatibility("s", "S");
         flags->setOverridingFlag("h");
         flags->setVerbose(VERBOSE);
@@ -135,6 +144,26 @@ int main(int argc, const char * argv[]) {
                     return -1;
                 }
             }
+            if (flags->flagFound("mr")) {
+                values = flags->getFlagValues("mr");
+                if (values->size() == 1) {
+                    mr = stof(values->at(0));
+                } else {
+                    cout << "param mr need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("mma")) {
+                values = flags->getFlagValues("mma");
+                if (values->size() == 1) {
+                    mma = stoi(values->at(0));
+                } else {
+                    cout << "param mma need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
             if (!sceneArgFound) {
                 cout << "missing parameter, need s or S\n";
                 showHelp();
@@ -147,18 +176,20 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-//    if (true) {
-//        cv::Mat scene = cv::imread("scene.jpg");
+    if (!CONSOLE) {
+        cv::Mat scene = cv::imread("cocacola.jpg");
 //        cv::Mat pattern = cv::imread("scene.jpg");
-//        Img* sceneImg = new Img(scene, "scene");
+        Img* sceneImg = new Img(scene, "scene");
 //        Img* patternImg = new Img(pattern, "cocacola");
-//        HistogramComparator hcomp(sceneImg);
-//        std::cout << hcomp.compareUsingColor(patternImg, 2) << "%\n";
-//        return 0;
-//    }
+        HistogramComparator hcomp(sceneImg);
+//        std::cout << "histogram comparison(color): " << hcomp.compareUsingColor(patternImg, 2) << "%\n";
+//        std::cout << "histogram comparison(grayscale): " << hcomp.compareUsingGray(patternImg, 2) << "%\n";
+//        std::cout << "histogram comparison(hsv): " << hcomp.compareUsingHSV(patternImg, 2) << "%\n";
+        DataInput* trainingSet = new ImageDataInput("landscapes/forest");
+        hcomp.train(trainingSet);
+        return 0;
+    }
 
-//    std::cout << "Scenes directory : " << scenesDir << "\n";
-//    std::cout << "Patterns directory : " << patternsDir << "\n";
 
     cv::Ptr<cv::FeatureDetector>     fdetector  = new cv::SurfFeatureDetector(400);
     cv::Ptr<cv::DescriptorExtractor> dextractor = new cv::SurfDescriptorExtractor();
@@ -168,7 +199,7 @@ int main(int argc, const char * argv[]) {
     DataInput* patternsDataInput = new ImageDataInput(patternsDir);
     PatternLoader* patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
     patternsLoader->load();
-    Detector *detector = new BasicFlannDetector(matcher, patterns);
+    Detector *detector = new BasicFlannDetector(matcher, patterns, mr, mma);
     detector->init();
     DataInput* scenesDataInput;
     if (!useScenePathAsDir) {

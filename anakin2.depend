@@ -127,7 +127,7 @@
 	<boost/test/unit_test.hpp>
 	<opencv2/opencv.hpp>
 
-1387639554 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
+1387661590 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<iostream>
@@ -253,7 +253,7 @@
 1386636614 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
 	<Detector.hpp>
 
-1387549950 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
+1387667934 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
 	"BasicFlannDetector.hpp"
 
 1386633274 source:/home/stein/Documents/ym/anakin-daemons/src/Test.cpp
@@ -285,8 +285,9 @@
 1386796937 /home/stein/Documents/ym/anakin-daemons/includes/SingleImageDataInput.hpp
 	<DataInput.hpp>
 
-1387546698 /home/stein/Documents/ym/anakin-daemons/includes/HistogramComparator.hpp
+1387666892 /home/stein/Documents/ym/anakin-daemons/includes/HistogramComparator.hpp
 	<Img.hpp>
+	<DataInput.hpp>
 
 1387639562 /home/stein/Documents/ym/anakin-daemons/includes/Flags.hpp
 	<map>
@@ -303,8 +304,9 @@
 	<iostream>
 	<boost/foreach.hpp>
 
-1387556661 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramComparator.cpp
+1387669947 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramComparator.cpp
 	"HistogramComparator.hpp"
+	<DataInput.hpp>
 
 1383446143 source:/home/stein/Documents/ym/anakin-daemons/src/JSON.cpp
 	"JSON.h"
