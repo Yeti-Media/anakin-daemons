@@ -4,7 +4,7 @@ using namespace Anakin;
 using namespace std;
 using namespace cv;
 
-string getFilename (const string& str) {
+string Img::getFilename (const string& str) {
     unsigned lastSeparator = str.find_last_of("/\\");
     string file = lastSeparator == string::npos ? str : str.substr(lastSeparator+1);
     unsigned lastDot = file.find_last_of(".");

@@ -232,6 +232,14 @@ vector<string>* Flags::getFlagValues(string flag) {
     return new vector<string>(0);
 }
 
+void Flags::setMinCount(int val) {
+    this->minCount = val;
+}
+
+int Flags::getMinCount() {
+    return this->minCount;
+}
+
 bool Flags::validateInput() {
     bool expectingFlag = true;
     bool valuesFound = false;
@@ -298,6 +306,12 @@ bool Flags::validateInput() {
             }
             valuesFound = true;
         }
+    }
+    if (this->foundFlags.size() < this->minCount) {
+        if (this->verbose) {
+            cout << "found " << this->foundFlags.size() << " flags, expected at least " << this->minCount << " \n";
+        }
+        return false;
     }
     if (!this->isOverridingFlagFound() && requiredFlagsFound < this->getRequiredFlags()->size()) {
         if (this->verbose) {

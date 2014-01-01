@@ -7,7 +7,6 @@ using namespace Anakin;
 
 std::vector<cv::Mat> images(0);
 std::vector<std::string> labels(0);
-void loadImages(std::vector<cv::Mat>& images);
 
 ImageDataInput::ImageDataInput(std::string imagesFolder) {
     this->imagesFolder = imagesFolder;
@@ -25,6 +24,10 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
         return true;
     }
     return false;
+}
+
+void ImageDataInput::reload() {
+    loadImages(images);
 }
 
 void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
