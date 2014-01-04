@@ -133,10 +133,14 @@ void showHelp() {
     cout << "\n\nocr advanced demo\n";
     cout << "./anakin2 -ocrAdvDemo\n";
     cout << "\n\nface detection\n";
-    cout << "./anakin2 -face <path to image> -mainCC <path to xml> [-detailsCC <path to xml>+]\n";
+    cout << "./anakin2 -face <path to image> -mainCC <path to xml> [-detailsCC <path to xml>+] [-scaleFactor <value> -minNeighbors <value> -minSize <value> -maxSize <value>]\n";
     cout << "-face <path to image> : will use face detection on the specified image\n";
     cout << "-mainCC <path to xml> : the classifier file used to detect main features\n";
     cout << "-detailsCC <path to xml>+ : classifier fiels used to detect details inside detected main features\n";
+    cout << "-scaleFactor <value> : specify how much the image size is reduced at each image scale.(default 1.1)\n";
+    cout << "-minNeighbors <value> :  specify how many neighbors each candidate rectangle should have to retain it.(default 3)\n";
+    cout << "-minSize <width> <height> : minimum possible object size. Objects smaller than that are ignored.(default none)\n";
+    cout << "-maxSize <width> <height> : Maximum possible object size. Objects larger than that are ignored.(default none)\n";
     cout << "\nNOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])\n";
 }
 
@@ -164,13 +168,20 @@ int main(int argc, const char * argv[]) {
     std::vector<std::string>* detailsCC;
     std::string mainCC;
     bool useDetailsDetection=false;
+    float scaleFactor = 1.1;
+    int minNeighbors = 3;
+    cv::Size minSize = Size();
+    cv::Size maxSize = Size();
+
 
 
     const char * argv_[] = {
-        "anakin", "-face", "people.jpg", "-mainCC", "lbpcascades/lbpcascade_frontalface.xml",
-        "-detailsCC", "haarcascades/haarcascade_mcs_mouth.xml", "-show"
+         "./anakin2", "-face", "people.jpg",
+         "-mainCC",
+         "haarcascades/haarcascade_profileface.xml",
+         "-show"
     };
-    int argc_ = 8;
+    int argc_ = 6;
     vector<string> *input = new vector<string>(0);
     for (int i = 1; i < argc; i++) {
         input->push_back(argv[i]);
@@ -265,8 +276,8 @@ int main(int argc, const char * argv[]) {
         flags->setDependence("color", "landscape");
         flags->setDependence("hsv", "landscape");
         flags->setDependence("gray", "landscape");
-        flags->setOptionalFlag("minMax");
-        flags->setOptionalFlag("avg");
+        flags->setNoValuesFlag("minMax");
+        flags->setNoValuesFlag("avg");
         flags->setIncompatibility("minMax", "avg");
         flags->setDependence("minMax", "landscape");
         flags->setDependence("avg", "landscape");
@@ -312,6 +323,14 @@ int main(int argc, const char * argv[]) {
         flags->setDependence("detailsCC", "face");
         flags->setDependence("mainCC", "face");
         flags->setDependence("face", "mainCC");
+        flags->setOptionalFlag("scaleFactor");
+        flags->setOptionalFlag("minNeighbors");
+        flags->setOptionalFlag("minSize");
+        flags->setOptionalFlag("maxSize");
+        flags->setDependence("scaleFactor", "face");
+        flags->setDependence("minNeighbors", "face");
+        flags->setDependence("minSize", "face");
+        flags->setDependence("maxSize", "face");
 
         flags->setVerbose(VERBOSE);
 
@@ -535,6 +554,48 @@ int main(int argc, const char * argv[]) {
                 values = flags->getFlagValues("detailsCC");
                 detailsCC = values;
             }
+            if (flags->flagFound("scaleFactor")) {
+                values = flags->getFlagValues("scaleFactor");
+                if (values->size() == 1) {
+                    scaleFactor = stof(values->at(0));
+                } else {
+                    cout << "param scaleFactor need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("minNeighbors")) {
+                values = flags->getFlagValues("minNeighbors");
+                if (values->size() == 1) {
+                    minNeighbors = stoi(values->at(0));
+                } else {
+                    cout << "param minNeighbors need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("minSize")) {
+                values = flags->getFlagValues("minSize");
+                if (values->size() == 2) {
+                    minSize.width = stoi(values->at(0));
+                    minSize.height = stoi(values->at(1));
+                } else {
+                    cout << "param minSize need two values\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("maxSize")) {
+                values = flags->getFlagValues("maxSize");
+                if (values->size() == 2) {
+                    maxSize.width = stoi(values->at(0));
+                    maxSize.height = stoi(values->at(1));
+                } else {
+                    cout << "param maxSize need two values\n";
+                    showHelp();
+                    return -1;
+                }
+            }
 
 
 //            if (!sceneArgFound) {
@@ -587,9 +648,17 @@ int main(int argc, const char * argv[]) {
         vector<vector<cv::Rect>*>* detailsDetections = new vector<vector<cv::Rect>*>(0);
         Img* faceDetImage;
         if (!scenesDataInput->nextInput(&faceDetImage)) return -1;
-        faceDetector = new FaceDetector(mainCC, detailsCC);
+        if (useDetailsDetection) {
+            faceDetector = new FaceDetector(mainCC, detailsCC);
+        } else {
+            faceDetector = new FaceDetector(mainCC);
+        }
+        faceDetector->setScaleFactor(scaleFactor);
+        faceDetector->setMinNeighbors(minNeighbors);
+        faceDetector->setMinSize(minSize);
+        faceDetector->setMaxSize(maxSize);
         vector<FaceMatch*>* matches = faceDetector->detect(faceDetImage->getGrayImg(), mainDetections, detailsDetections);
-        wcout << outputResult(matches);
+        wcout << outputResult(matches) << "\n";
         if (show) {
             faceDetector->showDetections(faceDetImage->getImage(), matches);
         }

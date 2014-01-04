@@ -127,7 +127,7 @@
 	<boost/test/unit_test.hpp>
 	<opencv2/opencv.hpp>
 
-1388528600 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
+1388544339 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<iostream>
@@ -152,6 +152,7 @@
 	<Histogram.hpp>
 	<OCRDetector.hpp>
 	<FaceDetector.hpp>
+	<FaceMatch.hpp>
 
 1387721127 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
@@ -357,12 +358,12 @@
 	"OCRDetector.hpp"
 	<tesseract/baseapi.h>
 
-1388537735 /home/stein/Documents/ym/anakin-daemons/includes/FaceDetector.hpp
+1388543702 /home/stein/Documents/ym/anakin-daemons/includes/FaceDetector.hpp
 	<opencv2/objdetect/objdetect.hpp>
 	<opencv2/opencv.hpp>
 	<FaceMatch.hpp>
 
-1388537950 source:/home/stein/Documents/ym/anakin-daemons/src/FaceDetector.cpp
+1388834521 source:/home/stein/Documents/ym/anakin-daemons/src/FaceDetector.cpp
 	"FaceDetector.hpp"
 
 1388537860 /home/stein/Documents/ym/anakin-daemons/includes/FaceMatch.hpp

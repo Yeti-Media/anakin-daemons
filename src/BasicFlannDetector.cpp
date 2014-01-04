@@ -132,6 +132,12 @@ using namespace cv;
         std::vector< std::vector<cv::DMatch> > m_knnMatches;
         // KNN match will return 2 nearest matches for each query descriptor
         if (patternDescriptors.empty() || queryDescriptors.empty()) return;
+        if(patternDescriptors.type()!=CV_32F) {
+            patternDescriptors.convertTo(patternDescriptors, CV_32F);
+        }
+        if(queryDescriptors.type()!=CV_32F) {
+            queryDescriptors.convertTo(queryDescriptors, CV_32F);
+        }
         this->detector->knnMatch(patternDescriptors, queryDescriptors, m_knnMatches, 2);
         for (size_t i=0; i<m_knnMatches.size(); i++) {
             if (m_knnMatches[i].empty()) continue;

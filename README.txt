@@ -59,6 +59,14 @@ ocr specific arguments
 -rois <p1x p1y p2x p2y>+ : will define rectangles in which ocr recognition will be executed
 -clearEvery <times> : will clear tesseract memory every times recognitions
 
+face specific arguments
+
+-detailsCC <path to xml>+ : classifier files used to detect details inside detected main features
+-scaleFactor <value> : specify how much the image size is reduced at each image scale.(default 1.1)
+-minNeighbors <value> :  specify how many neighbors each candidate rectangle should have to retain it.(default 3)
+-minSize <width> <height> : minimum possible object size. Objects smaller than that are ignored.(default none)
+-maxSize <width> <height> : Maximum possible object size. Objects larger than that are ignored.(default none)
+
 for template matching use
 
 ./anakin2 (-s <value>|-S <value>) -p <value> [template matching arguments]
@@ -89,7 +97,9 @@ to run ocr advanced demo use
 ./anakin2 -ocrAdvDemo
 
 for face detection use
-./anakin2 -face <path to image> -mainCC <path to xml> [-detailsCC <path to xml>+] [face arguments]
+./anakin2 -face <path to image> -mainCC <path to xml> [face arguments]
+-face <path to image> : will use face detection on the specified image
+-mainCC <path to xml> : the classifier file used to detect main features
 
 NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])
 

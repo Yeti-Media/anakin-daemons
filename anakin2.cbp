@@ -66,6 +66,7 @@
 		<Unit filename="includes/DataInput.hpp" />
 		<Unit filename="includes/Detector.hpp" />
 		<Unit filename="includes/FaceDetector.hpp" />
+		<Unit filename="includes/FaceMatch.hpp" />
 		<Unit filename="includes/Flags.hpp" />
 		<Unit filename="includes/HistMatch.hpp" />
 		<Unit filename="includes/Histogram.hpp" />
@@ -89,6 +90,7 @@
 		<Unit filename="src/CMakeLists.txt" />
 		<Unit filename="src/Detector.cpp" />
 		<Unit filename="src/FaceDetector.cpp" />
+		<Unit filename="src/FaceMatch.cpp" />
 		<Unit filename="src/Flags.cpp" />
 		<Unit filename="src/HistMatch.cpp" />
 		<Unit filename="src/Histogram.cpp" />
