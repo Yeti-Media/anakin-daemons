@@ -127,7 +127,7 @@
 	<boost/test/unit_test.hpp>
 	<opencv2/opencv.hpp>
 
-1388544339 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
+1388903536 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<iostream>
@@ -153,6 +153,8 @@
 	<OCRDetector.hpp>
 	<FaceDetector.hpp>
 	<FaceMatch.hpp>
+	<ImageComponentExtractor.hpp>
+	<SteinNormalizer.hpp>
 
 1387721127 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
@@ -256,7 +258,7 @@
 1387670884 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
 	<Detector.hpp>
 
-1387670884 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
+1388850148 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
 	"BasicFlannDetector.hpp"
 
 1386633274 source:/home/stein/Documents/ym/anakin-daemons/src/Test.cpp
@@ -350,20 +352,21 @@
 1387718575 source:/home/stein/Documents/ym/anakin-daemons/src/Histogram.cpp
 	"Histogram.hpp"
 
-1387776777 /home/stein/Documents/ym/anakin-daemons/includes/OCRDetector.hpp
+1388903565 /home/stein/Documents/ym/anakin-daemons/includes/OCRDetector.hpp
 	<opencv2/opencv.hpp>
 	<Img.hpp>
+	"tesseract/publictypes.h"
 
 1387776967 source:/home/stein/Documents/ym/anakin-daemons/src/OCRDetector.cpp
 	"OCRDetector.hpp"
 	<tesseract/baseapi.h>
 
-1388543702 /home/stein/Documents/ym/anakin-daemons/includes/FaceDetector.hpp
+1388838386 /home/stein/Documents/ym/anakin-daemons/includes/FaceDetector.hpp
 	<opencv2/objdetect/objdetect.hpp>
 	<opencv2/opencv.hpp>
 	<FaceMatch.hpp>
 
-1388834521 source:/home/stein/Documents/ym/anakin-daemons/src/FaceDetector.cpp
+1388848017 source:/home/stein/Documents/ym/anakin-daemons/src/FaceDetector.cpp
 	"FaceDetector.hpp"
 
 1388537860 /home/stein/Documents/ym/anakin-daemons/includes/FaceMatch.hpp
@@ -371,4 +374,27 @@
 
 1388533235 source:/home/stein/Documents/ym/anakin-daemons/src/FaceMatch.cpp
 	"FaceMatch.hpp"
+
+1388875807 source:/home/stein/Documents/ym/anakin-daemons/src/ImageComponentExtractor.cpp
+	"ImageComponentExtractor.hpp"
+
+1388875372 /home/stein/Documents/ym/anakin-daemons/includes/ImageComponentExtractor.hpp
+	<opencv2/opencv.hpp>
+
+1388888713 source:/home/stein/Documents/ym/anakin-daemons/src/SteinNormalizer.cpp
+	"SteinNormalizer.hpp"
+	<pthread.h>
+
+1388898396 /home/stein/Documents/ym/anakin-daemons/includes/SteinNormalizer.hpp
+	<opencv2/opencv.hpp>
+	<Barrier.hpp>
+
+1388899823 /home/stein/Documents/ym/anakin-daemons/includes/Barrier.hpp
+	<semaphore.h>
+	<vector>
+
+1388900513 source:/home/stein/Documents/ym/anakin-daemons/src/Barrier.cpp
+	"Barrier.hpp"
+	<iostream>
+	<vector>
 

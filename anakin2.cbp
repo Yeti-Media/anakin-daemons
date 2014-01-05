@@ -60,7 +60,9 @@
 			<Add library="opencv_calib3d" />
 			<Add library="/usr/local/lib/libtesseract.so" />
 			<Add library="/usr/local/lib/libopencv_objdetect.so" />
+			<Add library="/usr/lib/x86_64-linux-gnu/libpthread.so" />
 		</Linker>
+		<Unit filename="includes/Barrier.hpp" />
 		<Unit filename="includes/BasicFlannDetector.hpp" />
 		<Unit filename="includes/BasicImageProcessor.hpp" />
 		<Unit filename="includes/DataInput.hpp" />
@@ -71,6 +73,7 @@
 		<Unit filename="includes/HistMatch.hpp" />
 		<Unit filename="includes/Histogram.hpp" />
 		<Unit filename="includes/HistogramComparator.hpp" />
+		<Unit filename="includes/ImageComponentExtractor.hpp" />
 		<Unit filename="includes/ImageDataInput.hpp" />
 		<Unit filename="includes/ImageProcessor.hpp" />
 		<Unit filename="includes/Img.hpp" />
@@ -84,7 +87,9 @@
 		<Unit filename="includes/ResultWriter.hpp" />
 		<Unit filename="includes/RichImg.hpp" />
 		<Unit filename="includes/SingleImageDataInput.hpp" />
+		<Unit filename="includes/SteinNormalizer.hpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Barrier.cpp" />
 		<Unit filename="src/BasicFlannDetector.cpp" />
 		<Unit filename="src/BasicImageProcessor.cpp" />
 		<Unit filename="src/CMakeLists.txt" />
@@ -95,6 +100,7 @@
 		<Unit filename="src/HistMatch.cpp" />
 		<Unit filename="src/Histogram.cpp" />
 		<Unit filename="src/HistogramComparator.cpp" />
+		<Unit filename="src/ImageComponentExtractor.cpp" />
 		<Unit filename="src/ImageDataInput.cpp" />
 		<Unit filename="src/Img.cpp" />
 		<Unit filename="src/JSON.cpp" />
@@ -107,6 +113,7 @@
 		<Unit filename="src/ResultWriter.cpp" />
 		<Unit filename="src/RichImg.cpp" />
 		<Unit filename="src/SingleImageDataInput.cpp" />
+		<Unit filename="src/SteinNormalizer.cpp" />
 		<Unit filename="tests/unit/pattern_detector.cpp" />
 		<Extensions>
 			<code_completion />

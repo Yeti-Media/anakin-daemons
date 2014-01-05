@@ -1,17 +1,3 @@
-/*****************************************************************************
-*   Markerless AR desktop application.
-******************************************************************************
-*   by Khvedchenia Ievgen, 5th Dec 2012
-*   http://computer-vision-talks.com
-******************************************************************************
-*   Ch3 of the book "Mastering OpenCV with Practical Computer Vision Projects"
-*   Copyright Packt Publishing 2012.
-*   http://www.packtpub.com/cool-projects-with-opencv/book
-*****************************************************************************/
-
-////////////////////////////////////////////////////////////////////
-// File includes:
-
 ////////////////////////////////////////////////////////////////////
 // Standard includes:
 #include <opencv2/opencv.hpp>
@@ -38,6 +24,8 @@
 #define SHOW 0
 #define CLEAR_EVERY 0;
 #define FACE_DETECTION 0;
+#define RUN_CONTOUR_DEMO 0;
+#define EDGE_DETECTION 0;
 
 
 #include <ImageDataInput.hpp>
@@ -55,6 +43,8 @@
 #include <OCRDetector.hpp>
 #include <FaceDetector.hpp>
 #include <FaceMatch.hpp>
+#include <ImageComponentExtractor.hpp>
+#include <SteinNormalizer.hpp>
 
 using namespace Anakin;
 
@@ -115,6 +105,19 @@ void showHelp() {
     cout << "   NOTE: if there's neither -color, -gray or -hsv specified then the matching will be made using all three and taking the max value for each\n";
     cout << "\nocr specific arguments\n";
     cout << "-rois <p1x p1y p2x p2y>+ : will define rectangles in which ocr recognition will be executed\n";
+    cout << "-mode <0-3> :  sets which engine to use\n";
+    cout << "   OEM_TESSERACT_ONLY(0)          : Run Tesseract only - fastest\n";
+    cout << "   OEM_CUBE_ONLY(1)               : Run Cube only - better accuracy, but slower\n";
+    cout << "   OEM_TESSERACT_CUBE_COMBINED(2) : Run both and combine results - best accuracy\n";
+    cout << "   OEM_DEFAULT(3)                 : Specify this mode when calling init_*(),\n";
+    cout << "                                    to indicate that any of the above modes\n";
+    cout << "                                    should be automatically inferred from the\n";
+    cout << "                                    variables in the language-specific config,\n";
+    cout << "                                    command-line configs, or if not specified\n";
+    cout << "                                    in any of the above should be set to the\n";
+    cout << "                                    default OEM_TESSERACT_ONLY.\n";
+    cout << "-datapath <path> : the location of tessdata folder containing the trained data files\n";
+    cout << "-lang <[~]<lang_value>[+[~]<lang_value>]*> : sets the languages to use, ~ is used to override the loading of a language\n";
     cout << "-clearEvery <times> : will clear tesseract memory every times recognitions\n";
     cout << "\n\ntemplate matching\n";
     cout << "./anakin2 (-s <value>|-S <value>) -p <value> [template matching arguments]\n";
@@ -172,8 +175,28 @@ int main(int argc, const char * argv[]) {
     int minNeighbors = 3;
     cv::Size minSize = Size();
     cv::Size maxSize = Size();
+    bool run_contour_demo = RUN_CONTOUR_DEMO;
+    int aproxMode = CV_CHAIN_APPROX_NONE;
+    int thresBegin = 0;
+    int thresEnd = 256;
+    int thresMode = CV_THRESH_BINARY;
+    bool useEdgeDetection = EDGE_DETECTION;
+    double threshold;
+    int apertureSize=3;
+    bool L2gradient=false;
+    int ratio=3;
+    bool useBlur = false;
+    bool useEdgeDetectionToFindContours=false;
+    int ocrMode = 0;
+    string lang = "eng";
+    string datapath = "/usr/src/tesseract-ocr/";
 
 
+    //TESTING; DELETE THIS BLOCK
+    //SteinNormalizer* normalizer = new SteinNormalizer();
+    //normalizer->normalize(10);
+    //return 0;
+    ////////////////////////////
 
     const char * argv_[] = {
          "./anakin2", "-face", "people.jpg",
@@ -193,6 +216,8 @@ int main(int argc, const char * argv[]) {
         flags->setOverridingFlag("help");
         flags->setOverridingFlag("ocrDemo");
         flags->setOverridingFlag("ocrAdvDemo");
+
+        flags->setNoValuesFlag("interactive");
 
         //keypoints detection
         flags->setOptionalFlag("p"); //patterns folder path
@@ -297,6 +322,12 @@ int main(int argc, const char * argv[]) {
         flags->setOptionalFlag("clearEvery");
         flags->setDependence("clearEvery", "ocr");
         flags->setIncompatibility("clearEvery", "landscape");
+        flags->setOptionalFlag("lang");
+        flags->setOptionalFlag("datapath");
+        flags->setOptionalFlag("mode");
+        flags->setDependence("lang", "ocr");
+        flags->setDependence("datapath", "ocr");
+        flags->setDependence("mode", "ocr");
 
         flags->setNoValuesFlag("show");
         vector<string>* showLooseDeps = new vector<string>(0);
@@ -304,8 +335,6 @@ int main(int argc, const char * argv[]) {
         safeOffsetLooseDeps->push_back("ocr");
         safeOffsetLooseDeps->push_back("face");
         flags->setLooseDependencies("show", showLooseDeps);
-        flags->setIncompatibility("show", "ocrDemo");
-        flags->setIncompatibility("show", "ocrAdvDemo");
 
         //FACE DETECTION
         flags->setOptionalFlag("face");
@@ -313,8 +342,6 @@ int main(int argc, const char * argv[]) {
         flags->setOptionalFlag("detailsCC");
         flags->setIncompatibility("face", "p");
         flags->setIncompatibility("face", "ocr");
-        flags->setIncompatibility("face", "ocrDemo");
-        flags->setIncompatibility("face", "ocrAdvDemo");
         flags->setIncompatibility("face", "landscape");
         flags->setIncompatibility("face", "h");
         flags->setIncompatibility("face", "hColor");
@@ -331,6 +358,43 @@ int main(int argc, const char * argv[]) {
         flags->setDependence("minNeighbors", "face");
         flags->setDependence("minSize", "face");
         flags->setDependence("maxSize", "face");
+
+        //CONTOUR DEMO
+        flags->setOptionalFlag("contour");
+        flags->setIncompatibility("contour", "s");
+        flags->setIncompatibility("contour", "p");
+        flags->setIncompatibility("contour", "face");
+        flags->setIncompatibility("contour", "landscape");
+        flags->setIncompatibility("contour", "h");
+        flags->setIncompatibility("contour", "hColor");
+        flags->setIncompatibility("contour", "hGray");
+        flags->setIncompatibility("contour", "hHSV");
+        flags->setOptionalFlag("aproxMode");
+        flags->setDependence("aproxMode", "contour");
+        flags->setOptionalFlag("thresBegin");
+        flags->setOptionalFlag("thresEnd");
+        flags->setDependence("thresBegin", "contour");
+        flags->setDependence("thresEnd", "thresBegin");
+        flags->setOptionalFlag("thresMode");
+        flags->setDependence("thresMode", "contour");
+        flags->setNoValuesFlag("edges");
+        flags->setDependence("edges", "contour");
+        flags->setOptionalFlag("threshold");
+        flags->setDependence("threshold", "edges");
+        //flags->setDependence("edges", "threshold");
+        vector<string>* edgesLooseDeps = new vector<string>(0);
+        edgesLooseDeps->push_back("threshold");
+        edgesLooseDeps->push_back("interactive");
+        flags->setLooseDependencies("edges", edgesLooseDeps);
+        flags->setOptionalFlag("aperture");
+        flags->setDependence("aperture", "edges");
+        flags->setNoValuesFlag("L2");
+        flags->setDependence("L2", "edges");
+        flags->setOptionalFlag("ratio");
+        flags->setDependence("ratio", "edges");
+
+        flags->setNoValuesFlag("useBlur");
+        flags->setDependence("useBlur", "edges");
 
         flags->setVerbose(VERBOSE);
 
@@ -596,7 +660,163 @@ int main(int argc, const char * argv[]) {
                     return -1;
                 }
             }
-
+            if (flags->flagFound("contour")) {
+                run_contour_demo = true;
+                useScenePathAsDir = false;
+                values = flags->getFlagValues("contour");
+                if (values->size() == 1) {
+                    scenesDir = values->at(0);
+                } else {
+                    cout << "param contour need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("aproxMode")) {
+                values = flags->getFlagValues("aproxMode");
+                if (values->size() == 1) {
+                    aproxMode = stoi(values->at(0));
+                    if (aproxMode < 0 || aproxMode > 2) {
+                        cout << "param aproxMode use values from 0 to 2\n";
+                        showHelp();
+                        return -1;
+                    }
+                } else {
+                    cout << "param aproxMode need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("thresBegin")) {
+                values = flags->getFlagValues("thresBegin");
+                if (values->size() == 1) {
+                    thresBegin = stoi(values->at(0));
+                    if (thresBegin < 0 || thresBegin > 256) {
+                        cout << "param thresBegin use values from 0 to 256\n";
+                        showHelp();
+                        return -1;
+                    }
+                } else {
+                    cout << "param thresBegin need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("thresEnd")) {
+                values = flags->getFlagValues("thresEnd");
+                if (values->size() == 1) {
+                    thresEnd = stoi(values->at(0));
+                    if (thresEnd < thresBegin || thresEnd > 256) {
+                        cout << "param thresEnd use values from thresBegin to 256\n";
+                        showHelp();
+                        return -1;
+                    }
+                } else {
+                    cout << "param thresEnd need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("thresMode")) {
+                values = flags->getFlagValues("thresMode");
+                if (values->size() == 1) {
+                    thresMode = stoi(values->at(0));
+                    if (thresMode < 0 || thresMode > 5) {
+                        cout << "param thresMode use values from 0 to 5\n";
+                        showHelp();
+                        return -1;
+                    }
+                } else {
+                    cout << "param thresMode need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("edges")) {
+                //useEdgeDetection = true;
+                useEdgeDetectionToFindContours=true;
+            }
+            if (flags->flagFound("threshold")) {
+                values = flags->getFlagValues("threshold");
+                if (values->size() == 1) {
+                    threshold = stoi(values->at(0));
+                } else {
+                    cout << "param threshold need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("threshold")) {
+                values = flags->getFlagValues("threshold");
+                if (values->size() == 1) {
+                    threshold = stoi(values->at(0));
+                } else {
+                    cout << "param threshold need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("aperture")) {
+                values = flags->getFlagValues("aperture");
+                if (values->size() == 1) {
+                    apertureSize = stoi(values->at(0));
+                } else {
+                    cout << "param aperture need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("L2")) {
+                L2gradient = true;
+            }
+            if (flags->flagFound("ratio")) {
+                values = flags->getFlagValues("ratio");
+                if (values->size() == 1) {
+                    ratio = stoi(values->at(0));
+                } else {
+                    cout << "param ratio need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("useBlur")) {
+                useBlur = true;
+            }
+            if (flags->flagFound("mode")) {
+                values = flags->getFlagValues("mode");
+                if (values->size() == 1) {
+                    mode = stoi(values->at(0));
+                    if (mode < 0 || mode > 3) {
+                        cout << "param mode use values from 0 to 3\n";
+                        showHelp();
+                        return -1;
+                    }
+                } else {
+                    cout << "param mode need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("lang")) {
+                values = flags->getFlagValues("lang");
+                if (values->size() == 1) {
+                    lang = values->at(0);
+                } else {
+                    cout << "param lang need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
+            if (flags->flagFound("datapath")) {
+                values = flags->getFlagValues("datapath");
+                if (values->size() == 1) {
+                    datapath = values->at(0);
+                } else {
+                    cout << "param datapath need only one value\n";
+                    showHelp();
+                    return -1;
+                }
+            }
 
 //            if (!sceneArgFound) {
 //                cout << "missing parameter, need s or S\n";
@@ -618,7 +838,7 @@ int main(int argc, const char * argv[]) {
     std::vector<RichImg> patterns;
     DataInput* patternsDataInput;
     PatternLoader* patternsLoader;
-    if (!run_ocr_detect && !face_detection) {
+    if (!run_ocr_detect && !face_detection && !run_contour_demo) {
         patternsDataInput = new ImageDataInput(patternsDir);
         patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
         patternsLoader->load();
@@ -639,7 +859,7 @@ int main(int argc, const char * argv[]) {
         vector<HistMatch*>* results = hComparator->compareHistogramsMinMax(landscape, minHistPercentage, mode, histSafeOffset);
         wcout << outputResult(results) << "\n";
     } else if (run_ocr_detect) {
-        OCRDetector* ocrDetector = new OCRDetector("eng", scenesDir);
+        OCRDetector* ocrDetector = new OCRDetector(scenesDir, datapath, lang, mode);
         vector<string>* results = ocrDetector->detect(ocrRois, show, clearEvery);
         wcout << outputResult(results) << "\n";
     } else if (face_detection) {
@@ -661,6 +881,17 @@ int main(int argc, const char * argv[]) {
         wcout << outputResult(matches) << "\n";
         if (show) {
             faceDetector->showDetections(faceDetImage->getImage(), matches);
+        }
+    } else if (run_contour_demo) {
+        Img* contourImg;
+        if (!scenesDataInput->nextInput(&contourImg)) return -1;
+        ImageComponentExtractor* componentExtractor = new ImageComponentExtractor(contourImg->getImage());
+        if (useEdgeDetection) {
+            componentExtractor->demo_edges(threshold, apertureSize, L2gradient, ratio, useBlur);
+        } else if (useEdgeDetectionToFindContours) {
+            componentExtractor->demo_contours_using_edges(aproxMode, thresBegin, thresEnd, thresMode, threshold, apertureSize, L2gradient, ratio, useBlur);
+        } else {
+            componentExtractor->demo_contours(aproxMode, thresBegin, thresEnd, thresMode);
         }
     } else {
         Detector *detector = new BasicFlannDetector(matcher, patterns, mr, mma);

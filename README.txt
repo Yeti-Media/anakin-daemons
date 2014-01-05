@@ -57,6 +57,19 @@ NOTE: if there's neither -color, -gray or -hsv specified then the matching will 
 
 ocr specific arguments
 -rois <p1x p1y p2x p2y>+ : will define rectangles in which ocr recognition will be executed
+-mode <0-3> :  sets which engine to use
+   OEM_TESSERACT_ONLY(0)          : Run Tesseract only - fastest
+   OEM_CUBE_ONLY(1)               : Run Cube only - better accuracy, but slower
+   OEM_TESSERACT_CUBE_COMBINED(2) : Run both and combine results - best accuracy
+   OEM_DEFAULT(3)                 : Specify this mode when calling init_*(),
+                                    to indicate that any of the above modes
+                                    should be automatically inferred from the
+                                    variables in the language-specific config,
+                                    command-line configs, or if not specified
+                                    in any of the above should be set to the
+                                    default OEM_TESSERACT_ONLY.
+-datapath <path> : the location of tessdata folder containing the trained data files
+-lang <[~]<lang_value>[+[~]<lang_value>]*> : sets the languages to use, ~ is used to override the loading of a language
 -clearEvery <times> : will clear tesseract memory every times recognitions
 
 face specific arguments

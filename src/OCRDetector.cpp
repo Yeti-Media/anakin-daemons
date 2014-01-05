@@ -9,15 +9,25 @@ using namespace tesseract;
 
 TessBaseAPI *api;
 
-OCRDetector::OCRDetector(string lang, string imgPath) {
+OCRDetector::OCRDetector(std::string imgPath, std::string datapath, std::string lang, int mode) {
     this->lang = lang;
+    this->datapath = datapath;
+    switch (mode) {
+        case 0 : this->mode = OEM_TESSERACT_ONLY; break;
+        case 1 : this->mode = OEM_CUBE_ONLY; break;
+        case 2 : this->mode = OEM_TESSERACT_CUBE_COMBINED; break;
+        case 3 : this->mode = OEM_DEFAULT; break;
+    }
     this->imgPath = imgPath;
 }
 
 bool OCRDetector::init(bool loadImg) {
     api = new TessBaseAPI();
     const char * l = this->lang.c_str();
-    if (api->Init("/usr/src/tesseract-ocr/", l))  {
+    const char * dp = this->datapath.c_str();
+    const char * tp = "TESSDATA_PREFIX";
+    setenv(tp, dp, 1);
+    if (api->Init(dp, l, this->mode))  {
         cout << "Could not initialize tesseract.\n";
         return false;
     }
