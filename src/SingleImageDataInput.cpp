@@ -12,8 +12,11 @@ SingleImageDataInput::SingleImageDataInput(string pathToImage) {
     this->pathToImage = pathToImage;
 }
 
+void SingleImageDataInput::reload() {
+    loaded = false;
+}
+
 bool SingleImageDataInput::nextInput(Img** output) {
-    static bool loaded = false;
     if (!loaded) {
         Mat nextMat = imread(this->pathToImage);
         if (!nextMat.data) {

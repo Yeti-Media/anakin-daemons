@@ -77,6 +77,9 @@ protected:
     void transformToGray(const cv::Mat& image, cv::Mat& gray);
     std::string label;  //asociated label
 
+private:
+    std::string getFilename (const std::string& str);
+
 };
 
 };

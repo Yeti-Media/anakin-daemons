@@ -1,7 +1,5 @@
 #include "BasicFlannDetector.hpp"
 
-#define HOMOGRAPHY_REPROJECTION_THRESHOLD 3.0f
-#define MIN_MATCHES_ALLOWED 8
 #define DEBUG 0
 
 using namespace Anakin;
@@ -9,9 +7,11 @@ using namespace cv;
 
     void BasicFlannDetector::init() {}
 
-    BasicFlannDetector::BasicFlannDetector( cv::Ptr<cv::DescriptorMatcher>  detector,  std::vector<Anakin::RichImg>& patterns) {
+    BasicFlannDetector::BasicFlannDetector( cv::Ptr<cv::DescriptorMatcher>  detector,  std::vector<Anakin::RichImg>& patterns, float minRatio = 1.f / 1.5f, int min_matches_allowed = 8) {
         this->detector = detector;
         this->patterns = &patterns;
+        this->minRatio = minRatio;
+        this->min_matches_allowed = min_matches_allowed;
     }
 
     int testPointWithLine(Point2f p1, Point2f p2, Point2f point) {
@@ -81,7 +81,7 @@ using namespace cv;
                 removedKeypoints++;
             }
         }
-        std::cout << "removed keypoints : " << removedKeypoints << "\n";
+        //std::cout << "removed keypoints : " << removedKeypoints << "\n";
         match->getScene()->recalculateFeatures(mask);
 
 
@@ -128,9 +128,10 @@ using namespace cv;
     void BasicFlannDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches) {}
 
     void BasicFlannDetector::getMatches(const cv::Mat& patternDescriptors, const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches) {
-        const float minRatio = 1.f / 1.5f;
+        //const float minRatio = 1.f / 1.5f;
         std::vector< std::vector<cv::DMatch> > m_knnMatches;
         // KNN match will return 2 nearest matches for each query descriptor
+        if (patternDescriptors.empty() || queryDescriptors.empty()) return;
         this->detector->knnMatch(patternDescriptors, queryDescriptors, m_knnMatches, 2);
         for (size_t i=0; i<m_knnMatches.size(); i++) {
             if (m_knnMatches[i].empty()) continue;
@@ -139,7 +140,7 @@ using namespace cv;
             float distanceRatio = bestMatch.distance / betterMatch.distance;
             // Pass only matches where distance ratio between
             // nearest matches is greater than 1.5 (distinct criteria)
-            if (distanceRatio < minRatio) {
+            if (distanceRatio < this->minRatio) {
                 matches.push_back(bestMatch);
             }
         }
@@ -174,7 +175,7 @@ using namespace cv;
 
 #endif
 
-        if (good_matches->size() >= MIN_MATCHES_ALLOWED) {
+        if (good_matches->size() >= this->min_matches_allowed) {
             std::vector<Point2f> obj_points;
             std::vector<Point2f> scene_points;
 

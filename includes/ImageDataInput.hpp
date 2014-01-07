@@ -9,6 +9,7 @@ class ImageDataInput : public DataInput {
     public:
         ImageDataInput(std::string imagesFolder);
         bool nextInput(Anakin::Img** output);
+        void reload();
     protected:
         void loadImages(std::vector<cv::Mat>& images);
     private:

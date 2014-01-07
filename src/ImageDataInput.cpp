@@ -7,7 +7,6 @@ using namespace Anakin;
 
 std::vector<cv::Mat> images(0);
 std::vector<std::string> labels(0);
-void loadImages(std::vector<cv::Mat>& images);
 
 ImageDataInput::ImageDataInput(std::string imagesFolder) {
     this->imagesFolder = imagesFolder;
@@ -27,6 +26,10 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
     return false;
 }
 
+void ImageDataInput::reload() {
+    loadImages(images);
+}
+
 void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
     if(fs::exists( imagesFolder )) {
 
@@ -34,7 +37,7 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
         for (fs::directory_iterator itr( imagesFolder ); itr != end_itr; ++itr ) {
 
             if (!fs::is_directory(itr->status())) {
-                std::cout << "Loading image : " << itr->path().c_str() << "\n";
+                //std::cout << "Loading image : " << itr->path().c_str() << "\n";
                 cv::Mat img = cv::imread(itr->path().c_str());
                 if (!img.data) {
                     std::cout << "Error loading image : " << itr->path().c_str() << "\n";
@@ -48,5 +51,6 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
 
     } else {
         std::cout << "directory : " << imagesFolder << " doesn't exist\n";
+        exit(-1);
     }
 }

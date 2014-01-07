@@ -15,6 +15,7 @@ class DataInput {
         * return: true if there was a new image to output : bool
         */
         virtual bool nextInput(Anakin::Img** output) = 0;
+        virtual void reload() = 0;
         virtual ~DataInput() {}
     protected:
     private:

@@ -1,52 +1,155 @@
 ******************************************************************************
-*   Marker-less Augmented Reality project sample
+*   Anakin Back-end
 ******************************************************************************
-*   by Khvedchenia Ievgen, 5th Dec 2012
-*   http://computer-vision-talks.com
-******************************************************************************
-*   Ch3 of the book "Mastering OpenCV with Practical Computer Vision Projects"
-*   Copyright Packt Publishing 2012.
-*   http://www.packtpub.com/cool-projects-with-opencv/book
+*   by Yeti-Media, 30th Dec 2013
+*   /*COMPLETE*/
 ******************************************************************************
 
+To build this proyect you will need CodeBlocks (IDE), opencv 2.4.7, boost, CMake to build opencv
 
-To build this app use the CMake to generate project files for your IDE, then build the project in your IDE.
-NOTE: You will need to have OpenCV built with OpenGL support in order to run the demo (prebuilt versions of OpenCV don't support OpenGL).
-
-----------------------------------------------------------
-How to enable OpenGL Support in OpenCV
-----------------------------------------------------------
- * Linux:   Execute "sudo apt-get install libgtkglext1 libgtkglext1-dev" first.
- * MacOSX:  Install QT4 and then configure OpenCV with QT and OpenGL.
- * Windows: Enable WITH_OPENGL=YES flag when building OpenCV to enable OpenGL support.
+******************************************************************************
+* Repository can be found in : https://github.com/Yeti-Media/anakin-daemons
+******************************************************************************
 
 ----------------------------------------------------------
-Building the project using CMake from the command-line:
+Running Anakin back-end:
 ----------------------------------------------------------
-Linux:
-    export OpenCV_DIR="~/OpenCV/build"
-    mkdir build
-    cd build
-    cmake -D OpenCV_DIR=$OpenCV_DIR ..
-    make 
+for help use -help
 
-MacOSX (Xcode):
-    export OpenCV_DIR="~/OpenCV/build"
-    mkdir build
-    cd build
-    cmake -G Xcode -D OpenCV_DIR=$OpenCV_DIR ..
-    open EXAMPLE_MARKERLESS_AR.xcodeproj
+ocr, lanscape and histogram arguments
+-s <path to scene file> : scene file refers to the image that will be tested
+-S <path to scene folder> : will test all images inside a folder
+-p <path to patterns folder> : patterns refer to images againts a scene will be tested
 
-Windows (MS Visual Studio):
-    set OpenCV_DIR="C:\OpenCV\build"
-    mkdir build
-    cd build
-    cmake -G "Visual Studio 9 2008" -D OpenCV_DIR=%OpenCV_DIR% ..
-    start EXAMPLE_MARKERLESS_AR.sln 
+ocr, landscape and face common arguments
+-show : this enables UI output
+	* when doing ocr detection this will show the input image and a green rectangle for each rectangle passed as argument
+	* when doing landscape detection this will show the histogram constructed from the patterns images with min, max and avg values
+	* when doing face detection this will show main and details features detected
 
-    
+histogram, landscape common arguments
+-min <value> : this will set the minimum accepted value when testing a scene
+	* when doing histogram matching this value will refer to the minimum matching pertentage the scene and pattern histograms must have to be a 		  succesfull match
+	* when doing landscape matching this value will refer to the minimum percentage the values of the scene histogram matches the landscape 	  histogram
+		* if the matching use the min max values of the landscape histogram then a scene histogram value match if it's between the 			  corresponding lanscape min and max value
+		* if the matching use the avg values of the landscape histogram then a scene histogram value match if it's equal to the corresponding 			  landscape histogram avg value
+
+template specific arguments
+-mma <value> : this will set the minimum matches a pair of scene/pattern must have to be a succesfull match
+-mr <min ratio> : filter matches where the distance ratio between nearest matches is greater than min ratio
+
+histogram specific arguments
+-corr : will use correlation method when comparing histograms
+-inter : will use intersection method when comparing histograms
+
+landscape specific arguments
+-minMax(default value) : this will use the min values and max values of the histograms of the landscapes
+-avg : this will use the average value of the landscapes histograms
+-safeOffset <value> : when comparing histogram value x this will also compare with x+value and x-value
+   *when using min max values of the landscapes histogram, an x value from the scene histogram will match if x is in [min-value..max+value]
+   *when using average values of the landscapes histogram, an x value from the scene histogram will match if x is in [avg-value..avg+value]
+-label <value> : this will set the landscape label to value
+-color : will use color to make landscape and scene histograms
+-gray : will use gray to make landscape and scene histograms
+-hsv : will use hue and saturation to make landscape and scene histograms
+
+NOTE: if there's neither -color, -gray or -hsv specified then the matching will be made using all three and taking the max value for each
+
+ocr specific arguments
+-rois <p1x p1y p2x p2y>+ : will define rectangles in which ocr recognition will be executed
+-clearEvery <times> : will clear tesseract memory every times recognitions
+
+for template matching use
+
+./anakin2 (-s <value>|-S <value>) -p <value> [template matching arguments]
+
+for histogram matching use
+
+./anakin2 (-s <value>|-S <value>) -p <value> (-h | -hColor | -hHSV | -hGray) [histogram matching arguments]
+
+-hColor : will use color histograms for matching
+-hGray : will use gray histograms for matching
+-hHSV : will use hue and saturation histograms for matching
+-h : will use all of the above histograms and use the maximum value obtained for matching
+
+landscape matching
+
+./anakin2 -landscape (-s <value>|-S <value>) -p <value> [landscape matching arguments]
+
+to use ocr detection use
+
+./anakin2 -ocr <path to image> [ocr arguments]
+
+to run ocr basic demo use
+
+./anakin2 -ocrDemo
+
+to run ocr advanced demo use
+
+./anakin2 -ocrAdvDemo
+
+for face detection use
+./anakin2 -face <path to image> -mainCC <path to xml> [-detailsCC <path to xml>+] [face arguments]
+
+NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])
+
 ----------------------------------------------------------
-Running the project:
+Results of Anakin back-end (JSON)
 ----------------------------------------------------------
-Just execute "EXAMPLE_MARKERLESS_AR".
 
+when using keypoints
+
+(<matches>)*
+
+matches : 
+
+root	-> scene label (string)
+
+       	-> values (JSONArray)	-> <match>
+
+match :
+
+root	-> center	-> x (float)
+     			-> y (float)
+
+	-> pattern label (string)
+
+	-> keypoints (JSONArray)	-> pos	-> x (float)
+                                             	-> y (float)
+
+                                  	-> angle (float)
+
+                  			-> size (float)
+
+                                    	-> response (float)
+
+when using histograms and landscape
+
+(<matches>)*
+
+root	-> matches (JSONArray)	-> scene label (string)
+    				-> pattern/landscape label (string)
+    				-> percentage (float)
+
+when using ocr
+
+root    -> values (JSONArray)	-> text (string)
+
+when using face
+
+root    -> (<matches>)*
+
+matches :
+
+root    -> mainLabel (string)
+        -> rect ->  x (double)
+                ->  y (double)
+                ->  width (double)
+                ->  height (double)
+    	-> details (JSONArray)  ->  detailLabel (string)
+                                ->  rects (JSONAray)    ->  x (double)
+                                                        ->  y (double)
+                                                        ->  width (double)
+                                                        ->  height (double)
+
+NOTE: cv::Rect x,y,width and height are int but the JSON library only accepts float and double

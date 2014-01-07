@@ -7,7 +7,7 @@ namespace Anakin {
 
 class BasicFlannDetector : public Detector {
     public:
-        BasicFlannDetector( cv::Ptr<cv::DescriptorMatcher>  detector,  std::vector<Anakin::RichImg>& patterns);
+        BasicFlannDetector( cv::Ptr<cv::DescriptorMatcher>  detector,  std::vector<Anakin::RichImg>& patterns, float minRatio, int min_matches_allowed);
     protected:
         virtual std::vector<Anakin::Match>* findPatterns(Anakin::RichImg* scene);
         virtual void init();
@@ -25,6 +25,8 @@ class BasicFlannDetector : public Detector {
         cv::Ptr<cv::DescriptorMatcher>  detector;
         std::vector<Anakin::RichImg>* patterns;
     private:
+        float minRatio;
+        int min_matches_allowed;
 
 };
 
