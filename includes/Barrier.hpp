@@ -18,8 +18,10 @@ class Barrier {
         std::vector<bool>* barrierStatus;
         std::vector<bool>* allowedComponents;
         std::vector<bool>* finalizedComponents;
-        sem_t* reqNLeaveMut;
-        sem_t* barrier;
+        sem_t reqNLeaveMut;
+        sem_t forSem;
+        int threads;
+        std::vector<sem_t>* barrier;
 };
 
 };

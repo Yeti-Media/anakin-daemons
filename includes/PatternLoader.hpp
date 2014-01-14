@@ -4,6 +4,8 @@
 #include <DataInput.hpp>
 #include <RichImg.hpp>
 #include <opencv2/opencv.hpp>
+#include <ImageInfo.hpp>
+#include <SerializedPatternDataInput.hpp>
 
 namespace Anakin {
 
@@ -18,20 +20,27 @@ class PatternLoader {
         * param: patterns : a vector of RichImg in which patterns will be stored
         */
         PatternLoader(  DataInput* input,
-                        std::vector<RichImg>& patterns,
+                        std::vector<RichImg*>& patterns,
                         cv::Ptr<cv::FeatureDetector>& detector,
                         cv::Ptr<cv::DescriptorExtractor>& extractor);
+
+        PatternLoader(  SerializedPatternDataInput* input,
+                        std::vector<RichImg*>& patterns);
         /**
         * Will load the patterns
         */
         void load();
+        void load_and_save(std::string outputfolder);
         virtual ~PatternLoader();
     protected:
     private:
-        std::vector<RichImg>* patterns;
+        std::vector<RichImg*>* patterns;
         DataInput* input;
         cv::Ptr<cv::FeatureDetector> detector;
         cv::Ptr<cv::DescriptorExtractor> extractor;
+        static void write(cv::FileStorage& fs, const std::string&, const ImageInfo& x);
+        bool useSerializedInput=false;
+        SerializedPatternDataInput* sinput;
 };
 
 };

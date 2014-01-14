@@ -8,28 +8,9 @@ namespace Anakin {
 
 class SteinNormalizer {
     public:
-        SteinNormalizer(cv::Mat, int segments);
+        SteinNormalizer(cv::Mat img, int segmentSize);
         SteinNormalizer(); //used for testing, to be removed later
-        cv::Mat normalize(int threadsToRun=4);
-        struct ComponentArg {
-            public:
-                ComponentArg(int n) {
-                    test = new std::vector<int>(n,0);
-                    barrier = new Barrier(n);
-                }
-                int get(int idx) {
-                    return test->at(idx);
-                }
-                void set(int idx, int value) {
-                    test->at(idx) = value;
-                }
-                int getSize() {
-                    return test->size();
-                }
-                Barrier* barrier;
-            private:
-                std::vector<int>* test;
-        };
+        cv::Mat normalize();
     protected:
     private:
         //FUNCTIONS
@@ -41,8 +22,12 @@ class SteinNormalizer {
         //FIELDS
         cv::Mat sourceImg;
         cv::Mat labels;
-        std::vector<std::vector<int>> segmentsValues;
+        std::vector<std::vector<int>*>* segmentsValues;
         int segments;
+        int segmentSize;
+        //DEBUG FUNCTIONS AND FIELDS
+        void printSegments(std::vector<std::vector<int>*>* segments);
+        void printMeanPerValue(std::vector<std::vector<int>*>* segments);
 
 };
 

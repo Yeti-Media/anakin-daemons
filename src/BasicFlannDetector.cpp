@@ -4,10 +4,11 @@
 
 using namespace Anakin;
 using namespace cv;
+using namespace std;
 
     void BasicFlannDetector::init() {}
 
-    BasicFlannDetector::BasicFlannDetector( cv::Ptr<cv::DescriptorMatcher>  detector,  std::vector<Anakin::RichImg>& patterns, float minRatio = 1.f / 1.5f, int min_matches_allowed = 8) {
+    BasicFlannDetector::BasicFlannDetector( cv::Ptr<cv::DescriptorMatcher>  detector,  std::vector<Anakin::RichImg*>& patterns, float minRatio = 1.f / 1.5f, int min_matches_allowed = 8) {
         this->detector = detector;
         this->patterns = &patterns;
         this->minRatio = minRatio;
@@ -105,18 +106,30 @@ using namespace cv;
     #endif
     }
 
+    void BasicFlannDetector::cleanMatchedKeypoints(Match* match, std::vector<bool>* mask) {
+        std::vector<cv::KeyPoint> keypoints = match->getScene()->getKeypoints();
+        std::vector<DMatch>* matches = match->getMatches();
+        int removedKeypoints = 0;
+        for (int m = 0; m < match->getMatches()->size(); m++) {
+            DMatch cmatch = (*matches)[m];
+            mask->at(cmatch.trainIdx) = false;
+            removedKeypoints++;
+        }
+    }
+
 
     std::vector<Match>* BasicFlannDetector::findPatterns(RichImg* scene) {
         std::vector<Match>* result = new std::vector<Match>();
         bool reRun = true;
+        std::vector<bool>* mask = new std::vector<bool>(scene->getKeypoints().size(), true);
         while(reRun) {
             reRun = false;
             for (int p = 0; p < this->patterns->size(); p++) {
-            Match* match;
-            RichImg* pattern = &(*(this->patterns))[p];
-                if (findPattern(scene, pattern, &match)) {
+                Match* match;
+                RichImg* pattern = (*(this->patterns))[p];
+                if (findPattern(scene, pattern, &match, mask)) {
                     result->push_back(*match);
-                    cleanMatchedKeypoints(match);
+                    cleanMatchedKeypoints(match, mask);
                     reRun = true;
                 }
             }
@@ -125,12 +138,10 @@ using namespace cv;
         return result;
     }
 
-    void BasicFlannDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches) {}
+    void BasicFlannDetector::getMatches(const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches, std::vector<bool>* mask) {}
 
-    void BasicFlannDetector::getMatches(const cv::Mat& patternDescriptors, const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches) {
-        //const float minRatio = 1.f / 1.5f;
+    void BasicFlannDetector::getMatches(const cv::Mat& patternDescriptors, const cv::Mat& queryDescriptors, std::vector<cv::DMatch>& matches, std::vector<bool>* mask) {
         std::vector< std::vector<cv::DMatch> > m_knnMatches;
-        // KNN match will return 2 nearest matches for each query descriptor
         if (patternDescriptors.empty() || queryDescriptors.empty()) return;
         if(patternDescriptors.type()!=CV_32F) {
             patternDescriptors.convertTo(patternDescriptors, CV_32F);
@@ -144,9 +155,10 @@ using namespace cv;
             const cv::DMatch& bestMatch = m_knnMatches[i][0];
             const cv::DMatch& betterMatch = m_knnMatches[i][1];
             float distanceRatio = bestMatch.distance / betterMatch.distance;
-            // Pass only matches where distance ratio between
-            // nearest matches is greater than 1.5 (distinct criteria)
             if (distanceRatio < this->minRatio) {
+                if (!mask->at(bestMatch.trainIdx)) {
+                    continue;
+                }
                 matches.push_back(bestMatch);
             }
         }
@@ -163,9 +175,9 @@ using namespace cv;
         return true;
     }
 
-    bool BasicFlannDetector::findPattern(RichImg* scene, RichImg* pattern, Match** match) {
+    bool BasicFlannDetector::findPattern(RichImg* scene, RichImg* pattern, Match** match, std::vector<bool>* mask) {
         std::vector<DMatch>* good_matches = new std::vector<DMatch>(0);
-        getMatches(pattern->getDescriptors(), scene->getDescriptors(), *good_matches);
+        getMatches(pattern->getDescriptors(), scene->getDescriptors(), *good_matches, mask);
 
 #if DEBUG
         std::cout << "matches : " << good_matches->size() << "\n";
@@ -180,7 +192,6 @@ using namespace cv;
         waitKey();
 
 #endif
-
         if (good_matches->size() >= this->min_matches_allowed) {
             std::vector<Point2f> obj_points;
             std::vector<Point2f> scene_points;

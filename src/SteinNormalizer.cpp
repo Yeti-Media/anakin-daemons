@@ -5,57 +5,71 @@ using namespace Anakin;
 using namespace std;
 using namespace cv;
 
-SteinNormalizer::SteinNormalizer(cv::Mat, int segments) {
+void SteinNormalizer::printSegments(vector<vector<int>*>* segments) {
+    cout << "[\n";
+    for (int s = 0; s < segments->size(); s++) {
+        cout << "[";
+        vector<int>* currentSegment = segments->at(s);
+        for (int v = 0; v < currentSegment->size(); v++) {
+            cout << currentSegment->at(v);
+            if (v+1 < currentSegment->size()) {
+                cout << ", ";
+            }
+        }
+        cout << "]\n";
+    }
+    cout << "]\n";
+}
+
+void SteinNormalizer::printMeanPerValue(vector<vector<int>*>* segments) {
+    for (int v = 0; v < 256; v++) {
+        cout << "mean for value (" << v << ") is (" << getMean(getSegmentValues(v)) << ")\n";
+    }
+}
+
+SteinNormalizer::SteinNormalizer(cv::Mat img, int segmentSize) {
+    this->sourceImg = img;
+    bool lastOneIsBigger = false;
+    if (256%segmentSize == 0) {
+        this->segments = 256 / segmentSize;
+    } else {
+        this->segments = floor(256.0 / (float) segmentSize);
+        lastOneIsBigger = true;
+    }
+    if (segmentSize%2 == 0 || segmentSize > 256 || segmentSize < 1) {
+        cout << "segments must be an odd value between 1 and 256\n";
+        exit(-1);
+    }
+    this->segmentSize = segmentSize;
+    this->segmentsValues = new vector<vector<int>*>(this->segments);
+    int currentValue = 0;
+    for (int s = 0; s < this->segments; s++) {
+        int sSize = s+1 == this->segments && lastOneIsBigger? segmentSize+1 : segmentSize;
+        vector<int>* seg = new vector<int>(sSize);
+        for (int v = 0; v < sSize; v++) {
+            seg->at(v) = currentValue;
+            currentValue++;
+        }
+        this->segmentsValues->at(s) = seg;
+    }
+    //printSegments(this->segmentsValues);
+    //printMeanPerValue(this->segmentsValues);
 }
 
 SteinNormalizer::SteinNormalizer() {
     cout << "you are using the testing constructor\n" << endl;
 }
 
-void* component(void* arg) {
-    pair<int, SteinNormalizer::ComponentArg*>* compArg;
-    compArg = (pair<int, SteinNormalizer::ComponentArg*>*)arg;
-    cout << "Hello World! Thread ID, " << compArg->first << endl;
-    int size = compArg->second->getSize();
-    for (int i = 0; i < size; i++) {
-        compArg->second->set(compArg->first, compArg->second->get(compArg->first)+1);
-        cout << "[";
-        for (int e = 0; e < size; e++) {
-            cout << compArg->second->get(e);
-            if (e+1 < size) {
-                cout << ", ";
-            }
+Mat SteinNormalizer::normalize() {
+    Mat normalizedImage = this->sourceImg.clone();
+    for(int r=0;r<sourceImg.rows;r++) {
+        for (int c=0;c<sourceImg.cols;c++) {
+            int currentValue = sourceImg.at<uchar>(r,c);
+            normalizedImage.at<uchar>(r,c) = getMean(getSegmentValues(currentValue));
         }
-        cout << "]\n";
     }
-    pthread_exit(NULL);
+    return normalizedImage;
 }
-
-Mat SteinNormalizer::normalize(int threadsToRun) {
-    SteinNormalizer::ComponentArg* compArg = new SteinNormalizer::ComponentArg(threadsToRun);
-    pthread_t threads[threadsToRun];
-    int rc;
-    for(int i = 0; i < threadsToRun; i++ ){
-        cout << "main() : creating  thread, " << i << endl;
-        pair<int, SteinNormalizer::ComponentArg*>* arg = new pair<int, SteinNormalizer::ComponentArg*>(i, compArg);
-        rc = pthread_create(&threads[i], NULL, component, (void *)arg);
-        if (rc){
-            cout << "Error:unable to create thread," << rc << endl;
-            exit(-1);
-        }
-    }
-    cout << "[";
-    for (int e = 0; e < compArg->getSize(); e++) {
-        cout << compArg->get(e);
-        if (e+1 < compArg->getSize()) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-    pthread_exit(NULL);
-    return Mat();
-}
-
 
 vector<Point>* SteinNormalizer::getNeighbors(const Point pos) {
     vector<Point>* neighbors = new vector<Point>(0);
@@ -67,12 +81,19 @@ int SteinNormalizer::getMaxLabel(vector<Point>* neighbors) {
 }
 
 vector<int>* SteinNormalizer::getSegmentValues(const int value) {
-    vector<int>* segment = new vector<int>(0);
-    return segment;
+    //cout << "getSegmentsValues(" << value << ")\n";
+    int idx = value == 0? 0 : floor((float)value/(float)this->segmentSize);
+    if (idx == this->segments) {
+        idx--;
+    }
+    //cout << "segmentsValues->size() : " << this->segmentsValues->size() << " | idx : " << idx << "\n";
+    return this->segmentsValues->at(idx);
 }
 
 int SteinNormalizer::getMean(vector<int>* values) {
-    return 0;
+    int idx = floor((float)values->size()/2.0);
+    //cout << "values->size() : " << values->size() << " | idx : " << idx << "\n";
+    return values->at(idx);
 }
 
 bool SteinNormalizer::areInSameSegment(const int v1, const int v2) {

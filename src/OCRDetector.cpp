@@ -25,8 +25,10 @@ bool OCRDetector::init(bool loadImg) {
     api = new TessBaseAPI();
     const char * l = this->lang.c_str();
     const char * dp = this->datapath.c_str();
-    const char * tp = "TESSDATA_PREFIX";
-    setenv(tp, dp, 1);
+    if (!this->datapath.empty()) {
+        const char * tp = "TESSDATA_PREFIX";
+        setenv(tp, dp, 1);
+    }
     if (api->Init(dp, l, this->mode))  {
         cout << "Could not initialize tesseract.\n";
         return false;

@@ -6,9 +6,7 @@
 using namespace Anakin;
 using namespace std;
 
-Flags::Flags(vector<string>* input) {
-    this->input = *input;
-}
+Flags::Flags() {}
 
 void Flags::setVerbose(bool b) {
     this->verbose = b;
@@ -240,15 +238,31 @@ int Flags::getMinCount() {
     return this->minCount;
 }
 
-bool Flags::validateInput() {
+void Flags::clean() {
+    this->overridingFlagFound = false;
+    map<string, vector<string>*>::const_iterator itr;
+
+    for(itr = optionalFlags.begin(); itr != optionalFlags.end(); ++itr){
+        (*itr).second->clear();
+    }
+
+    for(itr = requiredFlags.begin(); itr != requiredFlags.end(); ++itr){
+        (*itr).second->clear();
+    }
+
+    this->foundFlags.clear();
+}
+
+bool Flags::validateInput(vector<string> *input) {
     bool expectingFlag = true;
     bool valuesFound = false;
     bool flagWasFound = false;
+    clean();
     string flag;
     string current;
     int requiredFlagsFound = 0;
-    for (int i = 0; i < this->input.size(); i++) {
-        current = this->input[i];
+    for (int i = 0; i < input->size(); i++) {
+        current = input->at(i);
         if (this->isOverridingFlagFound()) {
             if (this->verbose) cout << "Got overriding flag " << flag << " and received more than one flag or value\n";
             return false;
@@ -307,7 +321,7 @@ bool Flags::validateInput() {
             valuesFound = true;
         }
     }
-    if (this->foundFlags.size() < this->minCount) {
+    if (!this->isOverridingFlagFound() && this->foundFlags.size() < this->minCount) {
         if (this->verbose) {
             cout << "found " << this->foundFlags.size() << " flags, expected at least " << this->minCount << " \n";
         }

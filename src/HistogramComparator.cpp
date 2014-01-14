@@ -5,33 +5,100 @@ using namespace Anakin;
 using namespace cv;
 using namespace std;
 
-HistogramComparator::HistogramComparator(Anakin::DataInput* input, std::vector<Anakin::RichImg> patterns) {
-    this->input = input;
+HistogramComparator::HistogramComparator(Anakin::DataInput* input, std::vector<Anakin::RichImg*> patterns, HistogramsIO* io) {
+    if (io != 0) {
+        this->io = io;
+        this->ioPresent = true;
+    }
     this->patterns = patterns;
+    if (patterns.empty() && this->ioPresent) {
+       this->load = true;
+    } else if (this->ioPresent) {
+        this->save = true;
+    }
+    this->input = input;
 }
 
 vector<HistMatch*>* HistogramComparator::compareHistograms(float minValue, char mode) {
     vector<HistMatch*>*  result = new vector<HistMatch*>(0);
     Img* image;
-    while (this->input->nextInput(&image)) {
+    //patternsHistograms = (colorHists, grayHists, hsvHists);
+    vector<vector<Histogram*>*>* patternsHistograms = new vector<vector<Histogram*>*>(0);
+    int patternsCount = 0;
+    if (this->load) {
+        char loadMode = mode & 7;
+        this->io->load(loadMode);
+        patternsHistograms->push_back(this->io->getColorHistograms());
+        patternsHistograms->push_back(this->io->getGrayHistograms());
+        patternsHistograms->push_back(this->io->getHSVHistograms());
+        const int colorHistsCount = patternsHistograms->at(0)->size();
+        const int grayHistsCount = patternsHistograms->at(0)->size();
+        const int hsvHistsCount = patternsHistograms->at(0)->size();
+        patternsCount = colorHistsCount;
+        patternsCount = std::max(patternsCount, grayHistsCount);
+        patternsCount = std::max(patternsCount, hsvHistsCount);
+    } else {
+        vector<Histogram*>* colorHistograms = new vector<Histogram*>(0);
+        vector<Histogram*>* grayHistograms = new vector<Histogram*>(0);
+        vector<Histogram*>* hsvHistograms = new vector<Histogram*>(0);
         for (int p = 0; p < this->patterns.size(); p++) {
-            Img* pattern = this->patterns.at(p).getImage();
-            int method = mode & this->CORRELATION ? CV_COMP_CORREL : CV_COMP_INTERSECT;
-            int matchPercentage = 0;
+            Img* pattern = this->patterns.at(p)->getImage();
             if (mode & this->COLOR) {
-                int colorRes = compareUsingColor(image, pattern, method);
-                if (colorRes > matchPercentage) matchPercentage = colorRes;
+                Histogram* hist = createColorHistogram(pattern);
+                colorHistograms->push_back(hist);
             }
             if (mode & this->GRAY) {
-                int grayRes = compareUsingGray(image, pattern, method);
-                if (grayRes > matchPercentage) matchPercentage = grayRes;
+                Histogram* hist = createGrayHistogram(pattern);
+                grayHistograms->push_back(hist);
             }
             if (mode & this->HSV) {
-                int hsvRes = compareUsingHSV(image, pattern, method);
+                Histogram* hist = createHSVHistogram(pattern);
+                hsvHistograms->push_back(hist);
+            }
+        }
+        if (this->save) {
+            this->io->save(colorHistograms, COLOR);
+            this->io->save(grayHistograms, GRAY);
+            this->io->save(hsvHistograms, HSV);
+        }
+        const int colorHistsCount = colorHistograms->size();
+        const int grayHistsCount = grayHistograms->size();
+        const int hsvHistsCount = hsvHistograms->size();
+        patternsCount = colorHistsCount;
+        patternsCount = std::max(patternsCount, grayHistsCount);
+        patternsCount = std::max(patternsCount, hsvHistsCount);
+        patternsHistograms->push_back(colorHistograms);
+        patternsHistograms->push_back(grayHistograms);
+        patternsHistograms->push_back(hsvHistograms);
+    }
+    int method = mode & this->CORRELATION ? CV_COMP_CORREL : CV_COMP_INTERSECT;
+    while (this->input->nextInput(&image)) {
+        for (int h = 0; h < patternsCount; h++) {
+            int matchPercentage = 0;
+            Histogram* sceneHist;
+            string patternLabel = "";
+            if (!patternsHistograms->at(0)->empty()) {
+                if (patternLabel.size() == 0) patternLabel = patternsHistograms->at(0)->at(h)->getLabel();
+                sceneHist = createColorHistogram(image);
+                int colorRes = compare(sceneHist, patternsHistograms->at(0)->at(h), method);
+                if (colorRes > matchPercentage) matchPercentage = colorRes;
+            }
+            if (!patternsHistograms->at(1)->empty()) {
+                if (patternLabel.size() == 0) patternLabel = patternsHistograms->at(1)->at(h)->getLabel();
+                sceneHist = createGrayHistogram(image);
+                int grayRes = compare(sceneHist, patternsHistograms->at(1)->at(h), method);
+                if (grayRes > matchPercentage) matchPercentage = grayRes;
+            }
+            if (!patternsHistograms->at(2)->empty()) {
+                if (patternLabel.size() == 0) patternLabel = patternsHistograms->at(2)->at(h)->getLabel();
+                sceneHist = createHSVHistogram(image);
+                int hsvRes = compare(sceneHist, patternsHistograms->at(2)->at(h), method);
                 if (hsvRes > matchPercentage) matchPercentage = hsvRes;
             }
+            Mat dummy = Mat();
+            Img* patternDummy = new Img(dummy, patternLabel);
             if (matchPercentage >= minValue) {
-                HistMatch* match = new HistMatch(image, pattern, matchPercentage);
+                HistMatch* match = new HistMatch(image, patternDummy, matchPercentage);
                 result->push_back(match);
             }
         }
@@ -192,6 +259,24 @@ double HistogramComparator::compHistMinMaxHSV(Histogram* histogram, Img* scene, 
 }
 
 Histogram* HistogramComparator::train_minMax(char mode, std::string label, bool showHist) {
+    if (this->load) {
+        char loadMode = mode & 7;
+        loadMode = loadMode | HistogramsIO::LANDSCAPE;
+        this->io->load(loadMode);
+        if (mode & HistogramComparator::COLOR) {
+            Histogram* result = this->io->getColorHistograms()->at(0);
+            if (showHist) draw_hist(result, true);
+            return result;
+        } else if (mode & HistogramComparator::HSV) {
+            Histogram* result = this->io->getHSVHistograms()->at(0);
+            if (showHist) draw_hist(result, true);
+            return result;
+        } else {
+            Histogram* result = this->io->getGrayHistograms()->at(0);
+            if (showHist) draw_hist(result, true);
+            return result;
+        }
+    }
     int size = mode & HistogramComparator::HSV ? 50 : 256;
     int channels = mode & HistogramComparator::HSV ? 2 : (mode & HistogramComparator::COLOR ? 3 : 1);
     Mat minMaxHist = Mat::zeros(size, channels*3, CV_32SC1);
@@ -216,10 +301,10 @@ Histogram* HistogramComparator::train_minMax(char mode, std::string label, bool 
     }
     vector<Mat>* hists = new vector<Mat>(0);
     bool firstPass = true;
-    Histogram* result = new Histogram(minMaxHist, bins, channels, label);
+    Histogram* result = new Histogram(minMaxHist, bins, channels, label, true, true);
     int count = 0;
     for (int p = 0; p < this->patterns.size(); p++) {
-        current = this->patterns.at(p).getImage();
+        current = this->patterns.at(p)->getImage();
         hists->clear();
         vector<Mat> layers;
         Mat src;
@@ -246,6 +331,13 @@ Histogram* HistogramComparator::train_minMax(char mode, std::string label, bool 
     }
     update_average(minMaxHist, bins, channels, count);
     if (showHist) draw_hist(result, true);
+    if (this->save) {
+        char saveMode = mode & 7;
+        saveMode = saveMode | HistogramsIO::LANDSCAPE;
+        vector<Histogram*>* output = new vector<Histogram*>(0);
+        output->push_back(result);
+        this->io->save(output, saveMode);
+    }
     return result;
 }
 
@@ -607,6 +699,95 @@ double HistogramComparator::compareUsingHSV(Img* scene, Img* pattern, int method
 
     calcHist( &patternImg, 1, channels, Mat(), hist_pattern, 2, histSize, ranges, uniform, false );
     normalize( hist_pattern, hist_pattern, 0, 1, NORM_MINMAX, -1, Mat() );
+
+    double result = compareHist( hist_scene, hist_pattern, method );
+
+    if (method == CV_COMP_CORREL) result *= 100;
+    else if (method == CV_COMP_INTERSECT) {
+        double maxVal = compareHist( hist_scene, hist_scene, method );
+        result = (result * 100) / maxVal;
+    }
+
+    return result;
+}
+
+Histogram* HistogramComparator::createColorHistogram(Img* img) {
+    int histSize = 256;
+    /// Set the ranges ( for B,G,R) )
+    float range[] = { 0, 255 };
+    const float* ranges[] = { range, range, range};
+
+    bool uniform = true; bool accumulate = false;
+
+    // Use the o-th and 1-st channels
+    int channels[] = { 0, 1, 2};
+
+    /// Histograms
+    MatND hist;
+    Mat imgMat = img->getImage();
+
+    /// Calculate the histograms for the BGR images
+    calcHist( &imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform, false );
+    vector<int>* bins = new vector<int>(1, 256);
+    Histogram* histogram = new Histogram(hist, bins, 3, img->getLabel(), false, false);
+    return histogram;
+}
+
+Histogram* HistogramComparator::createGrayHistogram(Img* img) {
+    int histSize = 256;
+
+    /// Set the ranges ( for greyscale) )
+    float range[] = { 0, histSize-1 };
+    const float* ranges[] = { range};
+
+    bool uniform = true; bool accumulate = false;
+
+    // Use the o-th and 1-st channels
+    int channels[] = { 0};
+
+    /// Histograms
+    MatND hist;
+    Mat imgMat = img->getGrayImg();
+
+    /// Calculate the histograms for the grayscale images
+    calcHist( &imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform, false );
+    vector<int>* bins = new vector<int>(1, 256);
+    Histogram* histogram = new Histogram(hist, bins, 1, img->getLabel(), false, false);
+    return histogram;
+}
+
+Histogram* HistogramComparator::createHSVHistogram(Img* img) {
+    int h_bins = 50; int s_bins = 32;
+    int histSize[] = { h_bins, s_bins };
+
+    float h_ranges[] = { 0, 256 };
+    float s_ranges[] = { 0, 180 };
+
+    bool uniform = true; bool accumulate = false;
+
+    const float* ranges[] = { h_ranges, s_ranges };
+
+    int channels[] = { 0, 1 };
+
+
+    /// Histograms
+    MatND hist;
+    Mat imgMat;
+    cvtColor( img->getImage(), imgMat, CV_BGR2HSV );
+
+    /// Calculate the histograms for the grayscale images
+    calcHist( &imgMat, 1, channels, Mat(), hist, 2, histSize, ranges, uniform, false );
+    //---------------CHECK THIS-------------//normalize( hist, hist, 0, 1, NORM_MINMAX, -1, Mat() );
+    vector<int>* bins = new vector<int>(0);
+    bins->push_back(50);
+    bins->push_back(32);
+    Histogram* histogram = new Histogram(hist, bins, 2, img->getLabel(), false, false);
+    return histogram;
+}
+
+double HistogramComparator::compare(Histogram* scene, Histogram* pattern, int method) {
+    Mat hist_scene = scene->getHist();
+    Mat hist_pattern = pattern->getHist();
 
     double result = compareHist( hist_scene, hist_pattern, method );
 
