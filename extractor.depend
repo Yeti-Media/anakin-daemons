@@ -1,0 +1,140 @@
+# depslib dependency file v1.0
+1390305239 source:/home/stein/Documents/ym/extractor/main.cpp
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	<ImageDataInput.hpp>
+	<PatternLoader.hpp>
+	<SingleImageDataInput.hpp>
+	<HistogramComparator.hpp>
+	<Flags.hpp>
+	<Histogram.hpp>
+	<HistogramsIO.hpp>
+
+1387721127 /home/stein/Documents/ym/extractor/includes/ImageDataInput.hpp
+	<DataInput.hpp>
+
+1387721220 /home/stein/Documents/ym/extractor/includes/DataInput.hpp
+	"Img.hpp"
+
+1388530703 /home/stein/Documents/ym/extractor/includes/Img.hpp
+	<opencv2/opencv.hpp>
+
+1389737801 /home/stein/Documents/ym/extractor/includes/PatternLoader.hpp
+	<DataInput.hpp>
+	<RichImg.hpp>
+	<opencv2/opencv.hpp>
+	<ImageInfo.hpp>
+
+1388941697 /home/stein/Documents/ym/extractor/includes/RichImg.hpp
+	<opencv2/opencv.hpp>
+	<Img.hpp>
+	<ImageInfo.hpp>
+
+1388949935 /home/stein/Documents/ym/extractor/includes/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1387721354 /home/stein/Documents/ym/extractor/includes/SingleImageDataInput.hpp
+	<DataInput.hpp>
+
+1389738835 /home/stein/Documents/ym/extractor/includes/HistogramComparator.hpp
+	<Img.hpp>
+	<RichImg.hpp>
+	<Histogram.hpp>
+	<HistogramsIO.hpp>
+
+1389002331 /home/stein/Documents/ym/extractor/includes/Histogram.hpp
+	<opencv2/opencv.hpp>
+
+1389738432 /home/stein/Documents/ym/extractor/includes/HistogramsIO.hpp
+	<opencv2/opencv.hpp>
+	<Histogram.hpp>
+
+1389691278 /home/stein/Documents/ym/extractor/includes/Flags.hpp
+	<map>
+	<vector>
+
+1389698529 source:/home/stein/Documents/ym/extractor/src/Flags.cpp
+	"Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1389002025 source:/home/stein/Documents/ym/extractor/src/Histogram.cpp
+	"Histogram.hpp"
+
+1389738893 source:/home/stein/Documents/ym/extractor/src/HistogramComparator.cpp
+	"HistogramComparator.hpp"
+	<DataInput.hpp>
+
+1390305044 source:/home/stein/Documents/ym/extractor/src/HistogramsIO.cpp
+	"HistogramsIO.hpp"
+	<ResultWriter.hpp>
+	"boost/filesystem.hpp"
+
+1390303754 /home/stein/Documents/ym/extractor/includes/ResultWriter.hpp
+	<JSON.h>
+	<JSONValue.h>
+	<string>
+	<sstream>
+
+1383446143 /home/stein/Documents/ym/extractor/includes/JSON.h
+	<vector>
+	<string>
+	<map>
+	<cstring>
+	<cstdlib>
+	<wctype.h>
+	<wchar.h>
+	"JSONValue.h"
+
+1383446143 /home/stein/Documents/ym/extractor/includes/JSONValue.h
+	<vector>
+	<string>
+	"JSON.h"
+
+1387721127 source:/home/stein/Documents/ym/extractor/src/ImageDataInput.cpp
+	"ImageDataInput.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
+1388994739 source:/home/stein/Documents/ym/extractor/src/ImageInfo.cpp
+	"ImageInfo.hpp"
+
+1388530729 source:/home/stein/Documents/ym/extractor/src/Img.cpp
+	"Img.hpp"
+
+1383446143 source:/home/stein/Documents/ym/extractor/src/JSON.cpp
+	"JSON.h"
+
+1383446143 source:/home/stein/Documents/ym/extractor/src/JSONValue.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<math.h>
+	"JSONValue.h"
+
+1390305058 source:/home/stein/Documents/ym/extractor/src/PatternLoader.cpp
+	<PatternLoader.hpp>
+	<ResultWriter.hpp>
+
+1390303795 source:/home/stein/Documents/ym/extractor/src/ResultWriter.cpp
+	<ResultWriter.hpp>
+
+1388943436 source:/home/stein/Documents/ym/extractor/src/RichImg.cpp
+	<RichImg.hpp>
+
+1387721354 source:/home/stein/Documents/ym/extractor/src/SingleImageDataInput.cpp
+	"SingleImageDataInput.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
