@@ -18,6 +18,8 @@ class HistogramComparator {
         const static char HSV = 4;
         const static char MINMAX = 8;
         const static char AVG = 16;
+        const static char YAML = 32;
+        const static char XML = 64;
     protected:
     private:
         void update_minMax(cv::Mat minMaxHist, std::vector<cv::Mat>* hists, std::vector<int>* bins, std::vector<int> maxValues, int channels, bool firstPass);

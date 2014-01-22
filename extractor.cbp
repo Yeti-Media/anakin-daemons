@@ -47,6 +47,7 @@
 			<Add library="/usr/local/lib/libopencv_highgui.so" />
 			<Add library="/usr/lib/x86_64-linux-gnu/libboost_filesystem.so" />
 			<Add library="/usr/lib/x86_64-linux-gnu/libboost_iostreams.so" />
+			<Add directory="obj" />
 		</Linker>
 		<Unit filename="includes/DataInput.hpp" />
 		<Unit filename="includes/Flags.hpp" />

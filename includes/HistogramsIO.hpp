@@ -15,6 +15,8 @@ class HistogramsIO {
         const static char GRAY = 2;
         const static char HSV = 4;
         const static char LANDSCAPE = 8;
+        const static char YAML = 16;
+        const static char XML = 32;
         std::vector<Histogram*>* getColorHistograms();
         std::vector<Histogram*>* getGrayHistograms();
         std::vector<Histogram*>* getHSVHistograms();

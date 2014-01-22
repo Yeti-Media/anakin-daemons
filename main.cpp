@@ -62,6 +62,7 @@ int main(int argc, const char * argv[]) {
     string outputDir = "";
     bool showhelp=false;
     bool saveToFile=true;
+    bool useYaml = true;
 
     const char * argv_[] = {
         "./extractor",
@@ -122,6 +123,14 @@ int main(int argc, const char * argv[]) {
     //LANDSCAPE EXTRA OPTIONS
     flags->setOptionalFlag("label");
     flags->setDependence("label", "landscape");
+    //FORMAT OPTIONS
+    flags->setNoValuesFlag("xml");
+    flags->setNoValuesFlag("yml");
+    flags->setIncompatibility("xml", "yml");
+    vector<string>* formatLooseDeps = new vector<string>(0);
+    formatLooseDeps->push_back("patterns");
+    formatLooseDeps->push_back("landscape");
+    formatLooseDeps->push_back("histograms");
 
     flags->setVerbose(true);
 
@@ -189,6 +198,12 @@ int main(int argc, const char * argv[]) {
         if (flags->flagFound("toJson")) {
             saveToFile = false;
         }
+        if (flags->flagFound("xml")) {
+            useYaml = false;
+        }
+        if (flags->flagFound("yml")) {
+            useYaml = true;
+        }
     } else {
         cerr << "input error!\n";
         return -1;
@@ -216,7 +231,8 @@ int main(int argc, const char * argv[]) {
         fdetector = new cv::SurfFeatureDetector(400);
         dextractor = new cv::SurfDescriptorExtractor();
         patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
-        patternsLoader->load_and_save(outputDir, saveToFile);
+        char mode = useYaml? PatternLoader::YAML : PatternLoader::XML;
+        patternsLoader->load_and_save(outputDir, saveToFile, mode);
         return 0;
     } else {
         patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
@@ -225,6 +241,11 @@ int main(int argc, const char * argv[]) {
 
     HistogramsIO* io = new HistogramsIO(outputDir);
     HistogramComparator* hComparator = new HistogramComparator(patterns, io);
+    if (useYaml) {
+        mode = mode | HistogramComparator::YAML;
+    } else {
+        mode = mode | HistogramComparator::XML;
+    }
     if (inputMode & HISTOGRAMS) {
         hComparator->makeAndSaveHistograms(mode,saveToFile);
     } else if (inputMode & LANDSCAPE) {

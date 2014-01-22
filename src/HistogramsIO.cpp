@@ -30,9 +30,10 @@ void HistogramsIO::load(const char mode) {
 void HistogramsIO::save(std::vector<Histogram*>* input, const char mode, bool saveToFile) {
     string subfolder = mode & LANDSCAPE? "landscape/" : "pattern/";
     string subSubFolder = mode & COLOR? "color/" : ((mode & GRAY)? "gray/" : "hsv/");
+    string extension = mode & YAML ? ".yml" : ".xml";
     for (int i = 0; i < input->size(); i++) {
         Histogram* current = input->at(i);
-        string filename = saveToFile? (this->baseFolder+subfolder+subSubFolder+current->getLabel()+".yml") : "output.yml";
+        string filename = saveToFile? (this->baseFolder+subfolder+subSubFolder+current->getLabel()+extension) : ("output" + extension);
         save(filename, current, saveToFile);
     }
 }

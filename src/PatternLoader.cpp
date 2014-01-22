@@ -23,12 +23,13 @@ void PatternLoader::write(FileStorage& fs, const std::string&, const ImageInfo& 
     x.write(fs);
 }
 
-void PatternLoader::load_and_save(string outputfolder, bool saveToFile) {
+void PatternLoader::load_and_save(string outputfolder, bool saveToFile, char mode) {
     Img* image;
     while (this->input->nextInput(&image)) {
         RichImg* richImage = new RichImg(image, this->detector, this->extractor);
         ImageInfo* ii = richImage->getImageInfo();
-        string filename = saveToFile? (outputfolder+image->getLabel()+".yml") : "output.yml";
+        string extension = mode & YAML ? ".yml" : ".xml";
+        string filename = saveToFile? (outputfolder+image->getLabel()+extension) : ("output"+extension);
         FileStorage fs(filename, saveToFile? FileStorage::WRITE : (FileStorage::WRITE|FileStorage::MEMORY));
         write(fs, "ImageInfo", *ii);
         if (saveToFile) {

@@ -27,8 +27,10 @@ class PatternLoader {
         * Will load the patterns
         */
         void load();
-        void load_and_save(std::string outputfolder, bool saveToFile=true);
+        void load_and_save(std::string outputfolder, bool saveToFile=true, char mode=YAML);
         virtual ~PatternLoader();
+        const static char YAML = 1;
+        const static char XML = 2;
     protected:
     private:
         std::vector<RichImg*>* patterns;

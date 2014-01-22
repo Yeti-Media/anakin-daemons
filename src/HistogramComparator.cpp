@@ -66,6 +66,11 @@ void HistogramComparator::makeAndSaveLandscape(char mode, string label, bool sav
     update_average(minMaxHist, bins, channels, count);
     char saveMode = mode & 7;
     saveMode = saveMode | HistogramsIO::LANDSCAPE;
+    if (mode & YAML) {
+        saveMode = saveMode | HistogramsIO::YAML;
+    } else {
+        saveMode = saveMode | HistogramsIO::XML;
+    }
     vector<Histogram*>* output = new vector<Histogram*>(0);
     output->push_back(result);
     this->io->save(output, saveMode, saveToFile);
