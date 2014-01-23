@@ -16,7 +16,7 @@ class SerializedPatternDataInput {
         std::vector<ImageInfo*>* cache;
         bool useCache;
         bool loaded;
-        int current;
+        uint current;
         void loadData(std::vector<ImageInfo*>* data);
         static void read(const cv::FileNode& node, ImageInfo& x, const ImageInfo& default_value = ImageInfo());
 };

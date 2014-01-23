@@ -142,7 +142,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, vector<string> *inpu
             if (flags->flagFound("rois")) {
                 values = flags->getFlagValues("rois");
                 if (values->size() > 0 && values->size()%4 == 0) {
-                    for (int v = 0; v < values->size(); v += 4) {
+                    for (uint v = 0; v < values->size(); v += 4) {
                         int p1x = stof(values->at(v));
                         int p1y = stof(values->at(v+1));
                         int p2x = stof(values->at(v+2));
@@ -489,7 +489,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, vector<string> *inpu
 void CommandRunner::showHelp() {
     cout << "Anakin help\n\n";
     cout << "for help use -help (duh!)\n";
-    cout << "\ocr, lanscape and histogram arguments\n";
+    cout << "\nocr, lanscape and histogram arguments\n";
     cout << "-s <path to scene file> : scene file refers to the image that will be tested\n";
     cout << "-S <path to scene folder> : will test all images inside a folder\n";
     cout << "-p <path to patterns folder> : patterns refer to images againts a scene will be tested\n";
@@ -689,7 +689,7 @@ int CommandRunner::run() {
 
         vector<JSONValue*>* results = processor.getResults();
         //dcout << "results size: " << results->size() << "\n";
-        for (int r = 0; r < results->size(); r++) {
+        for (uint r = 0; r < results->size(); r++) {
             JSONValue* current = results->at(r);
             this->out->output(current->Stringify().c_str());
             //wcout << current->Stringify().c_str() << "\n";

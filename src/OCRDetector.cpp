@@ -160,7 +160,7 @@ vector<string>*  OCRDetector::detect(vector<pair<Point*, Point*>>* rectangles, b
 
     api->SetImage((uchar*)this->img.data, this->img.size().width, this->img.size().height, this->img.channels(), this->img.step1());
     int detections = 0;
-    for (int r = 0; r < rectangles->size(); r++) {
+    for (uint r = 0; r < rectangles->size(); r++) {
         Mat imgToShow = img.clone();
         pair<Point*, Point*> p = rectangles->at(r);
         Point p1 = *(p.first);
@@ -175,8 +175,8 @@ vector<string>*  OCRDetector::detect(vector<pair<Point*, Point*>>* rectangles, b
         double fontScale = 1;
         int thickness = 1;
 
-        int baseline=0;
-        Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
+        //int baseline=0;
+        //Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
 
         Point textOrg(p1.x, p1.y-5);
 

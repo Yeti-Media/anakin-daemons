@@ -41,7 +41,7 @@ vector<HistMatch*>* HistogramComparator::compareHistograms(float minValue, char 
         vector<Histogram*>* colorHistograms = new vector<Histogram*>(0);
         vector<Histogram*>* grayHistograms = new vector<Histogram*>(0);
         vector<Histogram*>* hsvHistograms = new vector<Histogram*>(0);
-        for (int p = 0; p < this->patterns.size(); p++) {
+        for (uint p = 0; p < this->patterns.size(); p++) {
             Img* pattern = this->patterns.at(p)->getImage();
             if (mode & this->COLOR) {
                 Histogram* hist = createColorHistogram(pattern);
@@ -303,7 +303,7 @@ Histogram* HistogramComparator::train_minMax(char mode, std::string label, bool 
     bool firstPass = true;
     Histogram* result = new Histogram(minMaxHist, bins, channels, label, true, true);
     int count = 0;
-    for (int p = 0; p < this->patterns.size(); p++) {
+    for (uint p = 0; p < this->patterns.size(); p++) {
         current = this->patterns.at(p)->getImage();
         hists->clear();
         vector<Mat> layers;
@@ -344,7 +344,7 @@ Histogram* HistogramComparator::train_minMax(char mode, std::string label, bool 
 void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists, vector<int>* bins, vector<int> maxValues, int channels, bool firstPass) {
     for (int c = 0; c < channels; c++) {
         int currentBins = bins->at(c);
-        int currentMaxValue = maxValues[c];
+        //int currentMaxValue = maxValues[c];
         Mat currentHist = hists->at(c);
         for (int i = 0; i < currentBins; i++) {
             float minVal = minMaxHist.at<float>(i, c);
@@ -482,7 +482,7 @@ void HistogramComparator::draw_hist(Histogram* histogram, bool minMax) {
 
                     text = avgLabels.at(c);
 
-                    Size avgTextSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
+                    //Size avgTextSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
 
 
                     Point avgTextOrg(15+(prevLabelEnd+space), 60);
@@ -610,7 +610,7 @@ double HistogramComparator::compareUsingColor(Img* scene, Img* pattern, int meth
     float range[] = { 0, histSize-1 };
     const float* ranges[] = { range, range, range};
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     // Use the o-th and 1-st channels
     int channels[] = { 0, 1, 2};
@@ -644,7 +644,7 @@ double HistogramComparator::compareUsingGray(Img* scene, Img* pattern, int metho
     float range[] = { 0, histSize-1 };
     const float* ranges[] = { range};
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     // Use the o-th and 1-st channels
     int channels[] = { 0};
@@ -678,7 +678,7 @@ double HistogramComparator::compareUsingHSV(Img* scene, Img* pattern, int method
     float h_ranges[] = { 0, 256 };
     float s_ranges[] = { 0, 180 };
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     const float* ranges[] = { h_ranges, s_ranges };
 
@@ -717,7 +717,7 @@ Histogram* HistogramComparator::createColorHistogram(Img* img) {
     float range[] = { 0, 255 };
     const float* ranges[] = { range, range, range};
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     // Use the o-th and 1-st channels
     int channels[] = { 0, 1, 2};
@@ -740,7 +740,7 @@ Histogram* HistogramComparator::createGrayHistogram(Img* img) {
     float range[] = { 0, histSize-1 };
     const float* ranges[] = { range};
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     // Use the o-th and 1-st channels
     int channels[] = { 0};
@@ -763,7 +763,7 @@ Histogram* HistogramComparator::createHSVHistogram(Img* img) {
     float h_ranges[] = { 0, 256 };
     float s_ranges[] = { 0, 180 };
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     const float* ranges[] = { h_ranges, s_ranges };
 

@@ -21,12 +21,12 @@ int main(int argc, const char * argv[]) {
     std::string portOut="18002";
     bool verbose=false;
 
-    const char * argv_[] = {
-        "./anakin2",
-        "-iTCP", "18003",
-        "-oTCP", "127.0.0.1", "18002"
-    };
-    int argc_ = 6;
+//    const char * argv_[] = {
+//        "./anakin2",
+//        "-iTCP", "18003",
+//        "-oTCP", "127.0.0.1", "18002"
+//    };
+//    int argc_ = 6;
     vector<string> *input = new vector<string>(0);
     for (int i = 1; i < argc; i++) {
         input->push_back(argv[i]);

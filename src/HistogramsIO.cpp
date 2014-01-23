@@ -29,7 +29,7 @@ void HistogramsIO::load(const char mode) {
 void HistogramsIO::save(std::vector<Histogram*>* input, const char mode) {
     string subfolder = mode & LANDSCAPE? "landscape/" : "pattern/";
     string subSubFolder = mode & COLOR? "color/" : ((mode & GRAY)? "gray/" : "hsv/");
-    for (int i = 0; i < input->size(); i++) {
+    for (uint i = 0; i < input->size(); i++) {
         Histogram* current = input->at(i);
         string filename = this->baseFolder+subfolder+subSubFolder+current->getLabel()+".yml";
         save(filename, current);

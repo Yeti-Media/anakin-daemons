@@ -7,10 +7,10 @@ using namespace cv;
 
 void SteinNormalizer::printSegments(vector<vector<int>*>* segments) {
     cout << "[\n";
-    for (int s = 0; s < segments->size(); s++) {
+    for (uint s = 0; s < segments->size(); s++) {
         cout << "[";
         vector<int>* currentSegment = segments->at(s);
-        for (int v = 0; v < currentSegment->size(); v++) {
+        for (uint v = 0; v < currentSegment->size(); v++) {
             cout << currentSegment->at(v);
             if (v+1 < currentSegment->size()) {
                 cout << ", ";
@@ -22,7 +22,7 @@ void SteinNormalizer::printSegments(vector<vector<int>*>* segments) {
 }
 
 void SteinNormalizer::printMeanPerValue(vector<vector<int>*>* segments) {
-    for (int v = 0; v < 256; v++) {
+    for (uint v = 0; v < 256; v++) {
         cout << "mean for value (" << v << ") is (" << getMean(getSegmentValues(v)) << ")\n";
     }
 }

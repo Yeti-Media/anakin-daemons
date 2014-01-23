@@ -101,7 +101,7 @@ bool Flags::setLooseDependencies(string dependent, vector<string>* dependencies)
             return false;
         }
         vector<string>* dependencies_ = new vector<string>(0);
-        for (int d = 0; d < dependencies->size(); d++) {
+        for (uint d = 0; d < dependencies->size(); d++) {
             string current = dependencies->at(d);
             if (!flagExist(current)) {
                 free(dependencies_);
@@ -135,10 +135,10 @@ bool Flags::setIncompatibility(string flag1, string flag2) {
 }
 
 bool Flags::checkDependencies(vector<string> flags) {
-    for (int f = 0; f < flags.size(); f++) {
+    for (uint f = 0; f < flags.size(); f++) {
         if (findKey(this->flagsDependencies, flags[f])) {
             vector<string> *dependencies = this->flagsDependencies.find(flags[f])->second;
-            for (int d = 0; d < dependencies->size(); d++) {
+            for (uint d = 0; d < dependencies->size(); d++) {
                 if (!findInVector(flags, dependencies->at(d))) {
                     if (verbose) cout << "Dependency not met, have (" << flags[f] << ") need (" << dependencies->at(d) << ")\n";
                     return false;
@@ -150,11 +150,11 @@ bool Flags::checkDependencies(vector<string> flags) {
 }
 
 bool Flags::checkLooseDependencies(vector<string> flags) {
-    for (int f = 0; f < flags.size(); f++) {
+    for (uint f = 0; f < flags.size(); f++) {
         if (findKey(this->flagsLooseDependencies, flags[f])) {
             vector<string> *dependencies = this->flagsLooseDependencies.find(flags[f])->second;
             bool found = dependencies->empty();
-            for (int d = 0; d < dependencies->size(); d++) {
+            for (uint d = 0; d < dependencies->size(); d++) {
                 if (findInVector(flags, dependencies->at(d))) {
                     found = true;
                     break;
@@ -163,7 +163,7 @@ bool Flags::checkLooseDependencies(vector<string> flags) {
             if (!found) {
                 if (verbose) {
                     cout << "Dependency not met, have (" << flags[f] << ") need at least one of (";
-                    for (int d = 0; d < dependencies->size(); d++) {
+                    for (uint d = 0; d < dependencies->size(); d++) {
                         cout << dependencies->at(d);
                         if (d + 1 < dependencies->size()) {
                             cout << ", ";
@@ -179,10 +179,10 @@ bool Flags::checkLooseDependencies(vector<string> flags) {
 }
 
 bool Flags::checkIncompatibilities(vector<string> flags) {
-    for (int f = 0; f < flags.size(); f++) {
+    for (uint f = 0; f < flags.size(); f++) {
         if (findKey(this->incompatibleFlags, flags[f])) {
             vector<string> *incompatibilities = this->incompatibleFlags.find(flags[f])->second;
-            for (int d = 0; d < incompatibilities->size(); d++) {
+            for (uint d = 0; d < incompatibilities->size(); d++) {
                 if (findInVector(flags, incompatibilities->at(d))) {
                     if (verbose) cout << "Incompatibility found, flag (" << flags[f] << ") is not compatible with (" << incompatibilities->at(d) << ")\n";
                     return false;
@@ -260,8 +260,8 @@ bool Flags::validateInput(vector<string> *input) {
     clean();
     string flag;
     string current;
-    int requiredFlagsFound = 0;
-    for (int i = 0; i < input->size(); i++) {
+    uint requiredFlagsFound = 0;
+    for (uint i = 0; i < input->size(); i++) {
         current = input->at(i);
         if (this->isOverridingFlagFound()) {
             if (this->verbose) cout << "Got overriding flag " << flag << " and received more than one flag or value\n";
@@ -331,7 +331,7 @@ bool Flags::validateInput(vector<string> *input) {
         if (this->verbose) {
             cout << "missing required flags\nrequired flags are ";
             vector<string> *requiredFlags = this->getRequiredFlags();
-            for (int f = 0; f < requiredFlags->size(); f++) {
+            for (uint f = 0; f < requiredFlags->size(); f++) {
                 cout << requiredFlags->at(f);
                 if (f + 1 < requiredFlags->size()) cout << ", ";
             }

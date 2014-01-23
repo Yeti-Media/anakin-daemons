@@ -46,7 +46,7 @@ using namespace std;
         std::vector<DMatch>* matches = match->getMatches();
 
         int removedKeypoints = 0;
-        for (int m = 0; m < match->getMatches()->size(); m++) {
+        for (uint m = 0; m < match->getMatches()->size(); m++) {
             DMatch cmatch = (*matches)[m];
             mask[cmatch.trainIdx] = 1;
             removedKeypoints++;
@@ -70,7 +70,7 @@ using namespace std;
         Point2f p4 = scene_corners[3]; //bottom left
 
         //int removedKeypoints = 0;
-        for (int k = 0; k < keypoints.size(); k++) {
+        for (uint k = 0; k < keypoints.size(); k++) {
             KeyPoint kp = keypoints[k];
             Point2f kpoint = kp.pt;
             bool test1 = testPointWithLine(p1,p2, kpoint) == 0 || (testPointWithLine(p1,p2, kpoint)*testPointWithLine(p1,p2, p3)) >= 0;
@@ -110,7 +110,7 @@ using namespace std;
         std::vector<cv::KeyPoint> keypoints = match->getScene()->getKeypoints();
         std::vector<DMatch>* matches = match->getMatches();
         int removedKeypoints = 0;
-        for (int m = 0; m < match->getMatches()->size(); m++) {
+        for (uint m = 0; m < match->getMatches()->size(); m++) {
             DMatch cmatch = (*matches)[m];
             mask->at(cmatch.trainIdx) = false;
             removedKeypoints++;
@@ -124,7 +124,7 @@ using namespace std;
         std::vector<bool>* mask = new std::vector<bool>(scene->getKeypoints().size(), true);
         while(reRun) {
             reRun = false;
-            for (int p = 0; p < this->patterns->size(); p++) {
+            for (uint p = 0; p < this->patterns->size(); p++) {
                 Match* match;
                 RichImg* pattern = (*(this->patterns))[p];
                 if (findPattern(scene, pattern, &match, mask)) {
@@ -196,14 +196,14 @@ using namespace std;
             std::vector<Point2f> obj_points;
             std::vector<Point2f> scene_points;
 
-            for( int i = 0; i < good_matches->size(); i++ ) {
+            for( uint i = 0; i < good_matches->size(); i++ ) {
                 //-- Get the keypoints from the good matches
                 obj_points.push_back( pattern->getKeypoints()[ (*good_matches)[i].queryIdx ].pt );
                 scene_points.push_back( scene->getKeypoints()[ (*good_matches)[i].trainIdx ].pt );
             }
 
             std::vector<cv::KeyPoint>* matchedKeypoints = new std::vector<cv::KeyPoint>(0);
-            for (int m = 0; m < good_matches->size(); m++) {
+            for (uint m = 0; m < good_matches->size(); m++) {
                 DMatch cmatch = (*good_matches)[m];
                 matchedKeypoints->push_back(scene->getKeypoints()[cmatch.trainIdx]);
             }

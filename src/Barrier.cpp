@@ -77,7 +77,7 @@ void Barrier::leave(int threadID) {
 
 bool Barrier::arrayOr(vector<bool>* a, vector<bool>* b) {
     bool res = true;
-    for (int i = 0; i < a->size() && res; i++) {
+    for (uint i = 0; i < a->size() && res; i++) {
         res = a->at(i) || b->at(i);
     }
     return res;

@@ -26,7 +26,7 @@ vector<JSONValue*>* BasicImageProcessor::getResults() {
 bool BasicImageProcessor::process(Img& scene) {
     RichImg* scenario = new RichImg(&scene, this->fdetector, this->dextractor);
     vector<Match>* matches = this->detector->findPatterns(scenario);
-    for (int m = 0; m < matches->size(); m++) {
+    for (uint m = 0; m < matches->size(); m++) {
         Match match = (*matches)[m];
         this->sceneResult->push_back(resultAsJSONValue(match.getCenter(), match.getPattern()->getImage()->getLabel(), match.getMatchedKeypoints()));
     }

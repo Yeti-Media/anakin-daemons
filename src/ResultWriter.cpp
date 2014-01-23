@@ -56,7 +56,7 @@ JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoi
 	root[L"label"] = new JSONValue(ws.str());
 
 
-	for (int k = 0; k < matchedKeypoints.size(); k++) {
+	for (uint k = 0; k < matchedKeypoints.size(); k++) {
         KeyPoint current = matchedKeypoints[k];
         JSONObject keypoint;
         JSONObject pos;
@@ -88,7 +88,7 @@ JSONValue* Anakin::resultAsJSONValue(string label, vector<JSONValue*> jsonValues
 	root[L"label"] = new JSONValue(ws.str());
 	JSONArray values;
 
-	for (int v = 0; v < jsonValues.size(); v++) {
+	for (uint v = 0; v < jsonValues.size(); v++) {
 		values.push_back(jsonValues.at(v));
     }
 
@@ -111,7 +111,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<HistMatch*>* histMatches) {
     */
     JSONObject root;
 	JSONArray matches;
-	for (int v = 0; v < histMatches->size(); v++) {
+	for (uint v = 0; v < histMatches->size(); v++) {
         wstringstream ws; wstringstream wp;
 		JSONObject matchJson;
         HistMatch* match = histMatches->at(v);
@@ -140,7 +140,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<string>* ocrRecognizedText) {
     */
     JSONObject root;
 	JSONArray texts;
-	for (int v = 0; v < ocrRecognizedText->size(); v++) {
+	for (uint v = 0; v < ocrRecognizedText->size(); v++) {
         wstringstream ws;
 		JSONObject text;
         ws << ocrRecognizedText->at(v).c_str();
@@ -192,7 +192,7 @@ JSONValue* Anakin::resultAsJSONValue(FaceMatch* match) {
 	root[L"rect"] = new JSONValue(rect);
 
 	vector<pair<string, vector<Rect>*>*>* details = match->getDetails();
-	for (int d = 0; d < details->size(); d++) {
+	for (uint d = 0; d < details->size(); d++) {
         wstringstream wp;
 		JSONObject detail;
         pair<string, vector<Rect>*>* dets = details->at(d);
@@ -201,7 +201,7 @@ JSONValue* Anakin::resultAsJSONValue(FaceMatch* match) {
         wp << detailLabel.c_str();
         detail[L"detailLabel"] = new JSONValue(wp.str());
         JSONArray rects;
-        for (int r = 0; r < rectsVector->size(); r++) {
+        for (uint r = 0; r < rectsVector->size(); r++) {
             JSONObject jsonRect;
             Rect dRect = rectsVector->at(r);
             jsonRect[L"x"] = new JSONValue((double)dRect.x);
@@ -231,7 +231,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<FaceMatch*>* matches) {
     JSONObject root;
     JSONArray jsonMatches;
 
-    for (int m = 0; m < matches->size(); m++) {
+    for (uint m = 0; m < matches->size(); m++) {
         FaceMatch* match = matches->at(m);
         jsonMatches.push_back(resultAsJSONValue(match));
     }
