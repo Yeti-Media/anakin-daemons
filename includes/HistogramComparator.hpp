@@ -22,6 +22,7 @@ class HistogramComparator {
         const static char XML = 64;
     protected:
     private:
+        void pmakeAndSaveLandscape(char mode, std::string label, bool saveToFile = true);
         void update_minMax(cv::Mat minMaxHist, std::vector<cv::Mat>* hists, std::vector<int>* bins, std::vector<int> maxValues, int channels, bool firstPass);
         void update_average(cv::Mat minMaxHist, std::vector<int>* bins, int channels, int count);
         Histogram* createColorHistogram(Anakin::Img* img);

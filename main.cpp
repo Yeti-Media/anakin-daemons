@@ -66,12 +66,14 @@ int main(int argc, const char * argv[]) {
 
     const char * argv_[] = {
         "./extractor",
-        "-histograms",
-        "-iFile", "../anakin-daemons/tests/fixtures/images/google.jpg",
+        "-iFolder", "../anakin-daemons/landscapes/forest/",
+        "-oPath", "../../dbtest/bin/Debug/horls/",
+        "-landscape",
         "-color",
-        "-toJson"
+        "-gray",
+        "-hsv"
     };
-    int argc_ = 6;
+    int argc_ = 9;
     vector<string> *input = new vector<string>(0);
     for (int i = 1; i < argc; i++) {
         input->push_back(argv[i]);
@@ -123,6 +125,7 @@ int main(int argc, const char * argv[]) {
     //LANDSCAPE EXTRA OPTIONS
     flags->setOptionalFlag("label");
     flags->setDependence("label", "landscape");
+    flags->setDependence("landscape", "label");
     //FORMAT OPTIONS
     flags->setNoValuesFlag("xml");
     flags->setNoValuesFlag("yml");
