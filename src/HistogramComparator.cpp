@@ -27,7 +27,7 @@ void HistogramComparator::makeAndSaveHistograms(char mode, bool saveToFile) {
     vector<Histogram*>* colorHistograms = new vector<Histogram*>(0);
     vector<Histogram*>* grayHistograms = new vector<Histogram*>(0);
     vector<Histogram*>* hsvHistograms = new vector<Histogram*>(0);
-    for (int p = 0; p < this->patterns.size(); p++) {
+    for (uint p = 0; p < this->patterns.size(); p++) {
         Img* pattern = this->patterns.at(p)->getImage();
         if (mode & this->COLOR) {
             Histogram* hist = createColorHistogram(pattern);
@@ -52,7 +52,7 @@ void HistogramComparator::makeAndSaveHistograms(char mode, bool saveToFile) {
 void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists, vector<int>* bins, vector<int> maxValues, int channels, bool firstPass) {
     for (int c = 0; c < channels; c++) {
         int currentBins = bins->at(c);
-        int currentMaxValue = maxValues[c];
+        //int currentMaxValue = maxValues[c];
         Mat currentHist = hists->at(c);
         for (int i = 0; i < currentBins; i++) {
             float minVal = minMaxHist.at<float>(i, c);
@@ -89,7 +89,7 @@ Histogram* HistogramComparator::createColorHistogram(Img* img) {
     float range[] = { 0, 255 };
     const float* ranges[] = { range, range, range};
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     // Use the o-th and 1-st channels
     int channels[] = { 0, 1, 2};
@@ -112,7 +112,7 @@ Histogram* HistogramComparator::createGrayHistogram(Img* img) {
     float range[] = { 0, histSize-1 };
     const float* ranges[] = { range};
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     // Use the o-th and 1-st channels
     int channels[] = { 0};
@@ -135,7 +135,7 @@ Histogram* HistogramComparator::createHSVHistogram(Img* img) {
     float h_ranges[] = { 0, 256 };
     float s_ranges[] = { 0, 180 };
 
-    bool uniform = true; bool accumulate = false;
+    bool uniform = true; //bool accumulate = false;
 
     const float* ranges[] = { h_ranges, s_ranges };
 
@@ -184,7 +184,7 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label, bool sa
     bool firstPass = true;
     Histogram* result = new Histogram(minMaxHist, bins, channels, label, true, true);
     int count = 0;
-    for (int p = 0; p < this->patterns.size(); p++) {
+    for (uint p = 0; p < this->patterns.size(); p++) {
         current = this->patterns.at(p)->getImage();
         hists->clear();
         vector<Mat> layers;

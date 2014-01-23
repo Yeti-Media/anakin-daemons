@@ -61,7 +61,7 @@ std::vector<int>* bins;
 void Histogram::write(FileStorage& fs) const {
     fs << "hist" << this->hist;
     fs << "bins" << "[";
-    for (int b = 0; b < this->bins->size(); b++) {
+    for (uint b = 0; b < this->bins->size(); b++) {
         fs << this->bins->at(b);
     }
     fs << "]";

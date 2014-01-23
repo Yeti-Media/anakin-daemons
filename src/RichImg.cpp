@@ -46,7 +46,7 @@ void RichImg::recalculateFeatures(std::vector<int> mask) {
     if (this->constructedWithImageInfo) return;
     std::vector<cv::KeyPoint> newKeypoints;
     int removedKeypoints = 0;
-    for (int i = 0; i < this->keypoints.size(); i++) {
+    for (uint i = 0; i < this->keypoints.size(); i++) {
         if (mask[i] != 1) {
             newKeypoints.push_back(this->keypoints[i]);
         } else {
@@ -54,7 +54,7 @@ void RichImg::recalculateFeatures(std::vector<int> mask) {
         }
     }
     this->keypoints.clear();
-    for (int k = 0; k < newKeypoints.size(); k++) {
+    for (uint k = 0; k < newKeypoints.size(); k++) {
         this->keypoints.push_back(newKeypoints[k]);
     }
     this->extractor->compute(this->aimg->getGrayImg(), this->keypoints, this->descriptors);

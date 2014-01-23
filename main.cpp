@@ -64,16 +64,16 @@ int main(int argc, const char * argv[]) {
     bool saveToFile=true;
     bool useYaml = true;
 
-    const char * argv_[] = {
-        "./extractor",
-        "-iFolder", "../anakin-daemons/landscapes/forest/",
-        "-oPath", "../../dbtest/bin/Debug/horls/",
-        "-landscape",
-        "-color",
-        "-gray",
-        "-hsv"
-    };
-    int argc_ = 9;
+//    const char * argv_[] = {
+//        "./extractor",
+//        "-iFolder", "../anakin-daemons/landscapes/forest/",
+//        "-oPath", "../../dbtest/bin/Debug/horls/",
+//        "-landscape",
+//        "-color",
+//        "-gray",
+//        "-hsv"
+//    };
+//    int argc_ = 9;
     vector<string> *input = new vector<string>(0);
     for (int i = 1; i < argc; i++) {
         input->push_back(argv[i]);
