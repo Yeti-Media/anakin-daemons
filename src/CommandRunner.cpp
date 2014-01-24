@@ -479,6 +479,21 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, vector<string> *inpu
                 loadFromImages = false;
                 patternsYMLOutputDir = patternsDir;
             }
+            if (flags->flagFound("useDB")) {
+                loadFromDB = true;
+                loadFromImages = false;
+            }
+            if (flags->flagFound("userID")) {
+                values = flags->getFlagValues("userID");
+                if (values->size() == 1) {
+                    userID = values->at(0);
+                } else {
+                    error = "param userID need only one value";
+                    inputError = true;
+                    showhelp = showHelpOnError;
+                    return;
+                }
+            }
         } else {
             error = "input error!";
             inputError = true;
@@ -605,7 +620,7 @@ int CommandRunner::run() {
             patternsDataInput = new ImageDataInput(patternsDir);
             patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
         } else {
-            SerializedPatternDataInput* sinput = new SerializedPatternDataInput(patternsDir);
+            SerializedPatternDataInput* sinput = new SerializedPatternDataInput(loadFromDB?userID:patternsDir, loadFromDB);
             patternsLoader = new PatternLoader(sinput, patterns);
         }
         if (saveToYML && !useHistComparison && !useLandscapeComparison) {
@@ -623,30 +638,30 @@ int CommandRunner::run() {
     if (useHistComparison) {
         HistogramComparator* hComparator;
         if (saveToYML || !loadFromImages) {
-            HistogramsIO* io = new HistogramsIO(patternsYMLOutputDir);
+            HistogramsIO* io = new HistogramsIO(loadFromDB?userID:patternsYMLOutputDir, loadFromDB);
             hComparator = new HistogramComparator(scenesDataInput, patterns, io);
         } else {
             hComparator = new HistogramComparator(scenesDataInput, patterns);
         }
         vector<HistMatch*>* results = hComparator->compareHistograms(minHistPercentage, mode);
-        this->out->output(outputResult(results));
+        this->out->output(ResultWriter::outputResult(results));
         //wcout << outputResult(results) << "\n";
     } else if (useLandscapeComparison) {
         HistogramComparator* hComparator;
         if (saveToYML || !loadFromImages) {
-            HistogramsIO* io = new HistogramsIO(patternsYMLOutputDir);
+            HistogramsIO* io = new HistogramsIO(loadFromDB?userID:patternsYMLOutputDir, loadFromDB);
             hComparator = new HistogramComparator(scenesDataInput, patterns, io);
         } else {
             hComparator = new HistogramComparator(scenesDataInput, patterns);
         }
         Histogram* landscape = hComparator->train_minMax(mode, landscapeLabel, show);
         vector<HistMatch*>* results = hComparator->compareHistogramsMinMax(landscape, minHistPercentage, mode, histSafeOffset);
-        this->out->output(outputResult(results).c_str());
+        this->out->output(ResultWriter::outputResult(results).c_str());
         //wcout << outputResult(results) << "\n";
     } else if (run_ocr_detect) {
         OCRDetector* ocrDetector = new OCRDetector(scenesDir, datapath, lang, mode);
         vector<string>* results = ocrDetector->detect(ocrRois, show, clearEvery);
-        this->out->output(outputResult(results).c_str());
+        this->out->output(ResultWriter::outputResult(results).c_str());
         //wcout << outputResult(results) << "\n";
     } else if (face_detection) {
         FaceDetector* faceDetector;
@@ -664,7 +679,7 @@ int CommandRunner::run() {
         faceDetector->setMinSize(minSize);
         faceDetector->setMaxSize(maxSize);
         vector<FaceMatch*>* matches = faceDetector->detect(faceDetImage->getGrayImg(), mainDetections, detailsDetections);
-        this->out->output(outputResult(matches).c_str());
+        this->out->output(ResultWriter::outputResult(matches).c_str());
         //wcout << outputResult(matches) << "\n";
         if (show) {
             faceDetector->showDetections(faceDetImage->getImage(), matches);

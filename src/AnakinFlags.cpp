@@ -23,10 +23,6 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         pLooseDeps->push_back("s");
         pLooseDeps->push_back("S");
         flags->setLooseDependencies("p", pLooseDeps);
-        flags->setDependence("s", "p");
-        flags->setDependence("S", "p");
-        flags->setDependence("mr", "p");
-        flags->setDependence("mma", "p");
         flags->setIncompatibility("s", "S");
 
         //histogram flags
@@ -54,13 +50,13 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setIncompatibility("hHSV", "mr");
         flags->setIncompatibility("hHSV", "mma");
         flags->setIncompatibility("corr", "inter");
-        flags->setDependence("min", "p");
-        flags->setDependence("h", "p");
-        flags->setDependence("hColor", "p");
-        flags->setDependence("hGray", "p");
-        flags->setDependence("hHSV", "p");
-        flags->setDependence("corr", "p");
-        flags->setDependence("inter", "p");
+        vector<string>* corrinterLooseDeps = new vector<string>(0);
+        corrinterLooseDeps->push_back("h");
+        corrinterLooseDeps->push_back("hColor");
+        corrinterLooseDeps->push_back("hGray");
+        corrinterLooseDeps->push_back("hHSV");
+        flags->setLooseDependencies("corr", corrinterLooseDeps);
+        flags->setLooseDependencies("inter", corrinterLooseDeps);
         vector<string>* minLooseDeps = new vector<string>(0);
         minLooseDeps->push_back("h");
         minLooseDeps->push_back("hColor");
@@ -79,7 +75,6 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setLooseDependencies("safeOffset", safeOffsetLooseDeps);
 
         //landscape flags
-        flags->setDependence("landscape", "p");
         flags->setOptionalFlag("label");
         flags->setDependence("label", "landscape");
         flags->setIncompatibility("landscape", "h");
@@ -186,7 +181,6 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setDependence("L2", "edges");
         flags->setOptionalFlag("ratio");
         flags->setDependence("ratio", "edges");
-
         flags->setNoValuesFlag("useBlur");
         flags->setDependence("useBlur", "edges");
 
@@ -206,6 +200,30 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setIncompatibility("import", "contour");
         flags->setIncompatibility("import", "face");
         flags->setIncompatibility("import", "export");
+
+        //DB FLAGS
+        flags->setNoValuesFlag("useDB");
+        flags->setOptionalFlag("userID");
+        flags->setDependence("useDB", "userID");
+        flags->setDependence("userID", "useDB");
+        flags->setIncompatibility("useDB", "export");
+        flags->setIncompatibility("useDB", "import");
+        flags->setIncompatibility("useDB", "ocr");
+        flags->setIncompatibility("useDB", "contour");
+        flags->setIncompatibility("useDB", "face");
+        flags->setIncompatibility("useDB", "p");
+        vector<string>* pordbLooseDeps = new vector<string>(0);
+        pordbLooseDeps->push_back("p");
+        pordbLooseDeps->push_back("useDB");
+        flags->setLooseDependencies("landscape", pordbLooseDeps);
+        flags->setLooseDependencies("s", pordbLooseDeps);
+        flags->setLooseDependencies("S", pordbLooseDeps);
+        flags->setLooseDependencies("mr", pordbLooseDeps);
+        flags->setLooseDependencies("mma", pordbLooseDeps);
+        flags->setLooseDependencies("h", pordbLooseDeps);
+        flags->setLooseDependencies("hColor", pordbLooseDeps);
+        flags->setLooseDependencies("hGray", pordbLooseDeps);
+        flags->setLooseDependencies("hHSV", pordbLooseDeps);
 
 
         flags->setVerbose(verbose);

@@ -14,7 +14,7 @@ HistogramComparator::HistogramComparator(Anakin::DataInput* input, std::vector<A
     if (patterns.empty() && this->ioPresent) {
        this->load = true;
     } else if (this->ioPresent) {
-        this->save = true;
+       this->save = true;
     }
     this->input = input;
 }
@@ -32,8 +32,8 @@ vector<HistMatch*>* HistogramComparator::compareHistograms(float minValue, char 
         patternsHistograms->push_back(this->io->getGrayHistograms());
         patternsHistograms->push_back(this->io->getHSVHistograms());
         const int colorHistsCount = patternsHistograms->at(0)->size();
-        const int grayHistsCount = patternsHistograms->at(0)->size();
-        const int hsvHistsCount = patternsHistograms->at(0)->size();
+        const int grayHistsCount = patternsHistograms->at(1)->size();
+        const int hsvHistsCount = patternsHistograms->at(2)->size();
         patternsCount = colorHistsCount;
         patternsCount = std::max(patternsCount, grayHistsCount);
         patternsCount = std::max(patternsCount, hsvHistsCount);

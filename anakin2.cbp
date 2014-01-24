@@ -42,6 +42,8 @@
 			<Add directory="src" />
 			<Add directory="includes" />
 			<Add directory="/usr/local/include/opencv2" />
+			<Add directory="/usr/include/postgresql" />
+			<Add directory="lib/tbb42_20131118oss/include" />
 		</Compiler>
 		<Linker>
 			<Add library="opencv_features2d" />
@@ -61,6 +63,10 @@
 			<Add library="/usr/local/lib/libtesseract.so" />
 			<Add library="/usr/local/lib/libopencv_objdetect.so" />
 			<Add library="/usr/lib/x86_64-linux-gnu/libpthread.so" />
+			<Add library="/usr/lib/libpq.so" />
+			<Add library="lib/tbb42_20131118oss/lib/intel64/gcc4.4/libtbb.so.2" />
+			<Add library="/usr/lib/x86_64-linux-gnu/libboost_regex.so" />
+			<Add directory="lib/tbb42_20131118oss/lib/intel64/gcc4.4" />
 		</Linker>
 		<Unit filename="includes/ATCPServerSocket.hpp" />
 		<Unit filename="includes/ATCPSocket.hpp" />
@@ -71,6 +77,11 @@
 		<Unit filename="includes/BasicFlannDetector.hpp" />
 		<Unit filename="includes/BasicImageProcessor.hpp" />
 		<Unit filename="includes/CommandRunner.hpp" />
+		<Unit filename="includes/Constants.hpp" />
+		<Unit filename="includes/DBDriver.hpp" />
+		<Unit filename="includes/DBHistogram.hpp" />
+		<Unit filename="includes/DBPattern.hpp" />
+		<Unit filename="includes/DBUser.hpp" />
 		<Unit filename="includes/DataInput.hpp" />
 		<Unit filename="includes/DataOutput.hpp" />
 		<Unit filename="includes/Detector.hpp" />
@@ -93,6 +104,7 @@
 		<Unit filename="includes/OCRDetector.hpp" />
 		<Unit filename="includes/PatternLoader.hpp" />
 		<Unit filename="includes/Processor.hpp" />
+		<Unit filename="includes/RequestServer.hpp" />
 		<Unit filename="includes/ResultWriter.hpp" />
 		<Unit filename="includes/RichImg.hpp" />
 		<Unit filename="includes/SerializedPatternDataInput.hpp" />
@@ -101,6 +113,8 @@
 		<Unit filename="includes/SingleImageDataInput.hpp" />
 		<Unit filename="includes/Socket.hpp" />
 		<Unit filename="includes/SteinNormalizer.hpp" />
+		<Unit filename="includes/Worker.hpp" />
+		<Unit filename="includes/XMLoader.hpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/ATCPServerSocket.cpp" />
 		<Unit filename="src/ATCPSocket.cpp" />
@@ -112,6 +126,11 @@
 		<Unit filename="src/BasicImageProcessor.cpp" />
 		<Unit filename="src/CMakeLists.txt" />
 		<Unit filename="src/CommandRunner.cpp" />
+		<Unit filename="src/Constants.cpp" />
+		<Unit filename="src/DBDriver.cpp" />
+		<Unit filename="src/DBHistogram.cpp" />
+		<Unit filename="src/DBPattern.cpp" />
+		<Unit filename="src/DBUser.cpp" />
 		<Unit filename="src/DataOutput.cpp" />
 		<Unit filename="src/Detector.cpp" />
 		<Unit filename="src/FaceDetector.cpp" />
@@ -132,12 +151,15 @@
 		<Unit filename="src/OCRDetector.cpp" />
 		<Unit filename="src/PatternLoader.cpp" />
 		<Unit filename="src/Processor.cpp" />
+		<Unit filename="src/RequestServer.cpp" />
 		<Unit filename="src/ResultWriter.cpp" />
 		<Unit filename="src/RichImg.cpp" />
 		<Unit filename="src/SerializedPatternDataInput.cpp" />
 		<Unit filename="src/Server.cpp" />
 		<Unit filename="src/SingleImageDataInput.cpp" />
 		<Unit filename="src/SteinNormalizer.cpp" />
+		<Unit filename="src/Worker.cpp" />
+		<Unit filename="src/XMLoader.cpp" />
 		<Unit filename="tests/unit/pattern_detector.cpp" />
 		<Extensions>
 			<code_completion />

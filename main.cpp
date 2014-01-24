@@ -6,6 +6,7 @@
 #include <ATCPSocket.hpp>
 #include <AUDPSocket.hpp>
 #include <Server.hpp>
+#include "RequestServer.hpp"
 
 #define CONSOLE 1
 #define TCP 2
@@ -63,6 +64,7 @@ int main(int argc, const char * argv[]) {
             cout << "-iConsole/oConsole: use console to input or output respectively\n";
             cout << "-iTCP/oTCP <ip> <port> : use a TCP connection with ip and port for input or output respectively\n";
             cout << "-iUDP/oUDP <ip> <port> : use a UDP connection with ip and port for input or output respectively\n";
+            return 0;
         }
         if (anakinInput->flagFound("verbose")) {
             verbose = true;
@@ -145,7 +147,7 @@ int main(int argc, const char * argv[]) {
         output = new DataOutput(soutput);
     }
 
-    Server* server = new Server(portIn, verbose, iMode);
+    Server* server = new RequestServer(portIn, 10, 4, verbose, iMode);
     server->start(flags, output);
 
     return 0;

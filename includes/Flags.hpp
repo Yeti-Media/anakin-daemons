@@ -22,7 +22,7 @@ class Flags {
         bool setLooseDependencies(string dependent, vector<string>* dependencies);
         bool setIncompatibility(string flag1, string flag2);
         void setVerbose(bool b);
-        void setMinCount(int val);
+        void setMinCount(uint val);
 
         //GETTERS
         vector<string>* getRequiredFlags();
@@ -30,7 +30,7 @@ class Flags {
         vector<string>* getOverridingFlags();
         vector<string>* getNoValuesFlags();
         vector<string>* getFlagValues(string flag);
-        int getMinCount();
+        uint getMinCount();
 
         bool validateInput(vector<string> *input);
         bool isOverridingFlagFound();
@@ -59,7 +59,7 @@ class Flags {
         vector<string> foundFlags;
         bool overridingFlagFound = false;
         bool verbose = false;
-        int minCount;
+        uint minCount;
 };
 
 };

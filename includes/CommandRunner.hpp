@@ -90,6 +90,8 @@ class CommandRunner {
         std::string error;
         bool inputError = false;
         DataOutput* out;
+        std::string userID;
+        bool loadFromDB=false;
 };
 };
 

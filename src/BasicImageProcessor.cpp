@@ -28,10 +28,10 @@ bool BasicImageProcessor::process(Img& scene) {
     vector<Match>* matches = this->detector->findPatterns(scenario);
     for (uint m = 0; m < matches->size(); m++) {
         Match match = (*matches)[m];
-        this->sceneResult->push_back(resultAsJSONValue(match.getCenter(), match.getPattern()->getImage()->getLabel(), match.getMatchedKeypoints()));
+        this->sceneResult->push_back(ResultWriter::resultAsJSONValue(match.getCenter(), match.getPattern()->getImage()->getLabel(), match.getMatchedKeypoints()));
     }
     if (!matches->empty()) {
-        this->result->push_back(resultAsJSONValue(scene.getLabel(), *this->sceneResult));
+        this->result->push_back(ResultWriter::resultAsJSONValue(scene.getLabel(), *this->sceneResult));
         this->sceneResult->clear();
     }
     return true;

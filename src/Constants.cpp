@@ -1,0 +1,33 @@
+#include "Constants.hpp"
+
+using namespace Anakin;
+
+const std::string Constants::INSERT_COMMAND = "INSERT INTO ";
+const std::string Constants::SELECT_ALL_COMMAND = "SELECT * FROM ";
+const std::string Constants::SELECT_COMMAND = "SELECT ";
+
+const std::string Constants::USER_TABLE = "User";
+const std::string Constants::USER_TABLE_ID = "id";
+
+const std::string Constants::PATTERN_TABLE = "Pattern";
+const std::string Constants::PATTERN_TABLE_ID = "id";
+const std::string Constants::PATTERN_TABLE_LABEL = "label";
+const std::string Constants::PATTERN_TABLE_DATA = "data";
+
+const std::string Constants::HISTOGRAM_TABLE = "Histogram";
+const std::string Constants::LANDSCAPE_TABLE = "Landscape";
+
+const std::string Constants::HISTLAND_TABLE_ID = "id";
+const std::string Constants::HISTLAND_TABLE_LABEL = "label";
+const std::string Constants::HISTLAND_TABLE_CDATA = "color_data";
+const std::string Constants::HISTLAND_TABLE_GDATA = "gray_data";
+const std::string Constants::HISTLAND_TABLE_HDATA = "hsv_data";
+
+const std::string Constants::RELATION_TABLE_USER_ID = "user_id";
+const std::string Constants::RELATION_TABLE_PATTERN_ID = "pattern_id";
+const std::string Constants::RELATION_TABLE_HISTOGRAM_ID = "histogram_id";
+const std::string Constants::RELATION_TABLE_LANDSCAPE_ID = "landscape_id";
+
+const std::string Constants::USER_PATTERNS_TABLE = "User_Patterns";
+const std::string Constants::USER_HISTOGRAMS_TABLE = "User_Histograms";
+const std::string Constants::USER_LANDSCAPES_TABLE = "User_Landscapes";

@@ -230,11 +230,11 @@ vector<string>* Flags::getFlagValues(string flag) {
     return new vector<string>(0);
 }
 
-void Flags::setMinCount(int val) {
+void Flags::setMinCount(uint val) {
     this->minCount = val;
 }
 
-int Flags::getMinCount() {
+uint Flags::getMinCount() {
     return this->minCount;
 }
 
