@@ -92,6 +92,8 @@ class CommandRunner {
         DataOutput* out;
         std::string userID;
         bool loadFromDB=false;
+        std::string reqID;
+        ResultWriter* rw;
 };
 };
 

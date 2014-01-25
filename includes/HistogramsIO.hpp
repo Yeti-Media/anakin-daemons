@@ -6,6 +6,7 @@
 #include "DBDriver.hpp"
 #include "DBUser.hpp"
 #include "DBHistogram.hpp"
+#include "ResultWriter.hpp"
 
 namespace Anakin {
 
@@ -40,6 +41,7 @@ class HistogramsIO {
         std::string db_user_id;
         bool load_from_db = false;
         DBDriver* driver;
+        ResultWriter* rw;
 };
 };
 #endif // HISTOGRAMSIO_HPP

@@ -3,6 +3,7 @@
 
 #include <Socket.hpp>
 #include <iostream>
+#include <semaphore.h>
 
 namespace Anakin {
 
@@ -15,8 +16,11 @@ class DataOutput {
         void close();
     protected:
     private:
+        void initSem();
         Socket* s;
         bool consoleOutput=true;
+        sem_t ssem;
+        sem_t wssem;
 };
 };
 

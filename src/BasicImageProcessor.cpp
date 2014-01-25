@@ -1,7 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include "BasicImageProcessor.hpp"
 #include <Match.hpp>
-#include <ResultWriter.hpp>
 
 using namespace Anakin;
 using namespace cv;
@@ -17,6 +16,7 @@ BasicImageProcessor::BasicImageProcessor(   DataInput* input,
     this->dextractor = dextractor;
     this->result = new vector<JSONValue*>(0);
     this->sceneResult = new vector<JSONValue*>(0);
+    this->rw = new ResultWriter();
 }
 
 vector<JSONValue*>* BasicImageProcessor::getResults() {
@@ -28,10 +28,10 @@ bool BasicImageProcessor::process(Img& scene) {
     vector<Match>* matches = this->detector->findPatterns(scenario);
     for (uint m = 0; m < matches->size(); m++) {
         Match match = (*matches)[m];
-        this->sceneResult->push_back(ResultWriter::resultAsJSONValue(match.getCenter(), match.getPattern()->getImage()->getLabel(), match.getMatchedKeypoints()));
+        this->sceneResult->push_back(this->rw->resultAsJSONValue(match.getCenter(), match.getPattern()->getImage()->getLabel(), match.getMatchedKeypoints()));
     }
     if (!matches->empty()) {
-        this->result->push_back(ResultWriter::resultAsJSONValue(scene.getLabel(), *this->sceneResult));
+        this->result->push_back(this->rw->resultAsJSONValue(scene.getLabel(), *this->sceneResult));
         this->sceneResult->clear();
     }
     return true;

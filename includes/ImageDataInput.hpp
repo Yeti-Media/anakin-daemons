@@ -2,6 +2,7 @@
 #define IMAGEDATAINPUT_H
 
 #include <DataInput.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace Anakin {
 
@@ -11,9 +12,11 @@ class ImageDataInput : public DataInput {
         bool nextInput(Anakin::Img** output);
         void reload();
     protected:
-        void loadImages(std::vector<cv::Mat>& images);
+        void loadImages(std::vector<cv::Mat>* images);
     private:
         std::string imagesFolder;
+        std::vector<cv::Mat>* images;
+        std::vector<std::string>* labels;
 };
 
 };

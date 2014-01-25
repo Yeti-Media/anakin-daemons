@@ -4,6 +4,7 @@
 #include <JustShowImageProcessor.hpp>
 #include <JSON.h>
 #include <JSONValue.h>
+#include <ResultWriter.hpp>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ class BasicImageProcessor : public JustShowImageProcessor {
         cv::Ptr<cv::DescriptorExtractor> dextractor;
         vector<JSONValue*>* result;
         vector<JSONValue*>* sceneResult;
+        ResultWriter* rw;
 };
 
 };

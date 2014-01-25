@@ -57,6 +57,10 @@ class Socket {
             return msg;
         }
 
+        virtual void sendStop() {
+            send("stop");
+        }
+
         const static char DEFAULTSEND = 0;
         const static char SYNCSEND = 1;
     protected:

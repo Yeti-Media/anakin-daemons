@@ -1,20 +1,25 @@
 #include <AnakinFlags.hpp>
 #include <DataOutput.hpp>
 #include <CommandRunner.hpp>
-#include <Flags.hpp>
 #include <Socket.hpp>
 #include <ATCPSocket.hpp>
 #include <AUDPSocket.hpp>
 #include <Server.hpp>
 #include "RequestServer.hpp"
+#include "DelimiterBasedTCPSocket.hpp"
+#include "DTCPServerSocket.hpp"
 
 #define CONSOLE 1
-#define TCP 2
-#define UDP 4
+#define TCP     2
+#define UDP     4
+#define DTCP    8
 
 using namespace Anakin;
 
 int main(int argc, const char * argv[]) {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    std::cerr.tie(nullptr);
     char iMode=CONSOLE;
     char oMode=CONSOLE;
     unsigned short portIn = 18003;
@@ -41,17 +46,25 @@ int main(int argc, const char * argv[]) {
     anakinInput->setNoValuesFlag("iConsole");
     anakinInput->setOptionalFlag("iTCP");
     anakinInput->setOptionalFlag("iUDP");
+    anakinInput->setOptionalFlag("iDTCP");
     anakinInput->setIncompatibility("iConsole", "iTCP");
     anakinInput->setIncompatibility("iConsole", "iUDP");
+    anakinInput->setIncompatibility("iConsole", "iDTCP");
     anakinInput->setIncompatibility("iUDP", "iTCP");
+    anakinInput->setIncompatibility("iUDP", "iDTCP");
+    anakinInput->setIncompatibility("iTCP", "iDTCP");
 
     //OUTPUT
     anakinInput->setNoValuesFlag("oConsole");
     anakinInput->setOptionalFlag("oTCP");
     anakinInput->setOptionalFlag("oUDP");
+    anakinInput->setOptionalFlag("oDTCP");
     anakinInput->setIncompatibility("oConsole", "oTCP");
     anakinInput->setIncompatibility("oConsole", "oUDP");
+    anakinInput->setIncompatibility("oConsole", "oDTCP");
     anakinInput->setIncompatibility("oUDP", "oTCP");
+    anakinInput->setIncompatibility("oUDP", "oDTCP");
+    anakinInput->setIncompatibility("oTCP", "oDTCP");
 
     anakinInput->setMinCount(2);
     anakinInput->setVerbose(true);
@@ -95,6 +108,16 @@ int main(int argc, const char * argv[]) {
                 return -1;
             }
         }
+        if (anakinInput->flagFound("iDTCP")) {
+            iMode = DTCP;
+            values = anakinInput->getFlagValues("iDTCP");
+            if (values->size() == 1) {
+                portIn = stoi(values->at(0));
+            } else {
+                cout << "param iDTCP needs only one value\n";
+                return -1;
+            }
+        }
 
         //OUTPUT
         if (anakinInput->flagFound("oConsole")) {
@@ -112,13 +135,24 @@ int main(int argc, const char * argv[]) {
             }
         }
         if (anakinInput->flagFound("oUDP")) {
-            oMode = TCP;
+            oMode = UDP;
             values = anakinInput->getFlagValues("oUDP");
             if (values->size() == 2) {
                 ipOut = values->at(0);
                 portOut = values->at(1);
             } else {
                 cout << "param oUDP needs two values\n";
+                return -1;
+            }
+        }
+        if (anakinInput->flagFound("oDTCP")) {
+            oMode = DTCP;
+            values = anakinInput->getFlagValues("oDTCP");
+            if (values->size() == 2) {
+                ipOut = values->at(0);
+                portOut = values->at(1);
+            } else {
+                cout << "param oDTCP needs two values\n";
                 return -1;
             }
         }
@@ -132,13 +166,14 @@ int main(int argc, const char * argv[]) {
         soutput = new ATCPSocket(ipOut, portOut);
     } else if (oMode & UDP) {
         soutput = new AUDPSocket(ipOut, portOut);
+    } else if (oMode & DTCP) {
+        soutput = new DelimiterBasedTCPSocket(ipOut, portOut, "<line>", "<stop>");
     }
-    if (oMode & TCP || oMode & UDP) {
+    if (oMode & TCP || oMode & UDP || oMode & DTCP) {
         soutput->connect();
     }
 
     AnakinFlags* aflags = new AnakinFlags();
-    Flags* flags = aflags->getFlags();
 
     DataOutput* output;
     if (oMode & CONSOLE) {
@@ -147,8 +182,8 @@ int main(int argc, const char * argv[]) {
         output = new DataOutput(soutput);
     }
 
-    Server* server = new RequestServer(portIn, 10, 4, verbose, iMode);
-    server->start(flags, output);
+    Server* server = new RequestServer(portIn, 10, 4, verbose, iMode, "<line>", "<end>");
+    server->start(aflags, output);
 
     return 0;
 }

@@ -5,6 +5,12 @@ using namespace cv;
 using namespace std;
 
 
+const std::string ResultWriter::RW_PATTERN_MATCHING = "PATTERN";
+const std::string ResultWriter::RW_HISTOGRAM_MATCHING = "HISTOGRAM";
+const std::string ResultWriter::RW_LANDSCAPE_MATCHING = "LANDSCAPE";
+const std::string ResultWriter::RW_OCR = "OCR";
+const std::string ResultWriter::RW_FACE_DETECTION = "FACE_DETECTION";
+
 wstring ResultWriter::outputResult(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
     return resultAsJSONValue(center, label, matchedKeypoints)->Stringify().c_str();
 }
@@ -27,6 +33,37 @@ wstring ResultWriter::outputResult(vector<FaceMatch*>* matches) {
 
 wstring ResultWriter::output(char mode, string data, char colors) {
     return resultAsJSONValue(mode, data, colors)->Stringify().c_str();
+}
+
+wstring ResultWriter::outputResult(string requestID, string category, vector<JSONValue*> jsonValues) {
+    return resultAsJSONValue(requestID, category, jsonValues)->Stringify().c_str();
+}
+
+JSONValue* ResultWriter::resultAsJSONValue(string requestID, string category, vector<JSONValue*> jsonValues) {
+    /*  Result as JSONObject
+
+        root    -> requestID (string)
+
+                -> category (string)
+
+                -> values (JSONArray)
+    */
+    JSONObject root;
+    wstringstream ws;
+    ws << requestID.c_str();
+	root[L"requestID"] = new JSONValue(ws.str());
+	wstringstream ys;
+    ys << category.c_str();
+    root[L"category"] = new JSONValue(ys.str());
+	JSONArray values;
+	for (uint v = 0; v < jsonValues.size(); v++) {
+		values.push_back(jsonValues.at(v));
+    }
+
+	root[L"values"] = new JSONValue(values);
+
+    JSONValue *value = new JSONValue(root);
+	return value;
 }
 
 JSONValue* ResultWriter::resultAsJSONValue(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
@@ -100,8 +137,6 @@ JSONValue* ResultWriter::resultAsJSONValue(string label, vector<JSONValue*> json
 
     JSONValue *value = new JSONValue(root);
 	return value;
-
-	//wcout << root->Stringify().c_str() << "\n";
 }
 
 JSONValue* ResultWriter::resultAsJSONValue(vector<HistMatch*>* histMatches) {

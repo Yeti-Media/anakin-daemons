@@ -20,7 +20,7 @@ void Worker::start() {
         this->workingQueue->pop(input);
         std::cout << "worker(" << this->id << ") is processing a request" << std::endl;
         if (input != NULL) {
-            CommandRunner* runner = new CommandRunner(flags, output, input);
+            CommandRunner* runner = new CommandRunner(flags, output, input, false);
             runner->run();
         } else {
             run = false;

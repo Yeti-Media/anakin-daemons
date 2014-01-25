@@ -1,24 +1,24 @@
 #include "ImageDataInput.hpp"
-#include <opencv2/opencv.hpp>
+
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 namespace fs = boost::filesystem;
 
 using namespace Anakin;
 
-std::vector<cv::Mat> images(0);
-std::vector<std::string> labels(0);
 
 ImageDataInput::ImageDataInput(std::string imagesFolder) {
     this->imagesFolder = imagesFolder;
-    loadImages(images);
+    this->images = new std::vector<cv::Mat>(0);
+    this->labels = new std::vector<std::string>(0);
+    loadImages(this->images);
 }
 
 bool ImageDataInput::nextInput(Anakin::Img** output) {
-    if (!images.empty()) {
-        cv::Mat nextMat = images.back();
-        std::string label = labels.back();
-        images.pop_back();
-        labels.pop_back();
+    if (!this->images->empty()) {
+        cv::Mat nextMat = this->images->back();
+        std::string label = this->labels->back();
+        this->images->pop_back();
+        this->labels->pop_back();
         Img* nextImg = new Img(nextMat, label);
         *output = nextImg;
         return true;
@@ -27,10 +27,10 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
 }
 
 void ImageDataInput::reload() {
-    loadImages(images);
+    loadImages(this->images);
 }
 
-void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
+void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
     if(fs::exists( imagesFolder )) {
 
         fs::directory_iterator end_itr; // default construction yields past-the-end
@@ -43,8 +43,8 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>& images) {
                     std::cout << "Error loading image : " << itr->path().c_str() << "\n";
                     exit(-1);
                 }
-                images.push_back(img);
-                labels.push_back(itr->path().string());
+                images->push_back(img);
+                this->labels->push_back(itr->path().string());
             }
 
         }

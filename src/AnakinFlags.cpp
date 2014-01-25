@@ -12,6 +12,7 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setOverridingFlag("ocrAdvDemo");
 
         flags->setNoValuesFlag("interactive");
+        flags->setRequiredFlag("reqID");
 
         //keypoints detection
         flags->setOptionalFlag("p"); //patterns folder path

@@ -127,26 +127,27 @@
 	<boost/test/unit_test.hpp>
 	<opencv2/opencv.hpp>
 
-1390585412 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
+1390614963 source:/home/stein/Documents/ym/anakin-daemons/main.cpp
 	<AnakinFlags.hpp>
 	<DataOutput.hpp>
 	<CommandRunner.hpp>
-	<Flags.hpp>
 	<Socket.hpp>
 	<ATCPSocket.hpp>
 	<AUDPSocket.hpp>
 	<Server.hpp>
 	"RequestServer.hpp"
+	"DelimiterBasedTCPSocket.hpp"
+	"DTCPServerSocket.hpp"
 
-1387721127 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
+1390617705 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
-	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 
-1387721127 /home/stein/Documents/ym/anakin-daemons/includes/ImageDataInput.hpp
+1390617642 /home/stein/Documents/ym/anakin-daemons/includes/ImageDataInput.hpp
 	<DataInput.hpp>
+	<opencv2/opencv.hpp>
 
-1387721220 /home/stein/Documents/ym/anakin-daemons/includes/DataInput.hpp
+1390617446 /home/stein/Documents/ym/anakin-daemons/includes/DataInput.hpp
 	"Img.hpp"
 
 1388530703 /home/stein/Documents/ym/anakin-daemons/includes/Img.hpp
@@ -229,16 +230,16 @@
 1386718794 source:/home/stein/Documents/ym/anakin-daemons/src/Match.cpp
 	<Match.hpp>
 
-1387632794 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
+1390614573 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
 	<JustShowImageProcessor.hpp>
 	<JSON.h>
 	<JSONValue.h>
+	<ResultWriter.hpp>
 
-1390522999 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
+1390614573 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
 	<opencv2/opencv.hpp>
 	"BasicImageProcessor.hpp"
 	<Match.hpp>
-	<ResultWriter.hpp>
 
 1388996384 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
 	<Detector.hpp>
@@ -287,7 +288,7 @@
 	<map>
 	<vector>
 
-1390522835 /home/stein/Documents/ym/anakin-daemons/includes/ResultWriter.hpp
+1390614354 /home/stein/Documents/ym/anakin-daemons/includes/ResultWriter.hpp
 	<JSON.h>
 	<JSONValue.h>
 	<opencv2/opencv.hpp>
@@ -300,7 +301,7 @@
 	<iostream>
 	<boost/foreach.hpp>
 
-1390535119 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramComparator.cpp
+1390617831 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramComparator.cpp
 	"HistogramComparator.hpp"
 	<DataInput.hpp>
 
@@ -318,7 +319,7 @@
 	<math.h>
 	"JSONValue.h"
 
-1390522835 source:/home/stein/Documents/ym/anakin-daemons/src/ResultWriter.cpp
+1390614355 source:/home/stein/Documents/ym/anakin-daemons/src/ResultWriter.cpp
 	<ResultWriter.hpp>
 
 1387721354 source:/home/stein/Documents/ym/anakin-daemons/src/SingleImageDataInput.cpp
@@ -400,17 +401,17 @@
 	"SerializedPatternDataInput.hpp"
 	"boost/filesystem.hpp"
 
-1390522157 /home/stein/Documents/ym/anakin-daemons/includes/HistogramsIO.hpp
+1390614708 /home/stein/Documents/ym/anakin-daemons/includes/HistogramsIO.hpp
 	<opencv2/opencv.hpp>
 	<Histogram.hpp>
 	"DBDriver.hpp"
 	"DBUser.hpp"
 	"DBHistogram.hpp"
+	"ResultWriter.hpp"
 
-1390538068 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramsIO.cpp
+1390616440 source:/home/stein/Documents/ym/anakin-daemons/src/HistogramsIO.cpp
 	"HistogramsIO.hpp"
 	"boost/filesystem.hpp"
-	"ResultWriter.hpp"
 
 1389693398 source:/home/stein/Documents/ym/anakin-daemons/src/ATCPSocket.cpp
 	"ATCPSocket.hpp"
@@ -420,7 +421,7 @@
 	<Socket.hpp>
 	<boost/asio.hpp>
 
-1389665084 /home/stein/Documents/ym/anakin-daemons/includes/Socket.hpp
+1390602293 /home/stein/Documents/ym/anakin-daemons/includes/Socket.hpp
 	<sstream>
 
 1389659572 source:/home/stein/Documents/ym/anakin-daemons/src/ATCPServerSocket.cpp
@@ -438,11 +439,12 @@
 1389681921 /home/stein/Documents/ym/anakin-daemons/includes/AnakinFlags.hpp
 	<Flags.hpp>
 
-1389685376 /home/stein/Documents/ym/anakin-daemons/includes/DataOutput.hpp
+1390611861 /home/stein/Documents/ym/anakin-daemons/includes/DataOutput.hpp
 	<Socket.hpp>
 	<iostream>
+	<semaphore.h>
 
-1390526310 /home/stein/Documents/ym/anakin-daemons/includes/CommandRunner.hpp
+1390614389 /home/stein/Documents/ym/anakin-daemons/includes/CommandRunner.hpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<string>
@@ -473,7 +475,7 @@
 	<HistogramsIO.hpp>
 	<DataOutput.hpp>
 
-1390527441 source:/home/stein/Documents/ym/anakin-daemons/src/AnakinFlags.cpp
+1390607578 source:/home/stein/Documents/ym/anakin-daemons/src/AnakinFlags.cpp
 	"AnakinFlags.hpp"
 
 1389672729 source:/home/stein/Documents/ym/anakin-daemons/src/AUDPServerSocket.cpp
@@ -493,23 +495,26 @@
 	"AUDPSocket.hpp"
 	<boost/lexical_cast.hpp>
 
-1390537940 source:/home/stein/Documents/ym/anakin-daemons/src/CommandRunner.cpp
+1390617839 source:/home/stein/Documents/ym/anakin-daemons/src/CommandRunner.cpp
 	"CommandRunner.hpp"
 
-1389685376 source:/home/stein/Documents/ym/anakin-daemons/src/DataOutput.cpp
+1390618144 source:/home/stein/Documents/ym/anakin-daemons/src/DataOutput.cpp
 	"DataOutput.hpp"
 
-1390591833 /home/stein/Documents/ym/anakin-daemons/includes/Server.hpp
+1390618551 /home/stein/Documents/ym/anakin-daemons/includes/Server.hpp
 	<ServerSocket.hpp>
-	<Flags.hpp>
+	<AnakinFlags.hpp>
 	<DataOutput.hpp>
 
-1390584774 source:/home/stein/Documents/ym/anakin-daemons/src/Server.cpp
+1390618478 source:/home/stein/Documents/ym/anakin-daemons/src/Server.cpp
 	"Server.hpp"
 	<ATCPServerSocket.hpp>
 	<AUDPServerSocket.hpp>
 	<sstream>
 	<CommandRunner.hpp>
+	"DTCPServerSocket.hpp"
+	<boost/regex.hpp>
+	<boost/algorithm/string.hpp>
 
 1390523467 /home/stein/Documents/ym/anakin-daemons/includes/DBDriver.hpp
 	"libpq-fe.h"
@@ -570,12 +575,14 @@
 	"DBPattern.hpp"
 	<vector>
 
-1390584745 source:/home/stein/Documents/ym/anakin-daemons/src/RequestServer.cpp
+1390608344 source:/home/stein/Documents/ym/anakin-daemons/src/RequestServer.cpp
 	"RequestServer.hpp"
 	"Worker.hpp"
 	<pthread.h>
+	"DTCPServerSocket.hpp"
+	<boost/regex.hpp>
 
-1390591833 /home/stein/Documents/ym/anakin-daemons/includes/RequestServer.hpp
+1390608038 /home/stein/Documents/ym/anakin-daemons/includes/RequestServer.hpp
 	"Server.hpp"
 	<tbb/concurrent_queue.h>
 	<vector>
@@ -772,7 +779,25 @@
 	"DataOutput.hpp"
 	<tbb/concurrent_queue.h>
 
-1390585528 source:/home/stein/Documents/ym/anakin-daemons/src/Worker.cpp
+1390607659 source:/home/stein/Documents/ym/anakin-daemons/src/Worker.cpp
 	"Worker.hpp"
 	"CommandRunner.hpp"
+
+1390602293 /home/stein/Documents/ym/anakin-daemons/includes/DelimiterBasedTCPSocket.hpp
+	<ATCPSocket.hpp>
+
+1390569234 /home/stein/Documents/ym/anakin-daemons/includes/DTCPServerSocket.hpp
+	<ATCPServerSocket.hpp>
+	<boost/asio.hpp>
+
+1390602293 source:/home/stein/Documents/ym/anakin-daemons/src/DelimiterBasedTCPSocket.cpp
+	"DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+	<boost/algorithm/string/predicate.hpp>
+	<boost/regex.hpp>
+
+1390569234 source:/home/stein/Documents/ym/anakin-daemons/src/DTCPServerSocket.cpp
+	"DTCPServerSocket.hpp"
+	"DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
 

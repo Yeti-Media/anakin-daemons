@@ -1,7 +1,6 @@
 #include "HistogramsIO.hpp"
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 namespace fs = boost::filesystem;
-#include "ResultWriter.hpp"
 
 using namespace Anakin;
 using namespace std;
@@ -22,6 +21,7 @@ HistogramsIO::HistogramsIO(string baseFolder, bool useFolderAsUserID) {
     this->colorHistograms = new vector<Histogram*>(0);
     this->grayHistograms = new vector<Histogram*>(0);
     this->hsvHistograms = new vector<Histogram*>(0);
+    this->rw = new ResultWriter();
 }
 
 void HistogramsIO::load(const char mode) {
@@ -86,7 +86,7 @@ void HistogramsIO::save(string filename, Histogram* histogram, bool saveToFile) 
         bool isLandscape = histogram->isMinMax() || histogram->hasAvg();
         bool color = histogram->getChannels() == 3;
         bool hsv = histogram->getChannels() == 2;
-        wcout << ResultWriter::output(isLandscape? ResultWriter::RW_LANDSCAPE : ResultWriter::RW_HISTOGRAMS, data, color? ResultWriter::RW_COLOR : (hsv? ResultWriter::RW_HSV : ResultWriter::RW_GRAY)) << endl;
+        wcout << this->rw->output(isLandscape? ResultWriter::RW_LANDSCAPE : ResultWriter::RW_HISTOGRAMS, data, color? ResultWriter::RW_COLOR : (hsv? ResultWriter::RW_HSV : ResultWriter::RW_GRAY)) << endl;
     }
 }
 

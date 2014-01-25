@@ -11,12 +11,16 @@ namespace Anakin {
 
 class RequestServer : public Server {
     public:
-        RequestServer(unsigned const short port, int cap, int threads, bool verbose=false, char mode=TCP);
-        void start(Flags* flags, DataOutput* output);
+        RequestServer(unsigned const short port, int cap, int threads, bool verbose=false, char mode=TCP, std::string ld="", std::string md="");
     protected:
+        void execute(std::vector<std::string>* input);
+        void executeStop();
+        bool stopMessageReceived(std::string rawMsg);
+        void startServer();
+        void endServer();
     private:
         void stopWorkers();
-        void startWorkers(Flags* flags, DataOutput* output);
+        void startWorkers(AnakinFlags* aflags, DataOutput* output);
         static void * startWorker(void *ptr);
         int threads;
         int qcap;

@@ -1,6 +1,8 @@
 #include "RequestServer.hpp"
 #include "Worker.hpp"
 #include <pthread.h>
+#include "DTCPServerSocket.hpp"
+#include <boost/regex.hpp>
 
 using namespace Anakin;
 
@@ -8,7 +10,9 @@ RequestServer::RequestServer(   unsigned const short port,
                                 int cap,
                                 int threads,
                                 bool verbose,
-                                char mode) : Server(port, verbose, mode) {
+                                char mode,
+                                std::string ld,
+                                std::string md) : Server(port, verbose, mode, ld, md) {
     this->threads = threads;
     this->workerThreads = new std::vector<pthread_t>(threads);
     this->qcap = cap;
@@ -16,42 +20,47 @@ RequestServer::RequestServer(   unsigned const short port,
     this->workingQueue->set_capacity(cap);
 }
 
-void RequestServer::start(Flags* flags, DataOutput* output) {
-    if (this->mode & TCP || this->mode & UDP) {
-        this->socket = this->server->waitForConnection();
-        this->socket->setShowComs(this->verbose);
+//PROTECTED
+
+void RequestServer::execute(std::vector<std::string>* input) {
+    this->workingQueue->push(input);
+}
+
+void RequestServer::executeStop() {
+    stopWorkers();
+}
+
+bool RequestServer::stopMessageReceived(std::string rawMsg) {
+    std::string msg = rawMsg;
+    if (this->mode & DTCP) {
+        std::string ld = ((DTCPServerSocket*)this->server)->getLineDelimiter();
+        std::string md = ((DTCPServerSocket*)this->server)->getMessageDelimiter();
+        boost::regex ldRx(ld);
+        boost::regex mdRx(md);
+        std::string ldfmt("");
+        std::string mdfmt("");
+        msg = boost::regex_replace(msg, ldRx, ldfmt, boost::match_default | boost::format_all);
+        msg = boost::regex_replace(msg, mdRx, mdfmt, boost::match_default | boost::format_all);
     }
-    startWorkers(flags, output);
-    string msg;
-    do {
-        vector<string> *input = new vector<string>(0);
-        msg = read();
-        if (msg != "stop") {
-            cout << "MESSAGE RECEIVED: " << msg << endl;
-            stringstream ss_input(msg);
-            while(ss_input.good()) {
-                string value;
-                ss_input >> value;
-                input->push_back(value);
-            }
-            this->workingQueue->push(input);
-        } else {
-            stopWorkers();
-        }
-    } while (msg != "stop");
+    return msg == "stop";
+}
+
+void RequestServer::startServer() {
+    startWorkers(this->aflags, this->output);
+}
+
+void RequestServer::endServer() {
     for (int t = 0; t < this->threads; t++) {
         pthread_join( this->workerThreads->at(t), NULL);
     }
-    output->close();
-    if (this->mode & TCP || this->mode & UDP) this->server->stopServer();
 }
 
 
 //PRIVATE
 
-void RequestServer::startWorkers(Flags* flags, DataOutput* output) {
+void RequestServer::startWorkers(AnakinFlags* aflags, DataOutput* output) {
     for (uint w = 0; w < this->threads; w++) {
-        WorkerArgs* wargs = new WorkerArgs(w+1, flags, output, this->workingQueue);
+        WorkerArgs* wargs = new WorkerArgs(w+1, aflags->getFlags(), output, this->workingQueue);
         pthread_create( &this->workerThreads->at(w), NULL, startWorker, (void*) wargs);
     }
 }

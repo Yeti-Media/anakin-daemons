@@ -6,6 +6,7 @@ using namespace std;
 
 CommandRunner::CommandRunner(Flags* flags, DataOutput* out, vector<string> *input, bool showHelpOnError) {
     this->out = out;
+    this->rw = new ResultWriter();
     if (flags->validateInput(input)) {
             if (flags->flagFound("help")) {
                 showhelp = true;
@@ -494,6 +495,22 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, vector<string> *inpu
                     return;
                 }
             }
+            if (flags->flagFound("reqID")) {
+                values = flags->getFlagValues("reqID");
+                if (values->size() == 1) {
+                    reqID = values->at(0);
+                } else {
+                    error = "param reqID need only one value, got "+std::to_string(values->size())+"instead";
+                    error = error.append("\nvalues for reqID are:\n");
+                    for (int v = 0; v < values->size(); v++) {
+                        error = error.append(values->at(v)).append("\n");
+                    }
+                    error = error.append("\n");
+                    inputError = true;
+                    showhelp = showHelpOnError;
+                    return;
+                }
+            }
         } else {
             error = "input error!";
             inputError = true;
@@ -644,7 +661,10 @@ int CommandRunner::run() {
             hComparator = new HistogramComparator(scenesDataInput, patterns);
         }
         vector<HistMatch*>* results = hComparator->compareHistograms(minHistPercentage, mode);
-        this->out->output(ResultWriter::outputResult(results));
+        vector<JSONValue*> jsonresults(1);
+        jsonresults.at(0) = this->rw->resultAsJSONValue(results);
+        this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_HISTOGRAM_MATCHING, jsonresults));
+        //this->out->output(ResultWriter::outputResult(results));
         //wcout << outputResult(results) << "\n";
     } else if (useLandscapeComparison) {
         HistogramComparator* hComparator;
@@ -656,12 +676,18 @@ int CommandRunner::run() {
         }
         Histogram* landscape = hComparator->train_minMax(mode, landscapeLabel, show);
         vector<HistMatch*>* results = hComparator->compareHistogramsMinMax(landscape, minHistPercentage, mode, histSafeOffset);
-        this->out->output(ResultWriter::outputResult(results).c_str());
+        vector<JSONValue*> jsonresults(1);
+        jsonresults.at(0) = this->rw->resultAsJSONValue(results);
+        this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_LANDSCAPE_MATCHING, jsonresults));
+        //this->out->output(ResultWriter::outputResult(results).c_str());
         //wcout << outputResult(results) << "\n";
     } else if (run_ocr_detect) {
         OCRDetector* ocrDetector = new OCRDetector(scenesDir, datapath, lang, mode);
         vector<string>* results = ocrDetector->detect(ocrRois, show, clearEvery);
-        this->out->output(ResultWriter::outputResult(results).c_str());
+        vector<JSONValue*> jsonresults(1);
+        jsonresults.at(0) = this->rw->resultAsJSONValue(results);
+        this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_OCR, jsonresults));
+        //this->out->output(ResultWriter::outputResult(results).c_str());
         //wcout << outputResult(results) << "\n";
     } else if (face_detection) {
         FaceDetector* faceDetector;
@@ -679,8 +705,10 @@ int CommandRunner::run() {
         faceDetector->setMinSize(minSize);
         faceDetector->setMaxSize(maxSize);
         vector<FaceMatch*>* matches = faceDetector->detect(faceDetImage->getGrayImg(), mainDetections, detailsDetections);
-        this->out->output(ResultWriter::outputResult(matches).c_str());
-        //wcout << outputResult(matches) << "\n";
+        //this->out->output(ResultWriter::outputResult(matches).c_str());
+        vector<JSONValue*> results(1);
+        results.at(0) = this->rw->resultAsJSONValue(matches);
+        this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_FACE_DETECTION, results));
         if (show) {
             faceDetector->showDetections(faceDetImage->getImage(), matches);
         }
@@ -703,12 +731,11 @@ int CommandRunner::run() {
         processor.start();
 
         vector<JSONValue*>* results = processor.getResults();
-        //dcout << "results size: " << results->size() << "\n";
-        for (uint r = 0; r < results->size(); r++) {
-            JSONValue* current = results->at(r);
-            this->out->output(current->Stringify().c_str());
-            //wcout << current->Stringify().c_str() << "\n";
-        }
+        this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_PATTERN_MATCHING, *results));
+//        for (uint r = 0; r < results->size(); r++) {
+//            JSONValue* current = results->at(r);
+//            this->out->output(current->Stringify().c_str());
+//        }
     }
 
     return 0;
