@@ -25,7 +25,17 @@ void PatternLoader::write(FileStorage& fs, const std::string&, const ImageInfo& 
 
 void PatternLoader::load_and_save(string outputfolder, bool saveToFile, char mode) {
     Img* image;
+    int processedFiles = 0;
+    int filesToLoad = this->input->imagesToLoad();
+    std::cout << "images to process : " << filesToLoad << std::endl;
+    if (filesToLoad > 0) {
+        this->patterns->resize(filesToLoad);
+    }
+    int idx = 0;
     while (this->input->nextInput(&image)) {
+        if (processedFiles > 0 && (processedFiles % 1000 == 0)) {
+            std::cout << "1k files processed, total processed files : " << processedFiles << std::endl;
+        }
         RichImg* richImage = new RichImg(image, this->detector, this->extractor);
         ImageInfo* ii = richImage->getImageInfo();
         string extension = mode & YAML ? ".yml" : ".xml";
@@ -38,8 +48,16 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile, char mod
             string data = fs.releaseAndGetString();
             std::wcout << ResultWriter::output(ResultWriter::RW_PATTERNS, data) << std::endl;
         }
-        this->patterns->push_back(richImage);
+        if (filesToLoad > 0) {
+            this->patterns->at(idx) = richImage;
+            idx++;
+        } else {
+            this->patterns->push_back(richImage);
+        }
+
+        processedFiles += 1;
     }
+    std::cout << "total processed files : " << processedFiles << std::endl;
 }
 
 PatternLoader::~PatternLoader() {

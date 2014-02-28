@@ -63,17 +63,16 @@ int main(int argc, const char * argv[]) {
     bool showhelp=false;
     bool saveToFile=true;
     bool useYaml = true;
+    bool loadOnDemand = false;
 
 //    const char * argv_[] = {
 //        "./extractor",
-//        "-iFolder", "../anakin-daemons/landscapes/forest/",
-//        "-oPath", "../../dbtest/bin/Debug/horls/",
-//        "-landscape",
-//        "-color",
-//        "-gray",
-//        "-hsv"
+//        "-iFolder", "/home/stein/Downloads/interesante_images_5K/",
+//        "-oPath", "../../dbtest/bin/Debug/interesante_images_patterns/",
+//        "-patterns",
+//        "-xml"
 //    };
-//    int argc_ = 9;
+//    int argc_ = 7;
     vector<string> *input = new vector<string>(0);
     for (int i = 1; i < argc; i++) {
         input->push_back(argv[i]);
@@ -134,6 +133,8 @@ int main(int argc, const char * argv[]) {
     formatLooseDeps->push_back("patterns");
     formatLooseDeps->push_back("landscape");
     formatLooseDeps->push_back("histograms");
+    //LOAD ON DEMAND
+    flags->setNoValuesFlag("lod");
 
     flags->setVerbose(true);
 
@@ -207,6 +208,9 @@ int main(int argc, const char * argv[]) {
         if (flags->flagFound("yml")) {
             useYaml = true;
         }
+        if (flags->flagFound("lod")) {
+            loadOnDemand = true;
+        }
     } else {
         cerr << "input error!\n";
         return -1;
@@ -227,7 +231,7 @@ int main(int argc, const char * argv[]) {
     if (!useInputPathAsDir) {
         patternsDataInput = new SingleImageDataInput(inputDir);
     } else {
-        patternsDataInput = new ImageDataInput(inputDir);
+        patternsDataInput = new ImageDataInput(inputDir, loadOnDemand);
     }
 
     if (inputMode & PATTERNS) {
