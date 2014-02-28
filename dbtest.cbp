@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="dbtest" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/dbtest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/dbtest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="-g" />
+			<Add option="-rdynamic" />
+			<Add directory="src" />
+			<Add directory="includes" />
+			<Add directory="/usr/include/postgresql" />
+		</Compiler>
+		<Linker>
+			<Add library="/usr/lib/libpq.so" />
+			<Add library="/usr/lib/x86_64-linux-gnu/libboost_filesystem.so" />
+			<Add library="/usr/lib/x86_64-linux-gnu/libboost_iostreams.so" />
+			<Add library="/usr/lib/x86_64-linux-gnu/libboost_system.so" />
+		</Linker>
+		<Unit filename="includes/Constants.hpp" />
+		<Unit filename="includes/DBDriver.hpp" />
+		<Unit filename="includes/DBHistogram.hpp" />
+		<Unit filename="includes/DBPattern.hpp" />
+		<Unit filename="includes/DBUser.hpp" />
+		<Unit filename="includes/Flags.hpp" />
+		<Unit filename="includes/XMLoader.hpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="src/Constants.cpp" />
+		<Unit filename="src/DBDriver.cpp" />
+		<Unit filename="src/DBHistogram.cpp" />
+		<Unit filename="src/DBPattern.cpp" />
+		<Unit filename="src/DBUser.cpp" />
+		<Unit filename="src/Flags.cpp" />
+		<Unit filename="src/XMLoader.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
