@@ -226,6 +226,18 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setLooseDependencies("hGray", pordbLooseDeps);
         flags->setLooseDependencies("hHSV", pordbLooseDeps);
 
+        flags->setNoValuesFlag("lod");
+        flags->setNoValuesFlag("useTraining");
+        flags->setLooseDependencies("useTraining", pordbLooseDeps);
+        flags->setIncompatibility("useTraining", "landscape");
+        flags->setIncompatibility("useTraining", "h");
+        flags->setIncompatibility("useTraining", "hColor");
+        flags->setIncompatibility("useTraining", "hGray");
+        flags->setIncompatibility("useTraining", "hHSV");
+        flags->setIncompatibility("useTraining", "ocr");
+        flags->setIncompatibility("useTraining", "contour");
+        flags->setIncompatibility("useTraining", "face");
+
 
         flags->setVerbose(verbose);
         return flags;

@@ -511,6 +511,12 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, vector<string> *inpu
                     return;
                 }
             }
+            if (flags->flagFound("lod")) {
+                this->loadOnDemand = true;
+            }
+            if (flags->flagFound("useTraining")) {
+                this->useTraining = true;
+            }
         } else {
             error = "input error!";
             inputError = true;
@@ -627,14 +633,23 @@ int CommandRunner::run() {
 
     cv::Ptr<cv::FeatureDetector>     fdetector  = new cv::SurfFeatureDetector(400);
     cv::Ptr<cv::DescriptorExtractor> dextractor = new cv::SurfDescriptorExtractor();
-    cv::Ptr<cv::DescriptorMatcher>   matcher   = new cv::FlannBasedMatcher();
+    cv::Ptr<cv::DescriptorMatcher>   matcher;
+    if (useTraining) {
+//        const Ptr<flann::IndexParams>& indexParams=new flann::KDTreeIndexParams(4);
+//        const Ptr<flann::SearchParams>& searchParams=new flann::SearchParams();
+//        matcher = new cv::FlannBasedMatcher(indexParams, searchParams);
+//        matcher->clear();
+        matcher = new SerializableFlannBasedMatcher("logos_index.xml");
+    } else {
+        matcher = new cv::FlannBasedMatcher();
+    }
 
     std::vector<RichImg*> patterns;
     DataInput* patternsDataInput;
     PatternLoader* patternsLoader;
     if (!run_ocr_detect && !face_detection && !run_contour_demo && !((useHistComparison||useLandscapeComparison) && !loadFromImages)) {
         if (loadFromImages) {
-            patternsDataInput = new ImageDataInput(patternsDir);
+            patternsDataInput = new ImageDataInput(patternsDir, this->loadOnDemand);
             patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
         } else {
             SerializedPatternDataInput* sinput = new SerializedPatternDataInput(loadFromDB?userID:patternsDir, loadFromDB);
@@ -724,10 +739,10 @@ int CommandRunner::run() {
             componentExtractor->demo_contours(aproxMode, thresBegin, thresEnd, thresMode);
         }
     } else {
-        Detector *detector = new BasicFlannDetector(matcher, patterns, mr, mma);
-        detector->init();
+        Detector *detector = new BasicFlannDetector(new SerializableFlannBasedMatcher("logos_index.xml")/*matcher*/, patterns, useTraining, mr, mma);
+        //detector->init();
 
-        BasicImageProcessor processor(scenesDataInput, detector, fdetector, dextractor);
+        BasicImageProcessor processor(scenesDataInput, detector, fdetector, dextractor, true);
         processor.start();
 
         vector<JSONValue*>* results = processor.getResults();

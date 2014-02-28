@@ -31,6 +31,7 @@
 #include <SerializedPatternDataInput.hpp>
 #include <HistogramsIO.hpp>
 #include <DataOutput.hpp>
+#include "SerializableFlannBasedMatcher.hpp"
 
 namespace fs = boost::filesystem;
 
@@ -94,6 +95,8 @@ class CommandRunner {
         bool loadFromDB=false;
         std::string reqID;
         ResultWriter* rw;
+        bool loadOnDemand=false;
+        bool useTraining=false;
 };
 };
 

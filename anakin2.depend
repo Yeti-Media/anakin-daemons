@@ -139,15 +139,16 @@
 	"DelimiterBasedTCPSocket.hpp"
 	"DTCPServerSocket.hpp"
 
-1390617705 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
+1392349807 source:/home/stein/Documents/ym/anakin-daemons/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
 	"boost/filesystem.hpp"
 
-1390617642 /home/stein/Documents/ym/anakin-daemons/includes/ImageDataInput.hpp
+1392342768 /home/stein/Documents/ym/anakin-daemons/includes/ImageDataInput.hpp
 	<DataInput.hpp>
 	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
 
-1390617446 /home/stein/Documents/ym/anakin-daemons/includes/DataInput.hpp
+1392342722 /home/stein/Documents/ym/anakin-daemons/includes/DataInput.hpp
 	"Img.hpp"
 
 1388530703 /home/stein/Documents/ym/anakin-daemons/includes/Img.hpp
@@ -230,22 +231,26 @@
 1386718794 source:/home/stein/Documents/ym/anakin-daemons/src/Match.cpp
 	<Match.hpp>
 
-1390614573 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
+1392424031 /home/stein/Documents/ym/anakin-daemons/includes/BasicImageProcessor.hpp
 	<JustShowImageProcessor.hpp>
 	<JSON.h>
 	<JSONValue.h>
 	<ResultWriter.hpp>
 
-1390614573 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
+1392438832 source:/home/stein/Documents/ym/anakin-daemons/src/BasicImageProcessor.cpp
 	<opencv2/opencv.hpp>
 	"BasicImageProcessor.hpp"
 	<Match.hpp>
 
-1388996384 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
+1393296773 /home/stein/Documents/ym/anakin-daemons/includes/BasicFlannDetector.hpp
 	<Detector.hpp>
+	<map>
+	"SerializableFlannBasedMatcher.hpp"
 
-1390510866 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
+1393296771 source:/home/stein/Documents/ym/anakin-daemons/src/BasicFlannDetector.cpp
 	"BasicFlannDetector.hpp"
+	<time.h>
+	<boost/foreach.hpp>
 
 1386633274 source:/home/stein/Documents/ym/anakin-daemons/src/Test.cpp
 	<stdio.h>
@@ -319,7 +324,7 @@
 	<math.h>
 	"JSONValue.h"
 
-1390614355 source:/home/stein/Documents/ym/anakin-daemons/src/ResultWriter.cpp
+1392415333 source:/home/stein/Documents/ym/anakin-daemons/src/ResultWriter.cpp
 	<ResultWriter.hpp>
 
 1387721354 source:/home/stein/Documents/ym/anakin-daemons/src/SingleImageDataInput.cpp
@@ -444,7 +449,7 @@
 	<iostream>
 	<semaphore.h>
 
-1390614389 /home/stein/Documents/ym/anakin-daemons/includes/CommandRunner.hpp
+1393268333 /home/stein/Documents/ym/anakin-daemons/includes/CommandRunner.hpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<string>
@@ -474,8 +479,9 @@
 	<SerializedPatternDataInput.hpp>
 	<HistogramsIO.hpp>
 	<DataOutput.hpp>
+	"SerializableFlannBasedMatcher.hpp"
 
-1390607578 source:/home/stein/Documents/ym/anakin-daemons/src/AnakinFlags.cpp
+1392360616 source:/home/stein/Documents/ym/anakin-daemons/src/AnakinFlags.cpp
 	"AnakinFlags.hpp"
 
 1389672729 source:/home/stein/Documents/ym/anakin-daemons/src/AUDPServerSocket.cpp
@@ -495,7 +501,7 @@
 	"AUDPSocket.hpp"
 	<boost/lexical_cast.hpp>
 
-1390617839 source:/home/stein/Documents/ym/anakin-daemons/src/CommandRunner.cpp
+1393296984 source:/home/stein/Documents/ym/anakin-daemons/src/CommandRunner.cpp
 	"CommandRunner.hpp"
 
 1390618144 source:/home/stein/Documents/ym/anakin-daemons/src/DataOutput.cpp
@@ -516,7 +522,7 @@
 	<boost/regex.hpp>
 	<boost/algorithm/string.hpp>
 
-1390523467 /home/stein/Documents/ym/anakin-daemons/includes/DBDriver.hpp
+1393552237 /home/stein/Documents/ym/anakin-daemons/includes/DBDriver.hpp
 	"libpq-fe.h"
 	"DBUser.hpp"
 	"DBPattern.hpp"
@@ -540,17 +546,20 @@
 1390482338 /home/stein/Documents/ym/anakin-daemons/includes/DBHistogram.hpp
 	<string>
 
-1390486114 source:/home/stein/Documents/ym/anakin-daemons/src/Constants.cpp
+1393544421 source:/home/stein/Documents/ym/anakin-daemons/src/Constants.cpp
 	"Constants.hpp"
 
-1390506070 /home/stein/Documents/ym/anakin-daemons/includes/Constants.hpp
+1393548965 /home/stein/Documents/ym/anakin-daemons/includes/Constants.hpp
 	<string>
 
-1390537357 source:/home/stein/Documents/ym/anakin-daemons/src/DBDriver.cpp
+1393557944 source:/home/stein/Documents/ym/anakin-daemons/src/DBDriver.cpp
 	"DBDriver.hpp"
 	<iostream>
 	"Constants.hpp"
 	<string>
+	<libpq/libpq-fs.h>
+	<cstdio>
+	<fstream>
 
 1390482377 source:/home/stein/Documents/ym/anakin-daemons/src/DBHistogram.cpp
 	"DBHistogram.hpp"
@@ -790,7 +799,7 @@
 	<ATCPServerSocket.hpp>
 	<boost/asio.hpp>
 
-1390602293 source:/home/stein/Documents/ym/anakin-daemons/src/DelimiterBasedTCPSocket.cpp
+1390619413 source:/home/stein/Documents/ym/anakin-daemons/src/DelimiterBasedTCPSocket.cpp
 	"DelimiterBasedTCPSocket.hpp"
 	<boost/lexical_cast.hpp>
 	<boost/algorithm/string/predicate.hpp>
@@ -800,4 +809,15 @@
 	"DTCPServerSocket.hpp"
 	"DelimiterBasedTCPSocket.hpp"
 	<boost/lexical_cast.hpp>
+
+1393310377 /home/stein/Documents/ym/anakin-daemons/includes/SerializableFlannBasedMatcher.hpp
+	"opencv2/features2d/features2d.hpp"
+
+1393555604 source:/home/stein/Documents/ym/anakin-daemons/src/SerializableFlannBasedMatcher.cpp
+	"SerializableFlannBasedMatcher.hpp"
+	<iostream>
+	<stdio.h>
+	<fstream>
+
+1386310690 /usr/include/postgresql/libpq/libpq-fs.h
 

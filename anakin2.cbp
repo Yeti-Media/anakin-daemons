@@ -82,8 +82,10 @@
 		<Unit filename="includes/DBHistogram.hpp" />
 		<Unit filename="includes/DBPattern.hpp" />
 		<Unit filename="includes/DBUser.hpp" />
+		<Unit filename="includes/DTCPServerSocket.hpp" />
 		<Unit filename="includes/DataInput.hpp" />
 		<Unit filename="includes/DataOutput.hpp" />
+		<Unit filename="includes/DelimiterBasedTCPSocket.hpp" />
 		<Unit filename="includes/Detector.hpp" />
 		<Unit filename="includes/FaceDetector.hpp" />
 		<Unit filename="includes/FaceMatch.hpp" />
@@ -131,7 +133,9 @@
 		<Unit filename="src/DBHistogram.cpp" />
 		<Unit filename="src/DBPattern.cpp" />
 		<Unit filename="src/DBUser.cpp" />
+		<Unit filename="src/DTCPServerSocket.cpp" />
 		<Unit filename="src/DataOutput.cpp" />
+		<Unit filename="src/DelimiterBasedTCPSocket.cpp" />
 		<Unit filename="src/Detector.cpp" />
 		<Unit filename="src/FaceDetector.cpp" />
 		<Unit filename="src/FaceMatch.cpp" />

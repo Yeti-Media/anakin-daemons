@@ -12,7 +12,7 @@ namespace Anakin {
 
 class BasicImageProcessor : public JustShowImageProcessor {
     public:
-        BasicImageProcessor(Anakin::DataInput* input, Anakin::Detector* detector, cv::Ptr<cv::FeatureDetector>& fdetector, cv::Ptr<cv::DescriptorExtractor>& dextractor);
+        BasicImageProcessor(Anakin::DataInput* input, Anakin::Detector* detector, cv::Ptr<cv::FeatureDetector>& fdetector, cv::Ptr<cv::DescriptorExtractor>& dextractor, bool show=false);
         vector<JSONValue*>* getResults();
     protected:
         virtual bool process(Anakin::Img& scene);
@@ -22,6 +22,7 @@ class BasicImageProcessor : public JustShowImageProcessor {
         vector<JSONValue*>* result;
         vector<JSONValue*>* sceneResult;
         ResultWriter* rw;
+        bool show;
 };
 
 };

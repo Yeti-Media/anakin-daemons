@@ -27,7 +27,14 @@ const std::string Constants::RELATION_TABLE_USER_ID = "user_id";
 const std::string Constants::RELATION_TABLE_PATTERN_ID = "pattern_id";
 const std::string Constants::RELATION_TABLE_HISTOGRAM_ID = "histogram_id";
 const std::string Constants::RELATION_TABLE_LANDSCAPE_ID = "landscape_id";
+const std::string Constants::RELATION_TABLE_SMATCHER_ID = "smatcher_id";
 
 const std::string Constants::USER_PATTERNS_TABLE = "User_Patterns";
 const std::string Constants::USER_HISTOGRAMS_TABLE = "User_Histograms";
 const std::string Constants::USER_LANDSCAPES_TABLE = "User_Landscapes";
+const std::string Constants::USER_SMATCHERS_TABLE = "User_SerializedMatchers";
+
+const std::string Constants::SMATCHER_TABLE = "SerializedMatcher";
+const std::string Constants::SMATCHER_TABLE_ID = "id";
+const std::string Constants::SMATCHER_TABLE_FBM_BASE = "fbm_base";
+const std::string Constants::SMATCHER_TABLE_INDEX_ID = "index_id";

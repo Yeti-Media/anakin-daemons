@@ -1,4 +1,5 @@
 #include <ResultWriter.hpp>
+#define LIGH_RESULTS 1
 
 using namespace Anakin;
 using namespace cv;
@@ -97,7 +98,7 @@ JSONValue* ResultWriter::resultAsJSONValue(Point2f center, string label, vector<
 	root[L"label"] = new JSONValue(ws.str());
 
 
-	for (uint k = 0; k < matchedKeypoints.size(); k++) {
+	for (uint k = 0; k < matchedKeypoints.size() && !LIGH_RESULTS; k++) {
         KeyPoint current = matchedKeypoints[k];
         JSONObject keypoint;
         JSONObject pos;

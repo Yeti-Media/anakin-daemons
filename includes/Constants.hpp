@@ -13,6 +13,7 @@ class Constants {
         static const char LANDSCAPE = 8;
         static const char HISTOGRAM = 16;
         static const char PATTERN = 32;
+        static const char INDEX = 64;
 
         static const std::string INSERT_COMMAND;
         static const std::string SELECT_ALL_COMMAND;
@@ -39,10 +40,18 @@ class Constants {
         static const std::string RELATION_TABLE_PATTERN_ID;
         static const std::string RELATION_TABLE_HISTOGRAM_ID;
         static const std::string RELATION_TABLE_LANDSCAPE_ID;
+        static const std::string RELATION_TABLE_SMATCHER_ID;
 
         static const std::string USER_PATTERNS_TABLE;
         static const std::string USER_HISTOGRAMS_TABLE;
         static const std::string USER_LANDSCAPES_TABLE;
+        static const std::string USER_SMATCHERS_TABLE;
+
+        static const std::string SMATCHER_TABLE;
+        static const std::string SMATCHER_TABLE_ID;
+        static const std::string SMATCHER_TABLE_FBM_BASE;
+        static const std::string SMATCHER_TABLE_INDEX_ID;
+
 
     protected:
     private:
