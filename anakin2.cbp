@@ -39,6 +39,7 @@
 			<Add option="-Wall" />
 			<Add option="-g" />
 			<Add option="-rdynamic" />
+			<Add directory="lib" />
 			<Add directory="src" />
 			<Add directory="includes" />
 			<Add directory="/usr/local/include/opencv2" />
@@ -109,6 +110,7 @@
 		<Unit filename="includes/RequestServer.hpp" />
 		<Unit filename="includes/ResultWriter.hpp" />
 		<Unit filename="includes/RichImg.hpp" />
+		<Unit filename="includes/SerializableFlannBasedMatcher.hpp" />
 		<Unit filename="includes/SerializedPatternDataInput.hpp" />
 		<Unit filename="includes/Server.hpp" />
 		<Unit filename="includes/ServerSocket.hpp" />
@@ -117,6 +119,10 @@
 		<Unit filename="includes/SteinNormalizer.hpp" />
 		<Unit filename="includes/Worker.hpp" />
 		<Unit filename="includes/XMLoader.hpp" />
+		<Unit filename="lib/quicklz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lib/quicklz.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/ATCPServerSocket.cpp" />
 		<Unit filename="src/ATCPSocket.cpp" />
@@ -158,6 +164,7 @@
 		<Unit filename="src/RequestServer.cpp" />
 		<Unit filename="src/ResultWriter.cpp" />
 		<Unit filename="src/RichImg.cpp" />
+		<Unit filename="src/SerializableFlannBasedMatcher.cpp" />
 		<Unit filename="src/SerializedPatternDataInput.cpp" />
 		<Unit filename="src/Server.cpp" />
 		<Unit filename="src/SingleImageDataInput.cpp" />

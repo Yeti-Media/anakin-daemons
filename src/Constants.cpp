@@ -36,5 +36,5 @@ const std::string Constants::USER_SMATCHERS_TABLE = "User_SerializedMatchers";
 
 const std::string Constants::SMATCHER_TABLE = "SerializedMatcher";
 const std::string Constants::SMATCHER_TABLE_ID = "id";
-const std::string Constants::SMATCHER_TABLE_FBM_BASE = "fbm_base";
+const std::string Constants::SMATCHER_TABLE_FBM_ID = "fbm_id";
 const std::string Constants::SMATCHER_TABLE_INDEX_ID = "index_id";

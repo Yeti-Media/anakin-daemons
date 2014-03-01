@@ -49,7 +49,7 @@ class Constants {
 
         static const std::string SMATCHER_TABLE;
         static const std::string SMATCHER_TABLE_ID;
-        static const std::string SMATCHER_TABLE_FBM_BASE;
+        static const std::string SMATCHER_TABLE_FBM_ID;
         static const std::string SMATCHER_TABLE_INDEX_ID;
 
 
