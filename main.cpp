@@ -288,8 +288,7 @@ int main(int argc, const char * argv[]) {
                 break;
             }
             case Constants::INDEX : {
-                std::string xmlData = XMLoader::loadFile(smatcher_id+".xml");
-                if (driver->storeSFBM(smatcher_id, xmlData, smatcher_id+".if")) {
+                if (driver->storeSFBM(smatcher_id)) {
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
                     std::cerr << driver->lastMessageReceived << std::endl;

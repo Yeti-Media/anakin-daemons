@@ -5,7 +5,7 @@
 CREATE TABLE "SerializedMatcher"
 (
   id text NOT NULL,
-  fbm_base text NOT NULL,
+  fbm_id int NOT NULL,
   index_id int NOT NULL,
   CONSTRAINT "SerializedMatcher_pkey" PRIMARY KEY (id)
 )

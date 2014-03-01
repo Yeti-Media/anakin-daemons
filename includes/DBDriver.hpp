@@ -39,8 +39,8 @@ class DBDriver {
         bool retrieveLandscape(int id, bool load = false, DBHistogram** result = NULL);
 
         //SERIALIZED FLANN BASED MATCHER
-        bool storeSFBM(std::string smatcher_id, std::string xmlData, std::string index_filename, bool delete_index_file=false);
-        bool retrieveSFBM(std::string smatcher_id, std::string* xmlData = NULL);
+        bool storeSFBM(std::string smatcher_id, bool delete_files=false);
+        bool retrieveSFBM(std::string smatcher_id);
 
         std::string lastMessageReceived;
     protected:
@@ -50,10 +50,9 @@ class DBDriver {
         bool retrieveHORL(std::string label, char mode, bool load = false, DBHistogram** result = NULL);
         bool retrieveHORL(int id, char mode, bool load = false, DBHistogram** result = NULL);
         bool checkConn();
-        bool saveIndexFileToDB(std::string index_filename, int * index_id_value);
-        bool loadIndexFileFromDB(int index_index, std::string index_filename);
-        bool deleteIndexFile(std::string index_filename);
-        bool saveToFile(std::string filename, std::string data);
+        bool saveFileToDB(std::string filename, int * fid);
+        bool loadFileFromDB(int fid, std::string filename);
+        bool deleteFile(std::string filename);
         PGconn *conn;
 };
 };

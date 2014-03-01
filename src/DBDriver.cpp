@@ -425,19 +425,26 @@ bool DBDriver::saveUserLandscapes(DBUser* u, bool saveNeededObjectsFirst) {
 
 
 //SERIALIZED FLANN BASED MATCHER
-bool DBDriver::storeSFBM(std::string smatcher_id, std::string xmlData, std::string index_filename, bool delete_index_file) {
+bool DBDriver::storeSFBM(std::string smatcher_id, bool delete_files) {
     if (checkConn()) {
         int index_id_value;
-        if (!saveIndexFileToDB(index_filename, &index_id_value)) {
+        int matcher_id_value;
+        std::string index_filename = smatcher_id + ".if";
+        std::string matcher_filename = smatcher_id + ".xml";
+        if (!saveFileToDB(index_filename, &index_id_value)) {
+            return false;
+        }
+        if (!saveFileToDB(matcher_filename, &matcher_id_value)) {
             return false;
         }
         PGresult   *res;
         std::string index_id_svalue = std::to_string(index_id_value);
-        const char *paramValues[3] = {smatcher_id.c_str(), xmlData.c_str(), index_id_svalue.c_str()};
+        std::string matcher_id_svalue = std::to_string(matcher_id_value);
+        const char *paramValues[3] = {smatcher_id.c_str(), matcher_id_svalue.c_str(), index_id_svalue.c_str()};
         std::string table;
         table = table.append("public.\"").append(Constants::SMATCHER_TABLE).append("\"");
         std::string param_name_id = Constants::SMATCHER_TABLE_ID;
-        std::string param_name_fbm_data = Constants::SMATCHER_TABLE_FBM_BASE;
+        std::string param_name_fbm_data = Constants::SMATCHER_TABLE_FBM_ID;
         std::string param_name_index_id = Constants::SMATCHER_TABLE_INDEX_ID;
         std::string command = Constants::INSERT_COMMAND + table + " (" + param_name_id + ", " + param_name_fbm_data + ", " + param_name_index_id +")  VALUES ($1, $2, $3)";
         res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL, NULL,0);
@@ -447,8 +454,10 @@ bool DBDriver::storeSFBM(std::string smatcher_id, std::string xmlData, std::stri
             return false;
         }
         PQclear(res);
-        if (delete_index_file) {
-            return deleteIndexFile(index_filename);
+        if (delete_files) {
+            bool indexFileDeleted = deleteFile(index_filename);
+            bool matcherFileDeleted = deleteFile(matcher_filename);
+            return indexFileDeleted && matcherFileDeleted;
         }
         this->lastMessageReceived = "succesfully uploaded " + smatcher_id + ".xml and " + index_filename + " to db";
         return true;
@@ -458,7 +467,7 @@ bool DBDriver::storeSFBM(std::string smatcher_id, std::string xmlData, std::stri
     return false;
 }
 
-bool DBDriver::retrieveSFBM(std::string smatcher_id, std::string* xmlData) {
+bool DBDriver::retrieveSFBM(std::string smatcher_id) {
     if (checkConn()) {
         PGresult   *res;
         std::string sid = smatcher_id;
@@ -477,27 +486,19 @@ bool DBDriver::retrieveSFBM(std::string smatcher_id, std::string* xmlData) {
             this->lastMessageReceived = "No serialized matcher found with id: " + smatcher_id;
             return false;
         }
-        const char* xmlDataRaw = PQgetvalue(res, 0, 1);
-        std::string xmlDataString(xmlDataRaw);
+        const char* matcher_file_id = PQgetvalue(res, 0, 1);
+        std::string matcher_file_sid(matcher_file_id);
         const char* index_file_id = PQgetvalue(res, 0, 2);
         std::string index_file_sid(index_file_id);
         PQclear(res);
-        if (loadIndexFileFromDB(std::stoi(index_file_sid), smatcher_id+".if")) {
-            this->lastMessageReceived = "Serialized matcher with id " + smatcher_id + " found, index file loaded to file : " + smatcher_id + ".if";
+        bool indexFileLoaded = loadFileFromDB(std::stoi(index_file_sid), smatcher_id+".if");
+        bool matcherFileLoaded = loadFileFromDB(std::stoi(matcher_file_sid), smatcher_id+".xml");
+        if (indexFileLoaded && matcherFileLoaded) {
+            this->lastMessageReceived = "Serialized matcher with id " + smatcher_id + " found, index file saved to file : " + smatcher_id + ".if, matcher file saved to file : " + smatcher_id + ".xml";
+            return true;
         } else {
             return false;
         }
-        if (xmlData == NULL)  {
-            if (saveToFile(smatcher_id+".xml", xmlDataString)) {
-                this->lastMessageReceived += " and Matcher data saved to " + smatcher_id + ".xml";
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            *xmlData = xmlDataString;
-        }
-        return true;
     } else {
         return false;
     }
@@ -661,7 +662,7 @@ bool DBDriver::saveUserHORLS(DBUser* u, char mode, bool saveNeededObjectsFirst) 
 }
 
 
-bool DBDriver::saveIndexFileToDB(std::string index_filename, int * index_id_value) {
+bool DBDriver::saveFileToDB(std::string filename, int * fid) {
     PGresult * pqres;
     pqres = PQexec(conn, "BEGIN");
     if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
@@ -669,22 +670,22 @@ bool DBDriver::saveIndexFileToDB(std::string index_filename, int * index_id_valu
         return false;
     }
     PQclear(pqres);
-    Oid oid = lo_import(conn, index_filename.c_str());
+    Oid oid = lo_import(conn, filename.c_str());
     pqres = PQexec(conn, "END");
     if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
         this->lastMessageReceived = PQerrorMessage(conn);
         return false;
     }
     if (oid > 0) {
-        *index_id_value = oid;
+        *fid = oid;
         return true;
     } else {
-        this->lastMessageReceived = "Error importing " + index_filename + " to db";
+        this->lastMessageReceived = "Error importing " + filename + " to db";
         return false;
     }
 }
 
-bool DBDriver::loadIndexFileFromDB(int index_index, std::string index_filename) {
+bool DBDriver::loadFileFromDB(int fid, std::string filename) {
     PGresult * pqres;
     pqres = PQexec(conn, "BEGIN");
     if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
@@ -692,7 +693,7 @@ bool DBDriver::loadIndexFileFromDB(int index_index, std::string index_filename) 
         return false;
     }
     PQclear(pqres);
-    int res = lo_export(conn, index_index, index_filename.c_str());
+    int res = lo_export(conn, fid, filename.c_str());
     pqres = PQexec(conn, "END");
     if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
         this->lastMessageReceived = PQerrorMessage(conn);
@@ -702,24 +703,16 @@ bool DBDriver::loadIndexFileFromDB(int index_index, std::string index_filename) 
     if (res > 0) {
         return true;
     } else {
-        this->lastMessageReceived = "Error exporting " + index_filename + " from db";
+        this->lastMessageReceived = "Error exporting " + filename + " from db";
         return false;
     }
 }
 
-bool DBDriver::deleteIndexFile(std::string index_filename) {
-    int res = remove(index_filename.c_str());
+bool DBDriver::deleteFile(std::string filename) {
+    int res = remove(filename.c_str());
     if (res != 0) {
-        this->lastMessageReceived = "error deleting " + index_filename;
+        this->lastMessageReceived = "error deleting " + filename;
         return false;
     }
     return false;
-}
-
-bool DBDriver::saveToFile(std::string filename, std::string data) {
-    std::ofstream file;
-    file.open(filename.c_str());
-    file << data;
-    file.close();
-    return true;
 }
