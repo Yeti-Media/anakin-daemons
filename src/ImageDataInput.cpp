@@ -1,6 +1,7 @@
 #include "ImageDataInput.hpp"
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 namespace fs = boost::filesystem;
+#include <algorithm>
 
 using namespace Anakin;
 
@@ -93,7 +94,7 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
 
 void ImageDataInput::initializeIterator() {
     if(fs::exists( imagesFolder )) {
-        this->itr = new fs::directory_iterator(imagesFolder);
+        orderFiles();
     } else {
         std::cerr << "directory : " << imagesFolder << " doesn't exist\n";
         exit(-1);
@@ -101,22 +102,22 @@ void ImageDataInput::initializeIterator() {
 }
 
 bool ImageDataInput::nextFile(cv::Mat* imat, std::string * label) {
-    fs::directory_iterator di = *this->itr;
-    fs::directory_iterator end_itr;
+    std::vector<fs::path>::const_iterator di = *this->fileItr;
+    std::vector<fs::path>::const_iterator end_itr(filePaths.end());
     if (di != end_itr) {
-        if (!fs::is_directory(di->status())) {
-            std::cout << "reading " << di->path().c_str() << std::endl;
-            cv::Mat img = cv::imread(di->path().c_str());
+        if (!fs::is_directory(*di)) {
+            std::cout << "reading " << *di << std::endl;
+            cv::Mat img = cv::imread((*di).string().c_str());
             if (!img.data) {
-                std::cerr << "Error loading image : " << di->path().c_str() << "\n";
+                std::cerr << "Error loading image : " << *di << "\n";
                 exit(-1);
             }
             *imat = img;
-            *label = di->path().string();
-            (*this->itr)++;
+            *label = (*di).string();
+            (*this->fileItr)++;
         } else {
             std::cout << "directory found" << std::endl;
-            (*this->itr)++;
+            (*this->fileItr)++;
             return nextFile(imat, label);
         }
         return true;
@@ -136,4 +137,10 @@ int ImageDataInput::scanFiles() {
             }
     }
     return files;
+}
+
+void ImageDataInput::orderFiles() {
+    std::copy(fs::directory_iterator(imagesFolder), fs::directory_iterator(), std::back_inserter(filePaths));
+    std::sort(filePaths.begin(), filePaths.end());
+    fileItr = new std::vector<fs::path>::const_iterator(filePaths.begin());
 }

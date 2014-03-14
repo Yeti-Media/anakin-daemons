@@ -26,6 +26,9 @@ class ImageDataInput : public DataInput {
         fs::directory_iterator* itr;
         fs::directory_iterator end_itr;
         bool loadOnDemand = false;
+        std::vector<fs::path> filePaths;
+        std::vector<fs::path>::const_iterator* fileItr;
+        void orderFiles();
 };
 
 };

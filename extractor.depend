@@ -16,7 +16,7 @@
 	<Histogram.hpp>
 	<HistogramsIO.hpp>
 
-1392348967 /home/stein/Documents/ym/extractor/includes/ImageDataInput.hpp
+1393708861 /home/stein/Documents/ym/extractor/includes/ImageDataInput.hpp
 	<DataInput.hpp>
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
@@ -100,9 +100,10 @@
 	<string>
 	"JSON.h"
 
-1392346934 source:/home/stein/Documents/ym/extractor/src/ImageDataInput.cpp
+1393711159 source:/home/stein/Documents/ym/extractor/src/ImageDataInput.cpp
 	"ImageDataInput.hpp"
 	"boost/filesystem.hpp"
+	<algorithm>
 
 1388994739 source:/home/stein/Documents/ym/extractor/src/ImageInfo.cpp
 	"ImageInfo.hpp"
