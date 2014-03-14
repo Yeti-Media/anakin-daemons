@@ -78,6 +78,14 @@ void SerializableFlannBasedMatcher::train(std::vector<cv::Mat> descriptors) {
     flannIndex = new flann::Index( mergedDescriptors.getDescriptors(), *indexParams );
 }
 
+void SerializableFlannBasedMatcher::setID(std::string id) {
+    this->smatcher_id = id;
+}
+
+std::string SerializableFlannBasedMatcher::getID() {
+    return this->smatcher_id;
+}
+
 //PRIVATE
 
 void SerializableFlannBasedMatcher::load(std::string xmlData) {

@@ -29,12 +29,14 @@ class RequestServer : public Server {
             int id;
             Flags* flags;
             DataOutput* output;
+            SFBMCache* cache;
             tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
             WorkerArgs( int id,
                         Flags* flags,
                         DataOutput* output,
+                        SFBMCache* cache,
                         tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue
-                    ) : id(id), flags(flags), output(output), workingQueue(workingQueue) {}
+                    ) : id(id), flags(flags), output(output), cache(cache), workingQueue(workingQueue) {}
         };
         std::vector<pthread_t>* workerThreads;
 };

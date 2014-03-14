@@ -59,20 +59,20 @@ void RequestServer::endServer() {
 //PRIVATE
 
 void RequestServer::startWorkers(AnakinFlags* aflags, DataOutput* output) {
-    for (uint w = 0; w < this->threads; w++) {
-        WorkerArgs* wargs = new WorkerArgs(w+1, aflags->getFlags(), output, this->workingQueue);
+    for (int w = 0; w < this->threads; w++) {
+        WorkerArgs* wargs = new WorkerArgs(w+1, aflags->getFlags(), output, this->cache, this->workingQueue);
         pthread_create( &this->workerThreads->at(w), NULL, startWorker, (void*) wargs);
     }
 }
 
 void * RequestServer::startWorker(void *ptr) {
     WorkerArgs* wargs = (WorkerArgs*) ptr;
-    Worker* worker = new Worker(wargs->id, wargs->flags, wargs->output, wargs->workingQueue);
+    Worker* worker = new Worker(wargs->id, wargs->flags, wargs->output, wargs->cache, wargs->workingQueue);
     worker->start();
 }
 
 void RequestServer::stopWorkers() {
-    for (uint w = 0; w < this->threads; w++) {
+    for (int w = 0; w < this->threads; w++) {
         this->workingQueue->push(NULL);
     }
 }

@@ -14,6 +14,7 @@ class Constants {
         static const char HISTOGRAM = 16;
         static const char PATTERN = 32;
         static const char INDEX = 64;
+        static const char SCENE = 128;
 
         static const std::string INSERT_COMMAND;
         static const std::string SELECT_ALL_COMMAND;
@@ -51,6 +52,16 @@ class Constants {
         static const std::string SMATCHER_TABLE_ID;
         static const std::string SMATCHER_TABLE_FBM_ID;
         static const std::string SMATCHER_TABLE_INDEX_ID;
+
+        static const std::string SCENE_TABLE;
+        static const std::string SCENE_TABLE_ID;
+        static const std::string SCENE_TABLE_DESC;
+        static const std::string SCENE_TABLE_KEYPTS;
+
+        static const std::string SMATCHER_PATTERNS_TABLE;
+        static const std::string SMATCHER_PATTERNS_TABLE_IID;
+        static const std::string SMATCHER_PATTERNS_TABLE_PID;
+        static const std::string SMATCHER_PATTERNS_TABLE_PIDX;
 
 
     protected:

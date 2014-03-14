@@ -5,6 +5,8 @@
 #include "DBUser.hpp"
 #include "DBPattern.hpp"
 #include "DBHistogram.hpp"
+#include <opencv2/opencv.hpp>
+#include "ImageInfo.hpp"
 #include <string>
 
 namespace Anakin {
@@ -39,8 +41,16 @@ class DBDriver {
         bool retrieveLandscape(int id, bool load = false, DBHistogram** result = NULL);
 
         //SERIALIZED FLANN BASED MATCHER
-        bool storeSFBM(std::string smatcher_id, bool delete_files=false);
+        bool storeSFBM(std::string smatcher_id, bool checkExistence=false, bool delete_files=false);
         bool retrieveSFBM(std::string smatcher_id);
+        bool sfbmExists(std::string smatcher_id, bool * exists);
+        bool storeNthPattern(std::string smatcher_id, int pidx, std::string patternID);
+        bool storeNthPattern(std::string smatcher_id, int pidx, DBPattern* p);
+        bool retrieveNthPattern(std::string smatcher_id, int pidx, ImageInfo** pattern);
+
+        //SCENE
+        bool storeScene(ImageInfo* scene);
+        bool retrieveScene(ImageInfo** scene, std::string sceneID);
 
         std::string lastMessageReceived;
     protected:

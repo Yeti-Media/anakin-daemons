@@ -4,8 +4,6 @@
 #include <JSON.h>
 #include <JSONValue.h>
 #include <opencv2/opencv.hpp>
-#include <HistMatch.hpp>
-#include <FaceMatch.hpp>
 
 using namespace cv;
 using namespace std;
@@ -17,31 +15,15 @@ class ResultWriter {
 
         ResultWriter() {};
 
-        std::wstring output(char mode, std::string data, char colors=0);
-        JSONValue* resultAsJSONValue(char mode, std::string data, char colors=0);
-        static const char RW_PATTERNS = 1;
-        static const char RW_HISTOGRAMS = 2;
-        static const char RW_LANDSCAPE = 4;
-
-        static const char RW_COLOR = 8;
-        static const char RW_GRAY = 16;
-        static const char RW_HSV = 32;
-
         static const std::string RW_PATTERN_MATCHING;
-        static const std::string RW_HISTOGRAM_MATCHING;
-        static const std::string RW_LANDSCAPE_MATCHING;
-        static const std::string RW_OCR;
-        static const std::string RW_FACE_DETECTION;
+        static const std::string RW_CACHE_IDX_ADD;
+        static const std::string RW_CACHE_IDX_DEL;
+        static const std::string RW_CACHE_IDX_UPD;
+        static const std::string RW_CACHE_IDX_STATUS;
 
         wstring outputResult(Point2f center, string label, vector<KeyPoint> matchedKeypoints);
 
         wstring outputResult(string label, vector<JSONValue*> values);
-
-        wstring outputResult(vector<HistMatch*>* histMatches);
-
-        wstring outputResult(vector<string>* ocrRecognizedText);
-
-        wstring outputResult(vector<FaceMatch*>* matches);
 
         wstring outputResult(string requestID, string category, vector<JSONValue*> jsonValues);
 
@@ -51,13 +33,13 @@ class ResultWriter {
 
         JSONValue* resultAsJSONValue(string label, vector<JSONValue*> values);
 
-        JSONValue* resultAsJSONValue(vector<Anakin::HistMatch*>* histMatches);
+        JSONValue* resultAsJSONValue(string smatcher_id_added, int cacheFreeSpace, string smatcher_id_removed);
 
-        JSONValue* resultAsJSONValue(vector<string>* ocrRecognizedText);
+        JSONValue* resultAsJSONValue(string smatcher_id_deleted, int cacheFreeSpace);
 
-        JSONValue* resultAsJSONValue(vector<FaceMatch*>* matches);
+        JSONValue* resultAsJSONValue(string smatcher_id_updated);
 
-        JSONValue* resultAsJSONValue(FaceMatch* match);
+        JSONValue* resultAsJSONValue(vector<string> smatchers_in_cache, int cacheFreeSpace);
 
 };
 };

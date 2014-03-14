@@ -14,6 +14,14 @@ using namespace std;
 Server::Server(unsigned short port, bool verbose, char mode, std::string ld, std::string md) {
     this->port = port;
     this->mode = mode;
+    this->dbdriver = new DBDriver();
+    if (this->dbdriver->connect()) {
+        std::cout << this->dbdriver->lastMessageReceived << std::endl;
+    } else {
+        std::cerr << this->dbdriver->lastMessageReceived << std::endl;
+        exit(-1);
+    }
+    this->cache = new SFBMCache(this->dbdriver, 9, true, 10);
     if (mode & TCP) {
         this->server = new ATCPServerSocket(port);
         this->server->setShowComs(verbose);
@@ -43,7 +51,7 @@ void Server::start(AnakinFlags* aflags, DataOutput* output) {
         if (!stopMessageReceived(msg)) {
             std::cout << "MESSAGE RECEIVED:\n" << msg << std::endl;
             std::vector<std::vector<std::string>*>* inputs = getInputs(msg, &stopReceivedInsideInput);
-            for (int i = 0; i < inputs->size(); i++) {
+            for (uint i = 0; i < inputs->size(); i++) {
                 execute(inputs->at(i));
             }
             if (stopReceivedInsideInput) {
@@ -112,7 +120,7 @@ std::vector<std::string>* Server::rawToInput(std::string rawInput) {
 }
 
 void Server::execute(std::vector<std::string>* input) {
-    CommandRunner* runner = new CommandRunner(this->aflags->getFlags(), this->output, input, false);
+    CommandRunner* runner = new CommandRunner(this->aflags->getFlags(), this->output, this->cache, input);
     runner->run();
 }
 

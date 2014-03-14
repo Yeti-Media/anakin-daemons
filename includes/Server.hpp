@@ -3,6 +3,8 @@
 #include <ServerSocket.hpp>
 #include <AnakinFlags.hpp>
 #include <DataOutput.hpp>
+#include "SFBMCache.hpp"
+#include "DBDriver.hpp"
 
 namespace Anakin {
 
@@ -31,6 +33,8 @@ class Server {
         char mode;
         AnakinFlags* aflags;
         DataOutput* output;
+        SFBMCache* cache;
+        DBDriver* dbdriver;
     private:
 };
 

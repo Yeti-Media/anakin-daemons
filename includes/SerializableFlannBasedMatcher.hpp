@@ -12,6 +12,8 @@ class SerializableFlannBasedMatcher : public cv::FlannBasedMatcher {
         void save(std::string filename, std::string * xmlData = NULL);
         void train(std::vector<cv::Mat> descriptors);
         virtual bool empty() const;
+        void setID(std::string id);
+        std::string getID();
     protected:
     private:
         void load(std::string xmlData="");
@@ -23,6 +25,7 @@ class SerializableFlannBasedMatcher : public cv::FlannBasedMatcher {
         void decompress(bool useOriginalNames = false, std::string * xmlData=NULL);
         int readFile(char ** data, std::string filename);
         void writeFile(char * data, std::string filename, int length);
+        std::string smatcher_id;
 };
 
 };
