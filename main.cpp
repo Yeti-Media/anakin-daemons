@@ -5,6 +5,7 @@
 #include "Flags.hpp"
 #include "XMLoader.hpp"
 #include "Constants.hpp"
+#include "ImageInfo.hpp"
 #include <iostream>
 
 using namespace Anakin;
@@ -53,6 +54,9 @@ int main(int argc, const char * argv[]) {
     char objectsAs = 0;
     bool load = false;
     std::string smatcher_id;
+    bool savePatterns = false;
+    std::string sceneID;
+    bool loadingScenes = false;
 
 
 //    const char * argv_[] = {
@@ -69,21 +73,29 @@ int main(int argc, const char * argv[]) {
     flags->setOptionalFlag("user");
     flags->setOptionalFlag("path");
     flags->setNoValuesFlag("patterns");
+    flags->setNoValuesFlag("scenes");
     flags->setNoValuesFlag("histograms");
     flags->setNoValuesFlag("landscapes");
     flags->setOptionalFlag("index");
+    flags->setNoValuesFlag("savePatterns");
     vector<string>* pathLooseDeps = new vector<string>(0);
     pathLooseDeps->push_back("patterns");
     pathLooseDeps->push_back("histograms");
     pathLooseDeps->push_back("landscapes");
+    pathLooseDeps->push_back("savePatterns");
+    pathLooseDeps->push_back("scenes");
     flags->setLooseDependencies("path", pathLooseDeps);
-    flags->setIncompatibility("index", "path");
+    //flags->setIncompatibility("index", "path");
     flags->setIncompatibility("patterns", "histograms");
     flags->setIncompatibility("patterns", "landscapes");
+    flags->setIncompatibility("patterns", "scenes");
     flags->setIncompatibility("histograms", "landscapes");
+    flags->setIncompatibility("histograms", "scenes");
+    flags->setIncompatibility("landscapes", "scenes");
     flags->setIncompatibility("index", "patterns");
     flags->setIncompatibility("index", "histograms");
     flags->setIncompatibility("index", "landscapes");
+    flags->setIncompatibility("index", "scenes");
     flags->setNoValuesFlag("load");
     vector<string>* loadLooseDeps = new vector<string>(0);
     loadLooseDeps->push_back("user");
@@ -91,9 +103,14 @@ int main(int argc, const char * argv[]) {
     loadLooseDeps->push_back("patterns");
     loadLooseDeps->push_back("histograms");
     loadLooseDeps->push_back("landscapes");
+    loadLooseDeps->push_back("scenes");
     flags->setLooseDependencies("load", loadLooseDeps);
     flags->setIncompatibility("load", "path");
-
+    flags->setDependence("savePatterns", "index");
+    flags->setIncompatibility("savePatterns", "load");
+    flags->setOptionalFlag("sceneID");
+    flags->setDependence("sceneID", "load");
+    flags->setDependence("sceneID", "scenes");
 
 
     if (flags->validateInput(input)) {
@@ -143,8 +160,31 @@ int main(int argc, const char * argv[]) {
         if (flags->flagFound("index")) {
             objectsAs = Constants::INDEX;
         }
+        if (flags->flagFound("scenes")) {
+            objectsAs = Constants::SCENE;
+        }
         if (flags->flagFound("load")) {
             load = true;
+            if (objectsAs == Constants::SCENE) {
+                loadingScenes = true;
+            }
+        }
+        if (flags->flagFound("sceneID")) {
+            values = flags->getFlagValues("sceneID");
+            if (values->size() == 1) {
+                sceneID = values->at(0);
+            } else {
+                std::cerr << "param sceneID need only one value\n";
+                return -1;
+            }
+        }
+        if (flags->flagFound("savePatterns")) {
+            savePatterns = true;
+        }
+
+        if (loadingScenes && sceneID.empty()) { //THIS MUST BE AT THE END
+            std::cerr << "Missing sceneID flag!" << std::endl;
+            return -1;
         }
     } else {
         std::cerr << "Input error!" << std::endl;
@@ -165,7 +205,7 @@ int main(int argc, const char * argv[]) {
     std::vector<DBHistogram*>* histograms;
     std::vector<DBHistogram*>* landscapes;
     if (load) {
-        if (objectsAs != Constants::INDEX) user = new DBUser(userID);
+        if (objectsAs != Constants::INDEX && objectsAs != Constants::SCENE) user = new DBUser(userID);
         bool error = false;
         switch (objectsAs) {
             case Constants::PATTERN : {
@@ -219,6 +259,16 @@ int main(int argc, const char * argv[]) {
             }
             case Constants::INDEX : {
                 if (driver->retrieveSFBM(smatcher_id)) {
+                    std::cout << driver->lastMessageReceived << std::endl;
+                } else {
+                    std::cerr << driver->lastMessageReceived << std::endl;
+                    return -1;
+                }
+                break;
+            }
+            case Constants::SCENE : {
+                ImageInfo* scene;
+                if (driver->retrieveScene(&scene, sceneID)) {
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
                     std::cerr << driver->lastMessageReceived << std::endl;
@@ -288,12 +338,35 @@ int main(int argc, const char * argv[]) {
                 break;
             }
             case Constants::INDEX : {
-                if (driver->storeSFBM(smatcher_id)) {
+                if (driver->storeSFBM(smatcher_id, savePatterns)) {
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
                     std::cerr << driver->lastMessageReceived << std::endl;
                     return -1;
                 }
+                if (savePatterns) {
+                    loader = new XMLoader(path);
+                    patterns = loader->loadAsPattern();
+
+                    for (uint p = 0; p < patterns->size(); p++) {
+                        driver->storeNthPattern(smatcher_id, p, patterns->at(p));
+                        std::cout << driver->lastMessageReceived << std::endl;
+                    }
+                }
+            }
+            case Constants::SCENE : {
+                patterns = loader->loadAsPattern();
+                for (uint s = 0; s < patterns->size(); s++) {
+                    DBPattern* sceneAsDBPattern = patterns->at(s);
+                    ImageInfo* scene = XMLoader::dbpatternToImageInfo(sceneAsDBPattern);
+                    if (driver->storeScene(scene)) {
+                        std::cout << driver->lastMessageReceived << std::endl;
+                    } else {
+                        std::cerr << driver->lastMessageReceived << std::endl;
+                        return -1;
+                    }
+                }
+                break;
             }
         }
     } else {

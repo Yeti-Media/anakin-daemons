@@ -36,12 +36,15 @@
 			<Add directory="src" />
 			<Add directory="includes" />
 			<Add directory="/usr/include/postgresql" />
+			<Add directory="/usr/local/include/opencv2" />
 		</Compiler>
 		<Linker>
 			<Add library="/usr/lib/libpq.so" />
 			<Add library="/usr/lib/x86_64-linux-gnu/libboost_filesystem.so" />
 			<Add library="/usr/lib/x86_64-linux-gnu/libboost_iostreams.so" />
 			<Add library="/usr/lib/x86_64-linux-gnu/libboost_system.so" />
+			<Add library="/usr/local/lib/libopencv_core.so" />
+			<Add library="/usr/local/lib/libopencv_features2d.so" />
 		</Linker>
 		<Unit filename="includes/Constants.hpp" />
 		<Unit filename="includes/DBDriver.hpp" />
@@ -49,6 +52,7 @@
 		<Unit filename="includes/DBPattern.hpp" />
 		<Unit filename="includes/DBUser.hpp" />
 		<Unit filename="includes/Flags.hpp" />
+		<Unit filename="includes/ImageInfo.hpp" />
 		<Unit filename="includes/XMLoader.hpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Constants.cpp" />
@@ -57,6 +61,7 @@
 		<Unit filename="src/DBPattern.cpp" />
 		<Unit filename="src/DBUser.cpp" />
 		<Unit filename="src/Flags.cpp" />
+		<Unit filename="src/ImageInfo.cpp" />
 		<Unit filename="src/XMLoader.cpp" />
 		<Extensions>
 			<code_completion />

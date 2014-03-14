@@ -341,6 +341,45 @@ std::vector<int> DBDriver::getUserPatterns(std::string id, bool* error) {
     return pids;
 }
 
+std::vector<std::string> DBDriver::getUserPatternLabels(std::string id, bool* error) {
+    std::vector<std::string> labels(0);
+    std::vector<int> ids = getUserPatterns(id, error);
+    if (!(*error)) {
+        std::string in_set = "(";
+        for (uint i = 0; i < ids.size(); i++) {
+            std::string value = "";//\'";
+            value += std::to_string(ids.at(i));
+            //value += "\'";
+            in_set += value;
+            if (i+1 < ids.size()) {
+                in_set += ", ";
+            }
+        }
+        in_set += ")";
+        PGresult   *res;
+        std::string table;
+        table = table.append("public.\"").append(Constants::PATTERN_TABLE).append("\"");
+        std::string param_name_id = Constants::PATTERN_TABLE_ID;
+        std::string param_name_label = Constants::PATTERN_TABLE_LABEL;
+        std::string command = Constants::SELECT_COMMAND + param_name_label + " FROM " + table + " WHERE " + param_name_id + " IN " + in_set + " ORDER BY " + param_name_label + " ASC";
+        //std::cout << "command: " << command << std::endl;
+        res = PQexecParams(conn, command.c_str(), 0, NULL, NULL, NULL, NULL,0);
+        if (PQresultStatus(res) == PGRES_TUPLES_OK) {
+            int tuples = PQntuples(res);
+            for (int t = 0; t < tuples; t++) {
+                const char* value = PQgetvalue(res, t, 0);
+                std::string svalue(value);
+                labels.push_back(svalue);
+            }
+            *error = false;
+        } else {
+            this->lastMessageReceived = PQerrorMessage(conn);
+            *error = true;
+        }
+    }
+    return labels;
+}
+
 bool DBDriver::retrieveHistogram(std::string label, bool load, DBHistogram** result) {
     return retrieveHORL(label, Constants::HISTOGRAM, load, result);
 }
@@ -425,12 +464,17 @@ bool DBDriver::saveUserLandscapes(DBUser* u, bool saveNeededObjectsFirst) {
 
 
 //SERIALIZED FLANN BASED MATCHER
-bool DBDriver::storeSFBM(std::string smatcher_id, bool delete_files) {
-    if (checkConn()) {
+bool DBDriver::storeSFBM(std::string smatcher_id, bool checkExistence, bool delete_files) {
+    bool exists = false;
+    if (checkExistence && !sfbmExists(smatcher_id, &exists)) {
+        return false;
+    }
+    std::string index_filename = smatcher_id + ".if";
+    std::string matcher_filename = smatcher_id + ".xml";
+    bool everythingWentOk = exists;
+    if (!exists && checkConn()) {
         int index_id_value;
         int matcher_id_value;
-        std::string index_filename = smatcher_id + ".if";
-        std::string matcher_filename = smatcher_id + ".xml";
         if (!saveFileToDB(index_filename, &index_id_value)) {
             return false;
         }
@@ -454,17 +498,28 @@ bool DBDriver::storeSFBM(std::string smatcher_id, bool delete_files) {
             return false;
         }
         PQclear(res);
-        if (delete_files) {
-            bool indexFileDeleted = deleteFile(index_filename);
-            bool matcherFileDeleted = deleteFile(matcher_filename);
-            return indexFileDeleted && matcherFileDeleted;
-        }
-        this->lastMessageReceived = "succesfully uploaded " + smatcher_id + ".xml and " + index_filename + " to db";
-        return true;
-    } else {
-        return false;
+        everythingWentOk = true;
+        this->lastMessageReceived = "succesfully uploaded " + matcher_filename + " and " + index_filename + " to db";
     }
-    return false;
+    std::string insertionStatus = this->lastMessageReceived;
+    bool deletionWentOK = everythingWentOk;
+    std::string deletionErrors = "";
+    if (everythingWentOk && delete_files) {
+        bool indexFileDeleted = deleteFile(index_filename);
+        if (!indexFileDeleted) {
+            deletionErrors += this->lastMessageReceived;
+        }
+        bool matcherFileDeleted = deleteFile(matcher_filename);
+        if (!matcherFileDeleted) {
+            deletionErrors += (indexFileDeleted?"":"\n") + this->lastMessageReceived;
+        }
+        deletionWentOK = indexFileDeleted && matcherFileDeleted;
+    }
+    this->lastMessageReceived = insertionStatus;
+    if (!deletionWentOK) {
+        this->lastMessageReceived += "\ndeletion errors:\n" + deletionErrors;
+    }
+    return deletionWentOK;
 }
 
 bool DBDriver::retrieveSFBM(std::string smatcher_id) {
@@ -504,6 +559,197 @@ bool DBDriver::retrieveSFBM(std::string smatcher_id) {
     }
 }
 
+bool DBDriver::sfbmExists(std::string smatcher_id, bool * exists) {
+    if (checkConn()) {
+        PGresult   *res;
+        std::string sid = smatcher_id;
+        const char *paramValues[1] = {sid.c_str()};
+        std::string table;
+        table = table.append("public.\"").append(Constants::SMATCHER_TABLE).append("\"");
+        std::string param_name_id = Constants::SMATCHER_TABLE_ID;
+        std::string command = Constants::SELECT_ALL_COMMAND + table + " WHERE " + param_name_id + " = $1";
+        res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL, NULL,0);
+        if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+            this->lastMessageReceived = PQerrorMessage(conn);
+            PQclear(res);
+            return false;
+        }
+        *exists = (PQntuples(res) > 0);
+        PQclear(res);
+        this->lastMessageReceived = "index " + smatcher_id + ((*exists)?" already exists on db":" doesn't exists on db");
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool DBDriver::storeScene(ImageInfo* scene) {
+    if (checkConn()) {
+        std::string sdescriptors;
+        std::string sceneID = scene->getLabel();
+        cv::FileStorage fs_descs(sdescriptors, cv::FileStorage::WRITE | cv::FileStorage::MEMORY);
+        fs_descs << "descriptors" << scene->getDescriptors();
+        sdescriptors = fs_descs.releaseAndGetString();
+        //fs_descs.release();
+
+        std::string skeypoints;
+        cv::FileStorage fs_keypts(skeypoints, cv::FileStorage::WRITE | cv::FileStorage::MEMORY);
+        fs_keypts << "keypoints" << scene->getKeypoints();
+        //fs_keypts.release();
+        skeypoints = fs_keypts.releaseAndGetString();
+
+        PGresult   *res;
+        const char *paramValues[3] = {sceneID.c_str(), sdescriptors.c_str(), skeypoints.c_str()};
+        std::string table;
+        table = table.append("public.\"").append(Constants::SCENE_TABLE).append("\"");
+        std::string param_name_id = Constants::SCENE_TABLE_ID;
+        std::string param_name_desc = Constants::SCENE_TABLE_DESC;
+        std::string param_name_keypts = Constants::SCENE_TABLE_KEYPTS;
+        std::string command = Constants::INSERT_COMMAND + table + " (" + param_name_id + ", " + param_name_desc + ", " + param_name_keypts +")  VALUES ($1, $2, $3)";
+        res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL, NULL,0);
+        if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+            this->lastMessageReceived = PQerrorMessage(conn);
+            PQclear(res);
+            return false;
+        }
+        PQclear(res);
+        this->lastMessageReceived = "succesfully stored scene " + sceneID + " in db";
+        return true;
+    } else {
+        return false;
+    }
+    return false;
+}
+
+bool DBDriver::retrieveScene(ImageInfo** scene, std::string sceneID) {
+    if (checkConn()) {
+        PGresult   *res;
+        const char *paramValues[1] = {sceneID.c_str()};
+        std::string table;
+        table = table.append("public.\"").append(Constants::SCENE_TABLE).append("\"");
+        std::string param_name_id = Constants::SCENE_TABLE_ID;
+        std::string command = Constants::SELECT_ALL_COMMAND + table + " WHERE " + param_name_id + " = $1";
+        res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL, NULL,0);
+        if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+            this->lastMessageReceived = PQerrorMessage(conn);
+            PQclear(res);
+            return false;
+        }
+        if (PQntuples(res) == 0) {
+            this->lastMessageReceived = "No scene found with id: " + sceneID;
+            return false;
+        }
+        const char* scene_descriptors = PQgetvalue(res, 0, 1);
+        std::string scene_sdescriptors(scene_descriptors);
+        const char* scene_keypoints = PQgetvalue(res, 0, 2);
+        std::string scene_skeypoints(scene_keypoints);
+        PQclear(res);
+        cv::FileStorage fs_desc(scene_sdescriptors, cv::FileStorage::READ | cv::FileStorage::MEMORY);
+        cv::FileNode root_desc = fs_desc.root();
+        cv::FileStorage fs_keypts(scene_skeypoints, cv::FileStorage::READ | cv::FileStorage::MEMORY);
+        cv::FileNode root_keypts = fs_keypts.root();
+        cv::FileNode kps = root_keypts["keypoints"];
+
+        cv::Mat descriptors;
+        std::vector<cv::KeyPoint> keypoints;
+        root_desc["descriptors"] >> descriptors;
+        cv::read(kps, keypoints);
+        *scene = new ImageInfo(sceneID, keypoints, descriptors);
+        this->lastMessageReceived = "Scene " + sceneID + " loaded";
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool DBDriver::storeNthPattern(std::string smatcher_id, int pidx, std::string patternID) {
+    if (checkConn()) {
+        PGresult   *res;
+        std::string spidx = std::to_string(pidx);
+        const char *paramValues[3] = {smatcher_id.c_str(), spidx.c_str(), patternID.c_str()};
+        std::string table;
+        table = table.append("public.\"").append(Constants::SMATCHER_PATTERNS_TABLE).append("\"");
+        std::string param_name_id = Constants::SMATCHER_PATTERNS_TABLE_IID;
+        std::string param_name_pidx = Constants::SMATCHER_PATTERNS_TABLE_PIDX;
+        std::string param_name_pid = Constants::SMATCHER_PATTERNS_TABLE_PID;
+
+        std::string command = Constants::INSERT_COMMAND + table + " (" + param_name_id + ", " + param_name_pid + ", " + param_name_pidx +")  VALUES ($1, $3, $2)";
+        res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL, NULL,0);
+        if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+            this->lastMessageReceived = PQerrorMessage(conn);
+            PQclear(res);
+            return false;
+        }
+        PQclear(res);
+        this->lastMessageReceived = "succesfully stored " + spidx + "-th pattern(" + patternID + ") of index " + smatcher_id;
+        return true;
+    } else {
+        return false;
+    }
+    return false;
+}
+
+bool DBDriver::storeNthPattern(std::string smatcher_id, int pidx, DBPattern* p) {
+    if (checkConn()) {
+        if (!retrievePattern(p->getLabel())) {
+            int id;
+            if (!savePattern(p, &id)) {
+                return false;
+            }
+        }
+        return storeNthPattern(smatcher_id, pidx, p->getLabel());
+    } else {
+        return false;
+    }
+}
+
+bool DBDriver::retrieveNthPattern(std::string smatcher_id, int pidx, ImageInfo** pattern) {
+    if (checkConn()) {
+        PGresult   *res;
+        std::string spidx = std::to_string(pidx);
+        const char *paramValues[2] = {smatcher_id.c_str(), spidx.c_str()};
+        std::string table;
+        table = table.append("public.\"").append(Constants::SMATCHER_PATTERNS_TABLE).append("\"");
+        std::string param_name_id = Constants::SMATCHER_PATTERNS_TABLE_IID;
+        std::string param_name_pidx = Constants::SMATCHER_PATTERNS_TABLE_PIDX;
+        std::string param_name_pid = Constants::SMATCHER_PATTERNS_TABLE_PID;
+        std::string command = Constants::SELECT_COMMAND + param_name_pid +
+                                " FROM " + table +
+                                " WHERE " + param_name_id + " = $1" +
+                                " AND " + param_name_pidx + " = $2";
+        res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues, NULL, NULL,0);
+        if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+            this->lastMessageReceived = PQerrorMessage(conn);
+            PQclear(res);
+            return false;
+        }
+        if (PQntuples(res) == 0) {
+            this->lastMessageReceived = "No pattern found for smatcher : " + smatcher_id + " and index " + spidx;
+            return false;
+        }
+        const char* retrieved_pid = PQgetvalue(res, 0, 0);
+        std::string retrieved_spid(retrieved_pid);
+        PQclear(res);
+        DBPattern* dbp;
+        if (!retrievePattern(retrieved_spid, true, &dbp)) {
+            return false;
+        }
+
+        std::string xmlData = "<?xml version=\"1.0\"?>";
+        xmlData.append(dbp->getData());
+        ImageInfo *ii = new ImageInfo();
+        cv::FileStorage fstorage(xmlData.c_str(), cv::FileStorage::READ | cv::FileStorage::MEMORY);
+        cv::FileNode n = fstorage.root();
+        ii->read(n);
+        fstorage.release();
+
+        *pattern = ii;
+        this->lastMessageReceived = spidx + "-th Pattern of smatcher " + smatcher_id + " loaded";
+        return true;
+    } else {
+        return false;
+    }
+}
 
 //PRIVATE
 

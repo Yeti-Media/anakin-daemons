@@ -5,6 +5,8 @@
 #include "DBUser.hpp"
 #include "DBPattern.hpp"
 #include "DBHistogram.hpp"
+#include <opencv2/opencv.hpp>
+#include "ImageInfo.hpp"
 #include <string>
 
 namespace Anakin {
@@ -18,6 +20,7 @@ class DBDriver {
         bool saveUser(DBUser* u, bool complete=false);
         bool retrieveUser(std::string id, bool load = false, DBUser** result = NULL, bool full = false);
         std::vector<int> getUserPatterns(std::string id, bool* error);
+        std::vector<std::string> getUserPatternLabels(std::string id, bool* error);
         bool saveUserPattern(DBUser* u, DBPattern* p, bool saveNeededObjectsFirst=false);
         bool saveUserPatterns(DBUser* u, bool saveNeededObjectsFirst=false);
         std::vector<int> getUserHistograms(std::string id, bool* error);
@@ -39,8 +42,16 @@ class DBDriver {
         bool retrieveLandscape(int id, bool load = false, DBHistogram** result = NULL);
 
         //SERIALIZED FLANN BASED MATCHER
-        bool storeSFBM(std::string smatcher_id, bool delete_files=false);
+        bool storeSFBM(std::string smatcher_id, bool checkExistence=false, bool delete_files=false);
         bool retrieveSFBM(std::string smatcher_id);
+        bool sfbmExists(std::string smatcher_id, bool * exists);
+        bool storeNthPattern(std::string smatcher_id, int pidx, std::string patternID);
+        bool storeNthPattern(std::string smatcher_id, int pidx, DBPattern* p);
+        bool retrieveNthPattern(std::string smatcher_id, int pidx, ImageInfo** pattern);
+
+        //SCENE
+        bool storeScene(ImageInfo* scene);
+        bool retrieveScene(ImageInfo** scene, std::string sceneID);
 
         std::string lastMessageReceived;
     protected:

@@ -5,13 +5,14 @@
 #include "Constants.hpp"
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 namespace fs = boost::filesystem;
+#include <algorithm>
 
 using namespace Anakin;
 
 XMLoader::XMLoader(std::string path) {
     this->path = path;
     unsigned lastSeparator = path.find_last_of("/\\");
-    this->inputAsFolder = lastSeparator != std::string::npos;
+    this->inputAsFolder = lastSeparator != std::string::npos && lastSeparator == (path.size()-1);
 }
 
 std::vector<DBPattern*>* XMLoader::loadAsPattern() {
@@ -33,6 +34,17 @@ std::vector<DBHistogram*>* XMLoader::loadAsHistogram() {
 
 std::vector<DBHistogram*>* XMLoader::loadAsLandscape() {
     return loadAsHORL(true);
+}
+
+ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
+    std::string xmlData = "";
+    xmlData.append(dbp->getData());
+    ImageInfo *ii = new ImageInfo();
+    cv::FileStorage fstorage(xmlData.c_str(), cv::FileStorage::READ | cv::FileStorage::MEMORY);
+    cv::FileNode n = fstorage.root();
+    ii->read(n);
+    fstorage.release();
+    return ii;
 }
 
 std::string XMLoader::loadFile(const std::string filename) {
@@ -114,22 +126,25 @@ std::vector<std::string>* XMLoader::getFilePaths(char mode, bool reload) {
                 filepath = filepath.append("hsv/");
             }
             if(fs::exists( filepath )) {
+                std::vector<fs::path> filePaths;
+                std::copy(fs::directory_iterator(filepath), fs::directory_iterator(), std::back_inserter(filePaths));
+                std::sort(filePaths.begin(), filePaths.end());
+                std::vector<fs::path>::const_iterator fileItr(filePaths.begin());
+                std::vector<fs::path>::const_iterator endItr(filePaths.end());
 
-                fs::directory_iterator end_itr; // default construction yields past-the-end
-                for (fs::directory_iterator itr( filepath ); itr != end_itr; ++itr ) {
-
-                    if (!fs::is_directory(itr->status()) && hasEnding(itr->path().string(), ".xml")) {
+                while (fileItr != endItr) {
+                    if (!fs::is_directory(*fileItr) && hasEnding((*fileItr).string(), ".xml")) {
                         if (mode & Constants::COLOR) {
-                            cpaths->push_back(itr->path().string());
+                            cpaths->push_back((*fileItr).string());
                         } else if (mode & Constants::GRAY) {
-                            gpaths->push_back(itr->path().string());
+                            gpaths->push_back((*fileItr).string());
                         } else if (mode & Constants::HSV) {
-                            hpaths->push_back(itr->path().string());
+                            hpaths->push_back((*fileItr).string());
                         } else {
-                            ppaths->push_back(itr->path().string());
+                            ppaths->push_back((*fileItr).string());
                         }
                     }
-
+                    fileItr++;
                 }
             } else {
                 std::cout << "directory : " << filepath << " doesn't exist\n";

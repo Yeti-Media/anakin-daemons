@@ -3,6 +3,7 @@
 
 #include "DBHistogram.hpp"
 #include "DBPattern.hpp"
+#include "ImageInfo.hpp"
 #include <vector>
 
 namespace Anakin {
@@ -13,6 +14,7 @@ class XMLoader {
         std::vector<DBPattern*>* loadAsPattern();
         std::vector<DBHistogram*>* loadAsHistogram();
         std::vector<DBHistogram*>* loadAsLandscape();
+        static ImageInfo* dbpatternToImageInfo(DBPattern* dbp);
         static std::string loadFile(const std::string filename);
         static std::string getFilename (const std::string& str);
     protected:

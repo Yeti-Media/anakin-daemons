@@ -38,3 +38,13 @@ const std::string Constants::SMATCHER_TABLE = "SerializedMatcher";
 const std::string Constants::SMATCHER_TABLE_ID = "id";
 const std::string Constants::SMATCHER_TABLE_FBM_ID = "fbm_id";
 const std::string Constants::SMATCHER_TABLE_INDEX_ID = "index_id";
+
+const std::string Constants::SCENE_TABLE = "Scene";
+const std::string Constants::SCENE_TABLE_ID = "id";
+const std::string Constants::SCENE_TABLE_DESC = "descriptors";
+const std::string Constants::SCENE_TABLE_KEYPTS = "keypts";
+
+const std::string Constants::SMATCHER_PATTERNS_TABLE = "Smatcher_Patterns";
+const std::string Constants::SMATCHER_PATTERNS_TABLE_IID = "indexID";
+const std::string Constants::SMATCHER_PATTERNS_TABLE_PID = "patternID";
+const std::string Constants::SMATCHER_PATTERNS_TABLE_PIDX = "patternIDX";

@@ -111,7 +111,7 @@
 1390482338 /home/stein/Documents/ym/dbconnector/includes/DBHistogram.hpp
 	<string>
 
-1393640531 /home/stein/Documents/ym/dbconnector/includes/Constants.hpp
+1393718977 /home/stein/Documents/ym/dbconnector/includes/Constants.hpp
 	<string>
 
 1390471848 source:/home/stein/Documents/ym/dbconnector/src/DBPattern.cpp
@@ -138,20 +138,22 @@
 	<map>
 	<vector>
 
-1392351178 source:/home/stein/Documents/ym/dbconnector/src/XMLoader.cpp
+1394801590 source:/home/stein/Documents/ym/dbconnector/src/XMLoader.cpp
 	"XMLoader.hpp"
 	<iostream>
 	<fstream>
 	<sstream>
 	"Constants.hpp"
 	"boost/filesystem.hpp"
+	<algorithm>
 
-1390501961 /home/stein/Documents/ym/dbconnector/includes/XMLoader.hpp
+1393720009 /home/stein/Documents/ym/dbconnector/includes/XMLoader.hpp
 	"DBHistogram.hpp"
 	"DBPattern.hpp"
+	"ImageInfo.hpp"
 	<vector>
 
-1393641172 source:/home/stein/Documents/ym/dbconnector/main.cpp
+1394801588 source:/home/stein/Documents/ym/dbconnector/main.cpp
 	"DBDriver.hpp"
 	"DBUser.hpp"
 	"DBPattern.hpp"
@@ -159,15 +161,33 @@
 	"Flags.hpp"
 	"XMLoader.hpp"
 	"Constants.hpp"
+	"ImageInfo.hpp"
 	<iostream>
 
-1393640745 /home/stein/Documents/ym/dbconnector/includes/DBDriver.hpp
+1394780121 /home/stein/Documents/ym/dbconnector/includes/DBDriver.hpp
 	"libpq-fe.h"
 	"DBUser.hpp"
 	"DBPattern.hpp"
 	"DBHistogram.hpp"
+	<opencv2/opencv.hpp>
+	"ImageInfo.hpp"
 	<string>
 
-1393640531 source:/home/stein/Documents/ym/dbconnector/src/Constants.cpp
+1393713766 source:/home/stein/Documents/ym/dbconnector/src/Constants.cpp
 	"Constants.hpp"
+
+1388949935 /home/stein/Documents/ym/dbconnector/includes/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1394801578 source:/home/stein/Documents/ym/dbconnector/src/DBDriver.cpp
+	"DBDriver.hpp"
+	<iostream>
+	"Constants.hpp"
+	<string>
+	<libpq/libpq-fs.h>
+	<cstdio>
+	<fstream>
+
+1388994739 source:/home/stein/Documents/ym/dbconnector/src/ImageInfo.cpp
+	"ImageInfo.hpp"
 
