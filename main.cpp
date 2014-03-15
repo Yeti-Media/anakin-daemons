@@ -85,10 +85,10 @@ int main(int argc, const char * argv[]) {
     //I/O MODE
     flags->setNoValuesFlag("landscape");
     flags->setNoValuesFlag("histograms");
-    flags->setNoValuesFlag("patterns");
+    flags->setNoValuesFlag("matching");
     flags->setIncompatibility("landscape", "histograms");
-    flags->setIncompatibility("landscape", "patterns");
-    flags->setIncompatibility("histograms", "patterns");
+    flags->setIncompatibility("landscape", "matching");
+    flags->setIncompatibility("histograms", "matching");
     //I/O paths
     flags->setOptionalFlag("iFile");
     flags->setOptionalFlag("iFolder");
@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
     imodesLooseDeps->push_back("toJson");
     flags->setLooseDependencies("landscape", imodesLooseDeps);
     flags->setLooseDependencies("histograms", imodesLooseDeps);
-    flags->setLooseDependencies("patterns", imodesLooseDeps);
+    flags->setLooseDependencies("matching", imodesLooseDeps);
 
     //HISTOGRAMS/LANDSCAPE MODE
     flags->setNoValuesFlag("color");
@@ -118,9 +118,9 @@ int main(int argc, const char * argv[]) {
     modesLooseDeps->push_back("gray");
     flags->setLooseDependencies("landscape", modesLooseDeps);
     flags->setLooseDependencies("histograms", modesLooseDeps);
-    flags->setIncompatibility("color", "patterns");
-    flags->setIncompatibility("gray", "patterns");
-    flags->setIncompatibility("hsv", "patterns");
+    flags->setIncompatibility("color", "matching");
+    flags->setIncompatibility("gray", "matching");
+    flags->setIncompatibility("hsv", "matching");
     //LANDSCAPE EXTRA OPTIONS
     flags->setOptionalFlag("label");
     flags->setDependence("label", "landscape");
@@ -130,7 +130,7 @@ int main(int argc, const char * argv[]) {
     flags->setNoValuesFlag("yml");
     flags->setIncompatibility("xml", "yml");
     vector<string>* formatLooseDeps = new vector<string>(0);
-    formatLooseDeps->push_back("patterns");
+    formatLooseDeps->push_back("matching");
     formatLooseDeps->push_back("landscape");
     formatLooseDeps->push_back("histograms");
     //LOAD ON DEMAND
@@ -149,7 +149,7 @@ int main(int argc, const char * argv[]) {
         if (flags->flagFound("histograms")) {
             inputMode = HISTOGRAMS;
         }
-        if (flags->flagFound("patterns")) {
+        if (flags->flagFound("matching")) {
             inputMode = PATTERNS;
         }
         if (flags->flagFound("iFile")) {
