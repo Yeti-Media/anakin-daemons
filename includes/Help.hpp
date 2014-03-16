@@ -33,10 +33,9 @@ class Help {
                                     "./dbtest -scenes ((-path <folder|file>)|(-sceneID <ID> -load))					(3)\n"
                                     "./dbtest -index <ID UID> [(-load)|-savePatterns)]	                			(4)\n";
         std::string flags = "flags:\n\n"
-                                    "-user <ID UID> 		: 	sets the user ID, when used with -patterns, -landscapes or -histograms flags then the saving or loading of patterns,\n"
+                                    "-user <ID> 		: 	sets the user ID, when used with -patterns, -landscapes or -histograms flags then the saving or loading of patterns,\n"
                                     "                       landscapes or histograms will be related to that particular user. A user can be saved without specifying any other flag\n"
                                     "                       but a user can't be loaded, only it's patterns, landscapes or histograms.\n"
-                                    "                       UID value refers to the userID, this values is only needed when saving.\n"
                                     "-path <folder|file> 	:	sets the object or objects to be loaded (patterns, landscapes or histograms)\n"
                                     "-load			:	this will load from the db based on the rest of the flags\n"
                                     "-patterns		:	the objects to save or load will be patterns\n"
@@ -44,8 +43,9 @@ class Help {
                                     "-histograms		:	the objects to save or load will be histograms\n"
                                     "-scenes			:	the objects to save or load will be scenes\n"
                                     "-sceneID <ID>		:	sets the scene ID to load from the db\n"
-                                    "-index <ID>		:	if saving, there must be two files named ID+.xml and ID+.if, those files will be stored in the db\n"
+                                    "-index <ID UID>	:	if saving, there must be two files named ID+.xml and ID+.if, those files will be stored in the db\n"
                                     "                       if loading, then two files will be created ID+.xml and ID+.if\n"
+                                    "                       UID value refers to the userID, this values is only needed when saving.\n"
                                     "-savePatterns		:	this will save all the patterns defined by the flag -path and make a relation (indexID, label, index) for each of them\n";
         std::string examples = "examples:\n\n"
                                         "./dbtest -user J				*this will save user J to the db\n"
