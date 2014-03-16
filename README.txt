@@ -1,178 +1,102 @@
-******************************************************************************
-*   Anakin Back-end
-******************************************************************************
-*   by Yeti-Media, 30th Dec 2013
-*   /*COMPLETE*/
-******************************************************************************
+PatternMatching
 
-To build this proyect you will need CodeBlocks (IDE), opencv 2.4.7, boost, CMake to build opencv
+Starts N threads and process requests to add, delete or update trainers to the cache, and to process pattern matching requests. This application
+only uses data from the db.
 
-******************************************************************************
-* Repository can be found in : https://github.com/Yeti-Media/anakin-daemons
-******************************************************************************
+usage: ./anakin2 (input flags) (output flags) [-verbose]
 
-----------------------------------------------------------
-Running Anakin back-end:
-----------------------------------------------------------
-for help use -help
+input flags (use one of the following) :
 
-ocr, lanscape and histogram arguments
--s <path to scene file> : scene file refers to the image that will be tested
--S <path to scene folder> : will test all images inside a folder
--p <path to patterns folder> : patterns refer to images againts a scene will be tested
+-iConsole	:	uses console as input
+-iUDP <p>	:	uses a UDP socket listening to port p
+-iTCP <p>	:	uses a TCP socket listening to port p
+-iDTCP <p>	:	uses a TCP socket listening to port p that allows multiple requests,
+			uses <line> to separate each, line and <end> to mark the end of the message
 
-ocr, landscape and face common arguments
--show : this enables UI output
-	* when doing ocr detection this will show the input image and a green rectangle for each rectangle passed as argument
-	* when doing landscape detection this will show the histogram constructed from the patterns images with min, max and avg values
-	* when doing face detection this will show main and details features detected
+output flags (use one of the following) :
 
-histogram, landscape common arguments
--min <value> : this will set the minimum accepted value when testing a scene
-	* when doing histogram matching this value will refer to the minimum matching pertentage the scene and pattern histograms must have to be a 		  succesfull match
-	* when doing landscape matching this value will refer to the minimum percentage the values of the scene histogram matches the landscape 	  histogram
-		* if the matching use the min max values of the landscape histogram then a scene histogram value match if it's between the 			  corresponding lanscape min and max value
-		* if the matching use the avg values of the landscape histogram then a scene histogram value match if it's equal to the corresponding 			  landscape histogram avg value
+-oConsole	: 	uses console as output
+-oUDP <i> <p>	:	send output to IP i and port p using a UDP socket
+-oTCP <i> <p>	:	send output to IP i and port p using a TCP socket
+-oDTCP <i> <p>	:	send output to IP i and port p using a TCP socket
+			message lines are separated with <end> and end of message is marked with <end>
 
-template specific arguments
--mma <value> : this will set the minimum matches a pair of scene/pattern must have to be a succesfull match
--mr <min ratio> : filter matches where the distance ratio between nearest matches is greater than min ratio
+Requests :
 
-histogram specific arguments
--corr : will use correlation method when comparing histograms
--inter : will use intersection method when comparing histograms
+-cacheStatus -reqID <ID>					:	will return trainers cache status (trainers loaded and free cache space)
+-addIndexes -indexes <I1 I2 ... In> -reqID <ID>			:	will add trainers with ID = I1, I2, ... In to the cache
+-remIndexes -indexes <I1 I2 ... In> -reqID <ID>			:	will remove trainers with ID = I1, I2, ... In from the cache
+-updateIndexes -indexes <I1 I2 ... In> -reqID <ID>		:	will reload trainers with ID = I1, I2, ... In to the cache
+-pmatch -sceneID <SID> -indexes <I1 I2 ... In> -reqID <ID>	:	will load scene with id SID and search for patterns
+									using trainers with ID = I1, I2, ... In
 
-landscape specific arguments
--minMax(default value) : this will use the min values and max values of the histograms of the landscapes
--avg : this will use the average value of the landscapes histograms
--safeOffset <value> : when comparing histogram value x this will also compare with x+value and x-value
-   *when using min max values of the landscapes histogram, an x value from the scene histogram will match if x is in [min-value..max+value]
-   *when using average values of the landscapes histogram, an x value from the scene histogram will match if x is in [avg-value..avg+value]
--label <value> : this will set the landscape label to value
--color : will use color to make landscape and scene histograms
--gray : will use gray to make landscape and scene histograms
--hsv : will use hue and saturation to make landscape and scene histograms
+-reqID <ID>	: this is just to set an ID to every request
 
-NOTE: if there's neither -color, -gray or -hsv specified then the matching will be made using all three and taking the max value for each
 
-ocr specific arguments
--rois <p1x p1y p2x p2y>+ : will define rectangles in which ocr recognition will be executed
--mode <0-3> :  sets which engine to use
-   OEM_TESSERACT_ONLY(0)          : Run Tesseract only - fastest
-   OEM_CUBE_ONLY(1)               : Run Cube only - better accuracy, but slower
-   OEM_TESSERACT_CUBE_COMBINED(2) : Run both and combine results - best accuracy
-   OEM_DEFAULT(3)                 : Specify this mode when calling init_*(),
-                                    to indicate that any of the above modes
-                                    should be automatically inferred from the
-                                    variables in the language-specific config,
-                                    command-line configs, or if not specified
-                                    in any of the above should be set to the
-                                    default OEM_TESSERACT_ONLY.
--datapath <path> : the location of tessdata folder containing the trained data files
--lang <[~]<lang_value>[+[~]<lang_value>]*> : sets the languages to use, ~ is used to override the loading of a language
--clearEvery <times> : will clear tesseract memory every times recognitions
+Examples :
 
-face specific arguments
+-addIndexes -indexes 2 3 5 7 -reqID r001	(1)
+-remIndexes -indexes 7 -reqID r002		(2)
+-pmatch -sceneID 1 -indexes 3 -reqID r003	(3)
 
--detailsCC <path to xml>+ : classifier files used to detect details inside detected main features
--scaleFactor <value> : specify how much the image size is reduced at each image scale.(default 1.1)
--minNeighbors <value> :  specify how many neighbors each candidate rectangle should have to retain it.(default 3)
--minSize <width> <height> : minimum possible object size. Objects smaller than that are ignored.(default none)
--maxSize <width> <height> : Maximum possible object size. Objects larger than that are ignored.(default none)
+In (1) the trainers 2, 3, 5 and 7 are loaded into the cache. After (2) the trainer with ID 7 is no longer in the cache.
+(3) will search for pattern in the scene with ID 1 using trainer with ID 3
 
-for template matching use
 
-./anakin2 (-s <value>|-S <value>) -p <value> [template matching arguments]
+Notes :
 
-for histogram matching use
+1)	currently the cache arguments are hardcoded, and the cache size is 10
+2)	asking the cache for a trainer will always return a trainer (unless the ID is invalid), if the trainer is in the cache
+	then it will be returned immediately, if not then it will be loaded from the db.
+3)	if the cache is full and there's a request to load a trainer, then two things can happen:
+		a) if the life of the trainer with less life is bigger than the life of the new trainer,
+		   then the new trainer is not stored in the cache
+		b) the trainer with less life is dropped from the cache and the new one is stored
+4)	a pmatch request using a trainer ID that is not in the cache will cause the loading of that trainer
 
-./anakin2 (-s <value>|-S <value>) -p <value> (-h | -hColor | -hHSV | -hGray) [histogram matching arguments]
+Results (JSON) :
 
--hColor : will use color histograms for matching
--hGray : will use gray histograms for matching
--hHSV : will use hue and saturation histograms for matching
--h : will use all of the above histograms and use the maximum value obtained for matching
+root   -> requestID (string)
 
-landscape matching
+       -> category (string)
 
-./anakin2 -landscape (-s <value>|-S <value>) -p <value> [landscape matching arguments]
+       -> values (JSONArray)
 
-to use ocr detection use
+values (add, removed) :
 
-./anakin2 -ocr <path to image> [ocr arguments]
+root    -> index_added (long) (this value is -1 for remIndexes requests)
 
-to run ocr basic demo use
+        -> index_removed (long) (this value is -1 for addIndexes requests that didn't remove any trainer)
 
-./anakin2 -ocrDemo
+        -> cache_free_space (long)
 
-to run ocr advanced demo use
+values (update) :
 
-./anakin2 -ocrAdvDemo
+root    -> index_updated (long)
 
-for face detection use
-./anakin2 -face <path to image> -mainCC <path to xml> [face arguments]
--face <path to image> : will use face detection on the specified image
--mainCC <path to xml> : the classifier file used to detect main features
+values (status) :
 
-NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])
+root    -> cache_free_space (long)
 
-----------------------------------------------------------
-Results of Anakin back-end (JSON)
-----------------------------------------------------------
+        -> indexes (JSONArray)    -> index (long)
 
-when using keypoints
+values (pmatch) :
 
-(<matches>)*
+root    -> scene label (string)
 
-matches : 
+        -> values (JSONArray)    -> center   -> x (float)
+                            		     -> y (float)
 
-root	-> scene label (string)
+                		 -> pattern label (string)
 
-       	-> values (JSONArray)	-> <match>
+                		 -> keypoints (JSONArray)    -> pos      -> x (float)
+                                                                         -> y (float)
 
-match :
+                                            		     -> angle (float)
 
-root	-> center	-> x (float)
-     			-> y (float)
+                                            		     -> size (float)
 
-	-> pattern label (string)
+                                            		     -> response (float)
 
-	-> keypoints (JSONArray)	-> pos	-> x (float)
-                                             	-> y (float)
+Note: currently keypoints are disabled in the JSON output
 
-                                  	-> angle (float)
-
-                  			-> size (float)
-
-                                    	-> response (float)
-
-when using histograms and landscape
-
-(<matches>)*
-
-root	-> matches (JSONArray)	-> scene label (string)
-    				-> pattern/landscape label (string)
-    				-> percentage (float)
-
-when using ocr
-
-root    -> values (JSONArray)	-> text (string)
-
-when using face
-
-root    -> (<matches>)*
-
-matches :
-
-root    -> mainLabel (string)
-        -> rect ->  x (double)
-                ->  y (double)
-                ->  width (double)
-                ->  height (double)
-    	-> details (JSONArray)  ->  detailLabel (string)
-                                ->  rects (JSONAray)    ->  x (double)
-                                                        ->  y (double)
-                                                        ->  width (double)
-                                                        ->  height (double)
-
-NOTE: cv::Rect x,y,width and height are int but the JSON library only accepts float and double
