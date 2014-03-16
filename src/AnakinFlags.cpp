@@ -12,7 +12,6 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         flags->setNoValuesFlag("updateIndexes");
         flags->setNoValuesFlag("pmatch");
         flags->setOptionalFlag("sceneID");
-        flags->setOptionalFlag("scene");
         flags->setOptionalFlag("reqID");
         flags->setOptionalFlag("indexes");
         flags->setOverridingFlag("cacheStatus");
@@ -34,7 +33,6 @@ Flags* AnakinFlags::getFlags(bool verbose) {
 
         std::vector<std::string>* pmatchLooseDependences = new std::vector<std::string>();
         pmatchLooseDependences->push_back("sceneID");
-        pmatchLooseDependences->push_back("scene");
         flags->setLooseDependencies("pmatch", pmatchLooseDependences);
         flags->setDependence("pmatch", "indexes");
 

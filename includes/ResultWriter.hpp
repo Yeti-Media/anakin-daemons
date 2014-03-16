@@ -33,13 +33,13 @@ class ResultWriter {
 
         JSONValue* resultAsJSONValue(string label, vector<JSONValue*> values);
 
-        JSONValue* resultAsJSONValue(string smatcher_id_added, int cacheFreeSpace, string smatcher_id_removed);
+        JSONValue* resultAsJSONValue(int smatcher_id_added, int cacheFreeSpace, int smatcher_id_removed);
 
-        JSONValue* resultAsJSONValue(string smatcher_id_deleted, int cacheFreeSpace);
+        JSONValue* resultAsJSONValue(int smatcher_id_deleted, int cacheFreeSpace);
 
-        JSONValue* resultAsJSONValue(string smatcher_id_updated);
+        JSONValue* resultAsJSONValue(int smatcher_id_updated);
 
-        JSONValue* resultAsJSONValue(vector<string> smatchers_in_cache, int cacheFreeSpace);
+        JSONValue* resultAsJSONValue(vector<int> smatchers_in_cache, int cacheFreeSpace);
 
 };
 };

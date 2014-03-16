@@ -38,8 +38,7 @@ class CommandRunner {
         char action = 0;
         int mma = 8;
         float mr = 1.f / 1.5f;
-        std::string sceneID;
-        bool useSceneIDasPath = false;
+        int sceneID;
         std::vector<std::string> indexes;
         std::string reqID;
         std::string error;

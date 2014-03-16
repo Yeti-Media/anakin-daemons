@@ -20,6 +20,10 @@ ImageInfo::~ImageInfo() {
     //dtor
 }
 
+void ImageInfo::setLabel(std::string l) {
+    this->label = l;
+}
+
 string ImageInfo::getLabel() {
     return this->label;
 }
@@ -33,14 +37,11 @@ Mat ImageInfo::getDescriptors() {
 }
 
 void ImageInfo::write(FileStorage& fs) const {
-    fs << "label" << this->label;
     fs << "descriptors" << this->descriptors;
     fs << "keypoints" << this->keypoints;
 }
 
 void ImageInfo::read(const FileNode& node) {
-    string label;
-    label = (string) node["label"];
 
     vector<KeyPoint>* keypoints = new vector<KeyPoint>(0);
     FileNode kps = node["keypoints"];

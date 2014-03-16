@@ -90,7 +90,8 @@ using namespace std;
                 std::vector<Point2f> obj_points;
                 std::vector<Point2f> scene_points;
 
-                ImageInfo* pii = this->cache->loadPattern(this->detector->getID(), currentKey);
+                int trainerID = std::stoi(this->detector->getID());
+                ImageInfo* pii = this->cache->loadPattern(trainerID, currentKey);
                 //RichImg* pattern = this->patterns->at(currentKey);
                 RichImg* pattern = new RichImg(pii);
 

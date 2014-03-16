@@ -854,7 +854,7 @@
 1390602293 /home/stein/Documents/ym/PatternMatching/includes/Socket.hpp
 	<sstream>
 
-1393726693 /home/stein/Documents/ym/PatternMatching/includes/CommandRunner.hpp
+1394950188 /home/stein/Documents/ym/PatternMatching/includes/CommandRunner.hpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<string>
@@ -900,7 +900,7 @@
 	<Img.hpp>
 	<ImageInfo.hpp>
 
-1388949935 /home/stein/Documents/ym/PatternMatching/includes/ImageInfo.hpp
+1394936762 /home/stein/Documents/ym/PatternMatching/includes/ImageInfo.hpp
 	<opencv2/opencv.hpp>
 
 1386718570 /home/stein/Documents/ym/PatternMatching/includes/Match.hpp
@@ -920,7 +920,7 @@
 	"DBUser.hpp"
 	"DBPattern.hpp"
 
-1393720149 /home/stein/Documents/ym/PatternMatching/includes/DBDriver.hpp
+1394945274 /home/stein/Documents/ym/PatternMatching/includes/DBDriver.hpp
 	"libpq-fe.h"
 	"DBUser.hpp"
 	"DBPattern.hpp"
@@ -929,15 +929,15 @@
 	"ImageInfo.hpp"
 	<string>
 
-1390487452 /home/stein/Documents/ym/PatternMatching/includes/DBUser.hpp
+1394888076 /home/stein/Documents/ym/PatternMatching/includes/DBUser.hpp
 	"DBPattern.hpp"
 	"DBHistogram.hpp"
 	<vector>
 
-1390471869 /home/stein/Documents/ym/PatternMatching/includes/DBPattern.hpp
+1394922671 /home/stein/Documents/ym/PatternMatching/includes/DBPattern.hpp
 	<string>
 
-1390482338 /home/stein/Documents/ym/PatternMatching/includes/DBHistogram.hpp
+1394922805 /home/stein/Documents/ym/PatternMatching/includes/DBHistogram.hpp
 	<string>
 
 1392424031 /home/stein/Documents/ym/PatternMatching/includes/BasicImageProcessor.hpp
@@ -961,7 +961,7 @@
 	<string>
 	"JSON.h"
 
-1393729036 /home/stein/Documents/ym/PatternMatching/includes/ResultWriter.hpp
+1394947399 /home/stein/Documents/ym/PatternMatching/includes/ResultWriter.hpp
 	<JSON.h>
 	<JSONValue.h>
 	<opencv2/opencv.hpp>
@@ -1245,7 +1245,7 @@
 	<ServerSocket.hpp>
 	<boost/asio.hpp>
 
-1393731729 source:/home/stein/Documents/ym/PatternMatching/src/AnakinFlags.cpp
+1394950220 source:/home/stein/Documents/ym/PatternMatching/src/AnakinFlags.cpp
 	"AnakinFlags.hpp"
 
 1389659572 source:/home/stein/Documents/ym/PatternMatching/src/ATCPServerSocket.cpp
@@ -1275,7 +1275,7 @@
 	<iostream>
 	<vector>
 
-1394771802 source:/home/stein/Documents/ym/PatternMatching/src/BasicFlannDetector.cpp
+1394950007 source:/home/stein/Documents/ym/PatternMatching/src/BasicFlannDetector.cpp
 	"BasicFlannDetector.hpp"
 	<time.h>
 	<boost/foreach.hpp>
@@ -1285,16 +1285,16 @@
 	"BasicImageProcessor.hpp"
 	<Match.hpp>
 
-1393732653 source:/home/stein/Documents/ym/PatternMatching/src/CommandRunner.cpp
+1394950257 source:/home/stein/Documents/ym/PatternMatching/src/CommandRunner.cpp
 	"CommandRunner.hpp"
 	"JSONValue.h"
 	<algorithm>
 	<iterator>
 
-1393713766 source:/home/stein/Documents/ym/PatternMatching/src/Constants.cpp
+1394912737 source:/home/stein/Documents/ym/PatternMatching/src/Constants.cpp
 	"Constants.hpp"
 
-1393718977 /home/stein/Documents/ym/PatternMatching/includes/Constants.hpp
+1394912740 /home/stein/Documents/ym/PatternMatching/includes/Constants.hpp
 	<string>
 
 1390618144 source:/home/stein/Documents/ym/PatternMatching/src/DataOutput.cpp
@@ -1309,14 +1309,14 @@
 	<cstdio>
 	<fstream>
 
-1390482377 source:/home/stein/Documents/ym/PatternMatching/src/DBHistogram.cpp
+1394922804 source:/home/stein/Documents/ym/PatternMatching/src/DBHistogram.cpp
 	"DBHistogram.hpp"
 	"Constants.hpp"
 
-1390471848 source:/home/stein/Documents/ym/PatternMatching/src/DBPattern.cpp
+1394922670 source:/home/stein/Documents/ym/PatternMatching/src/DBPattern.cpp
 	"DBPattern.hpp"
 
-1390487452 source:/home/stein/Documents/ym/PatternMatching/src/DBUser.cpp
+1394922855 source:/home/stein/Documents/ym/PatternMatching/src/DBUser.cpp
 	"DBUser.hpp"
 
 1390619413 source:/home/stein/Documents/ym/PatternMatching/src/DelimiterBasedTCPSocket.cpp
@@ -1367,7 +1367,7 @@
 	"ImageDataInput.hpp"
 	"boost/filesystem.hpp"
 
-1388994739 source:/home/stein/Documents/ym/PatternMatching/src/ImageInfo.cpp
+1394936762 source:/home/stein/Documents/ym/PatternMatching/src/ImageInfo.cpp
 	"ImageInfo.hpp"
 
 1388530729 source:/home/stein/Documents/ym/PatternMatching/src/Img.cpp
@@ -1418,7 +1418,7 @@
 	"SFBMCache.hpp"
 	<tbb/concurrent_queue.h>
 
-1393726470 source:/home/stein/Documents/ym/PatternMatching/src/ResultWriter.cpp
+1394947544 source:/home/stein/Documents/ym/PatternMatching/src/ResultWriter.cpp
 	<ResultWriter.hpp>
 
 1390510866 source:/home/stein/Documents/ym/PatternMatching/src/RichImg.cpp
@@ -1459,20 +1459,22 @@
 	"Worker.hpp"
 	"CommandRunner.hpp"
 
-1390509553 source:/home/stein/Documents/ym/PatternMatching/src/XMLoader.cpp
+1394936822 source:/home/stein/Documents/ym/PatternMatching/src/XMLoader.cpp
 	"XMLoader.hpp"
 	<iostream>
 	<fstream>
 	<sstream>
 	"Constants.hpp"
 	"boost/filesystem.hpp"
+	<algorithm>
 
-1390501961 /home/stein/Documents/ym/PatternMatching/includes/XMLoader.hpp
+1394923041 /home/stein/Documents/ym/PatternMatching/includes/XMLoader.hpp
 	"DBHistogram.hpp"
 	"DBPattern.hpp"
+	"ImageInfo.hpp"
 	<vector>
 
-1393729100 /home/stein/Documents/ym/PatternMatching/includes/SFBMCache.hpp
+1394946894 /home/stein/Documents/ym/PatternMatching/includes/SFBMCache.hpp
 	"DBDriver.hpp"
 	"SerializableFlannBasedMatcher.hpp"
 	<map>
@@ -1483,7 +1485,7 @@
 	"JSONValue.h"
 	"ResultWriter.hpp"
 
-1393728991 source:/home/stein/Documents/ym/PatternMatching/src/SFBMCache.cpp
+1394949959 source:/home/stein/Documents/ym/PatternMatching/src/SFBMCache.cpp
 	"SFBMCache.hpp"
 	<boost/foreach.hpp>
 	<iostream>

@@ -28,24 +28,13 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache, st
                 action = CommandRunner::IDXSTATUS;
             }
             if (flags->flagFound("sceneID")) {
-                useSceneIDasPath = false;
                 values = flags->getFlagValues("sceneID");
                 if (values->size() != 1) {
                     error = "flag sceneID expects only one value";
                     inputError = true;
                     return;
                 }
-                sceneID = values->at(0);
-            }
-            if (flags->flagFound("scene")) {
-                useSceneIDasPath = true;
-                values = flags->getFlagValues("scene");
-                if (values->size() != 1) {
-                    error = "flag scene expects only one value";
-                    inputError = true;
-                    return;
-                }
-                sceneID = values->at(0);
+                sceneID = std::stoi(values->at(0));
             }
             if (flags->flagFound("reqID")) {
                 values = flags->getFlagValues("reqID");
@@ -64,9 +53,6 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache, st
                     return;
                 }
                 indexes.insert(indexes.begin(), values->begin(), values->end());
-//                std::cout << "indexes: ";
-//                std::copy(indexes.begin(), indexes.end(), std::ostream_iterator<std::string>(std::cout, " "));
-//                std::cout << std::endl;
             }
         } else {
             error = "input error!";
@@ -85,11 +71,9 @@ int CommandRunner::run() {
     switch (action) {
         case CommandRunner::ADDIDXS : {
             std::vector<JSONValue*> inserts;
-//            std::cout << "indexes to insert ";
-//            std::copy(indexes.begin(), indexes.end(), std::ostream_iterator<std::string>(std::cout, " "));
-//            std::cout << std::endl;
             for (uint i = 0; i < this->indexes.size(); i++) {
-                this->cache->loadMatcher(this->indexes.at(i));
+                int idxID = std::stoi(this->indexes.at(i));
+                this->cache->loadMatcher(idxID);
                 inserts.push_back(this->cache->getLastOperationResult());
             }
             this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_ADD, inserts));
@@ -99,7 +83,8 @@ int CommandRunner::run() {
             std::vector<JSONValue*> deletes;
             for (uint i = 0; i < this->indexes.size(); i++) {
                 std::string smatcherID = this->indexes.at(i);
-                this->cache->unloadMatcher(smatcherID);
+                int idxID = std::stoi(smatcherID);
+                this->cache->unloadMatcher(idxID);
                 deletes.push_back(this->cache->getLastOperationResult());
             }
             this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_DEL, deletes));
@@ -115,7 +100,8 @@ int CommandRunner::run() {
             std::vector<JSONValue*> updates;
             for (uint i = 0; i < this->indexes.size(); i++) {
                 std::string smatcherID = this->indexes.at(i);
-                this->cache->updateMatcher(smatcherID);
+                int idxID = std::stoi(smatcherID);
+                this->cache->updateMatcher(idxID);
                 updates.push_back(this->cache->getLastOperationResult());
             }
             this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_UPD, updates));
@@ -126,8 +112,9 @@ int CommandRunner::run() {
             ImageInfo* scene = this->cache->loadScene(sceneID);
             RichImg* rscene = new RichImg(scene);
             for (uint i = 0; i < this->indexes.size(); i++) {
-                std::string smatcher_id = this->indexes.at(i);
-                SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(smatcher_id);
+                std::string smatcherID = this->indexes.at(i);
+                int idxID = std::stoi(smatcherID);
+                SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(idxID);
                 if (this->processor == NULL) {
                     this->detector = new BasicFlannDetector(matcher, this->cache);
                     this->processor = new FlannMatchingProcessor(this->detector, this->rw);

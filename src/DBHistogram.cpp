@@ -3,8 +3,18 @@
 
 using namespace Anakin;
 
-DBHistogram::DBHistogram(std::string label, bool isLandscape) {
-    this->label = label;
+DBHistogram::DBHistogram(int id, int userID, bool isLandscape) {
+    this->id = id;
+    this->userID = userID;
+    this->mode = isLandscape? Constants::LANDSCAPE : Constants::HISTOGRAM;
+}
+
+DBHistogram::DBHistogram(int id, bool isLandscape) {
+    this->id = id;
+    this->mode = isLandscape? Constants::LANDSCAPE : Constants::HISTOGRAM;
+}
+
+DBHistogram::DBHistogram(bool isLandscape) {
     this->mode = isLandscape? Constants::LANDSCAPE : Constants::HISTOGRAM;
 }
 
@@ -46,18 +56,22 @@ std::string DBHistogram::getHSVData() const {
     }
 }
 
-std::string DBHistogram::getLabel() const {
-    return this->label;
-}
-
 char DBHistogram::getMode() const {
     return this->mode;
 }
 
-void DBHistogram::setID(int id) {
+int DBHistogram::getID() {
+    return this->id;
+}
+
+int DBHistogram::getUserID() {
+    return this->userID;
+}
+
+void DBHistogram::changeID(int id) {
     this->id = id;
 }
 
-int DBHistogram::getID() {
-    return this->id;
+void DBHistogram::changeUID(int user_id) {
+    this->userID = user_id;
 }

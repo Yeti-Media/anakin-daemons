@@ -9,6 +9,7 @@ class ImageInfo {
     public:
         ImageInfo(std::string label, std::vector<cv::KeyPoint> keypoints, cv::Mat descriptors);
         ImageInfo();
+        void setLabel(std::string l);
         std::string getLabel();
         std::vector<cv::KeyPoint> getKeypoints();
         cv::Mat getDescriptors();
