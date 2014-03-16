@@ -640,7 +640,7 @@ bool DBDriver::getPatternDescriptors(int id, std::string * data) {
     const char *paramValues[1] = {sid.c_str()};
     std::string table;
     table = table.append("public.\"").append(Constants::DESCRIPTORS_TABLE).append("\"");
-    std::string param_name_id = Constants::DESCRIPTORS_TABLE_ID;
+    std::string param_name_id = Constants::DESCRIPTORS_TABLE_PATTERN_ID;
     std::string param_name_data = Constants::DESCRIPTORS_TABLE_DATA;
     std::string command = Constants::SELECT_COMMAND +
                             param_name_data +
@@ -653,7 +653,7 @@ bool DBDriver::getPatternDescriptors(int id, std::string * data) {
         return false;
     }
     if (PQntuples(res) == 0) {
-        this->lastMessageReceived = "No Descriptors found with pattern: " + sid;
+        this->lastMessageReceived = "No Descriptors found for pattern: " + sid;
         return false;
     }
     const char* desc_data = PQgetvalue(res, 0, 0);
@@ -774,36 +774,6 @@ int DBDriver::getCategoryID(std::string name, bool * error) {
     PQclear(res);
     *error = false;
     return cid;
-}
-
-std::string DBDriver::getDescriptors(int pattern_id, bool * error) {
-    PGresult *res;
-    std::string spid = std::to_string(pattern_id);
-    const char *paramValues[1] = {spid.c_str()};
-    std::string tableName = Constants::DESCRIPTORS_TABLE;
-    std::string table;
-    table = table.append("public.\"").append(tableName).append("\"");
-    std::string param_name_id = Constants::DESCRIPTORS_TABLE_PATTERN_ID;
-    std::string param_name_data = Constants::DESCRIPTORS_TABLE_DATA;
-    std::string command = Constants::SELECT_COMMAND + param_name_data + " FROM " + table + "WHERE " + param_name_id + " = $1";
-    res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL, NULL,0);
-    if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
-        this->lastMessageReceived = PQerrorMessage(conn);
-        PQclear(res);
-        *error = true;
-        return "";
-    }
-    if (PQntuples(res) == 0) {
-        this->lastMessageReceived = "No descriptors found for pattern: " + spid;
-        *error = true;
-        return "";
-    }
-    const char* data = PQgetvalue(res, 0, 0);
-    std::string sdata(data);
-    this->lastMessageReceived = "Descriptors for pattern " + spid + " loaded";
-    PQclear(res);
-    *error = false;
-    return sdata;
 }
 
 bool DBDriver::checkConn() {

@@ -56,7 +56,6 @@ class DBDriver {
         bool getPatternBasicInfo(int id, int * user_id);
         bool updatePatternTrainerInfo(int id, int trainer_id, int position);
         int getCategoryID(std::string name, bool * error);
-        std::string getDescriptors(int pattern_id, bool * error);
         bool saveUserHORLS(DBUser* u, char mode, bool saveNeededObjectsFirst=false);
         std::vector<int> getUserHORLS(int user_id, char mode, bool* error);
         bool retrieveHORL(int id, char mode, bool load = false, DBHistogram** result = NULL);
