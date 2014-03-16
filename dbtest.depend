@@ -104,26 +104,26 @@
 
 1386310690 /usr/include/postgresql/libpq/libpq-fs.h
 
-1390482377 source:/home/stein/Documents/ym/dbconnector/src/DBHistogram.cpp
+1394922804 source:/home/stein/Documents/ym/dbconnector/src/DBHistogram.cpp
 	"DBHistogram.hpp"
 	"Constants.hpp"
 
-1390482338 /home/stein/Documents/ym/dbconnector/includes/DBHistogram.hpp
+1394922805 /home/stein/Documents/ym/dbconnector/includes/DBHistogram.hpp
 	<string>
 
-1393718977 /home/stein/Documents/ym/dbconnector/includes/Constants.hpp
+1394912740 /home/stein/Documents/ym/dbconnector/includes/Constants.hpp
 	<string>
 
-1390471848 source:/home/stein/Documents/ym/dbconnector/src/DBPattern.cpp
+1394922670 source:/home/stein/Documents/ym/dbconnector/src/DBPattern.cpp
 	"DBPattern.hpp"
 
-1390471869 /home/stein/Documents/ym/dbconnector/includes/DBPattern.hpp
+1394922671 /home/stein/Documents/ym/dbconnector/includes/DBPattern.hpp
 	<string>
 
-1390487452 source:/home/stein/Documents/ym/dbconnector/src/DBUser.cpp
+1394922855 source:/home/stein/Documents/ym/dbconnector/src/DBUser.cpp
 	"DBUser.hpp"
 
-1390487452 /home/stein/Documents/ym/dbconnector/includes/DBUser.hpp
+1394888076 /home/stein/Documents/ym/dbconnector/includes/DBUser.hpp
 	"DBPattern.hpp"
 	"DBHistogram.hpp"
 	<vector>
@@ -138,7 +138,7 @@
 	<map>
 	<vector>
 
-1394801590 source:/home/stein/Documents/ym/dbconnector/src/XMLoader.cpp
+1394936822 source:/home/stein/Documents/ym/dbconnector/src/XMLoader.cpp
 	"XMLoader.hpp"
 	<iostream>
 	<fstream>
@@ -147,13 +147,13 @@
 	"boost/filesystem.hpp"
 	<algorithm>
 
-1393720009 /home/stein/Documents/ym/dbconnector/includes/XMLoader.hpp
+1394923041 /home/stein/Documents/ym/dbconnector/includes/XMLoader.hpp
 	"DBHistogram.hpp"
 	"DBPattern.hpp"
 	"ImageInfo.hpp"
 	<vector>
 
-1394801588 source:/home/stein/Documents/ym/dbconnector/main.cpp
+1394931718 source:/home/stein/Documents/ym/dbconnector/main.cpp
 	"DBDriver.hpp"
 	"DBUser.hpp"
 	"DBPattern.hpp"
@@ -163,8 +163,9 @@
 	"Constants.hpp"
 	"ImageInfo.hpp"
 	<iostream>
+	"Help.hpp"
 
-1394780121 /home/stein/Documents/ym/dbconnector/includes/DBDriver.hpp
+1394925092 /home/stein/Documents/ym/dbconnector/includes/DBDriver.hpp
 	"libpq-fe.h"
 	"DBUser.hpp"
 	"DBPattern.hpp"
@@ -173,13 +174,13 @@
 	"ImageInfo.hpp"
 	<string>
 
-1393713766 source:/home/stein/Documents/ym/dbconnector/src/Constants.cpp
+1394912737 source:/home/stein/Documents/ym/dbconnector/src/Constants.cpp
 	"Constants.hpp"
 
-1388949935 /home/stein/Documents/ym/dbconnector/includes/ImageInfo.hpp
+1394936762 /home/stein/Documents/ym/dbconnector/includes/ImageInfo.hpp
 	<opencv2/opencv.hpp>
 
-1394801578 source:/home/stein/Documents/ym/dbconnector/src/DBDriver.cpp
+1394942207 source:/home/stein/Documents/ym/dbconnector/src/DBDriver.cpp
 	"DBDriver.hpp"
 	<iostream>
 	"Constants.hpp"
@@ -187,7 +188,14 @@
 	<libpq/libpq-fs.h>
 	<cstdio>
 	<fstream>
+	"XMLoader.hpp"
 
-1388994739 source:/home/stein/Documents/ym/dbconnector/src/ImageInfo.cpp
+1394936762 source:/home/stein/Documents/ym/dbconnector/src/ImageInfo.cpp
 	"ImageInfo.hpp"
+
+1394942828 /home/stein/Documents/ym/dbconnector/includes/Help.hpp
+	<string>
+
+1394924215 source:/home/stein/Documents/ym/dbconnector/src/Help.cpp
+	"Help.hpp"
 

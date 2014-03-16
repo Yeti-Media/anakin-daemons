@@ -9,8 +9,8 @@ namespace Anakin {
 
 class DBUser {
     public:
-        DBUser(std::string id);
-        std::string getID() const;
+        DBUser(int id);
+        int getID() const;
 
         std::vector<DBPattern*>* getPatterns() const;
         void addPattern(DBPattern* p);
@@ -22,7 +22,7 @@ class DBUser {
         void addLandscape(DBHistogram* l);
     protected:
     private:
-        std::string id;
+        int id;
         std::vector<DBPattern*>* patterns;
         std::vector<DBHistogram*>* histograms;
         std::vector<DBHistogram*>* landscapes;

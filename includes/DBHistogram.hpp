@@ -7,25 +7,28 @@ namespace Anakin {
 
 class DBHistogram {
     public:
-        DBHistogram(std::string label, bool isLandscape);
+        DBHistogram(int id, int userID, bool isLandscape);
+        DBHistogram(int id, bool isLandscape);
+        DBHistogram(bool isLandscape);
         void setColorData(std::string data);
         void setGrayData(std::string data);
         void setHSVData(std::string data);
-        std::string getLabel() const;
+        int getID();
+        int getUserID();
         std::string getColorData() const;
         std::string getGrayData() const;
         std::string getHSVData() const;
         char getMode() const;
-        void setID(int id);
-        int getID();
+        void changeID(int id);
+        void changeUID(int user_id);
     protected:
     private:
-        std::string label;
+        int id;
+        int userID;
         std::string colorData;
         std::string grayData;
         std::string hsvData;
         char mode;
-        int id;
 };
 };
 

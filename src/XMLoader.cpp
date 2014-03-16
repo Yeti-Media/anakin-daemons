@@ -20,9 +20,8 @@ std::vector<DBPattern*>* XMLoader::loadAsPattern() {
     std::vector<DBPattern*>* patterns = new std::vector<DBPattern*>(0);
     for (uint f = 0; f < files->size(); f++) {
         std::string filepath = files->at(f);
-        std::string label = getFilename(filepath);
         std::string data = loadFile(filepath);
-        DBPattern* pattern = new DBPattern(label, data);
+        DBPattern* pattern = new DBPattern(data);
         patterns->push_back(pattern);
     }
     return patterns;
@@ -40,10 +39,12 @@ ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
     std::string xmlData = "";
     xmlData.append(dbp->getData());
     ImageInfo *ii = new ImageInfo();
+    std::string label = std::to_string(dbp->getID());
     cv::FileStorage fstorage(xmlData.c_str(), cv::FileStorage::READ | cv::FileStorage::MEMORY);
     cv::FileNode n = fstorage.root();
     ii->read(n);
     fstorage.release();
+    ii->setLabel(label);
     return ii;
 }
 
@@ -54,14 +55,6 @@ std::string XMLoader::loadFile(const std::string filename) {
     buffer << t.rdbuf();
     data = buffer.str();
     return data;
-}
-
-std::string XMLoader::getFilename (const std::string& str) {
-    unsigned lastSeparator = str.find_last_of("/\\");
-    std::string file = lastSeparator == std::string::npos ? str : str.substr(lastSeparator+1);
-    unsigned lastDot = file.find_last_of(".");
-    std::string name = lastDot == std::string::npos ? file : file.substr(0, lastDot);
-    return name;
 }
 
 //PRIVATE
@@ -80,11 +73,10 @@ std::vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
         std::string cfilepath = cfiles->at(f);
         std::string gfilepath = gfiles->at(f);
         std::string hfilepath = hfiles->at(f);
-        std::string label = getFilename(cfilepath);
         std::string cdata = loadFile(cfilepath);
         std::string gdata = loadFile(gfilepath);
         std::string hdata = loadFile(hfilepath);
-        DBHistogram* horl = new DBHistogram(label, isLandscape);
+        DBHistogram* horl = new DBHistogram(isLandscape);
         horl->setColorData(cdata);
         horl->setGrayData(gdata);
         horl->setHSVData(hdata);

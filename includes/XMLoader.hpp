@@ -16,7 +16,6 @@ class XMLoader {
         std::vector<DBHistogram*>* loadAsLandscape();
         static ImageInfo* dbpatternToImageInfo(DBPattern* dbp);
         static std::string loadFile(const std::string filename);
-        static std::string getFilename (const std::string& str);
     protected:
     private:
         std::vector<std::string>* getFilePaths(char mode = 0, bool reload=false);

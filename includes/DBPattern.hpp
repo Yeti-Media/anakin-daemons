@@ -7,16 +7,19 @@ namespace Anakin {
 
 class DBPattern {
     public:
-        DBPattern(std::string label, std::string data);
-        std::string getLabel() const;
-        std::string getData() const;
-        void setID(int id);
+        DBPattern(int id, int userID, std::string data);
+        DBPattern(int userID, std::string data);
+        DBPattern(std::string data); //USE ONLY FOR SCENARIOS
         int getID();
+        int getUserID();
+        void changeID(int id);
+        void changeUID(int user_id);
+        std::string getData() const;
     protected:
     private:
-        std::string label;
-        std::string data;
         int id;
+        int userID;
+        std::string data;
 };
 };
 

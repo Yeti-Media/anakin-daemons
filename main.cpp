@@ -7,55 +7,26 @@
 #include "Constants.hpp"
 #include "ImageInfo.hpp"
 #include <iostream>
+#include "Help.hpp"
 
 using namespace Anakin;
 
 void showHelp() {
-    std::cout << "dbconnector help" << std::endl;
-    std::cout << "Usage:" << std::endl;
-    std::cout << "./dbtest -help" << std::endl;
-    std::cout << "./dbtest -user <ID> (-path <value> (-patterns|-landscapes|-histograms))" << std::endl;
-    std::cout << "./dbtest -index <smatcher_id> [-load]" << std::endl;
-    std::cout << std::endl;
-    std::cout << "-index <smatcher_id>: for loading there must be two files called <smatcher_id>.xml and <smatcher_id>.if" << std::endl;
-    std::cout << "                      for saving two files will be created, <smatcher_id>.xml and <smatcher_id>.if" << std::endl;
-    std::cout << "-user <ID>: the user to save, if a path is also provided then this user will be related to the objects in that path" << std::endl;
-    std::cout << "-path <value>: the path to the objects (patterns, landscapes o histograms) it must be a folder except for patterns where it can be a file" << std::endl;
-    std::cout << "-patterns: the objects found at the path will be treated as patterns" << std::endl;
-    std::cout << "-landscapes: the objects found at the path will be treated as landscapes" << std::endl;
-    std::cout << "-histograms: the objects found at the path will be treated as histograms" << std::endl;
-    std::cout << std::endl;
-    std::cout << "examples:" << std::endl;
-    std::cout << "./dbtest -user uibdybhiuyr3y3" << std::endl;
-    std::cout << "./dbtest -path google.xml -patterns" << std::endl;
-    std::cout << "./dbtest -path horls/ -landscapes" << std::endl;
-    std::cout << "    the folder structure inside the folder passed with the path flag when loading landscapes or histograms must be the following:" << std::endl;
-    std::cout << "        root /" << std::endl;
-    std::cout << "            pattern / (1)" << std::endl;
-    std::cout << "                color / (2)" << std::endl;
-    std::cout << "                gray  /" << std::endl;
-    std::cout << "                hsv   /" << std::endl;
-    std::cout << "            landscape / (3)" << std::endl;
-    std::cout << "                color /" << std::endl;
-    std::cout << "                gray  /" << std::endl;
-    std::cout << "                hsv   /" << std::endl;
-    std::cout << std::endl;
-    std::cout << "(1) : subfolder where histograms are stored" << std::endl;
-    std::cout << "(2) : subsubfolder where color version of histograms are stored" << std::endl;
-    std::cout << "(3) : subfolder where landscapes are stored" << std::endl;
+    Help* h = new Help();
+    std::cout << h->getFullHelp() << std::endl;
 }
 
 int main(int argc, const char * argv[]) {
     std::string path;
     bool saveObjects=false;
-    std::string userID;
+    int userID;
     bool saveUser=false;
     bool showhelp = false;
     char objectsAs = 0;
     bool load = false;
     std::string smatcher_id;
     bool savePatterns = false;
-    std::string sceneID;
+    int sceneID = -1;
     bool loadingScenes = false;
 
 
@@ -85,7 +56,7 @@ int main(int argc, const char * argv[]) {
     pathLooseDeps->push_back("savePatterns");
     pathLooseDeps->push_back("scenes");
     flags->setLooseDependencies("path", pathLooseDeps);
-    //flags->setIncompatibility("index", "path");
+    flags->setIncompatibility("index", "path");
     flags->setIncompatibility("patterns", "histograms");
     flags->setIncompatibility("patterns", "landscapes");
     flags->setIncompatibility("patterns", "scenes");
@@ -122,7 +93,7 @@ int main(int argc, const char * argv[]) {
             saveUser = true;
             values = flags->getFlagValues("user");
             if (values->size() == 1) {
-                userID = values->at(0);
+                userID = std::stoi(values->at(0));
             } else {
                 std::cerr << "param user need only one value\n";
                 return -1;
@@ -135,16 +106,6 @@ int main(int argc, const char * argv[]) {
                 path = values->at(0);
             } else {
                 std::cerr << "param path need only one value\n";
-                return -1;
-            }
-        }
-        if (flags->flagFound("index")) {
-            saveObjects = true;
-            values = flags->getFlagValues("index");
-            if (values->size() == 1) {
-                smatcher_id = values->at(0);
-            } else {
-                std::cerr << "param index need only one value\n";
                 return -1;
             }
         }
@@ -172,7 +133,7 @@ int main(int argc, const char * argv[]) {
         if (flags->flagFound("sceneID")) {
             values = flags->getFlagValues("sceneID");
             if (values->size() == 1) {
-                sceneID = values->at(0);
+                sceneID = std::stoi(values->at(0));
             } else {
                 std::cerr << "param sceneID need only one value\n";
                 return -1;
@@ -182,7 +143,21 @@ int main(int argc, const char * argv[]) {
             savePatterns = true;
         }
 
-        if (loadingScenes && sceneID.empty()) { //THIS MUST BE AT THE END
+        if (flags->flagFound("index")) {
+            saveObjects = true;
+            values = flags->getFlagValues("index");
+            if (values->size() == 1 && load) {
+                smatcher_id = values->at(0);
+            } else if (values->size() == 2 && !load) {
+                smatcher_id = values->at(0);
+                userID = std::stoi(values->at(1));
+            } else {
+                std::cerr << "param index need two values when saving and one value when loading\n";
+                return -1;
+            }
+        }
+
+        if (loadingScenes && sceneID == -1) { //THIS MUST BE AT THE END
             std::cerr << "Missing sceneID flag!" << std::endl;
             return -1;
         }
@@ -237,7 +212,7 @@ int main(int argc, const char * argv[]) {
                         std::cerr << driver->lastMessageReceived << std::endl;
                         return -1;
                     }
-                    std::cout << "loaded histogram with label : " << histogram->getLabel() << " and id : " << histogram->getID() << std::endl;
+                    std::cout << "loaded histogram : " << histogram->getID() << std::endl;
                 }
                 break;
             }
@@ -253,12 +228,13 @@ int main(int argc, const char * argv[]) {
                         std::cerr << driver->lastMessageReceived << std::endl;
                         return -1;
                     }
-                    std::cout << "loaded landscape with label : " << landscape->getLabel() << " and id : " << landscape->getID() << std::endl;
+                    std::cout << "loaded landscape : " << landscape->getID() << std::endl;
                 }
                 break;
             }
             case Constants::INDEX : {
-                if (driver->retrieveSFBM(smatcher_id)) {
+                int trainerID = std::stoi(smatcher_id);
+                if (driver->retrieveSFBM(trainerID)) {
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
                     std::cerr << driver->lastMessageReceived << std::endl;
@@ -295,9 +271,8 @@ int main(int argc, const char * argv[]) {
                     driver->saveUserPatterns(user, true);
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
-                    int id;
                     for (uint p = 0; p < patterns->size(); p++) {
-                        driver->savePattern(patterns->at(p), &id);
+                        driver->savePattern(patterns->at(p));
                         std::cout << driver->lastMessageReceived << std::endl;
                     }
                 }
@@ -312,9 +287,8 @@ int main(int argc, const char * argv[]) {
                     driver->saveUserHistograms(user, true);
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
-                    int id;
                     for (uint p = 0; p < histograms->size(); p++) {
-                        driver->saveHORL(histograms->at(p), &id);
+                        driver->saveHORL(histograms->at(p), true);
                         std::cout << driver->lastMessageReceived << std::endl;
                     }
                 }
@@ -329,37 +303,43 @@ int main(int argc, const char * argv[]) {
                     driver->saveUserLandscapes(user, true);
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
-                    int id;
                     for (uint p = 0; p < landscapes->size(); p++) {
-                        driver->saveHORL(landscapes->at(p), &id);
+                        driver->saveHORL(landscapes->at(p), true);
                         std::cout << driver->lastMessageReceived << std::endl;
                     }
                 }
                 break;
             }
             case Constants::INDEX : {
-                if (driver->storeSFBM(smatcher_id, savePatterns)) {
+                int trainer_id;
+                if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true, false)) {
                     std::cout << driver->lastMessageReceived << std::endl;
                 } else {
                     std::cerr << driver->lastMessageReceived << std::endl;
                     return -1;
                 }
                 if (savePatterns) {
-                    loader = new XMLoader(path);
-                    patterns = loader->loadAsPattern();
-
-                    for (uint p = 0; p < patterns->size(); p++) {
-                        driver->storeNthPattern(smatcher_id, p, patterns->at(p));
-                        std::cout << driver->lastMessageReceived << std::endl;
+                    bool error;
+                    std::vector<int> patterns = driver->getUserPatterns(userID, &error);
+                    if (error) {
+                        std::cerr << driver->lastMessageReceived << std::endl;
+                        return -1;
+                    }
+                    for (uint p = 0; p < patterns.size(); p++) {
+                        if (driver->storeNthPattern(trainer_id, p, patterns.at(p))) {
+                            std::cout << driver->lastMessageReceived << std::endl;
+                        } else {
+                            std::cerr << driver->lastMessageReceived << std::endl;
+                        }
                     }
                 }
+                break;
             }
             case Constants::SCENE : {
                 patterns = loader->loadAsPattern();
                 for (uint s = 0; s < patterns->size(); s++) {
                     DBPattern* sceneAsDBPattern = patterns->at(s);
-                    ImageInfo* scene = XMLoader::dbpatternToImageInfo(sceneAsDBPattern);
-                    if (driver->storeScene(scene)) {
+                    if (driver->storeScene(sceneAsDBPattern)) {
                         std::cout << driver->lastMessageReceived << std::endl;
                     } else {
                         std::cerr << driver->lastMessageReceived << std::endl;

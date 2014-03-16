@@ -19,50 +19,48 @@ class Constants {
         static const std::string INSERT_COMMAND;
         static const std::string SELECT_ALL_COMMAND;
         static const std::string SELECT_COMMAND;
+        static const std::string UPDATE_COMMAND;
 
         static const std::string USER_TABLE;
         static const std::string USER_TABLE_ID;
 
         static const std::string PATTERN_TABLE;
         static const std::string PATTERN_TABLE_ID;
-        static const std::string PATTERN_TABLE_LABEL;
-        static const std::string PATTERN_TABLE_DATA;
+        static const std::string PATTERN_TABLE_USER_ID;
+        static const std::string PATTERN_TABLE_TRAINER_ID;
+        static const std::string PATTERN_TABLE_CATEGORY_ID;
+        static const std::string PATTERN_TABLE_POSITION;
 
-        static const std::string HISTOGRAM_TABLE;
-        static const std::string LANDSCAPE_TABLE;
+        static const std::string HISTLAND_TABLE;
 
         static const std::string HISTLAND_TABLE_ID;
-        static const std::string HISTLAND_TABLE_LABEL;
         static const std::string HISTLAND_TABLE_CDATA;
         static const std::string HISTLAND_TABLE_GDATA;
         static const std::string HISTLAND_TABLE_HDATA;
+        static const std::string HISTLAND_TABLE_PATTERN_ID;
 
-        static const std::string RELATION_TABLE_USER_ID;
-        static const std::string RELATION_TABLE_PATTERN_ID;
-        static const std::string RELATION_TABLE_HISTOGRAM_ID;
-        static const std::string RELATION_TABLE_LANDSCAPE_ID;
-        static const std::string RELATION_TABLE_SMATCHER_ID;
-
-        static const std::string USER_PATTERNS_TABLE;
-        static const std::string USER_HISTOGRAMS_TABLE;
-        static const std::string USER_LANDSCAPES_TABLE;
-        static const std::string USER_SMATCHERS_TABLE;
-
-        static const std::string SMATCHER_TABLE;
-        static const std::string SMATCHER_TABLE_ID;
-        static const std::string SMATCHER_TABLE_FBM_ID;
-        static const std::string SMATCHER_TABLE_INDEX_ID;
+        static const std::string TRAINER_TABLE;
+        static const std::string TRAINER_TABLE_ID;
+        static const std::string TRAINER_TABLE_XML_ID;
+        static const std::string TRAINER_TABLE_IF_ID;
+        static const std::string TRAINER_TABLE_USER_ID;
 
         static const std::string SCENE_TABLE;
         static const std::string SCENE_TABLE_ID;
-        static const std::string SCENE_TABLE_DESC;
-        static const std::string SCENE_TABLE_KEYPTS;
+        static const std::string SCENE_TABLE_DATA;
 
-        static const std::string SMATCHER_PATTERNS_TABLE;
-        static const std::string SMATCHER_PATTERNS_TABLE_IID;
-        static const std::string SMATCHER_PATTERNS_TABLE_PID;
-        static const std::string SMATCHER_PATTERNS_TABLE_PIDX;
+        static const std::string DESCRIPTORS_TABLE;
+        static const std::string DESCRIPTORS_TABLE_ID;
+        static const std::string DESCRIPTORS_TABLE_DATA;
+        static const std::string DESCRIPTORS_TABLE_PATTERN_ID;
 
+        static const std::string CATEGORIES_TABLE;
+        static const std::string CATEGORIES_TABLE_ID;
+        static const std::string CATEGORIES_TABLE_NAME;
+
+        static const std::string CATEGORIES_MATCHING;
+        static const std::string CATEGORIES_COMPARISON;
+        static const std::string CATEGORIES_LANDSCAPES;
 
     protected:
     private:
