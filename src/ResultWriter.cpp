@@ -1,31 +1,73 @@
 #include <ResultWriter.hpp>
+#define LIGH_RESULTS 1
 
 using namespace Anakin;
 using namespace cv;
 using namespace std;
 
 
-wstring Anakin::outputResult(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
+const std::string ResultWriter::RW_PATTERN_MATCHING = "PATTERN";
+const std::string ResultWriter::RW_HISTOGRAM_MATCHING = "HISTOGRAM";
+const std::string ResultWriter::RW_LANDSCAPE_MATCHING = "LANDSCAPE";
+const std::string ResultWriter::RW_OCR = "OCR";
+const std::string ResultWriter::RW_FACE_DETECTION = "FACE_DETECTION";
+
+wstring ResultWriter::outputResult(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
     return resultAsJSONValue(center, label, matchedKeypoints)->Stringify().c_str();
 }
 
-wstring Anakin::outputResult(string label, vector<JSONValue*> values) {
+wstring ResultWriter::outputResult(string label, vector<JSONValue*> values) {
     return resultAsJSONValue(label, values)->Stringify().c_str();
 }
 
-wstring Anakin::outputResult(vector<HistMatch*>* histMatches) {
+wstring ResultWriter::outputResult(vector<HistMatch*>* histMatches) {
     return resultAsJSONValue(histMatches)->Stringify().c_str();
 }
 
-wstring Anakin::outputResult(vector<string>* ocrRecognizedText) {
+wstring ResultWriter::outputResult(vector<string>* ocrRecognizedText) {
     return resultAsJSONValue(ocrRecognizedText)->Stringify().c_str();
 }
 
-wstring Anakin::outputResult(vector<FaceMatch*>* matches) {
+wstring ResultWriter::outputResult(vector<FaceMatch*>* matches) {
     return resultAsJSONValue(matches)->Stringify().c_str();
 }
 
-JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
+wstring ResultWriter::output(char mode, string data, char colors) {
+    return resultAsJSONValue(mode, data, colors)->Stringify().c_str();
+}
+
+wstring ResultWriter::outputResult(string requestID, string category, vector<JSONValue*> jsonValues) {
+    return resultAsJSONValue(requestID, category, jsonValues)->Stringify().c_str();
+}
+
+JSONValue* ResultWriter::resultAsJSONValue(string requestID, string category, vector<JSONValue*> jsonValues) {
+    /*  Result as JSONObject
+
+        root    -> requestID (string)
+
+                -> category (string)
+
+                -> values (JSONArray)
+    */
+    JSONObject root;
+    wstringstream ws;
+    ws << requestID.c_str();
+	root[L"requestID"] = new JSONValue(ws.str());
+	wstringstream ys;
+    ys << category.c_str();
+    root[L"category"] = new JSONValue(ys.str());
+	JSONArray values;
+	for (uint v = 0; v < jsonValues.size(); v++) {
+		values.push_back(jsonValues.at(v));
+    }
+
+	root[L"values"] = new JSONValue(values);
+
+    JSONValue *value = new JSONValue(root);
+	return value;
+}
+
+JSONValue* ResultWriter::resultAsJSONValue(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
     /*  Result as JSONObject
 
         root    -> center   -> x (float)
@@ -56,7 +98,7 @@ JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoi
 	root[L"label"] = new JSONValue(ws.str());
 
 
-	for (int k = 0; k < matchedKeypoints.size(); k++) {
+	for (uint k = 0; k < matchedKeypoints.size() && !LIGH_RESULTS; k++) {
         KeyPoint current = matchedKeypoints[k];
         JSONObject keypoint;
         JSONObject pos;
@@ -75,7 +117,7 @@ JSONValue* Anakin::resultAsJSONValue(Point2f center, string label, vector<KeyPoi
 	return value;
 }
 
-JSONValue* Anakin::resultAsJSONValue(string label, vector<JSONValue*> jsonValues) {
+JSONValue* ResultWriter::resultAsJSONValue(string label, vector<JSONValue*> jsonValues) {
     /*  Result as JSONObject
 
         root    -> scene label (string)
@@ -88,7 +130,7 @@ JSONValue* Anakin::resultAsJSONValue(string label, vector<JSONValue*> jsonValues
 	root[L"label"] = new JSONValue(ws.str());
 	JSONArray values;
 
-	for (int v = 0; v < jsonValues.size(); v++) {
+	for (uint v = 0; v < jsonValues.size(); v++) {
 		values.push_back(jsonValues.at(v));
     }
 
@@ -96,11 +138,9 @@ JSONValue* Anakin::resultAsJSONValue(string label, vector<JSONValue*> jsonValues
 
     JSONValue *value = new JSONValue(root);
 	return value;
-
-	//wcout << root->Stringify().c_str() << "\n";
 }
 
-JSONValue* Anakin::resultAsJSONValue(vector<HistMatch*>* histMatches) {
+JSONValue* ResultWriter::resultAsJSONValue(vector<HistMatch*>* histMatches) {
     /*  Result as JSONObject
 
         root    -> matches (JSONArray)    -> scene label (string)
@@ -111,7 +151,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<HistMatch*>* histMatches) {
     */
     JSONObject root;
 	JSONArray matches;
-	for (int v = 0; v < histMatches->size(); v++) {
+	for (uint v = 0; v < histMatches->size(); v++) {
         wstringstream ws; wstringstream wp;
 		JSONObject matchJson;
         HistMatch* match = histMatches->at(v);
@@ -132,7 +172,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<HistMatch*>* histMatches) {
 	//wcout << root->Stringify().c_str() << "\n";
 }
 
-JSONValue* Anakin::resultAsJSONValue(vector<string>* ocrRecognizedText) {
+JSONValue* ResultWriter::resultAsJSONValue(vector<string>* ocrRecognizedText) {
     /*  Result as JSONObject
 
         root    -> values (JSONArray)    -> text (string)
@@ -140,7 +180,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<string>* ocrRecognizedText) {
     */
     JSONObject root;
 	JSONArray texts;
-	for (int v = 0; v < ocrRecognizedText->size(); v++) {
+	for (uint v = 0; v < ocrRecognizedText->size(); v++) {
         wstringstream ws;
 		JSONObject text;
         ws << ocrRecognizedText->at(v).c_str();
@@ -159,7 +199,7 @@ JSONValue* Anakin::resultAsJSONValue(vector<string>* ocrRecognizedText) {
 
 
 
-JSONValue* Anakin::resultAsJSONValue(FaceMatch* match) {
+JSONValue* ResultWriter::resultAsJSONValue(FaceMatch* match) {
     /*  Result as JSONObject
 
         root    -> mainLabel (string)
@@ -192,7 +232,7 @@ JSONValue* Anakin::resultAsJSONValue(FaceMatch* match) {
 	root[L"rect"] = new JSONValue(rect);
 
 	vector<pair<string, vector<Rect>*>*>* details = match->getDetails();
-	for (int d = 0; d < details->size(); d++) {
+	for (uint d = 0; d < details->size(); d++) {
         wstringstream wp;
 		JSONObject detail;
         pair<string, vector<Rect>*>* dets = details->at(d);
@@ -201,7 +241,7 @@ JSONValue* Anakin::resultAsJSONValue(FaceMatch* match) {
         wp << detailLabel.c_str();
         detail[L"detailLabel"] = new JSONValue(wp.str());
         JSONArray rects;
-        for (int r = 0; r < rectsVector->size(); r++) {
+        for (uint r = 0; r < rectsVector->size(); r++) {
             JSONObject jsonRect;
             Rect dRect = rectsVector->at(r);
             jsonRect[L"x"] = new JSONValue((double)dRect.x);
@@ -222,7 +262,7 @@ JSONValue* Anakin::resultAsJSONValue(FaceMatch* match) {
 	return value;
 }
 
-JSONValue* Anakin::resultAsJSONValue(vector<FaceMatch*>* matches) {
+JSONValue* ResultWriter::resultAsJSONValue(vector<FaceMatch*>* matches) {
     /*  Result as JSONObject
 
         root    -> matches (JSONArray) -> <see function above>
@@ -231,12 +271,52 @@ JSONValue* Anakin::resultAsJSONValue(vector<FaceMatch*>* matches) {
     JSONObject root;
     JSONArray jsonMatches;
 
-    for (int m = 0; m < matches->size(); m++) {
+    for (uint m = 0; m < matches->size(); m++) {
         FaceMatch* match = matches->at(m);
         jsonMatches.push_back(resultAsJSONValue(match));
     }
 
     root[L"matches"] = new JSONValue(jsonMatches);
+    JSONValue *value = new JSONValue(root);
+	return value;
+}
+
+JSONValue* ResultWriter::resultAsJSONValue(char mode, string data, char colors) {
+    /*  Result as JSONObject
+
+        root    -> type ("pattern" | "histogram" | "landscape")
+                -> colors (only if type != "pattern")   ->  color (bool)
+                                                        ->  gray (bool)
+                                                        ->  hsv (bool)
+                -> dataType ("YML" | "XML")
+                -> data (string)
+    */
+    JSONObject root;
+
+    if (mode & RW_PATTERNS) {
+        root[L"type"] = new JSONValue(L"pattern");
+    } else if (mode & RW_HISTOGRAMS) {
+        root[L"type"] = new JSONValue(L"histogram");
+    } else if (mode & RW_LANDSCAPE) {
+        root[L"type"] = new JSONValue(L"landscape");
+    }
+
+    if (mode & RW_HISTOGRAMS || mode & RW_LANDSCAPE) {
+        JSONObject jcolors;
+        bool color = colors & RW_COLOR;
+        bool gray = colors & RW_GRAY;
+        bool hsv = colors & RW_HSV;
+        jcolors[L"color"] = new JSONValue(color);
+        jcolors[L"gray"] = new JSONValue(gray);
+        jcolors[L"hsv"] = new JSONValue(hsv);
+        root[L"colors"] = new JSONValue(jcolors);
+    }
+
+    root[L"dataType"] = new JSONValue(L"YML");
+    wstringstream ws;
+    ws << data.c_str();
+    root[L"data"] = new JSONValue(ws.str());
+
     JSONValue *value = new JSONValue(root);
 	return value;
 }

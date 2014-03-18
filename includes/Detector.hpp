@@ -28,7 +28,7 @@ class Detector
         virtual std::vector<Anakin::Match>* findPatterns(Anakin::RichImg* scene) = 0;
         virtual void init() = 0;
     protected:
-        virtual bool findPattern(Anakin::RichImg* scene, Anakin::RichImg* pattern, Anakin::Match** match) = 0;
+        virtual bool findPattern(Anakin::RichImg* scene, Anakin::RichImg* pattern, Anakin::Match** match, std::vector<bool>* mask) = 0;
         virtual void cleanMatchedKeypoints(Anakin::Match* match) = 0;
         virtual bool refineMatchesWithHomography(
                                 const std::vector<cv::KeyPoint>& queryKeypoints,
@@ -38,7 +38,7 @@ class Detector
                                 cv::Mat& homography) = 0;
         virtual void getMatches(const cv::Mat& patternDescriptors,
                                 const cv::Mat& queryDescriptors,
-                                std::vector<cv::DMatch>& matches) = 0;
+                                std::vector<cv::DMatch>& matches, std::vector<bool>* mask) = 0;
         Detector();
         cv::Ptr<cv::DescriptorMatcher>  detector;
         std::vector<Anakin::RichImg>* patterns;

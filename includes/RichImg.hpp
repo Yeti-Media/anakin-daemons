@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <Img.hpp>
+#include <ImageInfo.hpp>
 
 namespace Anakin {
 
@@ -23,6 +24,12 @@ class RichImg {
                   cv::Ptr<cv::FeatureDetector>& detector,
                   cv::Ptr<cv::DescriptorExtractor>& extractor
         );
+
+        /**
+        *   Initializer:
+        *   constructor used to make a RichImg using only descriptors, keypoints, and a label
+        */
+        RichImg(ImageInfo* imgInfo);
 
         /**
         *   copy constructor
@@ -69,6 +76,8 @@ class RichImg {
         */
         Img* getImage();
 
+        ImageInfo* getImageInfo();
+
         /**
         *   class destructor
         */
@@ -83,6 +92,7 @@ class RichImg {
         cv::Mat descriptors;
         bool descriptorsCalculated = false;
         bool keypointsCalculated = false;
+        bool constructedWithImageInfo = false;
 };
 
 };

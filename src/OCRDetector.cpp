@@ -9,15 +9,27 @@ using namespace tesseract;
 
 TessBaseAPI *api;
 
-OCRDetector::OCRDetector(string lang, string imgPath) {
+OCRDetector::OCRDetector(std::string imgPath, std::string datapath, std::string lang, int mode) {
     this->lang = lang;
+    this->datapath = datapath;
+    switch (mode) {
+        case 0 : this->mode = OEM_TESSERACT_ONLY; break;
+        case 1 : this->mode = OEM_CUBE_ONLY; break;
+        case 2 : this->mode = OEM_TESSERACT_CUBE_COMBINED; break;
+        case 3 : this->mode = OEM_DEFAULT; break;
+    }
     this->imgPath = imgPath;
 }
 
 bool OCRDetector::init(bool loadImg) {
     api = new TessBaseAPI();
     const char * l = this->lang.c_str();
-    if (api->Init("/usr/src/tesseract-ocr/", l))  {
+    const char * dp = this->datapath.c_str();
+    if (!this->datapath.empty()) {
+        const char * tp = "TESSDATA_PREFIX";
+        setenv(tp, dp, 1);
+    }
+    if (api->Init(dp, l, this->mode))  {
         cout << "Could not initialize tesseract.\n";
         return false;
     }
@@ -148,7 +160,7 @@ vector<string>*  OCRDetector::detect(vector<pair<Point*, Point*>>* rectangles, b
 
     api->SetImage((uchar*)this->img.data, this->img.size().width, this->img.size().height, this->img.channels(), this->img.step1());
     int detections = 0;
-    for (int r = 0; r < rectangles->size(); r++) {
+    for (uint r = 0; r < rectangles->size(); r++) {
         Mat imgToShow = img.clone();
         pair<Point*, Point*> p = rectangles->at(r);
         Point p1 = *(p.first);
@@ -163,8 +175,8 @@ vector<string>*  OCRDetector::detect(vector<pair<Point*, Point*>>* rectangles, b
         double fontScale = 1;
         int thickness = 1;
 
-        int baseline=0;
-        Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
+        //int baseline=0;
+        //Size textSize = getTextSize(text, fontFace, fontScale, thickness, &baseline);
 
         Point textOrg(p1.x, p1.y-5);
 

@@ -17,6 +17,7 @@ class DataInput {
         virtual bool nextInput(Anakin::Img** output) = 0;
         virtual void reload() = 0;
         virtual ~DataInput() {}
+        virtual int imagesToLoad() {return -1;}
     protected:
     private:
 };

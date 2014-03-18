@@ -17,7 +17,7 @@ FaceDetector::FaceDetector(string mainCascadeClassifierData, vector<string>* det
     load(mainCascadeClassifierData, this->mainClassifier);
     this->mainLabel = getFilename(mainCascadeClassifierData);
     this->detailsLabels = new vector<string>(0);
-    for (int c = 0; c < detailsCascadeClassifierData->size(); c++) {
+    for (uint c = 0; c < detailsCascadeClassifierData->size(); c++) {
         CascadeClassifier* detailsClassifier = new CascadeClassifier();
         load(detailsCascadeClassifierData->at(c), detailsClassifier);
         this->detailsClassifiers->push_back(detailsClassifier);
@@ -32,12 +32,18 @@ void FaceDetector::load(string file, CascadeClassifier* classifier) {
 vector<FaceMatch*>* FaceDetector::detect(Mat image, vector<Rect>* mainDetections, vector<vector<Rect>*>* details, bool lookForDetails) {
     vector<FaceMatch*>* results = new vector<FaceMatch*>(0);
     detect(image, mainDetections);
-    for (int m = 0; m < mainDetections->size() && !(this->forceIgnoreDetails || !lookForDetails); m++) {
+    for (uint m = 0; m < mainDetections->size(); m++) {
         vector<pair<string, vector<Rect>*>*>* detailsResults = new vector<pair<string, vector<Rect>*>*>(0);
         vector<Rect>* detailsOffMain = new vector<Rect>(0);
-        for (int cc = 0; cc < this->detailsClassifiers->size(); cc++) {
-            Mat mainRoi = image(mainDetections->at(m));
-            detect(mainRoi, this->detailsClassifiers->at(cc), detailsOffMain);
+        for (uint cc = 0; cc < this->detailsClassifiers->size() && !(this->forceIgnoreDetails || !lookForDetails); cc++) {
+            Rect mainRect = mainDetections->at(m);
+            Mat mainRoi = image(mainRect);
+            Size mainSize(mainRect.width, mainRect.height);
+            resize(mainRoi, mainRoi, mainSize);
+            //namedWindow("face", CV_WINDOW_AUTOSIZE);
+            //imshow("face", mainRoi);
+            //waitKey();
+            detect_default(mainRoi, this->detailsClassifiers->at(cc), detailsOffMain);
             details->push_back(detailsOffMain);
             string label = this->detailsLabels->at(cc);
             pair<string, vector<Rect>*>* detailsResult = new pair<string, vector<Rect>*>(label, detailsOffMain);
@@ -55,7 +61,11 @@ void FaceDetector::detect(Mat image, vector<Rect>* mainDetections) {
 }
 
 void FaceDetector::detect(Mat image, CascadeClassifier* classifier, vector<Rect>* detections) {
-    classifier->detectMultiScale(image, *detections);
+    classifier->detectMultiScale(image, *detections, this->scaleFactor, this->minNeighbors, 0, this->minSize, this->maxSize);
+}
+
+void FaceDetector::detect_default(Mat image, CascadeClassifier* classifier, vector<Rect>* detections) {
+    classifier->detectMultiScale(image, *detections, this->scaleFactor, this->minNeighbors);
 }
 
 void FaceDetector::showDetections(cv::Mat image, vector<FaceMatch*>* matches) {
@@ -63,7 +73,7 @@ void FaceDetector::showDetections(cv::Mat image, vector<FaceMatch*>* matches) {
     int fontFace = FONT_HERSHEY_PLAIN;
     double fontScale = 1;
     int thickness = 1;
-    for (int m = 0; m < matches->size(); m++) {
+    for (uint m = 0; m < matches->size(); m++) {
         FaceMatch* match = matches->at(m);
         string mainLabel = match->getMain()->first;
         Rect rect = match->getMain()->second;
@@ -75,12 +85,12 @@ void FaceDetector::showDetections(cv::Mat image, vector<FaceMatch*>* matches) {
         putText(image, mainLabel, Point(p1.x, p1.y-5), fontFace, fontScale, Scalar(0,0,255), thickness, 8);
 
         vector<pair<string, vector<Rect>*>*>* details = match->getDetails();
-        for (int d = 0; d < details->size(); d++) {
+        for (uint d = 0; d < details->size(); d++) {
             pair<string, vector<Rect>*>* detail = details->at(d);
             string detailLabel = detail->first;
             vector<Rect>* dRects = detail->second;
-            for (int dr = 0; dr < dRects->size(); dr++) {
-                Rect dRect = dRects->at(d);
+            for (uint dr = 0; dr < dRects->size(); dr++) {
+                Rect dRect = dRects->at(dr);
                 Point dp1(p1.x+dRect.x, p1.y+dRect.y);
                 Point dp2(dp1.x+dRect.width, dp1.y+dRect.height);
 
@@ -92,6 +102,38 @@ void FaceDetector::showDetections(cv::Mat image, vector<FaceMatch*>* matches) {
     }
     imshow("detections", image);
     waitKey();
+}
+
+void FaceDetector::setScaleFactor(float value) {
+    this->scaleFactor = value;
+}
+
+void FaceDetector::setMinNeighbors(int value) {
+    this->minNeighbors = value;
+}
+
+void FaceDetector::setMinSize(Size value) {
+    this->minSize = value;
+}
+
+void FaceDetector::setMaxSize(Size value) {
+    this->maxSize = value;
+}
+
+float FaceDetector::getScaleFactor() {
+    return this->scaleFactor;
+}
+
+int FaceDetector::getMinNeighbors() {
+    return this->minNeighbors;
+}
+
+Size FaceDetector::getMinSize() {
+    return this->minSize;
+}
+
+Size FaceDetector::getMaxSize() {
+    return this->maxSize;
 }
 
 string FaceDetector::getFilename (const string& str) {

@@ -8,10 +8,27 @@ RichImg::RichImg(Img *img, cv::Ptr<cv::FeatureDetector>& detector, cv::Ptr<cv::D
     this->extractor = extractor;
 }
 
+RichImg::RichImg(ImageInfo* imgInfo) {
+    cv::Mat img = cv::Mat();
+    this->aimg = new Img(img, imgInfo->getLabel());
+    this->keypoints = imgInfo->getKeypoints();
+    this->descriptors = imgInfo->getDescriptors();
+    this->constructedWithImageInfo = true;
+    this->descriptorsCalculated = true;
+    this->keypointsCalculated = true;
+}
+
 RichImg::RichImg(const RichImg& other) {
     this->aimg = new Img(*(other.aimg));
-    this->detector = other.detector;
-    this->extractor = other.extractor;
+    if (other.constructedWithImageInfo) {
+        this->constructedWithImageInfo = true;
+        this->aimg = other.aimg;
+        this->keypoints = other.keypoints;
+        this->descriptors = other.descriptors;
+    } else {
+        this->detector = other.detector;
+        this->extractor = other.extractor;
+    }
 }
 
 RichImg* RichImg::makeNew(Img* img) {
@@ -26,9 +43,10 @@ std::vector<cv::KeyPoint> RichImg::getKeypoints() {
 }
 
 void RichImg::recalculateFeatures(std::vector<int> mask) {
+    if (this->constructedWithImageInfo) return;
     std::vector<cv::KeyPoint> newKeypoints;
     int removedKeypoints = 0;
-    for (int i = 0; i < this->keypoints.size(); i++) {
+    for (uint i = 0; i < this->keypoints.size(); i++) {
         if (mask[i] != 1) {
             newKeypoints.push_back(this->keypoints[i]);
         } else {
@@ -36,7 +54,7 @@ void RichImg::recalculateFeatures(std::vector<int> mask) {
         }
     }
     this->keypoints.clear();
-    for (int k = 0; k < newKeypoints.size(); k++) {
+    for (uint k = 0; k < newKeypoints.size(); k++) {
         this->keypoints.push_back(newKeypoints[k]);
     }
     this->extractor->compute(this->aimg->getGrayImg(), this->keypoints, this->descriptors);
@@ -44,8 +62,10 @@ void RichImg::recalculateFeatures(std::vector<int> mask) {
 }
 
 std::vector<cv::KeyPoint> RichImg::getFreshKeypoints() {
-    this->detector->detect(this->aimg->getGrayImg(), this->keypoints);
-    this->keypointsCalculated = true;
+    if (!this->constructedWithImageInfo) {
+        this->detector->detect(this->aimg->getGrayImg(), this->keypoints);
+        this->keypointsCalculated = true;
+    }
     return this->keypoints;
 }
 
@@ -60,12 +80,19 @@ cv::Mat RichImg::getDescriptors() {
 }
 
 cv::Mat RichImg::getFreshDescriptors() {
-    if (!this->keypointsCalculated) {
-        this->getFreshKeypoints();
+    if (!this->constructedWithImageInfo) {
+        if (!this->keypointsCalculated) {
+            this->getFreshKeypoints();
+        }
+        this->extractor->compute(this->aimg->getGrayImg(), this->keypoints, this->descriptors);
+        this->descriptorsCalculated = true;
     }
-    this->extractor->compute(this->aimg->getGrayImg(), this->keypoints, this->descriptors);
-    this->descriptorsCalculated = true;
     return this->descriptors;
+}
+
+ImageInfo* RichImg::getImageInfo() {
+    ImageInfo* ii = new ImageInfo(this->aimg->getLabel(), getFreshKeypoints(), getFreshDescriptors());
+    return ii;
 }
 
 Img* RichImg::getImage() {

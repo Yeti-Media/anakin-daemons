@@ -10,7 +10,7 @@ using namespace std;
 
 class Flags {
     public:
-        Flags(vector<string> *input);
+        Flags();
         bool flagFound(string flag);
 
         //SETTERS
@@ -22,7 +22,7 @@ class Flags {
         bool setLooseDependencies(string dependent, vector<string>* dependencies);
         bool setIncompatibility(string flag1, string flag2);
         void setVerbose(bool b);
-        void setMinCount(int val);
+        void setMinCount(uint val);
 
         //GETTERS
         vector<string>* getRequiredFlags();
@@ -30,9 +30,9 @@ class Flags {
         vector<string>* getOverridingFlags();
         vector<string>* getNoValuesFlags();
         vector<string>* getFlagValues(string flag);
-        int getMinCount();
+        uint getMinCount();
 
-        bool validateInput();
+        bool validateInput(vector<string> *input);
         bool isOverridingFlagFound();
     protected:
     private:
@@ -45,6 +45,7 @@ class Flags {
         bool checkDependencies(vector<string> flags);
         bool checkLooseDependencies(vector<string> flags);
         bool checkIncompatibilities(vector<string> flags);
+        void clean();
 
         //FIELDS
         vector<string> input;
@@ -58,7 +59,7 @@ class Flags {
         vector<string> foundFlags;
         bool overridingFlagFound = false;
         bool verbose = false;
-        int minCount;
+        uint minCount;
 };
 
 };

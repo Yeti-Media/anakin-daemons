@@ -5,12 +5,13 @@
 #include <HistMatch.hpp>
 #include <RichImg.hpp>
 #include <Histogram.hpp>
+#include <HistogramsIO.hpp>
 
 namespace Anakin {
 
 class HistogramComparator {
     public:
-        HistogramComparator(Anakin::DataInput* input, std::vector<Anakin::RichImg> patterns);
+        HistogramComparator(Anakin::DataInput* input, std::vector<Anakin::RichImg*> patterns, HistogramsIO* io=0);
         std::vector<Anakin::HistMatch*>* compareHistograms(float minValue, char mode);
         std::vector<Anakin::HistMatch*>* compareHistogramsMinMax(Anakin::Histogram* histogram, float minValue, char mode, float safeOffset=0);
         Anakin::Histogram* train_minMax(char mode, std::string label, bool showHist);
@@ -29,14 +30,22 @@ class HistogramComparator {
         void draw_hist(Histogram* histogram, bool minMax);
         void draw_hist(std::vector<cv::Mat>* hists, std::vector<int>* bins);
         void drawDottedLine(cv::Mat img, cv::Point start, cv::Point end, cv::Scalar color, int solidPixels=3, int space=4);
-        double compareUsingColor(Anakin::Img* scene, Anakin::Img* pattern, int method);
-        double compareUsingGray(Anakin::Img* scene, Anakin::Img* pattern, int method);
-        double compareUsingHSV(Anakin::Img* scene, Anakin::Img* pattern, int method);
+        double compareUsingColor(Anakin::Img* scene, Anakin::Img* pattern, int method); //DELETE
+        double compareUsingGray(Anakin::Img* scene, Anakin::Img* pattern, int method);  //DELETE
+        double compareUsingHSV(Anakin::Img* scene, Anakin::Img* pattern, int method);   //DELETE
+        double compare(Histogram* scene, Histogram* pattern, int method);
+        Histogram* createColorHistogram(Anakin::Img* img);
+        Histogram* createGrayHistogram(Anakin::Img* img);
+        Histogram* createHSVHistogram(Anakin::Img* img);
         double compHistMinMaxColor(Anakin::Histogram* histogram, Anakin::Img* scene, float safeOffset=0, bool useMinMax=true);
         double compHistMinMaxGray(Anakin::Histogram* histogram, Anakin::Img* scene, float safeOffset=0, bool useMinMax=true);
         double compHistMinMaxHSV(Anakin::Histogram* histogram, Anakin::Img* scene, float safeOffset=0, bool useMinMax=true);
         Anakin::DataInput* input;
-        std::vector<Anakin::RichImg> patterns;
+        std::vector<Anakin::RichImg*> patterns;
+        HistogramsIO* io;
+        bool save = false;
+        bool load = false;
+        bool ioPresent = false;
 };
 
 };
