@@ -38,15 +38,15 @@
 			<Add directory="/usr/local/include/opencv2" />
 		</Compiler>
 		<Linker>
-			<Add library="/usr/local/lib/libopencv_core.so" />
-			<Add library="/usr/local/lib/libopencv_features2d.so" />
-			<Add library="/usr/local/lib/libopencv_contrib.so" />
-			<Add library="/usr/local/lib/libopencv_imgproc.so" />
-			<Add library="/usr/lib/x86_64-linux-gnu/libboost_system.so" />
-			<Add library="/usr/local/lib/libopencv_nonfree.so" />
-			<Add library="/usr/local/lib/libopencv_highgui.so" />
-			<Add library="/usr/lib/x86_64-linux-gnu/libboost_filesystem.so" />
-			<Add library="/usr/lib/x86_64-linux-gnu/libboost_iostreams.so" />
+			<Add library="libopencv_core" />
+			<Add library="libopencv_features2d" />
+			<Add library="libopencv_contrib" />
+			<Add library="libopencv_imgproc" />
+			<Add library="libboost_system" />
+			<Add library="libopencv_nonfree" />
+			<Add library="libopencv_highgui" />
+			<Add library="libboost_filesystem" />
+			<Add library="libboost_iostreams" />
 			<Add directory="obj" />
 		</Linker>
 		<Unit filename="includes/DataInput.hpp" />

@@ -85,7 +85,9 @@ int main(int argc, const char * argv[]) {
     //I/O MODE
     flags->setNoValuesFlag("landscape");
     flags->setNoValuesFlag("histograms");
-    flags->setNoValuesFlag("matching");
+
+
+     flags->setNoValuesFlag("matching");
     flags->setIncompatibility("landscape", "histograms");
     flags->setIncompatibility("landscape", "matching");
     flags->setIncompatibility("histograms", "matching");

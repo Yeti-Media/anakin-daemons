@@ -140,3 +140,144 @@
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 
+1389137549 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/Img.cpp
+	"Img.hpp"
+
+1389137549 /home/nicolas/dev/projects/rubix/anakin_processors/includes/Img.hpp
+	<opencv2/opencv.hpp>
+
+1389137549 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/JSON.cpp
+	"JSON.h"
+
+1389137549 /home/nicolas/dev/projects/rubix/anakin_processors/includes/JSON.h
+	<vector>
+	<string>
+	<map>
+	<cstring>
+	<cstdlib>
+	<wctype.h>
+	<wchar.h>
+	"JSONValue.h"
+
+1388081318 /home/nicolas/dev/projects/rubix/anakin_processors/includes/JSONValue.h
+	<vector>
+	<string>
+	"JSON.h"
+
+1389137549 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/JSONValue.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<math.h>
+	"JSONValue.h"
+
+1389137549 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/SingleImageDataInput.cpp
+	"SingleImageDataInput.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
+1389137549 /home/nicolas/dev/projects/rubix/anakin_processors/includes/SingleImageDataInput.hpp
+	<DataInput.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/DataInput.hpp
+	"Img.hpp"
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/Flags.cpp
+	"Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/Flags.hpp
+	<map>
+	<vector>
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/Histogram.cpp
+	"Histogram.hpp"
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/Histogram.hpp
+	<opencv2/opencv.hpp>
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/HistogramComparator.cpp
+	"HistogramComparator.hpp"
+	<DataInput.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/HistogramComparator.hpp
+	<Img.hpp>
+	<RichImg.hpp>
+	<Histogram.hpp>
+	<HistogramsIO.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/RichImg.hpp
+	<opencv2/opencv.hpp>
+	<Img.hpp>
+	<ImageInfo.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/HistogramsIO.hpp
+	<opencv2/opencv.hpp>
+	<Histogram.hpp>
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/HistogramsIO.cpp
+	"HistogramsIO.hpp"
+	<ResultWriter.hpp>
+	"boost/filesystem.hpp"
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/ResultWriter.hpp
+	<JSON.h>
+	<JSONValue.h>
+	<string>
+	<sstream>
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/ImageDataInput.cpp
+	"ImageDataInput.hpp"
+	"boost/filesystem.hpp"
+	<algorithm>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/ImageDataInput.hpp
+	<DataInput.hpp>
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/ImageInfo.cpp
+	"ImageInfo.hpp"
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/PatternLoader.cpp
+	<PatternLoader.hpp>
+	<ResultWriter.hpp>
+
+1395344477 /home/nicolas/dev/projects/rubix/anakin_processors/includes/PatternLoader.hpp
+	<DataInput.hpp>
+	<RichImg.hpp>
+	<opencv2/opencv.hpp>
+	<ImageInfo.hpp>
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/ResultWriter.cpp
+	<ResultWriter.hpp>
+
+1395344477 source:/home/nicolas/dev/projects/rubix/anakin_processors/src/RichImg.cpp
+	<RichImg.hpp>
+
+1395353563 source:/home/nicolas/dev/projects/rubix/anakin_processors/main.cpp
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	<ImageDataInput.hpp>
+	<PatternLoader.hpp>
+	<SingleImageDataInput.hpp>
+	<HistogramComparator.hpp>
+	<Flags.hpp>
+	<Histogram.hpp>
+	<HistogramsIO.hpp>
+
