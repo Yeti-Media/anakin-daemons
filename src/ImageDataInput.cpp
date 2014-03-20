@@ -23,9 +23,9 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
     cv::Mat nextMat;
     std::string label;
     if (this->loadOnDemand) {
-        if (loadedFiles > 0 && (loadedFiles % 1000 == 0)) {
-            std::cout << "\n1k files loaded, total loaded files : " << loadedFiles << std::endl;
-        }
+//        if (loadedFiles > 0 && (loadedFiles % 1000 == 0)) {
+//            std::cout << "\n1k files loaded, total loaded files : " << loadedFiles << std::endl;
+//        }
         if (nextFile(&nextMat, &label)) {
             Img* nextImg = new Img(nextMat, label);
             *output = nextImg;
@@ -66,9 +66,9 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
         int idx = 0;
         fs::directory_iterator end_itr; // default construction yields past-the-end
         for (fs::directory_iterator itr( imagesFolder ); itr != end_itr; ++itr ) {
-            if (loadedFiles > 0 && (loadedFiles % 1000 == 0)) {
-                std::cout << "1k files loaded, total loaded files : " << loadedFiles << std::endl;
-            }
+//            if (loadedFiles > 0 && (loadedFiles % 1000 == 0)) {
+//                std::cout << "1k files loaded, total loaded files : " << loadedFiles << std::endl;
+//            }
             if (!fs::is_directory(itr->status())) {
                 //std::cout << "Loading image : " << itr->path().c_str() << "\n";
                 cv::Mat img = cv::imread(itr->path().c_str());
@@ -89,7 +89,7 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
         std::cerr << "directory : " << imagesFolder << " doesn't exist\n";
         exit(-1);
     }
-    std::cout << "total loaded files : " << loadedFiles << std::endl;
+    //std::cout << "total loaded files : " << loadedFiles << std::endl;
 }
 
 void ImageDataInput::initializeIterator() {
@@ -106,7 +106,7 @@ bool ImageDataInput::nextFile(cv::Mat* imat, std::string * label) {
     std::vector<fs::path>::const_iterator end_itr(filePaths.end());
     if (di != end_itr) {
         if (!fs::is_directory(*di)) {
-            std::cout << "reading " << *di << std::endl;
+            //std::cout << "reading " << *di << std::endl;
             cv::Mat img = cv::imread((*di).string().c_str());
             if (!img.data) {
                 std::cerr << "Error loading image : " << *di << "\n";
@@ -116,7 +116,7 @@ bool ImageDataInput::nextFile(cv::Mat* imat, std::string * label) {
             *label = (*di).string();
             (*this->fileItr)++;
         } else {
-            std::cout << "directory found" << std::endl;
+            //std::cout << "directory found" << std::endl;
             (*this->fileItr)++;
             return nextFile(imat, label);
         }

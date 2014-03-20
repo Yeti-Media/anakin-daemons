@@ -99,7 +99,7 @@ void HistogramsIO::loadData(vector<Histogram*>* data, string folder) {
         }
 
     } else {
-        std::cout << "HistogramsIO#loadData : directory : " << folder << " doesn't exist\n";
+        std::cerr << "HistogramsIO#loadData : directory : " << folder << " doesn't exist\n";
         exit(-1);
     }
 }
