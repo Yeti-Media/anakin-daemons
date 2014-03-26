@@ -13,6 +13,14 @@ or histograms.
 
 (4) save and load serialized matchers
 
+
+the following commands must be runned from the bin/Debug or bin/Release folders (just once per session)
+
+. ./../../createDBENV.sh
+export LD_LIBRARY_PATH=../../lib/
+
+or you can just export the all values to bash config
+
 usage:
 
 ./dbtest -user <ID> [((-path <folder|file>) | -load) (-patterns|-landscapes|-histograms)] 	(1)
