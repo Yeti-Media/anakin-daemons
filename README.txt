@@ -3,6 +3,13 @@ PatternMatching
 Starts N threads and process requests to add, delete or update trainers to the cache, and to process pattern matching requests. This application
 only uses data from the db.
 
+the following commands must be runned from the bin/Debug or bin/Release folders (just once per session)
+
+. ./../../createDBENV.sh
+export LD_LIBRARY_PATH=../../lib/
+
+or you can just export the all values to bash config
+
 usage: ./anakin2 (input flags) (output flags) [-verbose]
 
 input flags (use one of the following) :
@@ -12,6 +19,7 @@ input flags (use one of the following) :
 -iTCP <p>	:	uses a TCP socket listening to port p
 -iDTCP <p>	:	uses a TCP socket listening to port p that allows multiple requests,
 			uses <line> to separate each, line and <end> to mark the end of the message
+-iHTTP <p>	:	uses a HTTP socket listening to port p
 
 output flags (use one of the following) :
 
@@ -20,6 +28,7 @@ output flags (use one of the following) :
 -oTCP <i> <p>	:	send output to IP i and port p using a TCP socket
 -oDTCP <i> <p>	:	send output to IP i and port p using a TCP socket
 			message lines are separated with <end> and end of message is marked with <end>
+-oHTTP		:	if iHTTP is used then this must be used as well
 
 Requests :
 
