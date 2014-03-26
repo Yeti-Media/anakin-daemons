@@ -827,7 +827,7 @@
 1393634484 /home/stein/Documents/ym/PatternMatching/lib/quicklz.h
 	<string.h>
 
-1390614963 source:/home/stein/Documents/ym/PatternMatching/main.cpp
+1395871848 source:/home/stein/Documents/ym/PatternMatching/main.cpp
 	<AnakinFlags.hpp>
 	<DataOutput.hpp>
 	<CommandRunner.hpp>
@@ -838,6 +838,7 @@
 	"RequestServer.hpp"
 	"DelimiterBasedTCPSocket.hpp"
 	"DTCPServerSocket.hpp"
+	"HTTPSocket.hpp"
 
 1389681921 /home/stein/Documents/ym/PatternMatching/includes/AnakinFlags.hpp
 	<Flags.hpp>
@@ -846,10 +847,11 @@
 	<map>
 	<vector>
 
-1390611861 /home/stein/Documents/ym/PatternMatching/includes/DataOutput.hpp
+1395868686 /home/stein/Documents/ym/PatternMatching/includes/DataOutput.hpp
 	<Socket.hpp>
 	<iostream>
 	<semaphore.h>
+	"HTTPSocket.hpp"
 
 1390602293 /home/stein/Documents/ym/PatternMatching/includes/Socket.hpp
 	<sstream>
@@ -1032,12 +1034,13 @@
 	<Socket.hpp>
 	<boost/asio.hpp>
 
-1393662949 /home/stein/Documents/ym/PatternMatching/includes/Server.hpp
+1395871532 /home/stein/Documents/ym/PatternMatching/includes/Server.hpp
 	<ServerSocket.hpp>
 	<AnakinFlags.hpp>
 	<DataOutput.hpp>
 	"SFBMCache.hpp"
 	"DBDriver.hpp"
+	"HTTPSocket.hpp"
 
 1389661991 /home/stein/Documents/ym/PatternMatching/includes/ServerSocket.hpp
 	<Socket.hpp>
@@ -1245,7 +1248,7 @@
 	<ServerSocket.hpp>
 	<boost/asio.hpp>
 
-1394950220 source:/home/stein/Documents/ym/PatternMatching/src/AnakinFlags.cpp
+1394963337 source:/home/stein/Documents/ym/PatternMatching/src/AnakinFlags.cpp
 	"AnakinFlags.hpp"
 
 1389659572 source:/home/stein/Documents/ym/PatternMatching/src/ATCPServerSocket.cpp
@@ -1297,10 +1300,10 @@
 1394912740 /home/stein/Documents/ym/PatternMatching/includes/Constants.hpp
 	<string>
 
-1390618144 source:/home/stein/Documents/ym/PatternMatching/src/DataOutput.cpp
+1395872548 source:/home/stein/Documents/ym/PatternMatching/src/DataOutput.cpp
 	"DataOutput.hpp"
 
-1394778924 source:/home/stein/Documents/ym/PatternMatching/src/DBDriver.cpp
+1394951283 source:/home/stein/Documents/ym/PatternMatching/src/DBDriver.cpp
 	"DBDriver.hpp"
 	<iostream>
 	"Constants.hpp"
@@ -1308,6 +1311,7 @@
 	<libpq/libpq-fs.h>
 	<cstdio>
 	<fstream>
+	"XMLoader.hpp"
 
 1394922804 source:/home/stein/Documents/ym/PatternMatching/src/DBHistogram.cpp
 	"DBHistogram.hpp"
@@ -1436,7 +1440,7 @@
 	"SerializedPatternDataInput.hpp"
 	"boost/filesystem.hpp"
 
-1393663123 source:/home/stein/Documents/ym/PatternMatching/src/Server.cpp
+1395871532 source:/home/stein/Documents/ym/PatternMatching/src/Server.cpp
 	"Server.hpp"
 	<ATCPServerSocket.hpp>
 	<AUDPServerSocket.hpp>
@@ -1502,4 +1506,69 @@
 1393692663 source:/home/stein/Documents/ym/PatternMatching/src/FlannMatchingProcessor.cpp
 	"FlannMatchingProcessor.hpp"
 	"Match.hpp"
+
+1395865188 /home/stein/Documents/ym/PatternMatching/includes/HTTPSocket.hpp
+	"mongoose.h"
+	<tbb/concurrent_queue.h>
+	"semaphore.h"
+	<vector>
+	<pthread.h>
+
+1394785194 /home/stein/Documents/ym/PatternMatching/lib/mongoose.h
+	<stdio.h>
+	<stddef.h>
+	<lua.h>
+	<lauxlib.h>
+
+1395872863 source:/home/stein/Documents/ym/PatternMatching/src/HTTPListener.cpp
+	"HTTPListener.hpp"
+	<iostream>
+
+1394966998 /home/stein/Documents/ym/PatternMatching/includes/HTTPListener.hpp
+	"mongoose.h"
+	<tbb/concurrent_queue.h>
+	<vector>
+	"HTTPSocket.hpp"
+
+1395865700 source:/home/stein/Documents/ym/PatternMatching/src/HTTPSocket.cpp
+	"HTTPSocket.hpp"
+	<iostream>
+	"HTTPListener.hpp"
+
+1394785194 source:/home/stein/Documents/ym/PatternMatching/lib/mongoose.c
+	"net_skeleton.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<assert.h>
+	<errno.h>
+	<fcntl.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<signal.h>
+	<windows.h>
+	<process.h>
+	<errno.h>
+	<fcntl.h>
+	<netdb.h>
+	<pthread.h>
+	<stdarg.h>
+	<unistd.h>
+	<arpa/inet.h>
+	<netinet/in.h>
+	<sys/socket.h>
+	<sys/select.h>
+	<openssl/ssl.h>
+	<ctype.h>
+	<io.h>
+	<direct.h>
+	<dirent.h>
+	<inttypes.h>
+	<pwd.h>
+	"mongoose.h"
+	"solarisfixes.h"
+	<sys/mman.h>
 

@@ -8,11 +8,13 @@
 #include "RequestServer.hpp"
 #include "DelimiterBasedTCPSocket.hpp"
 #include "DTCPServerSocket.hpp"
+#include "HTTPSocket.hpp"
 
 #define CONSOLE 1
 #define TCP     2
 #define UDP     4
 #define DTCP    8
+#define HTTP    16
 
 using namespace Anakin;
 
@@ -47,24 +49,37 @@ int main(int argc, const char * argv[]) {
     anakinInput->setOptionalFlag("iTCP");
     anakinInput->setOptionalFlag("iUDP");
     anakinInput->setOptionalFlag("iDTCP");
+    anakinInput->setOptionalFlag("iHTTP");
     anakinInput->setIncompatibility("iConsole", "iTCP");
     anakinInput->setIncompatibility("iConsole", "iUDP");
     anakinInput->setIncompatibility("iConsole", "iDTCP");
+    anakinInput->setIncompatibility("iConsole", "iHTTP");
     anakinInput->setIncompatibility("iUDP", "iTCP");
     anakinInput->setIncompatibility("iUDP", "iDTCP");
+    anakinInput->setIncompatibility("iUDP", "iHTTP");
     anakinInput->setIncompatibility("iTCP", "iDTCP");
+    anakinInput->setIncompatibility("iTCP", "iHTTP");
+    anakinInput->setIncompatibility("iDTCP", "iHTTP");
 
     //OUTPUT
     anakinInput->setNoValuesFlag("oConsole");
     anakinInput->setOptionalFlag("oTCP");
     anakinInput->setOptionalFlag("oUDP");
     anakinInput->setOptionalFlag("oDTCP");
+    anakinInput->setNoValuesFlag("oHTTP");
     anakinInput->setIncompatibility("oConsole", "oTCP");
     anakinInput->setIncompatibility("oConsole", "oUDP");
     anakinInput->setIncompatibility("oConsole", "oDTCP");
     anakinInput->setIncompatibility("oUDP", "oTCP");
     anakinInput->setIncompatibility("oUDP", "oDTCP");
     anakinInput->setIncompatibility("oTCP", "oDTCP");
+    anakinInput->setIncompatibility("oHTTP","oConsole");
+    anakinInput->setIncompatibility("oHTTP","oTCP");
+    anakinInput->setIncompatibility("oHTTP","oDTCP");
+    anakinInput->setIncompatibility("oHTTP","oDTCP");
+
+    anakinInput->setDependence("iHTTP", "oHTTP");
+    anakinInput->setDependence("oHTTP", "iHTTP");
 
     anakinInput->setMinCount(2);
     anakinInput->setVerbose(true);
@@ -118,6 +133,16 @@ int main(int argc, const char * argv[]) {
                 return -1;
             }
         }
+        if (anakinInput->flagFound("iHTTP")) {
+            iMode = HTTP;
+            values = anakinInput->getFlagValues("iHTTP");
+            if (values->size() == 1) {
+                portIn = stoi(values->at(0));
+            } else {
+                cout << "param iHTTP needs only one value\n";
+                return -1;
+            }
+        }
 
         //OUTPUT
         if (anakinInput->flagFound("oConsole")) {
@@ -156,12 +181,16 @@ int main(int argc, const char * argv[]) {
                 return -1;
             }
         }
+        if (anakinInput->flagFound("oHTTP")) {
+            oMode = HTTP;
+        }
     } else {
         cout << "Input error!\n";
         return -1;
     }
 
     Socket* soutput;
+    HTTPSocket* httpSocket;
     if (oMode & TCP) {
         soutput = new ATCPSocket(ipOut, portOut);
     } else if (oMode & UDP) {
@@ -175,14 +204,18 @@ int main(int argc, const char * argv[]) {
 
     AnakinFlags* aflags = new AnakinFlags();
 
+    Server* server = new RequestServer(portIn, 10, 4, verbose, iMode, "<line>", "<end>");
+
     DataOutput* output;
     if (oMode & CONSOLE) {
         output = new DataOutput();
+    } else if (oMode & HTTP) {
+        httpSocket = server->getHttpSocket();
+        output = new DataOutput(httpSocket);
     } else {
         output = new DataOutput(soutput);
     }
 
-    Server* server = new RequestServer(portIn, 10, 4, verbose, iMode, "<line>", "<end>");
     server->start(aflags, output);
 
     return 0;

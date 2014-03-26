@@ -31,6 +31,10 @@ Server::Server(unsigned short port, bool verbose, char mode, std::string ld, std
     } else if (mode & DTCP) {
         this->server = new DTCPServerSocket(port, ld, md);
         this->server->setShowComs(verbose);
+    } else if (mode & HTTP) {
+        std::string sport = std::to_string(port);
+        this->httpSocket = new HTTPSocket(sport, 15);
+        this->httpSocket->setShowComs(verbose);
     }
     this->verbose = verbose;
 }
@@ -66,6 +70,11 @@ void Server::start(AnakinFlags* aflags, DataOutput* output) {
     endServer();
     output->close();
     if (this->mode & TCP || this->mode & UDP || this->mode & DTCP) this->server->stopServer();
+    if (this->mode & HTTP) this->httpSocket->stop();
+}
+
+HTTPSocket* Server::getHttpSocket() {
+    return this->httpSocket;
 }
 
 //PROTECTED
@@ -75,6 +84,8 @@ string Server::read() {
         string msg = "";
         getline(cin, msg);
         return msg;
+    } else if (this->mode & HTTP) {
+        return this->httpSocket->read();
     } else {
         return this->socket->read();
     }

@@ -7,11 +7,20 @@ DataOutput::DataOutput(Socket* s) {
     initSem();
     this->s = s;
     this->consoleOutput = false;
+    this->httpOutput = false;
+}
+
+DataOutput::DataOutput(HTTPSocket* httpSocket) {
+    initSem();
+    this->httpSocket = httpSocket;
+    this->consoleOutput = false;
+    this->httpOutput = true;
 }
 
 DataOutput::DataOutput() {
     initSem();
     this->consoleOutput = true;
+    this->httpOutput = false;
 }
 
 void DataOutput::output(string data) {
@@ -19,6 +28,8 @@ void DataOutput::output(string data) {
     if (this->consoleOutput) {
         flush(cout);
         cout << data << endl;
+    } else if (this->httpOutput) {
+        this->httpSocket->respond(data, true);
     } else {
         this->s->send(data);
     }

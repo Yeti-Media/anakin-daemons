@@ -5,6 +5,7 @@
 #include <DataOutput.hpp>
 #include "SFBMCache.hpp"
 #include "DBDriver.hpp"
+#include "HTTPSocket.hpp"
 
 namespace Anakin {
 
@@ -16,6 +17,8 @@ class Server {
         static const char TCP = 2;
         static const char UDP = 4;
         static const char DTCP = 8;
+        static const char HTTP = 16;
+        HTTPSocket* getHttpSocket();
     protected:
         std::string read();
         std::vector<std::vector<std::string>*>* getInputs(std::string rawInput, bool * stopReceivedInsideInput);
@@ -30,6 +33,7 @@ class Server {
         ServerSocket* server;
         bool verbose;
         Socket* socket;
+        HTTPSocket* httpSocket;
         char mode;
         AnakinFlags* aflags;
         DataOutput* output;

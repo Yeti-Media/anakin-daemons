@@ -86,7 +86,7 @@ using namespace std;
                 continue;
             }
             if (pattern_matches->size() >= this->min_matches_allowed) {
-                std::cout << "matched img: " << currentKey << std::endl;
+                //std::cout << "matched img: " << currentKey << std::endl;
                 std::vector<Point2f> obj_points;
                 std::vector<Point2f> scene_points;
 

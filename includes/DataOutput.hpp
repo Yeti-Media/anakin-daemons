@@ -4,12 +4,14 @@
 #include <Socket.hpp>
 #include <iostream>
 #include <semaphore.h>
+#include "HTTPSocket.hpp"
 
 namespace Anakin {
 
 class DataOutput {
     public:
         DataOutput(Socket* s);
+        DataOutput(HTTPSocket* httpSocket);
         DataOutput();
         void output(std::string data);
         void output(std::wstring data);
@@ -18,7 +20,9 @@ class DataOutput {
     private:
         void initSem();
         Socket* s;
+        HTTPSocket* httpSocket;
         bool consoleOutput=true;
+        bool httpOutput=false;
         sem_t ssem;
         sem_t wssem;
 };
