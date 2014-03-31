@@ -23,23 +23,23 @@ DataOutput::DataOutput() {
     this->httpOutput = false;
 }
 
-void DataOutput::output(string data) {
+void DataOutput::output(string data, int reqID) {
     sem_wait(&this->ssem);
     if (this->consoleOutput) {
         flush(cout);
         cout << data << endl;
     } else if (this->httpOutput) {
-        this->httpSocket->respond(data, true);
+        this->httpSocket->respond(data, true, reqID);
     } else {
         this->s->send(data);
     }
     sem_post(&this->ssem);
 }
 
-void DataOutput::output(wstring data) {
+void DataOutput::output(wstring data, int reqID) {
     sem_wait(&this->wssem);
     string s(data.begin(), data.end());
-    output(s);
+    output(s,reqID);
     sem_post(&this->wssem);
 }
 

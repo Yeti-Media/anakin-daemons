@@ -2,6 +2,7 @@
 #include "JSONValue.h"
 #include <algorithm> // for copy
 #include <iterator> // for ostream_iterator
+#include "Constants.hpp"
 
 using namespace Anakin;
 using namespace cv;
@@ -12,43 +13,43 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache, st
     this->cache = cache;
     if (flags->validateInput(input)) {
             std::vector<std::string>* values;
-            if (flags->flagFound("pmatch")) {
+            if (flags->flagFound(Constants::ACTION_MATCH)) {
                 action = CommandRunner::MATCH;
             }
-            if (flags->flagFound("addIndexes")) {
+            if (flags->flagFound(Constants::ACTION_ADDIDX)) {
                 action = CommandRunner::ADDIDXS;
             }
-            if (flags->flagFound("remIndexes")) {
+            if (flags->flagFound(Constants::ACTION_DELIDX)) {
                 action = CommandRunner::DELIDXS;
             }
-            if (flags->flagFound("updateIndexes")) {
+            if (flags->flagFound(Constants::ACTION_UPDIDX)) {
                 action = CommandRunner::UPDIDXS;
             }
-            if (flags->flagFound("cacheStatus")) {
+            if (flags->flagFound(Constants::ACTION_STATUSIDX)) {
                 action = CommandRunner::IDXSTATUS;
             }
-            if (flags->flagFound("sceneID")) {
-                values = flags->getFlagValues("sceneID");
+            if (flags->flagFound(Constants::PARAM_SCENEID)) {
+                values = flags->getFlagValues(Constants::PARAM_SCENEID);
                 if (values->size() != 1) {
-                    error = "flag sceneID expects only one value";
+                    error = "flag " + Constants::PARAM_SCENEID + " expects only one value";
                     inputError = true;
                     return;
                 }
                 sceneID = std::stoi(values->at(0));
             }
-            if (flags->flagFound("reqID")) {
-                values = flags->getFlagValues("reqID");
+            if (flags->flagFound(Constants::PARAM_REQID)) {
+                values = flags->getFlagValues(Constants::PARAM_REQID);
                 if (values->size() != 1) {
-                    error = "flag reqID expects only one value";
+                    error = "flag " + Constants::PARAM_REQID + " expects only one value";
                     inputError = true;
                     return;
                 }
                 reqID = values->at(0);
             }
-            if (flags->flagFound("indexes")) { //MUST BE AT THE END
-                values = flags->getFlagValues("indexes");
+            if (flags->flagFound(Constants::PARAM_IDXS)) { //MUST BE AT THE END
+                values = flags->getFlagValues(Constants::PARAM_IDXS);
                 if (values->empty()) {
-                    error = "flag indexes expects at least one value";
+                    error = "flag " + Constants::PARAM_IDXS + " expects at least one value";
                     inputError = true;
                     return;
                 }
@@ -68,6 +69,8 @@ int CommandRunner::run() {
         return -1;
     }
 
+    int ireqID = std::stoi(reqID);
+
     switch (action) {
         case CommandRunner::ADDIDXS : {
             std::vector<JSONValue*> inserts;
@@ -76,7 +79,7 @@ int CommandRunner::run() {
                 this->cache->loadMatcher(idxID);
                 inserts.push_back(this->cache->getLastOperationResult());
             }
-            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_ADD, inserts));
+            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_ADD, inserts), ireqID);
             break;
         }
         case CommandRunner::DELIDXS : {
@@ -87,13 +90,13 @@ int CommandRunner::run() {
                 this->cache->unloadMatcher(idxID);
                 deletes.push_back(this->cache->getLastOperationResult());
             }
-            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_DEL, deletes));
+            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_DEL, deletes), ireqID);
             break;
         }
         case CommandRunner::IDXSTATUS : {
             std::vector<JSONValue*> status;
             status.push_back(this->cache->indexCacheStatus());
-            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_STATUS, status));
+            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_STATUS, status), ireqID);
             break;
         }
         case CommandRunner::UPDIDXS : {
@@ -104,7 +107,7 @@ int CommandRunner::run() {
                 this->cache->updateMatcher(idxID);
                 updates.push_back(this->cache->getLastOperationResult());
             }
-            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_UPD, updates));
+            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_CACHE_IDX_UPD, updates), ireqID);
             break;
         }
         case CommandRunner::MATCH : {
@@ -126,7 +129,7 @@ int CommandRunner::run() {
             }
             std::vector<JSONValue*> sceneMatches;
             sceneMatches.push_back(this->rw->resultAsJSONValue(scene->getLabel(), *matches));
-            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_PATTERN_MATCHING, sceneMatches));
+            this->out->output(this->rw->outputResult(reqID, ResultWriter::RW_PATTERN_MATCHING, sceneMatches), ireqID);
             delete matches;
             break;
         }

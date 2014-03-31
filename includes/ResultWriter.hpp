@@ -41,6 +41,10 @@ class ResultWriter {
 
         JSONValue* resultAsJSONValue(vector<int> smatchers_in_cache, int cacheFreeSpace);
 
+        JSONValue* parseJSON(const char * data);
+
+        std::string jsonReqToString(JSONValue* req);
+
 };
 };
 

@@ -7,7 +7,7 @@ using namespace Anakin;
 HTTPSocket::HTTPSocket(std::string port, int threads) {
     this->port = port;
     this->readingQueue = new tbb::concurrent_bounded_queue<MessageData*>();
-    this->writtingQueue = new tbb::concurrent_bounded_queue<MessageData*>();
+    this->writtingQueue = new BlockingMap<int, MessageData*>(NULL);
     if (sem_init (&this->sem, 0, 1) != 0) {
         std::cout << "HTTPSocket#HTTPSocket: error initializing semaphore\n";
         exit(-1);
@@ -15,10 +15,10 @@ HTTPSocket::HTTPSocket(std::string port, int threads) {
     startToListen(this->port, this->readingQueue, this->writtingQueue, threads);
 }
 
-void HTTPSocket::respond(std::string body, bool statusOK) {
+void HTTPSocket::respond(std::string body, bool statusOK, int reqID) {
     int status = statusOK?200:400;
     HTTPSocket::MessageData* rd = new HTTPSocket::MessageData("", body, HTTPSocket::RESPONSE, status);
-    this->writtingQueue->push(rd);
+    this->writtingQueue->put(reqID, rd);
 }
 
 std::string HTTPSocket::read() {
@@ -37,7 +37,7 @@ void HTTPSocket::stop() {
 
 void HTTPSocket::startToListen( std::string port,
                                 tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
-                                tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue,
+                                BlockingMap<int, MessageData*>* writtingQueue,
                                 int threads) {
     ListenerArgs* largs = new ListenerArgs(port, readingQueue, writtingQueue, threads);
     pthread_create( &this->t, NULL, startListener, (void*) largs);

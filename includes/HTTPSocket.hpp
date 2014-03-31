@@ -6,6 +6,8 @@
 #include "semaphore.h"
 #include <vector>
 #include <pthread.h>
+#include "BlockingMap.hpp"
+
 
 namespace Anakin {
 
@@ -13,7 +15,7 @@ class HTTPSocket {
     public:
         HTTPSocket(std::string port, int threads);
 
-        void respond(std::string body, bool statusOK);
+        void respond(std::string body, bool statusOK, int reqID);
 
         std::string read();
 
@@ -49,12 +51,12 @@ class HTTPSocket {
 
         struct ListenerArgs {
             std::string port;
-            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue;
-            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue;
+            tbb::concurrent_bounded_queue<MessageData*>* readingQueue;
+            BlockingMap<int, MessageData*>* writtingQueue;
             int threads;
             ListenerArgs(   std::string port,
-                            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
-                            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue,
+                            tbb::concurrent_bounded_queue<MessageData*>* readingQueue,
+                            BlockingMap<int, MessageData*>* writtingQueue,
                             int threads
                         ) : port(port),
                             readingQueue(readingQueue),
@@ -75,11 +77,11 @@ class HTTPSocket {
         pthread_t t;
 
         tbb::concurrent_bounded_queue<MessageData*>* readingQueue;
-        tbb::concurrent_bounded_queue<MessageData*>* writtingQueue;
+        BlockingMap<int, MessageData*>* writtingQueue;
 
         void startToListen( std::string port,
-                            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
-                            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue,
+                            tbb::concurrent_bounded_queue<MessageData*>* readingQueue,
+                            BlockingMap<int, MessageData*>* writtingQueue,
                             int threads);
         static void * startListener(void *ptr);
 };

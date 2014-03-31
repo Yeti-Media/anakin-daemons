@@ -13,8 +13,8 @@ class DataOutput {
         DataOutput(Socket* s);
         DataOutput(HTTPSocket* httpSocket);
         DataOutput();
-        void output(std::string data);
-        void output(std::wstring data);
+        void output(std::string data, int reqID=0);
+        void output(std::wstring data, int reqID=0);
         void close();
     protected:
     private:

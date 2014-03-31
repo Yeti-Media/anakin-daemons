@@ -1,0 +1,22 @@
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 41
+Content-Type: text/plain
+
+{"action":"add_indexes", "indexes":[5,6]}
+
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 50
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2}
+
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 4
+Content-Type: text/plain
+
+stop

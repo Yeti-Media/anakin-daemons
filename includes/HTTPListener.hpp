@@ -5,6 +5,8 @@
 #include <tbb/concurrent_queue.h>
 #include <vector>
 #include "HTTPSocket.hpp"
+#include "ResultWriter.hpp"
+#include "BlockingMap.hpp"
 
 namespace Anakin {
 
@@ -12,24 +14,27 @@ class HTTPListener {
     public:
         static HTTPListener* getInstance(   std::string port,
                                             tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
-                                            tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue,
+                                            BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue,
                                             int threads);
         void start();
     protected:
         static HTTPListener* instance;
         HTTPListener(   std::string port,
                         tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
-                        tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue,
+                        BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue,
                         int threads);
         static std::string port;
         static bool running;
         static int ev_handler(struct mg_connection *conn, enum mg_event ev);
         static struct mg_server *server;
         static tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue;
-        static tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* writtingQueue;
+        static BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue;
+        static ResultWriter rw;
     private:
+        static int generateRandomID();
 
 };
+
 };
 
 #endif // HTTPLISTENER_HPP

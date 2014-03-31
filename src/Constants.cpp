@@ -47,3 +47,24 @@ const std::string Constants::CATEGORIES_TABLE_NAME = "title";
 const std::string Constants::CATEGORIES_MATCHING = "matching";
 const std::string Constants::CATEGORIES_COMPARISON = "comparison";
 const std::string Constants::CATEGORIES_LANDSCAPES = "landscapes";
+
+//REQUESTS
+const std::string Constants::ACTION_MATCH = "matching";
+const std::string Constants::ACTION_ADDIDX = "add_indexes";
+const std::string Constants::ACTION_DELIDX = "remove_indexes";
+const std::string Constants::ACTION_UPDIDX = "update_indexes";
+const std::string Constants::ACTION_STATUSIDX = "status_indexes";
+
+const std::string Constants::PARAM_IDXS = "indexes";
+const std::string Constants::PARAM_SCENEID = "scenario";
+const std::string Constants::PARAM_REQID = "reqID";
+
+const std::wstring Constants::WACTION_MATCH = L"matching";
+const std::wstring Constants::WACTION_ADDIDX = L"add_indexes";
+const std::wstring Constants::WACTION_DELIDX = L"remove_indexes";
+const std::wstring Constants::WACTION_UPDIDX = L"update_indexes";
+const std::wstring Constants::WACTION_STATUSIDX = L"status_indexes";
+
+const std::wstring Constants::WPARAM_IDXS = L"indexes";
+const std::wstring Constants::WPARAM_SCENEID = L"scenario";
+const std::wstring Constants::WPARAM_REQID = L"reqID";

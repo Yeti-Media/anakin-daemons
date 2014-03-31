@@ -1,5 +1,6 @@
 #include <ResultWriter.hpp>
 #define LIGH_RESULTS 1
+#include "Constants.hpp"
 
 using namespace Anakin;
 using namespace cv;
@@ -178,5 +179,34 @@ JSONValue* ResultWriter::resultAsJSONValue(vector<int> smatchers_in_cache, int c
 
     JSONValue *value = new JSONValue(root);
 	return value;
+}
+
+JSONValue* ResultWriter::parseJSON(const char * data) {
+    return JSON::Parse(data);
+}
+
+std::string ResultWriter::jsonReqToString(JSONValue* req) {
+    std::string request = "";
+    if (req->HasChild(L"action")) {
+        std::wstring waction = req->Child(L"action")->AsString();
+        std::string saction(waction.begin(), waction.end());
+        request += "-" + saction + " ";
+    }
+    if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
+        request += "-" + Constants::PARAM_IDXS + " ";
+        JSONArray indexes = req->Child(Constants::WPARAM_IDXS.c_str())->AsArray();
+        for (int i = 0; i < indexes.size(); i++) {
+            JSONValue* v = indexes.at(i);
+            std::string sv = std::to_string((int)v->AsNumber());
+            request += sv + " ";
+        }
+    }
+    if (req->HasChild(Constants::WPARAM_SCENEID.c_str())) {
+        request += "-" + Constants::PARAM_SCENEID + " ";
+        std::string scenario = std::to_string((int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
+        request += scenario + " ";
+    }
+
+    return request;
 }
 
