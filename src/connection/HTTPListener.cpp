@@ -50,33 +50,40 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
     int result = MG_FALSE;
 
     if (ev == MG_REQUEST) {
-        std::string method = conn->request_method;
-        std::string action = conn->uri;
-        std::string body(conn->content, conn->content_len);
+        //the event is a request (POST, GET for example)
+        std::string method = conn->request_method; //method: POST, GET
+        std::string action = conn->uri; //the URL in a GET or the action of a POST
+        std::string body(conn->content, conn->content_len); //request's body
         std::string request;
         int reqID;
         if (strcmp(body.c_str(), "stop") == 0) {
-            HTTPListener::running = false;
+            //the request is a stop message
+            HTTPListener::running = false; //will stop the HTTP server
             request = body;
-            reqID = 0;
+            reqID = 0; //a random id will never have this value
         } else {
+            //first we convert the body (in JSON format) to a string representing a request
             request = rw.jsonReqToString(rw.parseJSON(body.c_str()));
-            reqID = generateRandomID();
+            reqID = generateRandomID(); //generate a random request ID
             std::string sreqID = std::to_string(reqID);
-            request += " -" + Constants::PARAM_REQID + " " + sreqID;
+            request += " -" + Constants::PARAM_REQID + " " + sreqID; //add a -reqID id to the request
         }
         char requestType = method=="POST"?(method=="GET"?HTTPSocket::GET:HTTPSocket::RESPONSE):HTTPSocket::POST;
         int status = conn->status_code;
         HTTPSocket::MessageData* md = new HTTPSocket::MessageData(action, request, requestType, status);
 
-        HTTPListener::readingQueue->push(md);
+        HTTPListener::readingQueue->push(md); //pushes the message received
         HTTPSocket::MessageData* rd;
         if (!HTTPListener::running) {
+            //if the message received was a stop message
+            //then we generate a response that will just return "stop received"
             std::string r_action = "";
             std::string r_body = "stop received";
             rd = new HTTPSocket::MessageData(r_action.c_str(), r_body.c_str(), HTTPSocket::RESPONSE, 200);
             HTTPListener::writtingQueue->put(reqID, rd);
         }
+        //we get the response corresponding with request reqID
+        //and with this a HTTP response is constructed and sent
         rd = HTTPListener::writtingQueue->get(reqID);
         mg_send_status(conn, rd->status);
         std::string cc_header = "connection";
@@ -86,8 +93,9 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
         std::string cl_value = std::to_string(rd->body.size());
         mg_send_header(conn, cl_header.c_str(), cl_value.c_str());
         mg_send_data(conn, rd->body.c_str(), rd->body.size());
-        result = MG_CLOSE;
+        result = MG_CLOSE; //MG_CLOSE will close the connection after the response is sent
     } else if (ev == MG_AUTH) {
+        //for auth events we just return true
         result = MG_TRUE;
     }
 
