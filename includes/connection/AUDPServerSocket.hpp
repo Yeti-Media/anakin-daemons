@@ -8,9 +8,19 @@ using boost::asio::ip::udp;
 
 namespace Anakin {
 
+/**
+* An implementation of ServerSocket for AUDPSocket
+*/
 class AUDPServerSocket : public ServerSocket{
     public:
+        /**
+        * Constructor
+        * port : the port in which to listen
+        */
         AUDPServerSocket(unsigned short port);
+        /**
+        * uses AUDPSocket wait for connection protocol
+        */
         Socket* waitForConnection();
         void stopServer();
     protected:
