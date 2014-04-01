@@ -13,10 +13,12 @@ class Match {
     public:
         /**
         * Initializer
-        * param: Anakin::RichImg : the scene where a pattern was found
-        * param: Anakin::RichImg : the pattern found in the scene
+        * param: RichImg : the scene where a pattern was found
+        * param: RichImg : the pattern found in the scene
         * param: std::vector<cv::DMatch>& : the matches between the scene and a pattern
         * param: cv::Mat : homography between the scene and a pattern
+        * param: cv::Point2f center : the center of the match
+        * param: std::vector<cv::KeyPoint> matchedKeypoints : the keypoints in the scene that matched with the pattern
         */
         Match(  Anakin::RichImg* scene,
                 Anakin::RichImg* pattern,
@@ -46,8 +48,14 @@ class Match {
         */
         cv::Mat& getHomography();
 
+        /**
+        * return the center in which the pattern matched in the scene
+        */
         cv::Point2f getCenter();
 
+        /**
+        * return the keypoints in the scene that matched with the pattern
+        */
         std::vector<cv::KeyPoint> getMatchedKeypoints();
 
     protected:

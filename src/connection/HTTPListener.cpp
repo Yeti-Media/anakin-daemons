@@ -49,6 +49,8 @@ HTTPListener::HTTPListener( std::string port,
 int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
     int result = MG_FALSE;
 
+    std::cout << ev << std::endl;
+
     if (ev == MG_REQUEST) {
         //the event is a request (POST, GET for example)
         std::string method = conn->request_method; //method: POST, GET
@@ -86,13 +88,16 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
         //and with this a HTTP response is constructed and sent
         rd = HTTPListener::writtingQueue->get(reqID);
         mg_send_status(conn, rd->status);
-        std::string cc_header = "connection";
-        std::string cc_value = "close header";
+        std::string cc_header = "Connection";
+        std::string cc_value = "close";
         mg_send_header(conn, cc_header.c_str(), cc_value.c_str());
-        std::string cl_header = "Content-Lenght";
-        std::string cl_value = std::to_string(rd->body.size());
-        mg_send_header(conn, cl_header.c_str(), cl_value.c_str());
-        mg_send_data(conn, rd->body.c_str(), rd->body.size());
+//        std::string cl_header = "Content-Lenght";
+//        std::string cl_value = std::to_string(rd->body.size());
+//        mg_send_header(conn, cl_header.c_str(), cl_value.c_str());
+        std::string responseData = rd->body + "\r\n";
+        mg_send_data(conn, responseData.c_str(), rd->body.size());
+        std::string stopMsg = "0\r\n\r\n";
+        mg_send_data(conn, stopMsg.c_str(), 0);
         result = MG_CLOSE; //MG_CLOSE will close the connection after the response is sent
     } else if (ev == MG_AUTH) {
         //for auth events we just return true

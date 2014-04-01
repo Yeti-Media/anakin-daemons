@@ -8,6 +8,11 @@
 
 namespace Anakin {
 
+/**
+* This class is used to detect patterns on a scene
+* Uses SerializableFlannBasedMatcher (SFBM) which is a FlannBasedMatcher with serialization capabilities
+*
+*/
 class BasicFlannDetector {
     public:
         BasicFlannDetector( cv::Ptr<SerializableFlannBasedMatcher>  detector, SFBMCache* cache, float minRatio = 1.f / 1.5f, int min_matches_allowed = 8);
