@@ -76,6 +76,9 @@ class RichImg {
         */
         Img* getImage();
 
+        /**
+        * result: an object containing keypoints, descriptors and a label : ImageInfo*
+        */
         ImageInfo* getImageInfo();
 
         /**
@@ -92,6 +95,11 @@ class RichImg {
         cv::Mat descriptors;
         bool descriptorsCalculated = false;
         bool keypointsCalculated = false;
+        /**
+        * if this object is constructed with an ImageInfo object
+        * then the descriptors and keypoints can't be recalculated
+        * because there's no image to use
+        */
         bool constructedWithImageInfo = false;
 };
 

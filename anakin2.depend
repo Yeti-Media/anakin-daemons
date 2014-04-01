@@ -827,18 +827,17 @@
 1393634484 /home/stein/Documents/ym/PatternMatching/lib/quicklz.h
 	<string.h>
 
-1395871848 source:/home/stein/Documents/ym/PatternMatching/main.cpp
-	<AnakinFlags.hpp>
-	<DataOutput.hpp>
-	<CommandRunner.hpp>
-	<Socket.hpp>
-	<ATCPSocket.hpp>
-	<AUDPSocket.hpp>
-	<Server.hpp>
-	"RequestServer.hpp"
-	"DelimiterBasedTCPSocket.hpp"
-	"DTCPServerSocket.hpp"
-	"HTTPSocket.hpp"
+1396312097 source:/home/stein/Documents/ym/PatternMatching/main.cpp
+	"processing/AnakinFlags.hpp"
+	"output/DataOutput.hpp"
+	"connection/Socket.hpp"
+	"connection/ATCPSocket.hpp"
+	"connection/AUDPSocket.hpp"
+	"connection/Server.hpp"
+	"connection/RequestServer.hpp"
+	"connection/DelimiterBasedTCPSocket.hpp"
+	"connection/DTCPServerSocket.hpp"
+	"connection/HTTPSocket.hpp"
 
 1389681921 /home/stein/Documents/ym/PatternMatching/includes/AnakinFlags.hpp
 	<Flags.hpp>
@@ -1605,10 +1604,10 @@
 	"connection/ServerSocket.hpp"
 	<boost/asio.hpp>
 
-1396310573 /home/stein/Documents/ym/PatternMatching/includes/connection/ServerSocket.hpp
+1396317659 /home/stein/Documents/ym/PatternMatching/includes/connection/ServerSocket.hpp
 	"connection/Socket.hpp"
 
-1390602293 /home/stein/Documents/ym/PatternMatching/includes/connection/Socket.hpp
+1396317197 /home/stein/Documents/ym/PatternMatching/includes/connection/Socket.hpp
 	<sstream>
 
 1396310592 /home/stein/Documents/ym/PatternMatching/includes/connection/ATCPSocket.hpp
@@ -1775,7 +1774,7 @@
 1394922805 /home/stein/Documents/ym/PatternMatching/includes/db/DBHistogram.hpp
 	<string>
 
-1394936762 /home/stein/Documents/ym/PatternMatching/includes/data/ImageInfo.hpp
+1396315343 /home/stein/Documents/ym/PatternMatching/includes/data/ImageInfo.hpp
 	<opencv2/opencv.hpp>
 
 1393690499 /home/stein/Documents/ym/PatternMatching/includes/matching/SerializableFlannBasedMatcher.hpp
@@ -1826,12 +1825,12 @@
 	"data/RichImg.hpp"
 	<opencv2/opencv.hpp>
 
-1396311211 /home/stein/Documents/ym/PatternMatching/includes/data/RichImg.hpp
+1396315519 /home/stein/Documents/ym/PatternMatching/includes/data/RichImg.hpp
 	<opencv2/opencv.hpp>
 	"data/Img.hpp"
 	"data/ImageInfo.hpp"
 
-1388530703 /home/stein/Documents/ym/PatternMatching/includes/data/Img.hpp
+1396315830 /home/stein/Documents/ym/PatternMatching/includes/data/Img.hpp
 	<opencv2/opencv.hpp>
 
 1396311264 /home/stein/Documents/ym/PatternMatching/includes/matching/FlannMatchingProcessor.hpp

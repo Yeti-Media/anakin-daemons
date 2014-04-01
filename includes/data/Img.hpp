@@ -78,6 +78,10 @@ protected:
     std::string label;  //asociated label
 
 private:
+    /**
+    *   if str is [path/]filename.extension this will return filename
+    *   else this will return str
+    */
     std::string getFilename (const std::string& str);
 
 };
