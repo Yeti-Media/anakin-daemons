@@ -1596,3 +1596,364 @@
 	<iostream>
 	<boost/foreach.hpp>
 
+1396310535 source:/home/stein/Documents/ym/PatternMatching/src/connection/ATCPServerSocket.cpp
+	"connection/ATCPServerSocket.hpp"
+	"connection/ATCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1396310560 /home/stein/Documents/ym/PatternMatching/includes/connection/ATCPServerSocket.hpp
+	"connection/ServerSocket.hpp"
+	<boost/asio.hpp>
+
+1396310573 /home/stein/Documents/ym/PatternMatching/includes/connection/ServerSocket.hpp
+	"connection/Socket.hpp"
+
+1390602293 /home/stein/Documents/ym/PatternMatching/includes/connection/Socket.hpp
+	<sstream>
+
+1396310592 /home/stein/Documents/ym/PatternMatching/includes/connection/ATCPSocket.hpp
+	"connection/Socket.hpp"
+	<boost/asio.hpp>
+
+1396310605 source:/home/stein/Documents/ym/PatternMatching/src/connection/ATCPSocket.cpp
+	"connection/ATCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1396310624 source:/home/stein/Documents/ym/PatternMatching/src/connection/AUDPServerSocket.cpp
+	"connection/AUDPServerSocket.hpp"
+	"connection/AUDPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1396310641 /home/stein/Documents/ym/PatternMatching/includes/connection/AUDPServerSocket.hpp
+	"connection/ServerSocket.hpp"
+	<boost/asio.hpp>
+
+1396310656 /home/stein/Documents/ym/PatternMatching/includes/connection/AUDPSocket.hpp
+	"connection/Socket.hpp"
+	<boost/asio.hpp>
+
+1396310669 source:/home/stein/Documents/ym/PatternMatching/src/connection/AUDPSocket.cpp
+	"connection/AUDPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1396310682 source:/home/stein/Documents/ym/PatternMatching/src/connection/DelimiterBasedTCPSocket.cpp
+	"connection/DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+	<boost/algorithm/string/predicate.hpp>
+	<boost/regex.hpp>
+
+1396310695 /home/stein/Documents/ym/PatternMatching/includes/connection/DelimiterBasedTCPSocket.hpp
+	"connection/ATCPSocket.hpp"
+
+1396310712 source:/home/stein/Documents/ym/PatternMatching/src/connection/DTCPServerSocket.cpp
+	"connection/DTCPServerSocket.hpp"
+	"connection/DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1396310730 /home/stein/Documents/ym/PatternMatching/includes/connection/DTCPServerSocket.hpp
+	"connection/ATCPServerSocket.hpp"
+	<boost/asio.hpp>
+
+1396310751 source:/home/stein/Documents/ym/PatternMatching/src/connection/HTTPListener.cpp
+	"connection/HTTPListener.hpp"
+	<iostream>
+	<ctime>
+	"utils/Constants.hpp"
+
+1396310786 /home/stein/Documents/ym/PatternMatching/includes/connection/HTTPListener.hpp
+	"mongoose.h"
+	<tbb/concurrent_queue.h>
+	<vector>
+	"connection/HTTPSocket.hpp"
+	"output/ResultWriter.hpp"
+	"utils/BlockingMap.hpp"
+
+1396310765 /home/stein/Documents/ym/PatternMatching/includes/connection/HTTPSocket.hpp
+	"mongoose.h"
+	<tbb/concurrent_queue.h>
+	"semaphore.h"
+	<vector>
+	<pthread.h>
+	"utils/BlockingMap.hpp"
+
+1396304292 /home/stein/Documents/ym/PatternMatching/includes/utils/BlockingMap.hpp
+	<map>
+	<semaphore.h>
+	<vector>
+	<iostream>
+	<boost/foreach.hpp>
+
+1396310812 /home/stein/Documents/ym/PatternMatching/includes/output/ResultWriter.hpp
+	"output/JSON.h"
+	"output/JSONValue.h"
+	<opencv2/opencv.hpp>
+
+1383446143 /home/stein/Documents/ym/PatternMatching/includes/output/JSON.h
+	<vector>
+	<string>
+	<map>
+	<cstring>
+	<cstdlib>
+	<wctype.h>
+	<wchar.h>
+	"JSONValue.h"
+
+1383446143 /home/stein/Documents/ym/PatternMatching/includes/output/JSONValue.h
+	<vector>
+	<string>
+	"JSON.h"
+
+1396296725 /home/stein/Documents/ym/PatternMatching/includes/utils/Constants.hpp
+	<string>
+
+1396310830 source:/home/stein/Documents/ym/PatternMatching/src/connection/HTTPSocket.cpp
+	"connection/HTTPSocket.hpp"
+	<iostream>
+	"connection/HTTPListener.hpp"
+
+1396310856 source:/home/stein/Documents/ym/PatternMatching/src/connection/RequestServer.cpp
+	"connection/RequestServer.hpp"
+	"processing/Worker.hpp"
+	<pthread.h>
+	"connection/DTCPServerSocket.hpp"
+	<boost/regex.hpp>
+
+1393665254 /home/stein/Documents/ym/PatternMatching/includes/connection/RequestServer.hpp
+	"Server.hpp"
+	<tbb/concurrent_queue.h>
+	<vector>
+
+1396310922 /home/stein/Documents/ym/PatternMatching/includes/connection/Server.hpp
+	"connection/ServerSocket.hpp"
+	"processing/AnakinFlags.hpp"
+	"output/DataOutput.hpp"
+	"processing/SFBMCache.hpp"
+	"db/DBDriver.hpp"
+	"connection/HTTPSocket.hpp"
+
+1396310940 /home/stein/Documents/ym/PatternMatching/includes/processing/AnakinFlags.hpp
+	"processing/Flags.hpp"
+
+1390512970 /home/stein/Documents/ym/PatternMatching/includes/processing/Flags.hpp
+	<map>
+	<vector>
+
+1396310961 /home/stein/Documents/ym/PatternMatching/includes/output/DataOutput.hpp
+	"connection/Socket.hpp"
+	<iostream>
+	<semaphore.h>
+	"connection/HTTPSocket.hpp"
+
+1396311004 /home/stein/Documents/ym/PatternMatching/includes/processing/SFBMCache.hpp
+	"db/DBDriver.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<map>
+	<vector>
+	<string>
+	<semaphore.h>
+	"data/ImageInfo.hpp"
+	"output/JSONValue.h"
+	"output/ResultWriter.hpp"
+
+1396311024 /home/stein/Documents/ym/PatternMatching/includes/db/DBDriver.hpp
+	"libpq-fe.h"
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+	"db/DBHistogram.hpp"
+	<opencv2/opencv.hpp>
+	"data/ImageInfo.hpp"
+	<string>
+
+1394888076 /home/stein/Documents/ym/PatternMatching/includes/db/DBUser.hpp
+	"DBPattern.hpp"
+	"DBHistogram.hpp"
+	<vector>
+
+1394922671 /home/stein/Documents/ym/PatternMatching/includes/db/DBPattern.hpp
+	<string>
+
+1394922805 /home/stein/Documents/ym/PatternMatching/includes/db/DBHistogram.hpp
+	<string>
+
+1394936762 /home/stein/Documents/ym/PatternMatching/includes/data/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1393690499 /home/stein/Documents/ym/PatternMatching/includes/matching/SerializableFlannBasedMatcher.hpp
+	"opencv2/features2d/features2d.hpp"
+
+1396311051 /home/stein/Documents/ym/PatternMatching/includes/processing/Worker.hpp
+	"processing/Flags.hpp"
+	"output/DataOutput.hpp"
+	"processing/SFBMCache.hpp"
+	<tbb/concurrent_queue.h>
+
+1396311107 source:/home/stein/Documents/ym/PatternMatching/src/connection/Server.cpp
+	"connection/Server.hpp"
+	"connection/ATCPServerSocket.hpp"
+	"connection/AUDPServerSocket.hpp"
+	<sstream>
+	"processing/CommandRunner.hpp"
+	"connection/DTCPServerSocket.hpp"
+	<boost/regex.hpp>
+	<boost/algorithm/string.hpp>
+
+1396311174 /home/stein/Documents/ym/PatternMatching/includes/processing/CommandRunner.hpp
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+	<string>
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	"matching/BasicFlannDetector.hpp"
+	"processing/Flags.hpp"
+	"output/ResultWriter.hpp"
+	"output/DataOutput.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	"processing/SFBMCache.hpp"
+	"data/ImageInfo.hpp"
+	"matching/FlannMatchingProcessor.hpp"
+
+1396311233 /home/stein/Documents/ym/PatternMatching/includes/matching/BasicFlannDetector.hpp
+	<map>
+	"matching/SerializableFlannBasedMatcher.hpp"
+	"matching/Match.hpp"
+	"processing/SFBMCache.hpp"
+
+1396311190 /home/stein/Documents/ym/PatternMatching/includes/matching/Match.hpp
+	"data/RichImg.hpp"
+	<opencv2/opencv.hpp>
+
+1396311211 /home/stein/Documents/ym/PatternMatching/includes/data/RichImg.hpp
+	<opencv2/opencv.hpp>
+	"data/Img.hpp"
+	"data/ImageInfo.hpp"
+
+1388530703 /home/stein/Documents/ym/PatternMatching/includes/data/Img.hpp
+	<opencv2/opencv.hpp>
+
+1396311264 /home/stein/Documents/ym/PatternMatching/includes/matching/FlannMatchingProcessor.hpp
+	"matching/BasicFlannDetector.hpp"
+	"output/ResultWriter.hpp"
+	"data/RichImg.hpp"
+	"output/JSONValue.h"
+	<vector>
+
+1396311280 source:/home/stein/Documents/ym/PatternMatching/src/data/ImageInfo.cpp
+	"data/ImageInfo.hpp"
+
+1396311291 source:/home/stein/Documents/ym/PatternMatching/src/data/Img.cpp
+	"data/Img.hpp"
+
+1396311306 source:/home/stein/Documents/ym/PatternMatching/src/data/RichImg.cpp
+	"data/RichImg.hpp"
+
+1396311330 source:/home/stein/Documents/ym/PatternMatching/src/db/DBDriver.cpp
+	"db/DBDriver.hpp"
+	<iostream>
+	"utils/Constants.hpp"
+	<string>
+	<libpq/libpq-fs.h>
+	<cstdio>
+	<fstream>
+	"utils/XMLoader.hpp"
+
+1396311345 /home/stein/Documents/ym/PatternMatching/includes/utils/XMLoader.hpp
+	"db/DBHistogram.hpp"
+	"db/DBPattern.hpp"
+	"data/ImageInfo.hpp"
+	<vector>
+
+1396311361 source:/home/stein/Documents/ym/PatternMatching/src/db/DBHistogram.cpp
+	"db/DBHistogram.hpp"
+	"utils/Constants.hpp"
+
+1396311371 source:/home/stein/Documents/ym/PatternMatching/src/db/DBPattern.cpp
+	"db/DBPattern.hpp"
+
+1396311383 source:/home/stein/Documents/ym/PatternMatching/src/db/DBUser.cpp
+	"db/DBUser.hpp"
+
+1396311397 source:/home/stein/Documents/ym/PatternMatching/src/matching/BasicFlannDetector.cpp
+	"matching/BasicFlannDetector.hpp"
+	<time.h>
+	<boost/foreach.hpp>
+
+1396311414 source:/home/stein/Documents/ym/PatternMatching/src/matching/FlannMatchingProcessor.cpp
+	"matching/FlannMatchingProcessor.hpp"
+	"matching/Match.hpp"
+
+1396311428 source:/home/stein/Documents/ym/PatternMatching/src/matching/Match.cpp
+	"matching/Match.hpp"
+
+1396311444 source:/home/stein/Documents/ym/PatternMatching/src/matching/SerializableFlannBasedMatcher.cpp
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<iostream>
+	<stdio.h>
+	<fstream>
+	<sstream>
+	"quicklz.h"
+
+1396311456 source:/home/stein/Documents/ym/PatternMatching/src/output/DataOutput.cpp
+	"output/DataOutput.hpp"
+
+1396311475 source:/home/stein/Documents/ym/PatternMatching/src/output/JSON.cpp
+	"output/JSON.h"
+
+1396311486 source:/home/stein/Documents/ym/PatternMatching/src/output/JSONValue.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<math.h>
+	"output/JSONValue.h"
+
+1396311507 source:/home/stein/Documents/ym/PatternMatching/src/output/ResultWriter.cpp
+	"output/ResultWriter.hpp"
+	"utils/Constants.hpp"
+
+1396311525 source:/home/stein/Documents/ym/PatternMatching/src/processing/AnakinFlags.cpp
+	"processing/AnakinFlags.hpp"
+	"utils/Constants.hpp"
+
+1396311547 source:/home/stein/Documents/ym/PatternMatching/src/processing/CommandRunner.cpp
+	"processing/CommandRunner.hpp"
+	"output/JSONValue.h"
+	<algorithm>
+	<iterator>
+	"utils/Constants.hpp"
+
+1396311561 source:/home/stein/Documents/ym/PatternMatching/src/processing/Flags.cpp
+	"processing/Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1396311573 source:/home/stein/Documents/ym/PatternMatching/src/processing/SFBMCache.cpp
+	"processing/SFBMCache.hpp"
+	<boost/foreach.hpp>
+	<iostream>
+	<time.h>
+	<limits>
+
+1396311590 source:/home/stein/Documents/ym/PatternMatching/src/processing/Worker.cpp
+	"processing/Worker.hpp"
+	"processing/CommandRunner.hpp"
+
+1396311604 source:/home/stein/Documents/ym/PatternMatching/src/utils/Constants.cpp
+	"utils/Constants.hpp"
+
+1396311620 source:/home/stein/Documents/ym/PatternMatching/src/utils/XMLoader.cpp
+	"utils/XMLoader.hpp"
+	<iostream>
+	<fstream>
+	<sstream>
+	"utils/Constants.hpp"
+	"boost/filesystem.hpp"
+	<algorithm>
+

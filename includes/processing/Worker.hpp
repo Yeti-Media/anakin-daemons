@@ -1,0 +1,26 @@
+#ifndef WORKER_HPP
+#define WORKER_HPP
+
+#include "processing/Flags.hpp"
+#include "output/DataOutput.hpp"
+#include "processing/SFBMCache.hpp"
+
+#include <tbb/concurrent_queue.h>
+
+namespace Anakin {
+
+class Worker {
+    public:
+        Worker(int id, Flags* flags, DataOutput* output, SFBMCache* cache, tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue);
+        void start();
+    protected:
+    private:
+        int id;
+        Flags* flags;
+        DataOutput* output;
+        SFBMCache* cache;
+        tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
+};
+};
+
+#endif // WORKER_HPP

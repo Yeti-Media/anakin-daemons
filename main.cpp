@@ -1,14 +1,13 @@
-#include <AnakinFlags.hpp>
-#include <DataOutput.hpp>
-#include <CommandRunner.hpp>
-#include <Socket.hpp>
-#include <ATCPSocket.hpp>
-#include <AUDPSocket.hpp>
-#include <Server.hpp>
-#include "RequestServer.hpp"
-#include "DelimiterBasedTCPSocket.hpp"
-#include "DTCPServerSocket.hpp"
-#include "HTTPSocket.hpp"
+#include "processing/AnakinFlags.hpp"
+#include "output/DataOutput.hpp"
+#include "connection/Socket.hpp"
+#include "connection/ATCPSocket.hpp"
+#include "connection/AUDPSocket.hpp"
+#include "connection/Server.hpp"
+#include "connection/RequestServer.hpp"
+#include "connection/DelimiterBasedTCPSocket.hpp"
+#include "connection/DTCPServerSocket.hpp"
+#include "connection/HTTPSocket.hpp"
 
 #define CONSOLE 1
 #define TCP     2
