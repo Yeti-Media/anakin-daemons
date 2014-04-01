@@ -52,6 +52,11 @@ Flags* AnakinFlags::getFlags(bool verbose) {
         reqIDLooseDependences->push_back(Constants::ACTION_STATUSIDX);
         flags->setLooseDependencies(Constants::PARAM_REQID, reqIDLooseDependences);
 
+        flags->setOptionalFlag(Constants::PARAM_MIN_RATIO);
+        flags->setOptionalFlag(Constants::PARAM_MIN_MATCHES_ALLOWED);
+        flags->setDependence(Constants::PARAM_MIN_RATIO, Constants::ACTION_MATCH);
+        flags->setDependence(Constants::PARAM_MIN_MATCHES_ALLOWED, Constants::ACTION_MATCH);
+
         flags->setVerbose(verbose);
         return flags;
 }

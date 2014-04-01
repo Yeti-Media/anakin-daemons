@@ -73,6 +73,9 @@ class Constants {
         static const std::string PARAM_IDXS;
         static const std::string PARAM_SCENEID;
         static const std::string PARAM_REQID;
+        static const std::string PARAM_MIN_RATIO;
+        static const std::string PARAM_MIN_MATCHES_ALLOWED;
+        static const std::string OPTIONAL_FLAGS;
 
         static const std::wstring WACTION_MATCH;
         static const std::wstring WACTION_ADDIDX;
@@ -83,6 +86,9 @@ class Constants {
         static const std::wstring WPARAM_IDXS;
         static const std::wstring WPARAM_SCENEID;
         static const std::wstring WPARAM_REQID;
+        static const std::wstring WPARAM_MIN_RATIO;
+        static const std::wstring WPARAM_MIN_MATCHES_ALLOWED;
+        static const std::wstring WOPTIONAL_FLAGS;
 
     protected:
     private:

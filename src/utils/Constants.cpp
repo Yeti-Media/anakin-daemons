@@ -58,6 +58,9 @@ const std::string Constants::ACTION_STATUSIDX = "status_indexes";
 const std::string Constants::PARAM_IDXS = "indexes";
 const std::string Constants::PARAM_SCENEID = "scenario";
 const std::string Constants::PARAM_REQID = "reqID";
+const std::string Constants::PARAM_MIN_RATIO = "mr";
+const std::string Constants::PARAM_MIN_MATCHES_ALLOWED = "mma";
+const std::string Constants::OPTIONAL_FLAGS = "flags";
 
 const std::wstring Constants::WACTION_MATCH = L"matching";
 const std::wstring Constants::WACTION_ADDIDX = L"add_indexes";
@@ -68,3 +71,6 @@ const std::wstring Constants::WACTION_STATUSIDX = L"status_indexes";
 const std::wstring Constants::WPARAM_IDXS = L"indexes";
 const std::wstring Constants::WPARAM_SCENEID = L"scenario";
 const std::wstring Constants::WPARAM_REQID = L"reqID";
+const std::wstring Constants::WPARAM_MIN_RATIO = L"mr";
+const std::wstring Constants::WPARAM_MIN_MATCHES_ALLOWED = L"mma";
+const std::wstring Constants::WOPTIONAL_FLAGS = L"flags";

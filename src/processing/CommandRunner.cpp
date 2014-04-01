@@ -46,6 +46,26 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache, st
                 }
                 reqID = values->at(0);
             }
+            if (flags->flagFound(Constants::PARAM_MIN_RATIO)) {
+                values = flags->getFlagValues(Constants::PARAM_MIN_RATIO);
+                if (values->size() == 1) {
+                    this->mr = std::stof(values->at(0));
+                } else {
+                    error = "flag " + Constants::PARAM_MIN_RATIO + " expects only one value";
+                    inputError = true;
+                    return;
+                }
+            }
+            if (flags->flagFound(Constants::PARAM_MIN_MATCHES_ALLOWED)) {
+                values = flags->getFlagValues(Constants::PARAM_MIN_MATCHES_ALLOWED);
+                if (values->size() == 1) {
+                    this->mma = std::stoi(values->at(0));
+                } else {
+                    error = "flag " + Constants::PARAM_MIN_MATCHES_ALLOWED + " expects only one value";
+                    inputError = true;
+                    return;
+                }
+            }
             if (flags->flagFound(Constants::PARAM_IDXS)) { //MUST BE AT THE END
                 values = flags->getFlagValues(Constants::PARAM_IDXS);
                 if (values->empty()) {
@@ -119,7 +139,7 @@ int CommandRunner::run() {
                 int idxID = std::stoi(smatcherID);
                 SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(idxID);
                 if (this->processor == NULL) {
-                    this->detector = new BasicFlannDetector(matcher, this->cache);
+                    this->detector = new BasicFlannDetector(matcher, this->cache, this->mr, this->mma);
                     this->processor = new FlannMatchingProcessor(this->detector, this->rw);
                 } else {
                     this->detector->changeMatcher(matcher);

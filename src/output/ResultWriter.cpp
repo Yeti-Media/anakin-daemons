@@ -206,7 +206,19 @@ std::string ResultWriter::jsonReqToString(JSONValue* req) {
         std::string scenario = std::to_string((int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
         request += scenario + " ";
     }
-
+    if (req->HasChild(Constants::WOPTIONAL_FLAGS.c_str())) {
+        JSONObject optionalFlags = req->Child(Constants::WOPTIONAL_FLAGS.c_str())->AsObject();
+        if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str()) != optionalFlags.end()) {
+            request += "-" + Constants::PARAM_MIN_RATIO + " ";
+            std::string mr = std::to_string((float) optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
+            request += mr + " ";
+        }
+        if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str()) != optionalFlags.end()) {
+            request += "-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ";
+            std::string mma = std::to_string((int) optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
+            request += mma + " ";
+        }
+    }
     return request;
 }
 

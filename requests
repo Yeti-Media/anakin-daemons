@@ -13,6 +13,27 @@ Content-Type: text/plain
 
 {"action":"matching", "indexes":[5], "scenario":2}
 
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 69
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2, "flags":{"mma":5}}
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 70
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2, "flags":{"mma":18}}
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 80
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2, "flags":{"mma":10, "mr":0.5}}
+
 
 POST / HTTP/1.1
 HOST:127.0.0.1:8000
