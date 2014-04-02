@@ -49,8 +49,6 @@ HTTPListener::HTTPListener( std::string port,
 int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
     int result = MG_FALSE;
 
-    std::cout << ev << std::endl;
-
     if (ev == MG_REQUEST) {
         //the event is a request (POST, GET for example)
         std::string method = conn->request_method; //method: POST, GET
