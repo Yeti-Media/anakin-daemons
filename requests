@@ -52,3 +52,5 @@ CURL
 
 
 time curl -X POST -H "Content-Type: application/json" -d '{"indexes":[5,6], "action":"add_indexes"}' --connect-timeout 10  -lv http://127.0.0.1:8080/
+
+time curl -X POST -H "Content-Type: application/json" -d '{"indexes":[5], "action":"matching", "scenario":2}' --connect-timeout 10  -lv http://127.0.0.1:8080/

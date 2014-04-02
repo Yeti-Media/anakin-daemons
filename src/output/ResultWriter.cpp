@@ -1,5 +1,5 @@
 #include "output/ResultWriter.hpp"
-#define LIGH_RESULTS 1
+#define LIGH_RESULTS 0
 #include "utils/Constants.hpp"
 
 using namespace Anakin;
