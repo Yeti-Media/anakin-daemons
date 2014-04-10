@@ -26,7 +26,7 @@ void HTTPListener::start() {
     HTTPListener::running = true;
     std::cout << "Starting on port : " << mg_get_option(HTTPListener::server, "listening_port") << std::endl;
     while (HTTPListener::running) {
-        if (HTTPListener::running) mg_poll_server(HTTPListener::server,2000);
+        if (HTTPListener::running) mg_poll_server(HTTPListener::server,300);
     }
     mg_destroy_server(&(HTTPListener::server));
 }
