@@ -258,12 +258,20 @@ public:
 	 */
 	bool retrieveScene(ImageInfo** scene, int sceneID, bool * error);
 
-	/**
-	 * Contains information about the last function called
-	 */
-	std::string lastMessageReceived;
+	std::string getMessage(int msg=0, bool append=false);
+
+	int getLogSize();
+
 protected:
 private:
+
+    void logMessage(std::string message);
+
+    /**
+	 * Contains information about the last function called
+	 */
+	std::vector<std::string> dbdriverLog;
+
 	/**
 	 * saves the descriptors (descriptors and keypoints) for the pattern with id <id>
 	 *

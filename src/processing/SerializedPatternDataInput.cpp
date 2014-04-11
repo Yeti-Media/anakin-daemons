@@ -70,7 +70,7 @@ bool SerializedPatternDataInput::initAndConnectDriver() {
 }
 
 void SerializedPatternDataInput::reportDBDriverError() {
-	std::cerr << this->driver->lastMessageReceived << std::endl;
+	std::cerr << this->driver->getMessage() << std::endl;
 }
 
 bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {

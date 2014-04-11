@@ -65,8 +65,8 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcher(int smatcher_id, bool * er
 		float lt;
 		matcher = loadMatcherFromDB(smatcher_id, &lt, error);
 		if (*error) {
-			sem_post(&this->sem);
-			return NULL;
+            sem_post(&this->sem);
+            return NULL;
 		}
 		int newMatcherLife = (int) lt * this->loadingTimeWeight;
 		int lowestMatcherLife = this->lowestLifeKey == -1 ? -1 : (this->matchersLife->find(this->lowestLifeKey)->second);
@@ -153,7 +153,7 @@ ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 		patternFound = this->dbdriver->retrieveNthPattern(smatcherID, pidx, &pattern, error);
 		if (!patternFound) {
             this->operation = ERROR;
-            this->errorMessage = this->dbdriver->lastMessageReceived;
+            this->errorMessage = this->dbdriver->getMessage();
             this->errorType = *error?ResultWriter::RW_ERROR_TYPE_FATAL:ResultWriter::RW_ERROR_TYPE_ERROR;
             this->origin = "SFBMCache#loadPattern";
             sem_post(&this->sem);
@@ -327,9 +327,10 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id, flo
 	clock_t t_1 = clock();
 	bool trainerFound;
 	trainerFound = this->dbdriver->retrieveSFBM(smatcher_id, error);
+	*error |= !trainerFound;
 	if (!trainerFound) {
         this->operation = ERROR;
-        this->errorMessage = this->dbdriver->lastMessageReceived;
+        this->errorMessage = this->dbdriver->getMessage();
         this->errorType = *error?ResultWriter::RW_ERROR_TYPE_FATAL:ResultWriter::RW_ERROR_TYPE_ERROR;
         this->origin = "SFBMCache#loadMatcherFromDB";
         return NULL;
@@ -349,7 +350,7 @@ ImageInfo* SFBMCache::loadSceneFromDB(int sceneID, bool * error) {
 	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error);
 	if (!sceneFound) {
         this->operation = ERROR;
-        this->errorMessage = this->dbdriver->lastMessageReceived;
+        this->errorMessage = this->dbdriver->getMessage();
         this->errorType = *error?ResultWriter::RW_ERROR_TYPE_FATAL:ResultWriter::RW_ERROR_TYPE_ERROR;
         this->origin = "SFBMCache#loadSceneFromDB";
         return NULL;

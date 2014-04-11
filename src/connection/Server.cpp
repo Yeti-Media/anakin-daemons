@@ -7,7 +7,8 @@
 #include "connection/DTCPServerSocket.hpp"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
-#include <logging/Log.hpp>
+#include "logging/Log.hpp"
+#include "output/JSONValue.h"
 
 using namespace Anakin;
 using namespace std;
@@ -18,12 +19,21 @@ Server::Server(unsigned short port, bool verbose, char mode, std::string ld,
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
 	if (this->dbdriver->connect()) {
-		std::cout << this->dbdriver->lastMessageReceived << std::endl;
+        this->initialization = true;
+		std::cout << this->dbdriver->getMessage() << std::endl;
 	} else {
-		std::cerr << this->dbdriver->lastMessageReceived << std::endl;
-		exit(-1);
+        this->initialization = false;
+        this->initializationError = this->dbdriver->getMessage();
+//		std::cerr << this->dbdriver->lastMessageReceived << std::endl;
+//		exit(-1);
 	}
-	this->cache = new SFBMCache(this->dbdriver, 9, true, 10);
+	if (this->initialization) {
+        this->cache = new SFBMCache(this->dbdriver, 9, true, 10);
+        JSONValue* cacheError = this->cache->getLastOperationResult(&this->cacheInitialization);
+        if (!this->cacheInitialization) {
+            this->cacheInitializationError = cacheError->Stringify().c_str();
+        }
+	}
 	if (mode & TCP) {
 		this->server = new ATCPServerSocket(port);
 		this->server->setShowComs(verbose);

@@ -1,5 +1,5 @@
 #include "output/ResultWriter.hpp"
-#define LIGH_RESULTS 0
+#define LIGHT_RESULTS 0
 #include "utils/Constants.hpp"
 
 using namespace Anakin;
@@ -58,19 +58,19 @@ JSONValue* ResultWriter::responseAsJSON(string requestID, string category, vecto
 JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
 	/*  Result as JSONObject
 
-	 root    -> center   -> x (float)
-	 -> y (float)
+        root    -> center   -> x (float)
+                            -> y (float)
 
-	 -> pattern label (string)
+                -> pattern label (string)
 
-	 -> keypoints (JSONArray)    -> pos      -> x (float)
-	 -> y (float)
+                -> keypoints (JSONArray)    -> pos      -> x (float)
+                                                        -> y (float)
 
-	 -> angle (float)
+                                            -> angle (float)
 
-	 -> size (float)
+                                            -> size (float)
 
-	 -> response (float)
+                                            -> response (float)
 	 */
 	JSONObject root;
 	JSONObject jcenter;
@@ -85,7 +85,7 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoi
 	ws << label.c_str();
 	root[L"label"] = new JSONValue(ws.str());
 
-	for (uint k = 0; k < matchedKeypoints.size() && !LIGH_RESULTS; k++) {
+	for (uint k = 0; k < matchedKeypoints.size() && !LIGHT_RESULTS; k++) {
 		KeyPoint current = matchedKeypoints[k];
 		JSONObject keypoint;
 		JSONObject pos;
@@ -97,7 +97,7 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoi
 		keypoint[L"response"] = new JSONValue(current.response);
 		keypoints.push_back(new JSONValue(keypoint));
 	}
-	root[L"keypoints"] = new JSONValue(keypoints);
+	if (!LIGHT_RESULTS) root[L"keypoints"] = new JSONValue(keypoints);
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
@@ -107,9 +107,9 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoi
 JSONValue* ResultWriter::matchesAsJSON(string label, vector<JSONValue*> jsonValues) {
 	/*  Result as JSONObject
 
-	 root    -> scene label (string)
+            root    -> scene label (string)
 
-	 -> values (JSONArray)    -> <see function above>
+                    -> values (JSONArray)    -> <see function above>
 	 */
 	JSONObject root;
 	wstringstream ws;
@@ -277,16 +277,15 @@ wstring ResultWriter::output(char mode, string data, char colors) {
 	return resultAsJSONValue(mode, data, colors)->Stringify().c_str();
 }
 
-JSONValue* ResultWriter::resultAsJSONValue(char mode, string data,
-		char colors) {
+JSONValue* ResultWriter::resultAsJSONValue(char mode, string data, char colors) {
 	/*  Result as JSONObject
 
-	 root    -> type ("pattern" | "histogram" | "landscape")
-	 -> colors (only if type != "pattern")   ->  color (bool)
-	 ->  gray (bool)
-	 ->  hsv (bool)
-	 -> dataType ("YML" | "XML")
-	 -> data (string)
+        root    -> type ("pattern" | "histogram" | "landscape")
+                -> colors (only if type != "pattern")   ->  color (bool)
+                                                        ->  gray (bool)
+                                                        ->  hsv (bool)
+                -> dataType ("YML" | "XML")
+                -> data (string)
 	 */
 	JSONObject root;
 
