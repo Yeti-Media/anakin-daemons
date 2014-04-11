@@ -230,36 +230,50 @@ int CommandRunner::run() {
             break;
         }
         case CommandRunner::MATCH: {
+            std::cout << "MARK 1" << std::endl;
             std::vector<JSONValue*>* matches = new std::vector<JSONValue*>();
             bool loadSceneError;
             ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
+            std::cout << "MARK 2" << std::endl;
             if (loadSceneError) {
                 this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
                 return -1;
             }
+            std::cout << "MARK 3" << std::endl;
             RichImg* rscene = new RichImg(scene);
+            std::cout << "MARK 4" << std::endl;
             for (uint i = 0; i < this->indexes.size(); i++) {
                 std::string smatcherID = this->indexes.at(i);
                 int idxID = std::stoi(smatcherID);
                 bool matcherError;
+                std::cout << "MARK 5" << std::endl;
                 SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(idxID, &matcherError);
+                std::cout << "MARK 6" << std::endl;
                 if (matcherError) {
                     this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
                     return -1;
                 }
+                std::cout << "MARK 7" << std::endl;
                 this->detector = new BasicFlannDetector(matcher, this->cache, this->mr, this->mma);
+                std::cout << "MARK 8" << std::endl;
                 this->processor = new FlannMatchingProcessor(this->detector, this->rw);
+                std::cout << "MARK 9" << std::endl;
                 bool processingError;
                 std::vector<JSONValue*>* cmatches = this->processor->process(rscene, &processingError);
+                std::cout << "MARK 10" << std::endl;
                 if (processingError) {
                     this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
                     return -1;
                 }
+                std::cout << "MARK 11" << std::endl;
                 matches->insert(matches->end(), cmatches->begin(), cmatches->end());
+                std::cout << "MARK 12" << std::endl;
             }
             std::vector<JSONValue*> sceneMatches;
             sceneMatches.push_back(this->rw->matchesAsJSON(scene->getLabel(), *matches));
+            std::cout << "MARK 13" << std::endl;
             this->out->output(this->rw->outputResponse(reqID, ResultWriter::RW_PATTERN_MATCHING, sceneMatches), ireqID);
+            std::cout << "MARK 14" << std::endl;
             delete matches;
             break;
         }
