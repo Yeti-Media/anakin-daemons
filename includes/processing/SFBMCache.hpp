@@ -38,9 +38,7 @@ public:
 	 * scenesCacheSize       : scenes cache size (how many scenes can be stored in the cache)
 	 * scenesLife            : scenes starting life
 	 */
-	SFBMCache(DBDriver* dbdriver, int loadingTimeWeight = 0,
-			bool discardLessValuable = false, int cacheSize = 4, int life = 10,
-			int scenesCacheSize = 15, int scenesLife = 10);
+	SFBMCache(DBDriver* dbdriver, int loadingTimeWeight = 0, bool discardLessValuable = false, int cacheSize = 4, int life = 10, int scenesCacheSize = 15, int scenesLife = 10);
 	/**
 	 * load a matcher
 	 *
@@ -111,7 +109,7 @@ public:
 	 * @see ResultWriter.hpp
 	 * @see SFBMCache.cpp
 	 */
-	JSONValue* getLastOperationResult();
+	JSONValue* getLastOperationResult(bool * error=NULL);
 protected:
 private:
 	//FIELDS
@@ -122,8 +120,11 @@ private:
 	static const char INSERTOP = 1;
 	static const char DELETEOP = 2;
 	static const char UPDATEOP = 3;
-	static const char DBERROR = 4;
+	static const char ERROR = 4;
 	char operation = 0;
+	std::string errorMessage;
+	char errorType;
+	std::string origin;
 
 	//MATCHERS
 	std::map<int, SerializableFlannBasedMatcher*>* cache;

@@ -237,8 +237,7 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern,
-			bool * error);
+	bool retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern, bool * error);
 
 	//SCENE
 	/**
