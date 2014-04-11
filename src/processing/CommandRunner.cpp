@@ -3,6 +3,7 @@
 #include <algorithm> // for copy
 #include <iterator> // for ostream_iterator
 #include "utils/Constants.hpp"
+#include <logging/Log.hpp>
 
 using namespace Anakin;
 using namespace cv;
