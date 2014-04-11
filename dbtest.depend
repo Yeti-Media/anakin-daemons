@@ -25,11 +25,11 @@
 	"DBHistogram.hpp"
 	<string>
 
-1386310690 /usr/include/postgresql/libpq-fe.h
+1395427826 /usr/include/postgresql/libpq-fe.h
 	<stdio.h>
 	"postgres_ext.h"
 
-1386310690 /usr/include/postgresql/postgres_ext.h
+1395427826 /usr/include/postgresql/postgres_ext.h
 
 1390428576 source:/home/stein/Documents/dbtest/src/Histogram.cpp
 	"Histogram.hpp"
@@ -102,7 +102,7 @@
 	"Constants.hpp"
 	"boost/filesystem.hpp"
 
-1386310690 /usr/include/postgresql/libpq/libpq-fs.h
+1395427826 /usr/include/postgresql/libpq/libpq-fs.h
 
 1394922804 source:/home/stein/Documents/ym/dbconnector/src/DBHistogram.cpp
 	"DBHistogram.hpp"
@@ -198,4 +198,99 @@
 
 1394924215 source:/home/stein/Documents/ym/dbconnector/src/Help.cpp
 	"Help.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/main.cpp
+	"DBDriver.hpp"
+	"DBUser.hpp"
+	"DBPattern.hpp"
+	"DBHistogram.hpp"
+	"Flags.hpp"
+	"XMLoader.hpp"
+	"Constants.hpp"
+	"ImageInfo.hpp"
+	<iostream>
+	"Help.hpp"
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/DBDriver.hpp
+	"libpq-fe.h"
+	"DBUser.hpp"
+	"DBPattern.hpp"
+	"DBHistogram.hpp"
+	<opencv2/opencv.hpp>
+	"ImageInfo.hpp"
+	<string>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/DBUser.hpp
+	"DBPattern.hpp"
+	"DBHistogram.hpp"
+	<vector>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/DBPattern.hpp
+	<string>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/DBHistogram.hpp
+	<string>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/Flags.hpp
+	<map>
+	<vector>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/XMLoader.hpp
+	"DBHistogram.hpp"
+	"DBPattern.hpp"
+	"ImageInfo.hpp"
+	<vector>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/Constants.hpp
+	<string>
+
+1397233221 /home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/includes/Help.hpp
+	<string>
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/Constants.cpp
+	"Constants.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/DBDriver.cpp
+	"DBDriver.hpp"
+	<iostream>
+	"Constants.hpp"
+	<string>
+	<libpq/libpq-fs.h>
+	<cstdio>
+	<fstream>
+	"XMLoader.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/DBHistogram.cpp
+	"DBHistogram.hpp"
+	"Constants.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/DBPattern.cpp
+	"DBPattern.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/DBUser.cpp
+	"DBUser.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/Flags.cpp
+	"Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/Help.cpp
+	"Help.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/ImageInfo.cpp
+	"ImageInfo.hpp"
+
+1397233221 source:/home/franco/Trabajos/Yeti-Media/Franco-Fork/dbconnector/anakin-daemons/src/XMLoader.cpp
+	"XMLoader.hpp"
+	<iostream>
+	<fstream>
+	<sstream>
+	"Constants.hpp"
+	"boost/filesystem.hpp"
+	<algorithm>
 

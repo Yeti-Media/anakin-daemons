@@ -52,6 +52,7 @@
 		<Unit filename="includes/DBPattern.hpp" />
 		<Unit filename="includes/DBUser.hpp" />
 		<Unit filename="includes/Flags.hpp" />
+		<Unit filename="includes/Help.hpp" />
 		<Unit filename="includes/ImageInfo.hpp" />
 		<Unit filename="includes/XMLoader.hpp" />
 		<Unit filename="main.cpp" />
@@ -61,6 +62,7 @@
 		<Unit filename="src/DBPattern.cpp" />
 		<Unit filename="src/DBUser.cpp" />
 		<Unit filename="src/Flags.cpp" />
+		<Unit filename="src/Help.cpp" />
 		<Unit filename="src/ImageInfo.cpp" />
 		<Unit filename="src/XMLoader.cpp" />
 		<Extensions>
