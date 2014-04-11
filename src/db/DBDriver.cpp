@@ -20,7 +20,7 @@ bool DBDriver::connect() {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		std::string cerror = "Connection to database failed";
         	std::string s_error(PQerrorMessage(conn));
-		cerror += "REASON:\n" + s_error;
+		cerror += "\nREASON:\n" + s_error;
         	logMessage(cerror);
 		return false;
 	}
@@ -430,6 +430,7 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 			return false;
 		}
 		if (PQntuples(res) < 1) {
+            std::cout << "no matcher found" << std::endl;
 			std::string no_matcher_found = "No serialized matcher found with id: " + smatcher_id;
 			logMessage(no_matcher_found);
 			return false;
