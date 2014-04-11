@@ -58,19 +58,19 @@ JSONValue* ResultWriter::responseAsJSON(string requestID, string category, vecto
 JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
 	/*  Result as JSONObject
 
-	 root    -> center   -> x (float)
-	 -> y (float)
+        root    -> center   -> x (float)
+                            -> y (float)
 
-	 -> pattern label (string)
+                -> pattern label (string)
 
-	 -> keypoints (JSONArray)    -> pos      -> x (float)
-	 -> y (float)
+                -> keypoints (JSONArray)    -> pos      -> x (float)
+                                                        -> y (float)
 
-	 -> angle (float)
+                                            -> angle (float)
 
-	 -> size (float)
+                                            -> size (float)
 
-	 -> response (float)
+                                            -> response (float)
 	 */
 	JSONObject root;
 	JSONObject jcenter;
@@ -107,9 +107,9 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoi
 JSONValue* ResultWriter::matchesAsJSON(string label, vector<JSONValue*> jsonValues) {
 	/*  Result as JSONObject
 
-	 root    -> scene label (string)
+            root    -> scene label (string)
 
-	 -> values (JSONArray)    -> <see function above>
+                    -> values (JSONArray)    -> <see function above>
 	 */
 	JSONObject root;
 	wstringstream ws;
@@ -277,16 +277,15 @@ wstring ResultWriter::output(char mode, string data, char colors) {
 	return resultAsJSONValue(mode, data, colors)->Stringify().c_str();
 }
 
-JSONValue* ResultWriter::resultAsJSONValue(char mode, string data,
-		char colors) {
+JSONValue* ResultWriter::resultAsJSONValue(char mode, string data, char colors) {
 	/*  Result as JSONObject
 
-	 root    -> type ("pattern" | "histogram" | "landscape")
-	 -> colors (only if type != "pattern")   ->  color (bool)
-	 ->  gray (bool)
-	 ->  hsv (bool)
-	 -> dataType ("YML" | "XML")
-	 -> data (string)
+        root    -> type ("pattern" | "histogram" | "landscape")
+                -> colors (only if type != "pattern")   ->  color (bool)
+                                                        ->  gray (bool)
+                                                        ->  hsv (bool)
+                -> dataType ("YML" | "XML")
+                -> data (string)
 	 */
 	JSONObject root;
 

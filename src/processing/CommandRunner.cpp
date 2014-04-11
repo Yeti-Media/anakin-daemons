@@ -8,8 +8,7 @@
 using namespace Anakin;
 using namespace cv;
 
-CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
-		std::vector<std::string> *input) {
+CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache, std::vector<std::string> *input) {
 	this->out = out;
 	this->rw = new ResultWriter();
 	this->cache = cache;
@@ -33,8 +32,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
 		if (flags->flagFound(Constants::PARAM_SCENEID)) {
 			values = flags->getFlagValues(Constants::PARAM_SCENEID);
 			if (values->size() != 1) {
-				error = "flag " + Constants::PARAM_SCENEID
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_SCENEID + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -43,8 +41,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
 		if (flags->flagFound(Constants::PARAM_REQID)) {
 			values = flags->getFlagValues(Constants::PARAM_REQID);
 			if (values->size() != 1) {
-				error = "flag " + Constants::PARAM_REQID
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_REQID + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -55,8 +52,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
 			if (values->size() == 1) {
 				this->mr = std::stof(values->at(0));
 			} else {
-				error = "flag " + Constants::PARAM_MIN_RATIO
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_MIN_RATIO + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -66,8 +62,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
 			if (values->size() == 1) {
 				this->mma = std::stoi(values->at(0));
 			} else {
-				error = "flag " + Constants::PARAM_MIN_MATCHES_ALLOWED
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_MIN_MATCHES_ALLOWED + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -76,8 +71,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
 				{
 			values = flags->getFlagValues(Constants::PARAM_IDXS);
 			if (values->empty()) {
-				error = "flag " + Constants::PARAM_IDXS
-						+ " expects at least one value";
+				error = "flag " + Constants::PARAM_IDXS + " expects at least one value";
 				inputError = true;
 				return;
 			}
@@ -125,8 +119,7 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 		if (flags->flagFound(Constants::PARAM_SCENEID)) {
 			values = flags->getFlagValues(Constants::PARAM_SCENEID);
 			if (values->size() != 1) {
-				error = "flag " + Constants::PARAM_SCENEID
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_SCENEID + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -135,8 +128,7 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 		if (flags->flagFound(Constants::PARAM_REQID)) {
 			values = flags->getFlagValues(Constants::PARAM_REQID);
 			if (values->size() != 1) {
-				error = "flag " + Constants::PARAM_REQID
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_REQID + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -147,8 +139,7 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 			if (values->size() == 1) {
 				this->mr = std::stof(values->at(0));
 			} else {
-				error = "flag " + Constants::PARAM_MIN_RATIO
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_MIN_RATIO + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -158,8 +149,7 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 			if (values->size() == 1) {
 				this->mma = std::stoi(values->at(0));
 			} else {
-				error = "flag " + Constants::PARAM_MIN_MATCHES_ALLOWED
-						+ " expects only one value";
+				error = "flag " + Constants::PARAM_MIN_MATCHES_ALLOWED + " expects only one value";
 				inputError = true;
 				return;
 			}
@@ -168,8 +158,7 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 				{
 			values = flags->getFlagValues(Constants::PARAM_IDXS);
 			if (values->empty()) {
-				error = "flag " + Constants::PARAM_IDXS
-						+ " expects at least one value";
+				error = "flag " + Constants::PARAM_IDXS + " expects at least one value";
 				inputError = true;
 				return;
 			}
@@ -198,6 +187,7 @@ int CommandRunner::run() {
                 bool error;
                 this->cache->loadMatcher(idxID, &error);
                 if (error) {
+                    std::cout << "ADDIDXS error" << std::endl;
                     this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
                     return -1;
                 }
