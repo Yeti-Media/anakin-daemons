@@ -183,113 +183,95 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 int CommandRunner::run() {
 
 	if (inputError) {
-		this->out->error(error);
+		this->out->error(this->rw->outputError(ResultWriter::RW_ERROR_TYPE_ERROR, error, "CommandRunner::run"));
 		return -1;
 	}
 
 	int ireqID = std::stoi(reqID);
 
 	switch (action) {
-	case CommandRunner::ADDIDXS: {
-		std::vector<JSONValue*> inserts;
-		for (uint i = 0; i < this->indexes.size(); i++) {
-			int idxID = std::stoi(this->indexes.at(i));
-			bool error;
-			this->cache->loadMatcher(idxID, &error);
-			if (error) {
-				//error handling
-			}
-			inserts.push_back(this->cache->getLastOperationResult());
-		}
-		this->out->output(
-				this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_ADD,
-						inserts), ireqID);
-		break;
-	}
-	case CommandRunner::DELIDXS: {
-		std::vector<JSONValue*> deletes;
-		for (uint i = 0; i < this->indexes.size(); i++) {
-			std::string smatcherID = this->indexes.at(i);
-			int idxID = std::stoi(smatcherID);
-			this->cache->unloadMatcher(idxID);
-			deletes.push_back(this->cache->getLastOperationResult());
-		}
-		this->out->output(
-				this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_DEL,
-						deletes), ireqID);
-		break;
-	}
-	case CommandRunner::IDXSTATUS: {
-		std::vector<JSONValue*> status;
-		status.push_back(this->cache->indexCacheStatus());
-		this->out->output(
-				this->rw->outputResponse(reqID,
-						ResultWriter::RW_CACHE_IDX_STATUS, status), ireqID);
-		break;
-	}
-	case CommandRunner::UPDIDXS: {
-		std::vector<JSONValue*> updates;
-		for (uint i = 0; i < this->indexes.size(); i++) {
-			std::string smatcherID = this->indexes.at(i);
-			int idxID = std::stoi(smatcherID);
-			bool error;
-			this->cache->updateMatcher(idxID, &error);
-			if (error) {
-				//error handling
-			}
-			updates.push_back(this->cache->getLastOperationResult());
-		}
-		this->out->output(
-				this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_UPD,
-						updates), ireqID);
-		break;
-	}
-	case CommandRunner::MATCH: {
-		std::vector<JSONValue*>* matches = new std::vector<JSONValue*>();
-		bool loadSceneError;
-		ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
-		if (loadSceneError) {
-			//error handling
-		}
-		RichImg* rscene = new RichImg(scene);
-		for (uint i = 0; i < this->indexes.size(); i++) {
-			std::string smatcherID = this->indexes.at(i);
-			int idxID = std::stoi(smatcherID);
-			bool matcherError;
-			SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(
-					idxID, &matcherError);
-			if (matcherError) {
-				//error handling
-			}
-			this->detector = new BasicFlannDetector(matcher, this->cache,
-					this->mr, this->mma);
-			this->processor = new FlannMatchingProcessor(this->detector,
-					this->rw);
-//                if (this->processor == NULL) {
-//                    this->detector = new BasicFlannDetector(matcher, this->cache, this->mr, this->mma);
-//                    this->processor = new FlannMatchingProcessor(this->detector, this->rw);
-//                } else {
-//                    this->detector->changeMatcher(matcher);
-//                    this->processor = new FlannMatchingProcessor(this->detector, this->rw);
-//                }
-			bool processingError;
-			std::vector<JSONValue*>* cmatches = this->processor->process(rscene,
-					&processingError);
-			if (processingError) {
-				//error handling
-			}
-			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
-		}
-		std::vector<JSONValue*> sceneMatches;
-		sceneMatches.push_back(
-				this->rw->matchesAsJSON(scene->getLabel(), *matches));
-		this->out->output(
-				this->rw->outputResponse(reqID,
-						ResultWriter::RW_PATTERN_MATCHING, sceneMatches),
-				ireqID);
-		delete matches;
-		break;
-	}
+        case CommandRunner::ADDIDXS: {
+            std::vector<JSONValue*> inserts;
+            for (uint i = 0; i < this->indexes.size(); i++) {
+                int idxID = std::stoi(this->indexes.at(i));
+                bool error;
+                this->cache->loadMatcher(idxID, &error);
+                if (error) {
+                    this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
+                    return -1;
+                }
+                inserts.push_back(this->cache->getLastOperationResult());
+            }
+            this->out->output(this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_ADD, inserts), ireqID);
+            break;
+        }
+        case CommandRunner::DELIDXS: {
+            std::vector<JSONValue*> deletes;
+            for (uint i = 0; i < this->indexes.size(); i++) {
+                std::string smatcherID = this->indexes.at(i);
+                int idxID = std::stoi(smatcherID);
+                this->cache->unloadMatcher(idxID);
+                deletes.push_back(this->cache->getLastOperationResult());
+            }
+            this->out->output(this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_DEL, deletes), ireqID);
+            break;
+        }
+        case CommandRunner::IDXSTATUS: {
+            std::vector<JSONValue*> status;
+            status.push_back(this->cache->indexCacheStatus());
+            this->out->output(this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_STATUS, status), ireqID);
+            break;
+        }
+        case CommandRunner::UPDIDXS: {
+            std::vector<JSONValue*> updates;
+            for (uint i = 0; i < this->indexes.size(); i++) {
+                std::string smatcherID = this->indexes.at(i);
+                int idxID = std::stoi(smatcherID);
+                bool error;
+                this->cache->updateMatcher(idxID, &error);
+                if (error) {
+                    this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
+                    return -1;
+                }
+                updates.push_back(this->cache->getLastOperationResult());
+            }
+            this->out->output(this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_UPD, updates), ireqID);
+            break;
+        }
+        case CommandRunner::MATCH: {
+            std::vector<JSONValue*>* matches = new std::vector<JSONValue*>();
+            bool loadSceneError;
+            ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
+            if (loadSceneError) {
+                this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
+                return -1;
+            }
+            RichImg* rscene = new RichImg(scene);
+            for (uint i = 0; i < this->indexes.size(); i++) {
+                std::string smatcherID = this->indexes.at(i);
+                int idxID = std::stoi(smatcherID);
+                bool matcherError;
+                SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(idxID, &matcherError);
+                if (matcherError) {
+                    this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
+                    return -1;
+                }
+                this->detector = new BasicFlannDetector(matcher, this->cache, this->mr, this->mma);
+                this->processor = new FlannMatchingProcessor(this->detector, this->rw);
+                bool processingError;
+                std::vector<JSONValue*>* cmatches = this->processor->process(rscene, &processingError);
+                if (processingError) {
+                    this->out->error(this->cache->getLastOperationResult()->Stringify().c_str());
+                    return -1;
+                }
+                matches->insert(matches->end(), cmatches->begin(), cmatches->end());
+            }
+            std::vector<JSONValue*> sceneMatches;
+            sceneMatches.push_back(this->rw->matchesAsJSON(scene->getLabel(), *matches));
+            this->out->output(this->rw->outputResponse(reqID, ResultWriter::RW_PATTERN_MATCHING, sceneMatches), ireqID);
+            delete matches;
+            break;
+        }
 	}
 
 	return 0;
