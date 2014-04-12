@@ -9,7 +9,7 @@ where mode is one of the following:
 
 -landscape 		: will construct histograms to use with landscape detection
 -histograms 		: will construct one histogram per pattern
--patterns 		: will extract descriptors and keypoints
+-matching 		: will extract descriptors and keypoints
 
 where I/O arguments are:
 
