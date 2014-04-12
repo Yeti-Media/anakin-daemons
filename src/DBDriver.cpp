@@ -15,11 +15,10 @@ DBDriver::DBDriver() {
 
 bool DBDriver::connect() {
 
-    conn = PQconnectdb("dbname = anakin-test");
+    conn = PQconnectdb("");
 
     if (PQstatus(conn) != CONNECTION_OK) {
         this->lastMessageReceived = "Connection to database failed";
-        PQfinish(conn);
         return false;
     }
 

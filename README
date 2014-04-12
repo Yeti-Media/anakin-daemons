@@ -17,7 +17,6 @@ or histograms.
 the following commands must be runned from the bin/Debug or bin/Release folders (just once per session)
 
 . ./../../createDBENV.sh
-export LD_LIBRARY_PATH=../../lib/
 
 or you can just export the all values to bash config
 
