@@ -21,7 +21,6 @@ bool DBDriver::connect() {
         this->lastMessageReceived = "Connection to database failed";
         std::string s_error(PQerrorMessage(conn));
         this->lastMessageReceived += "REASON:\n" + s_error;
-        PQfinish(conn);
         return false;
     }
 
