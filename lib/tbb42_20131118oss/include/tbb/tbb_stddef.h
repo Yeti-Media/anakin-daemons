@@ -1,30 +1,30 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+ Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
-    This file is part of Threading Building Blocks.
+ This file is part of Threading Building Blocks.
 
-    Threading Building Blocks is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    version 2 as published by the Free Software Foundation.
+ Threading Building Blocks is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ version 2 as published by the Free Software Foundation.
 
-    Threading Building Blocks is distributed in the hope that it will be
-    useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ Threading Building Blocks is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with Threading Building Blocks; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU General Public License
+ along with Threading Building Blocks; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-    As a special exception, you may use this file as part of a free software
-    library without restriction.  Specifically, if other files instantiate
-    templates or use macros or inline functions from this file, or you compile
-    this file and link it with other files to produce an executable, this
-    file does not by itself cause the resulting executable to be covered by
-    the GNU General Public License.  This exception does not however
-    invalidate any other reasons why the executable file might be covered by
-    the GNU General Public License.
-*/
+ As a special exception, you may use this file as part of a free software
+ library without restriction.  Specifically, if other files instantiate
+ templates or use macros or inline functions from this file, or you compile
+ this file and link it with other files to produce an executable, this
+ file does not by itself cause the resulting executable to be covered by
+ the GNU General Public License.  This exception does not however
+ invalidate any other reasons why the executable file might be covered by
+ the GNU General Public License.
+ */
 
 #ifndef __TBB_tbb_stddef_H
 #define __TBB_tbb_stddef_H
@@ -77,37 +77,37 @@
  */
 
 /** \page concepts TBB concepts
-    
-    A concept is a set of requirements to a type, which are necessary and sufficient
-    for the type to model a particular behavior or a set of behaviors. Some concepts 
-    are specific to a particular algorithm (e.g. algorithm body), while other ones 
-    are common to several algorithms (e.g. range concept). 
+ 
+ A concept is a set of requirements to a type, which are necessary and sufficient
+ for the type to model a particular behavior or a set of behaviors. Some concepts 
+ are specific to a particular algorithm (e.g. algorithm body), while other ones 
+ are common to several algorithms (e.g. range concept). 
 
-    All TBB algorithms make use of different classes implementing various concepts.
-    Implementation classes are supplied by the user as type arguments of template 
-    parameters and/or as objects passed as function call arguments. The library 
-    provides predefined  implementations of some concepts (e.g. several kinds of 
-    \ref range_req "ranges"), while other ones must always be implemented by the user. 
-    
-    TBB defines a set of minimal requirements each concept must conform to. Here is 
-    the list of different concepts hyperlinked to the corresponding requirements specifications:
-    - \subpage range_req
-    - \subpage parallel_do_body_req
-    - \subpage parallel_for_body_req
-    - \subpage parallel_reduce_body_req
-    - \subpage parallel_scan_body_req
-    - \subpage parallel_sort_iter_req
-**/
+ All TBB algorithms make use of different classes implementing various concepts.
+ Implementation classes are supplied by the user as type arguments of template 
+ parameters and/or as objects passed as function call arguments. The library 
+ provides predefined  implementations of some concepts (e.g. several kinds of 
+ \ref range_req "ranges"), while other ones must always be implemented by the user. 
+ 
+ TBB defines a set of minimal requirements each concept must conform to. Here is 
+ the list of different concepts hyperlinked to the corresponding requirements specifications:
+ - \subpage range_req
+ - \subpage parallel_do_body_req
+ - \subpage parallel_for_body_req
+ - \subpage parallel_reduce_body_req
+ - \subpage parallel_scan_body_req
+ - \subpage parallel_sort_iter_req
+ **/
 
 // tbb_config.h should be included the first since it contains macro definitions used in other headers
 #include "tbb_config.h"
 
 #if _MSC_VER >=1400
-    #define __TBB_EXPORTED_FUNC   __cdecl
-    #define __TBB_EXPORTED_METHOD __thiscall
+#define __TBB_EXPORTED_FUNC   __cdecl
+#define __TBB_EXPORTED_METHOD __thiscall
 #else
-    #define __TBB_EXPORTED_FUNC
-    #define __TBB_EXPORTED_METHOD
+#define __TBB_EXPORTED_FUNC
+#define __TBB_EXPORTED_METHOD
 #endif
 
 #if __INTEL_COMPILER || _MSC_VER
@@ -121,54 +121,55 @@
 #include <cstddef>      /* Need size_t and ptrdiff_t */
 
 #if _MSC_VER
-    #define __TBB_tbb_windef_H
-    #include "internal/_tbb_windef.h"
-    #undef __TBB_tbb_windef_H
+#define __TBB_tbb_windef_H
+#include "internal/_tbb_windef.h"
+#undef __TBB_tbb_windef_H
 #endif
 #if !defined(_MSC_VER) || _MSC_VER>=1600
-    #include <stdint.h>
+#include <stdint.h>
 #endif
 
 //! Type for an assertion handler
-typedef void(*assertion_handler_type)( const char* filename, int line, const char* expression, const char * comment );
+typedef void (*assertion_handler_type)(const char* filename, int line,
+		const char* expression, const char * comment);
 
 #if TBB_USE_ASSERT
 
-     #define __TBB_ASSERT_NS(predicate,message,ns) ((predicate)?((void)0) : ns::assertion_failure(__FILE__,__LINE__,#predicate,message))
-    //! Assert that x is true.
-    /** If x is false, print assertion failure message.  
-        If the comment argument is not NULL, it is printed as part of the failure message.  
-        The comment argument has no other effect. */
+#define __TBB_ASSERT_NS(predicate,message,ns) ((predicate)?((void)0) : ns::assertion_failure(__FILE__,__LINE__,#predicate,message))
+//! Assert that x is true.
+/** If x is false, print assertion failure message.  
+ If the comment argument is not NULL, it is printed as part of the failure message.  
+ The comment argument has no other effect. */
 #if __TBBMALLOC_BUILD
-namespace rml { namespace internal {
-    #define __TBB_ASSERT(predicate,message) __TBB_ASSERT_NS(predicate,message,rml::internal)
+namespace rml {namespace internal {
+#define __TBB_ASSERT(predicate,message) __TBB_ASSERT_NS(predicate,message,rml::internal)
 #else
-namespace tbb {
-    #define __TBB_ASSERT(predicate,message) __TBB_ASSERT_NS(predicate,message,tbb)
+		namespace tbb {
+#define __TBB_ASSERT(predicate,message) __TBB_ASSERT_NS(predicate,message,tbb)
 #endif
 
-    #define __TBB_ASSERT_EX __TBB_ASSERT
+#define __TBB_ASSERT_EX __TBB_ASSERT
 
-    //! Set assertion handler and return previous value of it.
-    assertion_handler_type __TBB_EXPORTED_FUNC set_assertion_handler( assertion_handler_type new_handler );
+			//! Set assertion handler and return previous value of it.
+			assertion_handler_type __TBB_EXPORTED_FUNC set_assertion_handler( assertion_handler_type new_handler );
 
-    //! Process an assertion failure.
-    /** Normally called from __TBB_ASSERT macro.
-        If assertion handler is null, print message for assertion failure and abort.
-        Otherwise call the assertion handler. */
-    void __TBB_EXPORTED_FUNC assertion_failure( const char* filename, int line, const char* expression, const char* comment );
+			//! Process an assertion failure.
+			/** Normally called from __TBB_ASSERT macro.
+			 If assertion handler is null, print message for assertion failure and abort.
+			 Otherwise call the assertion handler. */
+			void __TBB_EXPORTED_FUNC assertion_failure( const char* filename, int line, const char* expression, const char* comment );
 
 #if __TBBMALLOC_BUILD
-}}  // namespace rml::internal
+		}}  // namespace rml::internal
 #else
 } // namespace tbb
 #endif
 #else /* !TBB_USE_ASSERT */
 
-    //! No-op version of __TBB_ASSERT.
-    #define __TBB_ASSERT(predicate,comment) ((void)0)
-    //! "Extended" version is useful to suppress warnings if a variable is only used with an assert
-    #define __TBB_ASSERT_EX(predicate,comment) ((void)(1 && (predicate)))
+//! No-op version of __TBB_ASSERT.
+#define __TBB_ASSERT(predicate,comment) ((void)0)
+//! "Extended" version is useful to suppress warnings if a variable is only used with an assert
+#define __TBB_ASSERT_EX(predicate,comment) ((void)(1 && (predicate)))
 
 #endif /* !TBB_USE_ASSERT */
 
@@ -176,31 +177,31 @@ namespace tbb {
 namespace tbb {
 
 #if _MSC_VER && _MSC_VER<1600
-    namespace internal {
-        typedef __int8 int8_t;
-        typedef __int16 int16_t;
-        typedef __int32 int32_t;
-        typedef __int64 int64_t;
-        typedef unsigned __int8 uint8_t;
-        typedef unsigned __int16 uint16_t;
-        typedef unsigned __int32 uint32_t;
-        typedef unsigned __int64 uint64_t;
-    } // namespace internal
+namespace internal {
+	typedef __int8 int8_t;
+	typedef __int16 int16_t;
+	typedef __int32 int32_t;
+	typedef __int64 int64_t;
+	typedef unsigned __int8 uint8_t;
+	typedef unsigned __int16 uint16_t;
+	typedef unsigned __int32 uint32_t;
+	typedef unsigned __int64 uint64_t;
+} // namespace internal
 #else /* Posix */
-    namespace internal {
-        using ::int8_t;
-        using ::int16_t;
-        using ::int32_t;
-        using ::int64_t;
-        using ::uint8_t;
-        using ::uint16_t;
-        using ::uint32_t;
-        using ::uint64_t;
-    } // namespace internal
+namespace internal {
+using ::int8_t;
+using ::int16_t;
+using ::int32_t;
+using ::int64_t;
+using ::uint8_t;
+using ::uint16_t;
+using ::uint32_t;
+using ::uint64_t;
+} // namespace internal
 #endif /* Posix */
 
-    using std::size_t;
-    using std::ptrdiff_t;
+using std::size_t;
+using std::ptrdiff_t;
 
 //! The function returns the interface version of the TBB shared library being used.
 /**
@@ -225,44 +226,46 @@ namespace internal {
 
 //! Compile-time constant that is upper bound on cache line/sector size.
 /** It should be used only in situations where having a compile-time upper 
-    bound is more useful than a run-time exact answer.
-    @ingroup memory_allocation */
+ bound is more useful than a run-time exact answer.
+ @ingroup memory_allocation */
 const size_t NFS_MaxLineSize = 128;
 
 /** Label for data that may be accessed from different threads, and that may eventually become wrapped
-    in a formal atomic type.
-    
-    Note that no problems have yet been observed relating to the definition currently being empty,
-    even if at least "volatile" would seem to be in order to avoid data sometimes temporarily hiding
-    in a register (although "volatile" as a "poor man's atomic" lacks several other features of a proper
-    atomic, some of which are now provided instead through specialized functions).
+ in a formal atomic type.
+ 
+ Note that no problems have yet been observed relating to the definition currently being empty,
+ even if at least "volatile" would seem to be in order to avoid data sometimes temporarily hiding
+ in a register (although "volatile" as a "poor man's atomic" lacks several other features of a proper
+ atomic, some of which are now provided instead through specialized functions).
 
-    Note that usage is intentionally compatible with a definition as qualifier "volatile",
-    both as a way to have the compiler help enforce use of the label and to quickly rule out
-    one potential issue.
+ Note that usage is intentionally compatible with a definition as qualifier "volatile",
+ both as a way to have the compiler help enforce use of the label and to quickly rule out
+ one potential issue.
 
-    Note however that, with some architecture/compiler combinations, e.g. on IA-64 architecture, "volatile" 
-    also has non-portable memory semantics that are needlessly expensive for "relaxed" operations.
+ Note however that, with some architecture/compiler combinations, e.g. on IA-64 architecture, "volatile" 
+ also has non-portable memory semantics that are needlessly expensive for "relaxed" operations.
 
-    Note that this must only be applied to data that will not change bit patterns when cast to/from
-    an integral type of the same length; tbb::atomic must be used instead for, e.g., floating-point types.
+ Note that this must only be applied to data that will not change bit patterns when cast to/from
+ an integral type of the same length; tbb::atomic must be used instead for, e.g., floating-point types.
 
-    TODO: apply wherever relevant **/
+ TODO: apply wherever relevant **/
 #define __TBB_atomic // intentionally empty, see above
 
 template<class T, int S>
-struct padded_base : T {
-    char pad[NFS_MaxLineSize - sizeof(T) % NFS_MaxLineSize];
+struct padded_base: T {
+	char pad[NFS_MaxLineSize - sizeof(T) % NFS_MaxLineSize];
 };
-template<class T> struct padded_base<T, 0> : T {};
+template<class T> struct padded_base<T, 0> : T {
+};
 
 //! Pads type T to fill out to a multiple of cache line size.
 template<class T>
-struct padded : padded_base<T, sizeof(T)> {};
+struct padded: padded_base<T, sizeof(T)> {
+};
 
 //! Extended variant of the standard offsetof macro
 /** The standard offsetof macro is not sufficient for TBB as it can be used for
-    POD-types only. The constant 0x1000 (not NULL) is necessary to appease GCC. **/
+ POD-types only. The constant 0x1000 (not NULL) is necessary to appease GCC. **/
 #define __TBB_offsetof(class_name, member_name) \
     ((ptrdiff_t)&(reinterpret_cast<class_name*>(0x1000)->member_name) - 0x1000)
 
@@ -271,23 +274,23 @@ struct padded : padded_base<T, sizeof(T)> {};
     (*reinterpret_cast<class_name*>((char*)member_addr - __TBB_offsetof(class_name, member_name)))
 
 //! Throws std::runtime_error with what() returning error_code description prefixed with aux_info
-void __TBB_EXPORTED_FUNC handle_perror( int error_code, const char* aux_info );
+void __TBB_EXPORTED_FUNC handle_perror(int error_code, const char* aux_info);
 
 #if TBB_USE_EXCEPTIONS
-    #define __TBB_TRY try
-    #define __TBB_CATCH(e) catch(e)
-    #define __TBB_THROW(e) throw e
-    #define __TBB_RETHROW() throw
+#define __TBB_TRY try
+#define __TBB_CATCH(e) catch(e)
+#define __TBB_THROW(e) throw e
+#define __TBB_RETHROW() throw
 #else /* !TBB_USE_EXCEPTIONS */
-    inline bool __TBB_false() { return false; }
-    #define __TBB_TRY
-    #define __TBB_CATCH(e) if ( tbb::internal::__TBB_false() )
-    #define __TBB_THROW(e) ((void)0)
-    #define __TBB_RETHROW() ((void)0)
+inline bool __TBB_false() {return false;}
+#define __TBB_TRY
+#define __TBB_CATCH(e) if ( tbb::internal::__TBB_false() )
+#define __TBB_THROW(e) ((void)0)
+#define __TBB_RETHROW() ((void)0)
 #endif /* !TBB_USE_EXCEPTIONS */
 
 //! Report a runtime warning.
-void __TBB_EXPORTED_FUNC runtime_warning( const char* format, ... );
+void __TBB_EXPORTED_FUNC runtime_warning(const char* format, ...);
 
 #if TBB_USE_ASSERT
 static void* const poisoned_ptr = reinterpret_cast<void*>(-1);
@@ -295,108 +298,115 @@ static void* const poisoned_ptr = reinterpret_cast<void*>(-1);
 //! Set p to invalid pointer value.
 //  Also works for regular (non-__TBB_atomic) pointers.
 template<typename T>
-inline void poison_pointer( T* __TBB_atomic & p ) { p = reinterpret_cast<T*>(poisoned_ptr); }
+inline void poison_pointer( T* __TBB_atomic & p ) {p = reinterpret_cast<T*>(poisoned_ptr);}
 
 /** Expected to be used in assertions only, thus no empty form is defined. **/
 template<typename T>
-inline bool is_poisoned( T* p ) { return p == reinterpret_cast<T*>(poisoned_ptr); }
+inline bool is_poisoned( T* p ) {return p == reinterpret_cast<T*>(poisoned_ptr);}
 #else
 template<typename T>
-inline void poison_pointer( T* __TBB_atomic & ) {/*do nothing*/}
+inline void poison_pointer(T* __TBB_atomic &) {/*do nothing*/
+}
 #endif /* !TBB_USE_ASSERT */
 
 //! Cast between unrelated pointer types.
 /** This method should be used sparingly as a last resort for dealing with 
-    situations that inherently break strict ISO C++ aliasing rules. */
+ situations that inherently break strict ISO C++ aliasing rules. */
 // T is a pointer type because it will be explicitly provided by the programmer as a template argument;
 // U is a referent type to enable the compiler to check that "ptr" is a pointer, deducing U in the process.
-template<typename T, typename U> 
-inline T punned_cast( U* ptr ) {
-    uintptr_t x = reinterpret_cast<uintptr_t>(ptr);
-    return reinterpret_cast<T>(x);
+template<typename T, typename U>
+inline T punned_cast(U* ptr) {
+	uintptr_t x = reinterpret_cast<uintptr_t>(ptr);
+	return reinterpret_cast<T>(x);
 }
 
 //! Base class for types that should not be assigned.
 class no_assign {
-    // Deny assignment
-    void operator=( const no_assign& );
+	// Deny assignment
+	void operator=(const no_assign&);
 public:
 #if __GNUC__
-    //! Explicitly define default construction, because otherwise gcc issues gratuitous warning.
-    no_assign() {}
+	//! Explicitly define default construction, because otherwise gcc issues gratuitous warning.
+	no_assign() {
+	}
 #endif /* __GNUC__ */
 };
 
 //! Base class for types that should not be copied or assigned.
 class no_copy: no_assign {
-    //! Deny copy construction
-    no_copy( const no_copy& );
+	//! Deny copy construction
+	no_copy(const no_copy&);
 public:
-    //! Allow default construction
-    no_copy() {}
+	//! Allow default construction
+	no_copy() {
+	}
 };
 
 //! Class for determining type of std::allocator<T>::value_type.
 template<typename T>
 struct allocator_type {
-    typedef T value_type;
+	typedef T value_type;
 };
 
 #if _MSC_VER
 //! Microsoft std::allocator has non-standard extension that strips const from a type. 
 template<typename T>
 struct allocator_type<const T> {
-    typedef T value_type;
+	typedef T value_type;
 };
 #endif
 
 //! A template to select either 32-bit or 64-bit constant as compile time, depending on machine word size.
-template <unsigned u, unsigned long long ull >
+template<unsigned u, unsigned long long ull>
 struct select_size_t_constant {
-    //Explicit cast is needed to avoid compiler warnings about possible truncation.
-    //The value of the right size,   which is selected by ?:, is anyway not truncated or promoted.
-    static const size_t value = (size_t)((sizeof(size_t)==sizeof(u)) ? u : ull);
+	//Explicit cast is needed to avoid compiler warnings about possible truncation.
+	//The value of the right size,   which is selected by ?:, is anyway not truncated or promoted.
+	static const size_t value = (size_t) (
+			(sizeof(size_t) == sizeof(u)) ? u : ull);
 };
 
 //! A function to check if passed in pointer is aligned on a specific border
 template<typename T>
 inline bool is_aligned(T* pointer, uintptr_t alignment) {
-    return 0==((uintptr_t)pointer & (alignment-1));
+	return 0 == ((uintptr_t) pointer & (alignment - 1));
 }
 
 //! A function to check if passed integer is a power of 2
 template<typename integer_type>
 inline bool is_power_of_two(integer_type arg) {
-    return arg && (0 == (arg & (arg - 1)));
+	return arg && (0 == (arg & (arg - 1)));
 }
 
 //! A function to compute arg modulo divisor where divisor is a power of 2.
 template<typename argument_integer_type, typename divisor_integer_type>
-inline argument_integer_type modulo_power_of_two(argument_integer_type arg, divisor_integer_type divisor) {
-    // Divisor is assumed to be a power of two (which is valid for current uses).
-    __TBB_ASSERT( is_power_of_two(divisor), "Divisor should be a power of two" );
-    return (arg & (divisor - 1));
+inline argument_integer_type modulo_power_of_two(argument_integer_type arg,
+		divisor_integer_type divisor) {
+	// Divisor is assumed to be a power of two (which is valid for current uses).
+	__TBB_ASSERT(is_power_of_two(divisor), "Divisor should be a power of two");
+	return (arg & (divisor - 1));
 }
-
 
 //! A function to determine if "arg is a multiplication of a number and a power of 2".
 // i.e. for strictly positive i and j, with j a power of 2,
 // determines whether i==j<<k for some nonnegative k (so i==j yields true).
 template<typename argument_integer_type, typename divisor_integer_type>
-inline bool is_power_of_two_factor(argument_integer_type arg, divisor_integer_type divisor) {
-    // Divisor is assumed to be a power of two (which is valid for current uses).
-    __TBB_ASSERT( is_power_of_two(divisor), "Divisor should be a power of two" );
-    return 0 == (arg & (arg - divisor));
+inline bool is_power_of_two_factor(argument_integer_type arg,
+		divisor_integer_type divisor) {
+	// Divisor is assumed to be a power of two (which is valid for current uses).
+	__TBB_ASSERT(is_power_of_two(divisor), "Divisor should be a power of two");
+	return 0 == (arg & (arg - divisor));
 }
 
 //! Utility template function to prevent "unused" warnings by various compilers.
 template<typename T>
-void suppress_unused_warning( const T& ) {}
+void suppress_unused_warning(const T&) {
+}
 
 // Struct to be used as a version tag for inline functions.
 /** Version tag can be necessary to prevent loader on Linux from using the wrong 
-    symbol in debug builds (when inline functions are compiled as out-of-line). **/
-struct version_tag_v3 {};
+ symbol in debug builds (when inline functions are compiled as out-of-line). **/
+struct version_tag_v3 {
+};
 
 typedef version_tag_v3 version_tag;
 
@@ -405,16 +415,23 @@ typedef version_tag_v3 version_tag;
 
 } // tbb
 
-namespace tbb { namespace internal {
-template <bool condition>
+namespace tbb {
+namespace internal {
+template<bool condition>
 struct STATIC_ASSERTION_FAILED;
 
-template <>
-struct STATIC_ASSERTION_FAILED<false> { enum {value=1};};
+template<>
+struct STATIC_ASSERTION_FAILED<false> {
+	enum {
+		value = 1
+	};
+};
 
 template<>
-struct STATIC_ASSERTION_FAILED<true>; //intentionally left undefined to cause compile time error
-}} // namespace tbb { namespace internal {
+struct STATIC_ASSERTION_FAILED<true> ;
+//intentionally left undefined to cause compile time error
+}
+} // namespace tbb { namespace internal {
 
 #if    __TBB_STATIC_ASSERT_PRESENT
 #define __TBB_STATIC_ASSERT(condition,msg) static_assert(condition,msg)

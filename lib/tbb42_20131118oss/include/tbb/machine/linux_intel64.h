@@ -1,30 +1,30 @@
 /*
-    Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
+ Copyright 2005-2013 Intel Corporation.  All Rights Reserved.
 
-    This file is part of Threading Building Blocks.
+ This file is part of Threading Building Blocks.
 
-    Threading Building Blocks is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    version 2 as published by the Free Software Foundation.
+ Threading Building Blocks is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ version 2 as published by the Free Software Foundation.
 
-    Threading Building Blocks is distributed in the hope that it will be
-    useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ Threading Building Blocks is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with Threading Building Blocks; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU General Public License
+ along with Threading Building Blocks; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-    As a special exception, you may use this file as part of a free software
-    library without restriction.  Specifically, if other files instantiate
-    templates or use macros or inline functions from this file, or you compile
-    this file and link it with other files to produce an executable, this
-    file does not by itself cause the resulting executable to be covered by
-    the GNU General Public License.  This exception does not however
-    invalidate any other reasons why the executable file might be covered by
-    the GNU General Public License.
-*/
+ As a special exception, you may use this file as part of a free software
+ library without restriction.  Specifically, if other files instantiate
+ templates or use macros or inline functions from this file, or you compile
+ this file and link it with other files to produce an executable, this
+ file does not by itself cause the resulting executable to be covered by
+ the GNU General Public License.  This exception does not however
+ invalidate any other reasons why the executable file might be covered by
+ the GNU General Public License.
+ */
 
 #if !defined(__TBB_machine_H) || defined(__TBB_machine_linux_intel64_H)
 #error Do not #include this internal file directly; use public TBB headers instead.
@@ -79,19 +79,19 @@ static inline  T __TBB_machine_fetchstore##S(volatile void *ptr, T value)       
     return result;                                                                   \
 }                                                                                    \
 
-__TBB_MACHINE_DEFINE_ATOMICS(1,int8_t,"")
-__TBB_MACHINE_DEFINE_ATOMICS(2,int16_t,"")
-__TBB_MACHINE_DEFINE_ATOMICS(4,int32_t,"")
-__TBB_MACHINE_DEFINE_ATOMICS(8,int64_t,"q")
+__TBB_MACHINE_DEFINE_ATOMICS(1, int8_t, "")
+__TBB_MACHINE_DEFINE_ATOMICS(2, int16_t, "")
+__TBB_MACHINE_DEFINE_ATOMICS(4, int32_t, "")
+__TBB_MACHINE_DEFINE_ATOMICS(8, int64_t, "q")
 
 #undef __TBB_MACHINE_DEFINE_ATOMICS
 
-static inline void __TBB_machine_or( volatile void *ptr, uint64_t value ) {
-    __asm__ __volatile__("lock\norq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(value), "m"(*(volatile uint64_t*)ptr) : "memory");
+static inline void __TBB_machine_or(volatile void *ptr, uint64_t value) {
+	__asm__ __volatile__("lock\norq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(value), "m"(*(volatile uint64_t*)ptr) : "memory");
 }
 
-static inline void __TBB_machine_and( volatile void *ptr, uint64_t value ) {
-    __asm__ __volatile__("lock\nandq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(value), "m"(*(volatile uint64_t*)ptr) : "memory");
+static inline void __TBB_machine_and(volatile void *ptr, uint64_t value) {
+	__asm__ __volatile__("lock\nandq %1,%0" : "=m"(*(volatile uint64_t*)ptr) : "r"(value), "m"(*(volatile uint64_t*)ptr) : "memory");
 }
 
 #define __TBB_AtomicOR(P,V) __TBB_machine_or(P,V)
