@@ -3,19 +3,17 @@
 
 #include "data/DataInput.hpp"
 
-namespace Anakin
-{
+namespace Anakin {
 
-class SingleImageDataInput : public DataInput
-{
+class SingleImageDataInput: public DataInput {
 public:
-    SingleImageDataInput(std::string pathToImage);
-    bool nextInput(Anakin::Img** output);
-    void reload();
+	SingleImageDataInput(std::string pathToImage);
+	bool nextInput(Anakin::Img** output);
+	void reload();
 protected:
 private:
-    std::string pathToImage;
-    bool loaded = false;
+	std::string pathToImage;
+	bool loaded = false;
 };
 
 }

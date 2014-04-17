@@ -7,11 +7,14 @@
 
 namespace Anakin {
 
-class BasicFlannTrainer : public Trainer {
-    public:
-        BasicFlannTrainer( cv::Ptr<SerializableFlannBasedMatcher>  detector,  std::vector<Anakin::RichImg*>& patterns, std::string outputFolder, std::string fileName);
-        void train_and_save();
+class BasicFlannTrainer: public Trainer {
+public:
+	BasicFlannTrainer(cv::Ptr<SerializableFlannBasedMatcher> detector,
+			std::vector<Anakin::RichImg*>& patterns, std::string outputFolder,
+			std::string fileName);
+	void train_and_save();
 };
 
-};
-#endif // BASICFLANNTRAINER_HPP
+}
+;
+#endif // BASICFLANNTRAINER_HPP

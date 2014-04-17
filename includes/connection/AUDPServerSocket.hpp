@@ -6,28 +6,27 @@
 
 using boost::asio::ip::udp;
 
-namespace Anakin
-{
+namespace Anakin {
 
 /**
-* An implementation of ServerSocket for AUDPSocket
-*/
-class AUDPServerSocket : public ServerSocket
-{
+ * An implementation of ServerSocket for AUDPSocket
+ */
+class AUDPServerSocket: public ServerSocket {
 public:
-    /**
-    * Constructor
-    * port : the port in which to listen
-    */
-    AUDPServerSocket(unsigned short port);
-    /**
-    * uses AUDPSocket wait for connection protocol
-    */
-    Socket* waitForConnection();
-    void stopServer();
+	/**
+	 * Constructor
+	 * port : the port in which to listen
+	 */
+	AUDPServerSocket(unsigned short port);
+	/**
+	 * uses AUDPSocket wait for connection protocol
+	 */
+	Socket* waitForConnection();
+	void stopServer();
 protected:
 private:
 };
-};
+}
+;
 
 #endif // AUDPSERVERSOCKET_HPP

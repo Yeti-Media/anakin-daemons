@@ -6,26 +6,25 @@
 #include "data/ImageInfo.hpp"
 #include <vector>
 
-namespace Anakin
-{
+namespace Anakin {
 
-class XMLoader
-{
+class XMLoader {
 public:
-    XMLoader(std::string path);
-    std::vector<DBPattern*>* loadAsPattern();
-    std::vector<DBHistogram*>* loadAsHistogram();
-    std::vector<DBHistogram*>* loadAsLandscape();
-    static ImageInfo* dbpatternToImageInfo(DBPattern* dbp);
-    static std::string loadFile(const std::string filename);
+	XMLoader(std::string path);
+	std::vector<DBPattern*>* loadAsPattern();
+	std::vector<DBHistogram*>* loadAsHistogram();
+	std::vector<DBHistogram*>* loadAsLandscape();
+	static ImageInfo* dbpatternToImageInfo(DBPattern* dbp);
+	static std::string loadFile(const std::string filename);
 protected:
 private:
-    std::vector<std::string>* getFilePaths(char mode = 0, bool reload=false);
-    std::vector<DBHistogram*>* loadAsHORL(bool isLandscape);
-    bool hasEnding (std::string const &fullString, std::string const &ending);
-    std::string path;
-    bool inputAsFolder;
+	std::vector<std::string>* getFilePaths(char mode = 0, bool reload = false);
+	std::vector<DBHistogram*>* loadAsHORL(bool isLandscape);
+	bool hasEnding(std::string const &fullString, std::string const &ending);
+	std::string path;
+	bool inputAsFolder;
 };
-};
+}
+;
 
 #endif // XMLOADER_HPP

@@ -38,7 +38,6 @@
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-g" />
-			<Add option="-rdynamic" />
 			<Add directory="lib" />
 			<Add directory="src" />
 			<Add directory="includes" />
@@ -112,7 +111,6 @@
 		<Unit filename="includes/processing/Worker.hpp" />
 		<Unit filename="includes/utils/BlockingMap.hpp" />
 		<Unit filename="includes/utils/Constants.hpp" />
-		<Unit filename="includes/utils/Flags.hpp" />
 		<Unit filename="includes/utils/Help.hpp" />
 		<Unit filename="includes/utils/XMLoader.hpp" />
 		<Unit filename="lib/mongoose.c">

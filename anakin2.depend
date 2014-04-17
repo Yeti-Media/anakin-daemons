@@ -3313,3 +3313,751 @@
 	<opencv2/opencv.hpp>
 	"processing/Trainer.hpp"
 
+1397706911 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/mongoose.c
+	"net_skeleton.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<assert.h>
+	<errno.h>
+	<fcntl.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<signal.h>
+	<windows.h>
+	<process.h>
+	<errno.h>
+	<fcntl.h>
+	<netdb.h>
+	<pthread.h>
+	<stdarg.h>
+	<unistd.h>
+	<arpa/inet.h>
+	<netinet/in.h>
+	<sys/socket.h>
+	<sys/select.h>
+	<openssl/ssl.h>
+	<ctype.h>
+	<io.h>
+	<direct.h>
+	<dirent.h>
+	<inttypes.h>
+	<pwd.h>
+	"mongoose.h"
+	"solarisfixes.h"
+	<sys/mman.h>
+
+1397724864 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/mongoose.h
+	<stdio.h>
+	<stddef.h>
+	<lua.h>
+	<lauxlib.h>
+
+1397706911 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/quicklz.c
+	"quicklz.h"
+
+1397724868 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/quicklz.h
+	<string.h>
+
+1397717942 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/utils/Constants.cpp
+	"utils/Constants.hpp"
+
+1397721720 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/utils/Constants.hpp
+	<string>
+
+1397721725 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/main.cpp
+	"processing/AnakinFlags.hpp"
+	"output/DataOutput.hpp"
+	"connection/Socket.hpp"
+	"connection/ATCPSocket.hpp"
+	"connection/AUDPSocket.hpp"
+	"connection/Server.hpp"
+	"connection/RequestServer.hpp"
+	"connection/DelimiterBasedTCPSocket.hpp"
+	"connection/DTCPServerSocket.hpp"
+	"connection/HTTPSocket.hpp"
+	<iostream>
+	"db/DBDriver.hpp"
+	"processing/SFBMCache.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<string>
+	<vector>
+	<ctime>
+	"db/DBDriver.hpp"
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+	"db/DBHistogram.hpp"
+	"processing/Flags.hpp"
+	"utils/XMLoader.hpp"
+	"utils/Constants.hpp"
+	"data/ImageInfo.hpp"
+	<iostream>
+	"utils/Help.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	"data/ImageDataInput.hpp"
+	"data/PatternLoader.hpp"
+	"data/SingleImageDataInput.hpp"
+	"data/HistogramComparator.hpp"
+	"processing/Flags.hpp"
+	"data/Histogram.hpp"
+	"data/HistogramsIO.hpp"
+	<opencv2/opencv.hpp>
+	<string>
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	"processing/Trainer.hpp"
+	"data/PatternLoader.hpp"
+	"processing/BasicFlannTrainer.hpp"
+	"processing/Flags.hpp"
+	"processing/SerializedPatternDataInput.hpp"
+	"data/PatternLoader.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+
+1397721720 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/AnakinFlags.hpp
+	"processing/Flags.hpp"
+
+1397721718 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/Flags.hpp
+	<map>
+	<vector>
+
+1397721718 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/output/DataOutput.hpp
+	"connection/Socket.hpp"
+	<iostream>
+	<semaphore.h>
+	"connection/HTTPSocket.hpp"
+
+1397721719 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/Socket.hpp
+	<sstream>
+
+1397721719 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/HTTPSocket.hpp
+	"mongoose.h"
+	<tbb/concurrent_queue.h>
+	"semaphore.h"
+	<vector>
+	<pthread.h>
+	"utils/BlockingMap.hpp"
+
+1397724863 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/concurrent_queue.h
+	"internal/_concurrent_queue_impl.h"
+
+1397724865 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/internal/_concurrent_queue_impl.h
+	"../tbb_stddef.h"
+	"../tbb_machine.h"
+	"../atomic.h"
+	"../spin_mutex.h"
+	"../cache_aligned_allocator.h"
+	"../tbb_exception.h"
+	"../tbb_profiling.h"
+	<new>
+	<iterator>
+
+1397724869 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/tbb_stddef.h
+	"tbb_config.h"
+	<cstddef>
+	"internal/_tbb_windef.h"
+	<stdint.h>
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/tbb_config.h
+	<cstddef>
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/internal/_tbb_windef.h
+
+1397724870 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/tbb_machine.h
+	"tbb_stddef.h"
+	"machine/gcc_generic.h"
+	"machine/linux_intel64.h"
+	"machine/linux_ia32.h"
+	"machine/icc_generic.h"
+	"machine/windows_ia32.h"
+	"machine/windows_intel64.h"
+	"machine/xbox360_ppc.h"
+	"machine/msvc_armv7.h"
+	"machine/mic_common.h"
+	"machine/linux_intel64.h"
+	"machine/gcc_generic.h"
+	"machine/icc_generic.h"
+	"machine/linux_ia32.h"
+	"machine/linux_intel64.h"
+	"machine/linux_ia64.h"
+	"machine/mac_ppc.h"
+	"machine/gcc_armv7.h"
+	"machine/gcc_generic.h"
+	"machine/linux_common.h"
+	"machine/icc_generic.h"
+	"machine/linux_ia32.h"
+	"machine/linux_intel64.h"
+	"machine/mac_ppc.h"
+	"machine/macos_common.h"
+	"machine/ibm_aix51.h"
+	"machine/linux_ia32.h"
+	"machine/linux_intel64.h"
+	"machine/sunos_sparc.h"
+	<sched.h>
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/gcc_generic.h
+	<stdint.h>
+	<unistd.h>
+	"gcc_itsx.h"
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/gcc_itsx.h
+	<immintrin.h>
+
+1397724865 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/linux_intel64.h
+	<stdint.h>
+	"gcc_ia32_common.h"
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/gcc_ia32_common.h
+	"gcc_itsx.h"
+
+1397724871 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/linux_ia32.h
+	<stdint.h>
+	"gcc_ia32_common.h"
+
+1397724867 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/icc_generic.h
+	"msvc_ia32_common.h"
+	"gcc_ia32_common.h"
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/msvc_ia32_common.h
+	<intrin.h>
+	<thread>
+
+1397724867 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/windows_ia32.h
+	"msvc_ia32_common.h"
+
+1397724868 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/windows_intel64.h
+	<intrin.h>
+	"msvc_ia32_common.h"
+
+1397724864 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/xbox360_ppc.h
+	"xtl.h"
+	"ppcintrinsics.h"
+
+1397724867 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/msvc_armv7.h
+	<intrin.h>
+	<float.h>
+	<thread>
+
+1397724867 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/mic_common.h
+	<immintrin.h>
+	<sched.h>
+
+1397724865 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/linux_ia64.h
+	<stdint.h>
+	<ia64intrin.h>
+
+1397724870 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/mac_ppc.h
+	<stdint.h>
+	<unistd.h>
+
+1397724864 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/gcc_armv7.h
+	<sys/param.h>
+	<unistd.h>
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/linux_common.h
+	<sched.h>
+	<unistd.h>
+	<sys/syscall.h>
+	<limits.h>
+	<errno.h>
+
+1397724865 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/macos_common.h
+	<sched.h>
+	<sys/types.h>
+	<sys/sysctl.h>
+	<libkern/OSAtomic.h>
+
+1397724863 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/ibm_aix51.h
+	<stdint.h>
+	<unistd.h>
+	<sched.h>
+
+1397724865 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/machine/sunos_sparc.h
+	<stdint.h>
+	<unistd.h>
+
+1397724862 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/atomic.h
+	<cstddef>
+	"tbb_machine.h"
+
+1397724867 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/spin_mutex.h
+	<cstddef>
+	<new>
+	"aligned_space.h"
+	"tbb_stddef.h"
+	"tbb_machine.h"
+	"tbb_profiling.h"
+	"internal/_mutex_padding.h"
+	"internal/_x86_eliding_mutex_impl.h"
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/aligned_space.h
+	"tbb_stddef.h"
+	"tbb_machine.h"
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/tbb_profiling.h
+	"internal/_tbb_strings.h"
+	<stdlib.h>
+	"tbb_stddef.h"
+	"atomic.h"
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/internal/_tbb_strings.h
+
+1397724867 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/internal/_mutex_padding.h
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/internal/_x86_eliding_mutex_impl.h
+
+1397724863 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/cache_aligned_allocator.h
+	<new>
+	"tbb_stddef.h"
+	<utility>
+
+1397724869 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/tbb_exception.h
+	"tbb_stddef.h"
+	<exception>
+	<new>
+	<string>
+	"tbb_allocator.h"
+	<typeinfo>
+
+1397724869 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/lib/tbb42_20131118oss/include/tbb/tbb_allocator.h
+	"tbb_stddef.h"
+	<new>
+	<utility>
+	<cstring>
+
+1397721720 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/utils/BlockingMap.hpp
+	<map>
+	<semaphore.h>
+	<vector>
+	<iostream>
+	<boost/foreach.hpp>
+
+1397721726 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/ATCPSocket.hpp
+	"connection/Socket.hpp"
+	<boost/asio.hpp>
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/AUDPSocket.hpp
+	"connection/Socket.hpp"
+	<boost/asio.hpp>
+
+1397724865 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/Server.hpp
+	"connection/ServerSocket.hpp"
+	"processing/AnakinFlags.hpp"
+	"output/DataOutput.hpp"
+	"processing/SFBMCache.hpp"
+	"db/DBDriver.hpp"
+	"connection/HTTPSocket.hpp"
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/ServerSocket.hpp
+	"connection/Socket.hpp"
+
+1397724862 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/SFBMCache.hpp
+	"db/DBDriver.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<map>
+	<vector>
+	<string>
+	<semaphore.h>
+	"data/ImageInfo.hpp"
+	"output/JSONValue.h"
+	"output/ResultWriter.hpp"
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/db/DBDriver.hpp
+	<postgresql/libpq-fe.h>
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+	"db/DBHistogram.hpp"
+	<opencv2/opencv.hpp>
+	"data/ImageInfo.hpp"
+	<string>
+
+1397721717 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/db/DBUser.hpp
+	"DBPattern.hpp"
+	"DBHistogram.hpp"
+	<vector>
+
+1397721722 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/db/DBPattern.hpp
+	<string>
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/db/DBHistogram.hpp
+	<string>
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1397721768 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/matching/SerializableFlannBasedMatcher.hpp
+	"opencv2/features2d/features2d.hpp"
+
+1397724872 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/output/JSONValue.h
+	<vector>
+	<string>
+	"JSON.h"
+
+1397724863 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/output/JSON.h
+	<vector>
+	<string>
+	<map>
+	<cstring>
+	<cstdlib>
+	<wctype.h>
+	<wchar.h>
+	"JSONValue.h"
+
+1397721725 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/output/ResultWriter.hpp
+	"output/JSON.h"
+	"output/JSONValue.h"
+	<opencv2/opencv.hpp>
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/RequestServer.hpp
+	"Server.hpp"
+	<tbb/concurrent_queue.h>
+	<vector>
+
+1397724870 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/DelimiterBasedTCPSocket.hpp
+	"connection/ATCPSocket.hpp"
+
+1397721726 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/DTCPServerSocket.hpp
+	"connection/ATCPServerSocket.hpp"
+	<boost/asio.hpp>
+
+1397721723 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/ATCPServerSocket.hpp
+	"connection/ServerSocket.hpp"
+	<boost/asio.hpp>
+
+1397721727 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/utils/XMLoader.hpp
+	"db/DBHistogram.hpp"
+	"db/DBPattern.hpp"
+	"data/ImageInfo.hpp"
+	<vector>
+
+1397721725 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/utils/Help.hpp
+	<string>
+
+1397721720 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/ImageDataInput.hpp
+	<data/DataInput.hpp>
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
+1397721726 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/DataInput.hpp
+	"Img.hpp"
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/Img.hpp
+	<opencv2/opencv.hpp>
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/PatternLoader.hpp
+	"data/DataInput.hpp"
+	"data/RichImg.hpp"
+	<opencv2/opencv.hpp>
+	"data/ImageInfo.hpp"
+	"processing/SerializedPatternDataInput.hpp"
+
+1397721720 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/RichImg.hpp
+	<opencv2/opencv.hpp>
+	"data/Img.hpp"
+	"data/ImageInfo.hpp"
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/SerializedPatternDataInput.hpp
+	"data/ImageInfo.hpp"
+	"db/DBDriver.hpp"
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+
+1397721719 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/SingleImageDataInput.hpp
+	"data/DataInput.hpp"
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/HistogramComparator.hpp
+	"data/Img.hpp"
+	"data/RichImg.hpp"
+	"data/Histogram.hpp"
+	"data/HistogramsIO.hpp"
+
+1397721719 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/Histogram.hpp
+	<opencv2/opencv.hpp>
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/data/HistogramsIO.hpp
+	<opencv2/opencv.hpp>
+	"data/Histogram.hpp"
+
+1397721725 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/Trainer.hpp
+	"data/RichImg.hpp"
+
+1397721721 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/BasicFlannTrainer.hpp
+	"processing/Trainer.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<map>
+
+1397721718 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/ATCPServerSocket.cpp
+	"connection/ATCPServerSocket.hpp"
+	"connection/ATCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397721727 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/ATCPSocket.cpp
+	"connection/ATCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397721720 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/AUDPServerSocket.cpp
+	"connection/AUDPServerSocket.hpp"
+	"connection/AUDPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397721721 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/AUDPServerSocket.hpp
+	"connection/ServerSocket.hpp"
+	<boost/asio.hpp>
+
+1397721719 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/AUDPSocket.cpp
+	"connection/AUDPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397721718 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/DelimiterBasedTCPSocket.cpp
+	"connection/DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+	<boost/algorithm/string/predicate.hpp>
+	<boost/regex.hpp>
+
+1397721727 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/DTCPServerSocket.cpp
+	"connection/DTCPServerSocket.hpp"
+	"connection/DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397721722 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/HTTPSocket.cpp
+	"connection/HTTPSocket.hpp"
+	<iostream>
+	"connection/HTTPListener.hpp"
+
+1397723806 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/connection/HTTPListener.hpp
+	<mongoose.h>
+	<tbb/concurrent_queue.h>
+	<vector>
+	"connection/HTTPSocket.hpp"
+	"output/ResultWriter.hpp"
+	"utils/BlockingMap.hpp"
+
+1397721722 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/RequestServer.cpp
+	"connection/RequestServer.hpp"
+	"processing/Worker.hpp"
+	<pthread.h>
+	"connection/DTCPServerSocket.hpp"
+	<boost/regex.hpp>
+
+1397721720 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/Worker.hpp
+	"processing/Flags.hpp"
+	"output/DataOutput.hpp"
+	"processing/SFBMCache.hpp"
+	"processing/CommandRunner.hpp"
+	<tbb/concurrent_queue.h>
+
+1397724862 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/processing/CommandRunner.hpp
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+	<string>
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	"matching/BasicFlannDetector.hpp"
+	"processing/Flags.hpp"
+	"output/ResultWriter.hpp"
+	"output/DataOutput.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	"processing/SFBMCache.hpp"
+	"data/ImageInfo.hpp"
+	"matching/FlannMatchingProcessor.hpp"
+
+1397724866 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/matching/BasicFlannDetector.hpp
+	<map>
+	"matching/SerializableFlannBasedMatcher.hpp"
+	"matching/Match.hpp"
+	"processing/SFBMCache.hpp"
+
+1397721724 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/matching/Match.hpp
+	"data/RichImg.hpp"
+	<opencv2/opencv.hpp>
+
+1397721726 /home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/includes/matching/FlannMatchingProcessor.hpp
+	"matching/BasicFlannDetector.hpp"
+	"output/ResultWriter.hpp"
+	"data/RichImg.hpp"
+	"output/JSONValue.h"
+	<vector>
+
+1397721728 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/Server.cpp
+	"connection/Server.hpp"
+	"connection/ATCPServerSocket.hpp"
+	"connection/AUDPServerSocket.hpp"
+	<sstream>
+	"processing/CommandRunner.hpp"
+	"connection/DTCPServerSocket.hpp"
+	<boost/regex.hpp>
+	<boost/algorithm/string.hpp>
+
+1397721721 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/Histogram.cpp
+	"data/Histogram.hpp"
+
+1397721718 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/HistogramComparator.cpp
+	"data/HistogramComparator.hpp"
+	"data/DataInput.hpp"
+
+1397721726 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/HistogramsIO.cpp
+	"data/HistogramsIO.hpp"
+	"output/ResultWriter.hpp"
+	"boost/filesystem.hpp"
+
+1397721728 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/ImageDataInput.cpp
+	"data/ImageDataInput.hpp"
+	"boost/filesystem.hpp"
+	<algorithm>
+
+1397721721 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/ImageInfo.cpp
+	"data/ImageInfo.hpp"
+
+1397721719 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/Img.cpp
+	"data/Img.hpp"
+
+1397721721 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/PatternLoader.cpp
+	"data/PatternLoader.hpp"
+	"output/ResultWriter.hpp"
+
+1397721727 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/RichImg.cpp
+	"data/RichImg.hpp"
+
+1397721724 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/data/SingleImageDataInput.cpp
+	"data/SingleImageDataInput.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
+1397721721 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/db/DBDriver.cpp
+	"db/DBDriver.hpp"
+	<iostream>
+	"utils/Constants.hpp"
+	<string>
+	<postgresql/libpq/libpq-fs.h>
+	<cstdio>
+	<fstream>
+	"utils/XMLoader.hpp"
+
+1397721718 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/db/DBHistogram.cpp
+	"db/DBHistogram.hpp"
+	"utils/Constants.hpp"
+
+1397721721 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/db/DBPattern.cpp
+	"db/DBPattern.hpp"
+
+1397721723 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/db/DBUser.cpp
+	"db/DBUser.hpp"
+
+1397721722 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/matching/BasicFlannDetector.cpp
+	"matching/BasicFlannDetector.hpp"
+	<time.h>
+	<boost/foreach.hpp>
+
+1397721720 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/matching/FlannMatchingProcessor.cpp
+	"matching/FlannMatchingProcessor.hpp"
+	"matching/Match.hpp"
+
+1397721722 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/matching/Match.cpp
+	"matching/Match.hpp"
+
+1397721784 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/matching/SerializableFlannBasedMatcher.cpp
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<iostream>
+	<stdio.h>
+	<fstream>
+	<sstream>
+	"quicklz.h"
+
+1397721727 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/output/DataOutput.cpp
+	"output/DataOutput.hpp"
+
+1397721719 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/output/JSON.cpp
+	"output/JSON.h"
+
+1397721728 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/output/JSONValue.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<math.h>
+	"output/JSONValue.h"
+
+1397721720 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/output/ResultWriter.cpp
+	"output/ResultWriter.hpp"
+	"utils/Constants.hpp"
+
+1397721721 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/AnakinFlags.cpp
+	"processing/AnakinFlags.hpp"
+	"utils/Constants.hpp"
+
+1397721725 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/BasicFlannTrainer.cpp
+	"processing/BasicFlannTrainer.hpp"
+	<time.h>
+	<boost/foreach.hpp>
+
+1397721722 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/CommandRunner.cpp
+	"processing/CommandRunner.hpp"
+	"output/JSONValue.h"
+	<algorithm>
+	<iterator>
+	"utils/Constants.hpp"
+
+1397721723 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/Flags.cpp
+	"processing/Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1397721718 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/SerializedPatternDataInput.cpp
+	"processing/SerializedPatternDataInput.hpp"
+	"boost/filesystem.hpp"
+
+1397721723 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/SFBMCache.cpp
+	"processing/SFBMCache.hpp"
+	<boost/foreach.hpp>
+	<iostream>
+	<time.h>
+	<limits>
+
+1397721728 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/Trainer.cpp
+	<opencv2/opencv.hpp>
+	"processing/Trainer.hpp"
+
+1397721725 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/processing/Worker.cpp
+	"processing/Worker.hpp"
+
+1397721728 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/utils/Help.cpp
+	"utils/Help.hpp"
+
+1397721719 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/utils/XMLoader.cpp
+	"utils/XMLoader.hpp"
+	<iostream>
+	<fstream>
+	<sstream>
+	"utils/Constants.hpp"
+	"boost/filesystem.hpp"
+	<algorithm>
+
+1397723791 source:/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daemons/src/connection/HTTPListener.cpp
+	<connection/HTTPListener.hpp>
+	<utils/Constants.hpp>
+	<cstdlib>
+	<cstring>
+	<ctime>
+	<iostream>
+	<string>
+	<mongoose.h>
+

@@ -3,20 +3,19 @@
 
 #include "processing/Flags.hpp"
 
-namespace Anakin
-{
+namespace Anakin {
 
 /**
-* Defines flags for CommandRunner
-*/
-class AnakinFlags
-{
+ * Defines flags for CommandRunner
+ */
+class AnakinFlags {
 public:
-    AnakinFlags();
-    Flags* getFlags(bool verbose=true);
+	AnakinFlags();
+	Flags* getFlags(bool verbose = true);
 protected:
 private:
 };
-};
+}
+;
 
 #endif // ANAKINFLAGS_HPP
