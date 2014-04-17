@@ -1,2 +1,0 @@
-./anakin2 -contour ../../people.jpg -thresBegin 180 -thresEnd 255 -thresMode 2 -edges -threshold 0
-this achieve a very good result when having zones each with a unique color

@@ -1,0 +1,57 @@
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 41
+Content-Type: text/plain
+Connection: close
+
+{"action":"add_indexes", "indexes":[5,6]}
+
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 50
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2}
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 69
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2, "flags":{"mma":5}}
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 70
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2, "flags":{"mma":18}}
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 80
+Content-Type: text/plain
+
+{"action":"matching", "indexes":[5], "scenario":2, "flags":{"mma":10, "mr":0.5}}
+
+
+POST / HTTP/1.1
+HOST:127.0.0.1:8000
+Content-Length: 4
+Content-Type: text/plain
+
+stop
+
+
+
+
+
+CURL
+
+
+time curl -X POST -H "Content-Type: application/json" -d '{"indexes":[5,6], "action":"add_indexes"}' --connect-timeout 10  -lv http://127.0.0.1:8080/
+
+time curl -X POST -H "Content-Type: application/json" -d '{"indexes":[5,6], "action":"update_indexes"}' --connect-timeout 10  -lv http://127.0.0.1:8080/
+
+time curl -X POST -H "Content-Type: application/json" -d '{"indexes":[5], "action":"matching", "scenario":2}' --connect-timeout 10  -lv http://127.0.0.1:8080/
