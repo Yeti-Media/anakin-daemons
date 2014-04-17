@@ -43,7 +43,10 @@ WITH (
 ALTER TABLE "categories"
   OWNER TO postgres;
 ;
-  
+
+INSERT INTO "categories"(title) VALUES ('matching');
+INSERT INTO "categories"(title) VALUES ('comparison');
+INSERT INTO "categories"(title) VALUES ('landscape');
 ---------------------------------------------------------------------------------------------------------------
 CREATE TABLE "patterns" (
     id BIGSERIAL PRIMARY KEY,
