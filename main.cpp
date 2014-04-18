@@ -40,11 +40,8 @@ int patternMatching(int argc, const char * argv[]) {
 	unsigned short portIn = 18003;
 	std::string ipOut = "127.0.0.1";
 	std::string portOut = "18002";
+	std::string logFile = "anakin.log";
 	bool verbose = false;
-
-	//logger initialization
-	FILE* pFile = fopen("anakin.log", "a");
-	Logging::OutputPolicyFile::SetStream(pFile);
 
 //    const char * argv_[] = {
 //        "./anakin2",
@@ -80,6 +77,7 @@ int patternMatching(int argc, const char * argv[]) {
 
 	//OUTPUT
 	anakinInput->setNoValuesFlag("oConsole");
+	anakinInput->setOptionalFlag("oLogFile");
 	anakinInput->setOptionalFlag("oTCP");
 	anakinInput->setOptionalFlag("oUDP");
 	anakinInput->setOptionalFlag("oDTCP");
@@ -106,7 +104,7 @@ int patternMatching(int argc, const char * argv[]) {
 			cout << "Anakin help\n\n";
 			cout << "usage: ./anakin2 -help\n";
 			cout
-					<< "usage: ./anakin2 (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|(-oTCP|oUDP <ip> <port>))\n";
+					<< "usage: ./anakin2 (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n";
 			cout
 					<< "-iConsole/oConsole: use console to input or output respectively\n";
 			cout
@@ -169,6 +167,16 @@ int patternMatching(int argc, const char * argv[]) {
 		if (anakinInput->flagFound("oConsole")) {
 			oMode = CONSOLE;
 		}
+		if (anakinInput->flagFound("oLogFile")) {
+			values = anakinInput->getFlagValues("oLogFile");
+			if (values->size() == 1) {
+				logFile = values->at(0);
+			} else {
+				cout << "param oLogPath needs one value\n";
+				return -1;
+			}
+		}
+
 		if (anakinInput->flagFound("oTCP")) {
 			oMode = TCP;
 			values = anakinInput->getFlagValues("oTCP");
@@ -207,6 +215,15 @@ int patternMatching(int argc, const char * argv[]) {
 		}
 	} else {
 		cout << "Input error!\n";
+		return -1;
+	}
+
+	//logger initialization
+	FILE* pFile = fopen(logFile.c_str(), "a");
+	Logging::OutputPolicyFile::SetStream(pFile);
+
+	if (NULL == pFile) {
+		cout << "the logging file is not valid\n";
 		return -1;
 	}
 

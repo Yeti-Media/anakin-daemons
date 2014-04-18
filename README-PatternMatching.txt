@@ -24,6 +24,7 @@ input flags (use one of the following) :
 output flags (use one of the following) :
 
 -oConsole	: 	uses console as output
+-oLogFile   :   logging file
 -oUDP <i> <p>	:	send output to IP i and port p using a UDP socket
 -oTCP <i> <p>	:	send output to IP i and port p using a TCP socket
 -oDTCP <i> <p>	:	send output to IP i and port p using a TCP socket
