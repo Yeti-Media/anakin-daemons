@@ -20,6 +20,8 @@
 #include "connection/DelimiterBasedTCPSocket.hpp"
 #include "connection/DTCPServerSocket.hpp"
 #include "connection/HTTPSocket.hpp"
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 
 #define CONSOLE 1
 #define TCP     2
@@ -39,6 +41,10 @@ int patternMatching(int argc, const char * argv[]) {
 	std::string ipOut = "127.0.0.1";
 	std::string portOut = "18002";
 	bool verbose = false;
+
+	//logger initialization
+	FILE* pFile = fopen("anakin.log", "a");
+	Logging::OutputPolicyFile::SetStream(pFile);
 
 //    const char * argv_[] = {
 //        "./anakin2",
