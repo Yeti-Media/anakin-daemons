@@ -7,6 +7,7 @@
 #include "connection/DTCPServerSocket.hpp"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
+#include <logging/Log.hpp>
 
 using namespace Anakin;
 using namespace std;
@@ -41,7 +42,7 @@ Server::Server(unsigned short port, bool verbose, char mode, std::string ld,
 }
 
 void Server::start(AnakinFlags* aflags, DataOutput* output) {
-	if (this->mode & TCP || this->mode & UDP || this->mode & DTCP) {
+	if ((this->mode & TCP) || (this->mode & UDP) || (this->mode & DTCP)) {
 		this->socket = this->server->waitForConnection();
 		this->socket->setShowComs(this->verbose);
 	}
@@ -71,7 +72,7 @@ void Server::start(AnakinFlags* aflags, DataOutput* output) {
 	} while (run);
 	endServer();
 	output->close();
-	if (this->mode & TCP || this->mode & UDP || this->mode & DTCP)
+	if ((this->mode & TCP) || (this->mode & UDP) || (this->mode & DTCP))
 		this->server->stopServer();
 	if (this->mode & HTTP)
 		this->httpSocket->stop();
@@ -83,15 +84,19 @@ HTTPSocket* Server::getHttpSocket() {
 
 //PROTECTED
 
-string Server::read() {
+std::string Server::read() {
 	if (this->mode & CONSOLE) {
-		string msg = "";
+		std::string msg = "";
 		getline(cin, msg);
 		return msg;
 	} else if (this->mode & HTTP) {
-		return this->httpSocket->read();
+		std::string msj = this->httpSocket->read();
+		LOG("Request") << msj;
+		return msj;
 	} else {
-		return this->socket->read();
+		std::string msj = this->socket->read();
+		LOG("Request") << msj;
+		return msj;
 	}
 }
 
