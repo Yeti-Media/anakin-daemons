@@ -20,7 +20,7 @@ bool DBDriver::connect() {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		this->lastMessageReceived = "Connection to database failed";
 		std::string s_error(PQerrorMessage(conn));
-		this->lastMessageReceived += "REASON:\n" + s_error;
+		this->lastMessageReceived += ". REASON:\n" + s_error;
 		return false;
 	}
 
