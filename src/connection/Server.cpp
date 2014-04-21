@@ -7,7 +7,7 @@
 #include "connection/DTCPServerSocket.hpp"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
-#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 
 using namespace Anakin;
 using namespace std;
@@ -91,11 +91,11 @@ std::string Server::read() {
 		return msg;
 	} else if (this->mode & HTTP) {
 		std::string msj = this->httpSocket->read();
-		LOG("Request") << msj;
+		LOG_F("Request") << msj;
 		return msj;
 	} else {
 		std::string msj = this->socket->read();
-		LOG("Request") << msj;
+		LOG_F("Request") << msj;
 		return msj;
 	}
 }
