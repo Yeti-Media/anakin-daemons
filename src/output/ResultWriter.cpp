@@ -1,5 +1,5 @@
 #include "output/ResultWriter.hpp"
-#define LIGH_RESULTS 0
+#define LIGHT_RESULTS 1
 #include "utils/Constants.hpp"
 
 using namespace Anakin;
@@ -85,7 +85,7 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label,
 	ws << label.c_str();
 	root[L"label"] = new JSONValue(ws.str());
 
-	for (uint k = 0; k < matchedKeypoints.size() && !LIGH_RESULTS; k++) {
+	for (uint k = 0; k < matchedKeypoints.size() && !LIGHT_RESULTS; k++) {
 		KeyPoint current = matchedKeypoints[k];
 		JSONObject keypoint;
 		JSONObject pos;
@@ -97,7 +97,7 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label,
 		keypoint[L"response"] = new JSONValue(current.response);
 		keypoints.push_back(new JSONValue(keypoint));
 	}
-	root[L"keypoints"] = new JSONValue(keypoints);
+	if (!LIGHT_RESULTS) root[L"keypoints"] = new JSONValue(keypoints);
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
