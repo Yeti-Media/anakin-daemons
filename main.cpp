@@ -1,11 +1,11 @@
 /**
  * Uncomment what project do you want to compile. Comment the others.
  */
-#define PATTERNMATCHING
+//#define PATTERNMATCHING
 //#define MATCHERCACHE
 //#define DBCONNECTOR
 //#define EXTRACTOR
-//#define TRAINER
+#define TRAINER
 
 //=======================================================================================
 #ifdef PATTERNMATCHING

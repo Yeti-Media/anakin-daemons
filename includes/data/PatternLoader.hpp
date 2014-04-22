@@ -46,6 +46,7 @@ private:
 	SerializedPatternDataInput* sinput;
 	cv::Ptr<cv::FeatureDetector> detector;
 	cv::Ptr<cv::DescriptorExtractor> extractor;
+	bool usingSerializedDataInput;
 	static void write(cv::FileStorage& fs, const std::string&,
 			const ImageInfo& x);
 };

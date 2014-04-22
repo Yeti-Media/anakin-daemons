@@ -12,15 +12,35 @@ PatternLoader::PatternLoader(Anakin::DataInput* input,
 	this->patterns = &patterns;
 	this->detector = detector;
 	this->extractor = extractor;
+	this->usingSerializedDataInput = false;
+}
+
+PatternLoader::PatternLoader(SerializedPatternDataInput* input,
+		std::vector<RichImg*>& patterns) {
+	this->sinput = input;
+	this->patterns = &patterns;
+	this->usingSerializedDataInput = true;
 }
 
 void PatternLoader::load() {
-	Img* image;
-	while (this->input->nextInput(&image)) {
-		RichImg* richImage = new RichImg(image, this->detector,
-				this->extractor);
-		this->patterns->push_back(richImage);
+
+	if (!this->usingSerializedDataInput) {
+		Img* image;
+		while (this->input->nextInput(&image)) {
+			RichImg* richImage = new RichImg(image, this->detector,
+					this->extractor);
+			this->patterns->push_back(richImage);
+		}
+	} else {
+//Inicio simon
+		ImageInfo* ii;
+		while (this->sinput->nextInput(&ii)) {
+			RichImg* richImg = new RichImg(ii);
+			this->patterns->push_back(richImg);
+		}
+//Fin simon
 	}
+
 }
 
 void PatternLoader::write(FileStorage& fs, const std::string&,
@@ -31,9 +51,9 @@ void PatternLoader::write(FileStorage& fs, const std::string&,
 void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 		char mode) {
 	Img* image;
-	//int processedFiles = 0;
+//int processedFiles = 0;
 	int filesToLoad = this->input->imagesToLoad();
-	//std::cout << "images to process : " << filesToLoad << std::endl;
+//std::cout << "images to process : " << filesToLoad << std::endl;
 	if (filesToLoad > 0) {
 		this->patterns->resize(filesToLoad);
 	}
@@ -69,18 +89,12 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 			this->patterns->push_back(richImage);
 		}
 
-		//processedFiles += 1;
+//processedFiles += 1;
 	}
-	//std::cout << "total processed files : " << processedFiles << std::endl;
+//std::cout << "total processed files : " << processedFiles << std::endl;
 }
 
 PatternLoader::~PatternLoader() {
 	delete this->patterns;
 	delete this->input;
-}
-
-PatternLoader::PatternLoader(SerializedPatternDataInput* input,
-		std::vector<RichImg*>& patterns) {
-	this->sinput = input;
-	this->patterns = &patterns;
 }

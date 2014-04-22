@@ -27,7 +27,7 @@ private:
 ;
 
 /**
- * For custom level logs
+ * For logging to a file as default.
  */
 #define LOG_F(level) Logging::Log<Logging::OutputPolicyFile>().Get(level)
 
