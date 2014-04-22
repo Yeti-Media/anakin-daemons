@@ -5,8 +5,8 @@ export LD_LIBRARY_PATH=/home/franco/Trabajos/Yeti-Media/Git/Proyecto/anakin-daem
 echo "creating DB env..."
 
 export PGHOST=localhost
-export PGDATABASE=postgres
+export PGDATABASE=Anakin
 export PGUSER=postgres
-export PGPASSWORD=padme
+export PGPASSWORD=postgres
 
 echo "DB env created"

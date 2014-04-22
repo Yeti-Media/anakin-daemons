@@ -4,6 +4,7 @@
 #include <boost/thread/pthread/mutex.hpp>
 #include <cstdio>
 #include <string>
+#include <logging/Log.hpp>
 
 namespace Logging {
 
@@ -24,5 +25,10 @@ private:
 
 }
 ;
+
+/**
+ * For logging to a file as default.
+ */
+#define LOG_F(level) Logging::Log<Logging::OutputPolicyFile>().Get(level)
 
 #endif // OUTPUTPOLICYFILE_H

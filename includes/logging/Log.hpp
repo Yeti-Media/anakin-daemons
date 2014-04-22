@@ -4,13 +4,15 @@
 #include <ctime>
 #include <sstream>
 #include <string>
-#include <logging/OutputPolicyFile.hpp>
 
 namespace Logging {
 
 /**
- * This Logger is simple. Can output in a File or stdout.
- * Example:
+ * This Logger is simple. It needs an implementation for the output like the file
+ * OutputPolicyFile.hpp. Using that specific policy as an example, you can output
+ * in a File or stdout.
+ *
+ * Usage:
  * 	 ...
  * 	 //Set the log to output on a File "application.log"
  * 	 FILE* pFile = fopen("application.log", "a");
@@ -18,7 +20,7 @@ namespace Logging {
  *
  *	 //Test. Log example:
  *	 const int count = 3;
- *	 LOGL("DEBUG") << "A loop with " << count << " iterations";
+ *	 LOG("DEBUG") << "A loop with " << count << " iterations";
  *	 for (int i = 0; i != count; ++i) {
  *	     LOG << "the counter i = " << i;
  *	 }
@@ -85,10 +87,5 @@ std::ostringstream& Logging::Log<T>::Get(std::string level) {
 	os << '\t';
 	return os;
 }
-
-/**
- * For custom level logs
- */
-#define LOG(level) Logging::Log<Logging::OutputPolicyFile>().Get(level)
 
 #endif // LOG_H
