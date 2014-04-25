@@ -17,7 +17,7 @@ HTTPSocket::HTTPSocket(std::string port, int threads) {
 }
 
 void HTTPSocket::respond(std::string body, bool statusOK, int reqID) {
-	int status = statusOK ? 200 : 400;
+	int status = statusOK ? 200 : 422;
 	HTTPSocket::MessageData* rd = new HTTPSocket::MessageData("", body,
 			HTTPSocket::RESPONSE, status);
 	this->writtingQueue->put(reqID, rd);

@@ -4380,7 +4380,7 @@
 	<utility>
 	<cstring>
 
-1398444788 /home/stein/Documents/ym/anakin/includes/utils/BlockingMap.hpp
+1398456415 /home/stein/Documents/ym/anakin/includes/utils/BlockingMap.hpp
 	<map>
 	<semaphore.h>
 	<vector>
@@ -4395,7 +4395,7 @@
 	"connection/Socket.hpp"
 	<boost/asio.hpp>
 
-1398444788 /home/stein/Documents/ym/anakin/includes/connection/Server.hpp
+1398456415 /home/stein/Documents/ym/anakin/includes/connection/Server.hpp
 	"connection/ServerSocket.hpp"
 	"processing/AnakinFlags.hpp"
 	"output/DataOutput.hpp"
@@ -4406,7 +4406,7 @@
 1397217442 /home/stein/Documents/ym/anakin/includes/connection/ServerSocket.hpp
 	"connection/Socket.hpp"
 
-1398446445 /home/stein/Documents/ym/anakin/includes/processing/SFBMCache.hpp
+1398456415 /home/stein/Documents/ym/anakin/includes/processing/SFBMCache.hpp
 	"db/DBDriver.hpp"
 	"matching/SerializableFlannBasedMatcher.hpp"
 	<map>
@@ -4417,7 +4417,7 @@
 	"output/JSONValue.h"
 	"output/ResultWriter.hpp"
 
-1398445719 /home/stein/Documents/ym/anakin/includes/db/DBDriver.hpp
+1398456415 /home/stein/Documents/ym/anakin/includes/db/DBDriver.hpp
 	<postgresql/libpq-fe.h>
 	"db/DBUser.hpp"
 	"db/DBPattern.hpp"
@@ -4458,7 +4458,7 @@
 	<wchar.h>
 	"JSONValue.h"
 
-1398444788 /home/stein/Documents/ym/anakin/includes/output/ResultWriter.hpp
+1398456415 /home/stein/Documents/ym/anakin/includes/output/ResultWriter.hpp
 	"output/JSON.h"
 	"output/JSONValue.h"
 	<opencv2/opencv.hpp>
@@ -4502,7 +4502,7 @@
 1397217442 /home/stein/Documents/ym/anakin/includes/data/Img.hpp
 	<opencv2/opencv.hpp>
 
-1398444788 /home/stein/Documents/ym/anakin/includes/data/PatternLoader.hpp
+1398453066 /home/stein/Documents/ym/anakin/includes/data/PatternLoader.hpp
 	"data/DataInput.hpp"
 	"data/RichImg.hpp"
 	<opencv2/opencv.hpp>
@@ -4577,7 +4577,7 @@
 	"connection/DelimiterBasedTCPSocket.hpp"
 	<boost/lexical_cast.hpp>
 
-1398445401 source:/home/stein/Documents/ym/anakin/src/connection/HTTPListener.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/connection/HTTPListener.cpp
 	<connection/HTTPListener.hpp>
 	<utils/Constants.hpp>
 	<cstdlib>
@@ -4595,12 +4595,12 @@
 	"output/ResultWriter.hpp"
 	"utils/BlockingMap.hpp"
 
-1398447426 source:/home/stein/Documents/ym/anakin/src/connection/HTTPSocket.cpp
+1398456611 source:/home/stein/Documents/ym/anakin/src/connection/HTTPSocket.cpp
 	"connection/HTTPSocket.hpp"
 	<iostream>
 	"connection/HTTPListener.hpp"
 
-1398444788 source:/home/stein/Documents/ym/anakin/src/connection/RequestServer.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/connection/RequestServer.cpp
 	"connection/RequestServer.hpp"
 	"processing/Worker.hpp"
 	<pthread.h>
@@ -4614,7 +4614,7 @@
 	"processing/CommandRunner.hpp"
 	<tbb/concurrent_queue.h>
 
-1397217442 /home/stein/Documents/ym/anakin/includes/processing/CommandRunner.hpp
+1398457587 /home/stein/Documents/ym/anakin/includes/processing/CommandRunner.hpp
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 	<string>
@@ -4650,7 +4650,7 @@
 	"output/JSONValue.h"
 	<vector>
 
-1398444788 source:/home/stein/Documents/ym/anakin/src/connection/Server.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/connection/Server.cpp
 	"connection/Server.hpp"
 	"connection/ATCPServerSocket.hpp"
 	"connection/AUDPServerSocket.hpp"
@@ -4659,7 +4659,7 @@
 	"connection/DTCPServerSocket.hpp"
 	<boost/regex.hpp>
 	<boost/algorithm/string.hpp>
-	"logging/Log.hpp"
+	<logging/OutputPolicyFile.hpp>
 	"output/JSONValue.h"
 
 1397217442 source:/home/stein/Documents/ym/anakin/src/data/Histogram.cpp
@@ -4674,7 +4674,7 @@
 	"output/ResultWriter.hpp"
 	"boost/filesystem.hpp"
 
-1398445217 source:/home/stein/Documents/ym/anakin/src/data/ImageDataInput.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/data/ImageDataInput.cpp
 	"data/ImageDataInput.hpp"
 	"boost/filesystem.hpp"
 	<algorithm>
@@ -4685,7 +4685,7 @@
 1397217442 source:/home/stein/Documents/ym/anakin/src/data/Img.cpp
 	"data/Img.hpp"
 
-1398444789 source:/home/stein/Documents/ym/anakin/src/data/PatternLoader.cpp
+1398453066 source:/home/stein/Documents/ym/anakin/src/data/PatternLoader.cpp
 	"data/PatternLoader.hpp"
 	"output/ResultWriter.hpp"
 
@@ -4697,7 +4697,7 @@
 	<opencv2/opencv.hpp>
 	"boost/filesystem.hpp"
 
-1397247472 source:/home/stein/Documents/ym/anakin/src/db/DBDriver.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/db/DBDriver.cpp
 	"db/DBDriver.hpp"
 	<iostream>
 	"utils/Constants.hpp"
@@ -4717,7 +4717,7 @@
 1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBUser.cpp
 	"db/DBUser.hpp"
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/matching/BasicFlannDetector.cpp
+1398456404 source:/home/stein/Documents/ym/anakin/src/matching/BasicFlannDetector.cpp
 	"matching/BasicFlannDetector.hpp"
 	<time.h>
 	<boost/foreach.hpp>
@@ -4754,7 +4754,7 @@
 	<math.h>
 	"output/JSONValue.h"
 
-1398444789 source:/home/stein/Documents/ym/anakin/src/output/ResultWriter.cpp
+1398456907 source:/home/stein/Documents/ym/anakin/src/output/ResultWriter.cpp
 	"output/ResultWriter.hpp"
 	"utils/Constants.hpp"
 
@@ -4780,20 +4780,20 @@
 	<iostream>
 	<boost/foreach.hpp>
 
-1398444789 source:/home/stein/Documents/ym/anakin/src/processing/SerializedPatternDataInput.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/processing/SerializedPatternDataInput.cpp
 	"processing/SerializedPatternDataInput.hpp"
 	"boost/filesystem.hpp"
 
-1398444788 /home/stein/Documents/ym/anakin/includes/logging/Log.hpp
+1398453066 /home/stein/Documents/ym/anakin/includes/logging/Log.hpp
 	<ctime>
 	<sstream>
 	<string>
-	<logging/OutputPolicyFile.hpp>
 
-1398444788 /home/stein/Documents/ym/anakin/includes/logging/OutputPolicyFile.hpp
+1398453066 /home/stein/Documents/ym/anakin/includes/logging/OutputPolicyFile.hpp
 	<boost/thread/pthread/mutex.hpp>
 	<cstdio>
 	<string>
+	<logging/Log.hpp>
 
 1397245554 source:/home/stein/Documents/ym/anakin/src/logging/OutputPolicyFile.cpp
 	<logging/OutputPolicyFile.hpp>
@@ -4820,9 +4820,10 @@
 	"boost/filesystem.hpp"
 	<algorithm>
 
-1398451895 source:/home/stein/Documents/ym/anakin/src/processing/SFBMCache.cpp
+1398456415 source:/home/stein/Documents/ym/anakin/src/processing/SFBMCache.cpp
 	"processing/SFBMCache.hpp"
 	<boost/foreach.hpp>
 	<iostream>
 	<time.h>
 	<limits>
+
