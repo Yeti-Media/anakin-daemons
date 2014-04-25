@@ -82,7 +82,7 @@ bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result, bo
 			return false;
 		}
 		if (PQntuples(res) == 0) {
-			std::string snotFound = "No user found with id: " + id;
+			std::string snotFound = "No user found with id: " + user_id;
 			logMessage(snotFound);
 			return false;
 		}
@@ -384,8 +384,7 @@ bool DBDriver::storeSFBM(std::string filename, int * smatcher_id, int userID, bo
 				+ param_name_fbm_data + ", " + param_name_index_id + ", "
 				+ param_name_user_id + ")  VALUES ($1, $2, $3) " + " RETURNING "
 				+ param_name_id;
-		res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL,
-		NULL, 0);
+		res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL, NULL, 0);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
@@ -423,15 +422,14 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 				+ ", " + param_return_if + " FROM " + table + " WHERE "
 				+ param_name_id + " = $1";
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL, NULL, 0);
-		if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+		if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
 			*error = true;
 			return false;
 		}
 		if (PQntuples(res) < 1) {
-            std::cout << "no matcher found" << std::endl;
-			std::string no_matcher_found = "No serialized matcher found with id: " + smatcher_id;
+			std::string no_matcher_found = "No serialized matcher found with id: " + sid;
 			logMessage(no_matcher_found);
 			return false;
 		}
@@ -528,8 +526,7 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern
 				+ " FROM " + table + " WHERE " + param_name_sid + " = $1"
 				+ " AND " + param_name_pidx + " = $2" + " AND "
 				+ param_name_category + " = $3";
-		res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL,
-		NULL, 0);
+		res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL, NULL, 0);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
@@ -613,7 +610,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 		std::string command = Constants::SELECT_COMMAND + param_name_data
 				+ " FROM " + table + " WHERE " + param_name_id + " = $1";
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL, NULL, 0);
-		if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
+		if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
 			*error = true;

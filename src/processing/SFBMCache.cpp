@@ -327,12 +327,12 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id, flo
 	clock_t t_1 = clock();
 	bool trainerFound;
 	trainerFound = this->dbdriver->retrieveSFBM(smatcher_id, error);
-	*error |= !trainerFound;
 	if (!trainerFound) {
         this->operation = ERROR;
         this->errorMessage = this->dbdriver->getMessage();
         this->errorType = *error?ResultWriter::RW_ERROR_TYPE_FATAL:ResultWriter::RW_ERROR_TYPE_ERROR;
         this->origin = "SFBMCache#loadMatcherFromDB";
+        *error |= !trainerFound;
         return NULL;
 	}
 	std::string sid = std::to_string(smatcher_id);
@@ -353,6 +353,7 @@ ImageInfo* SFBMCache::loadSceneFromDB(int sceneID, bool * error) {
         this->errorMessage = this->dbdriver->getMessage();
         this->errorType = *error?ResultWriter::RW_ERROR_TYPE_FATAL:ResultWriter::RW_ERROR_TYPE_ERROR;
         this->origin = "SFBMCache#loadSceneFromDB";
+        *error |= !sceneFound;
         return NULL;
 	}
 	return scene;

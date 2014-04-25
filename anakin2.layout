@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+<<<<<<< HEAD
 	<File name="src/utils/Constants.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2135" topLine="43" />
 		</Cursor>
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+=======
+	<File name="includes/connection/Server.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+>>>>>>> error handling first version
 		<Cursor>
 			<Cursor1 position="909" topLine="6" />
 		</Cursor>
 	</File>
+<<<<<<< HEAD
 	<File name="src/connection/HTTPSocket.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1369" topLine="19" />
@@ -24,6 +29,21 @@
 	<File name="src/connection/HTTPListener.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2276" topLine="32" />
+=======
+	<File name="includes/output/ResultWriter.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1609" topLine="39" />
+		</Cursor>
+	</File>
+	<File name="includes/processing/BasicFlannTrainer.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="116" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="includes/matching/FlannMatchingProcessor.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="848" topLine="12" />
+>>>>>>> error handling first version
 		</Cursor>
 	</File>
 	<File name="src/connection/Server.cpp" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -31,6 +51,7 @@
 			<Cursor1 position="1464" topLine="69" />
 		</Cursor>
 	</File>
+<<<<<<< HEAD
 	<File name="src/data/HistogramComparator.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="5171" topLine="0" />
@@ -69,101 +90,10 @@
 	<File name="src/matching/BasicFlannDetector.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1414" topLine="28" />
-		</Cursor>
-	</File>
-	<File name="src/output/DataOutput.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+=======
+	<File name="includes/processing/AnakinFlags.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="962" topLine="35" />
-		</Cursor>
-	</File>
-	<File name="includes/matching/FlannMatchingProcessor.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="848" topLine="12" />
-		</Cursor>
-	</File>
-	<File name="src/data/SingleImageDataInput.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="15" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src/db/DBDriver.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="13024" topLine="384" />
-		</Cursor>
-	</File>
-	<File name="src/processing/Worker.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="412" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/connection/Server.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3644" topLine="101" />
-		</Cursor>
-	</File>
-	<File name="includes/data/PatternLoader.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="223" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src/processing/CommandRunner.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2394" topLine="40" />
-		</Cursor>
-	</File>
-	<File name="includes/data/HistogramComparator.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="89" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src/processing/Flags.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7698" topLine="302" />
-		</Cursor>
-	</File>
-	<File name="src/output/ResultWriter.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6378" topLine="190" />
-		</Cursor>
-	</File>
-	<File name="includes/data/HistogramsIO.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="112" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/db/DBDriver.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8619" topLine="243" />
-		</Cursor>
-	</File>
-	<File name="includes/data/ImageDataInput.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="69" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/processing/Worker.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="888" topLine="17" />
-		</Cursor>
-	</File>
-	<File name="includes/matching/BasicFlannDetector.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1389" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="includes/matching/Match.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="231" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/processing/SFBMCache.hpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1920" topLine="36" />
-		</Cursor>
-	</File>
-	<File name="src/processing/SerializedPatternDataInput.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2059" topLine="0" />
+			<Cursor1 position="142" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="includes/output/DataOutput.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -176,14 +106,162 @@
 			<Cursor1 position="3053" topLine="83" />
 		</Cursor>
 	</File>
-	<File name="includes/matching/SerializableFlannBasedMatcher.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="includes/processing/CommandRunner.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3634" topLine="111" />
+			<Cursor1 position="2176" topLine="60" />
+		</Cursor>
+	</File>
+	<File name="includes/processing/Worker.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="888" topLine="17" />
+		</Cursor>
+	</File>
+	<File name="includes/processing/SFBMCache.hpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3781" topLine="95" />
 		</Cursor>
 	</File>
 	<File name="includes/utils/BlockingMap.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1748" topLine="67" />
+			<Cursor1 position="1713" topLine="67" />
+		</Cursor>
+	</File>
+	<File name="src/data/HistogramsIO.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2433" topLine="65" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="570" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="includes/matching/SerializableFlannBasedMatcher.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3634" topLine="111" />
+>>>>>>> error handling first version
+		</Cursor>
+	</File>
+	<File name="src/output/DataOutput.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="962" topLine="35" />
+		</Cursor>
+	</File>
+<<<<<<< HEAD
+	<File name="includes/matching/FlannMatchingProcessor.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="848" topLine="12" />
+=======
+	<File name="src/connection/HTTPSocket.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="379" topLine="0" />
+>>>>>>> error handling first version
+		</Cursor>
+	</File>
+	<File name="src/data/SingleImageDataInput.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="15" topLine="0" />
+		</Cursor>
+	</File>
+<<<<<<< HEAD
+	<File name="src/db/DBDriver.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="13024" topLine="384" />
+=======
+	<File name="src/connection/Server.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="885" topLine="9" />
+>>>>>>> error handling first version
+		</Cursor>
+	</File>
+	<File name="src/processing/Worker.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="412" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="includes/connection/Server.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3644" topLine="101" />
+		</Cursor>
+	</File>
+	<File name="src/data/SingleImageDataInput.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2394" topLine="40" />
+		</Cursor>
+	</File>
+	<File name="src/db/DBDriver.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="12825" topLine="405" />
+		</Cursor>
+	</File>
+	<File name="src/data/ImageDataInput.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="15" topLine="114" />
+		</Cursor>
+	</File>
+	<File name="src/data/PatternLoader.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2441" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/output/DataOutput.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1107" topLine="39" />
+		</Cursor>
+	</File>
+	<File name="includes/db/DBDriver.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8619" topLine="243" />
+		</Cursor>
+	</File>
+	<File name="src/matching/FlannMatchingProcessor.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="619" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="src/output/ResultWriter.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="69" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/matching/SerializableFlannBasedMatcher.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8909" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/processing/CommandRunner.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8813" topLine="240" />
+		</Cursor>
+	</File>
+	<File name="src/processing/SerializedPatternDataInput.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2059" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/processing/Flags.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7698" topLine="302" />
+		</Cursor>
+	</File>
+	<File name="src/processing/SFBMCache.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9797" topLine="30" />
+		</Cursor>
+	</File>
+	<File name="includes/output/DataOutput.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1878" topLine="55" />
+		</Cursor>
+	</File>
+	<File name="includes/processing/Flags.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3053" topLine="83" />
+		</Cursor>
+	</File>
+	<File name="includes/db/DBDriver.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8629" topLine="243" />
 		</Cursor>
 	</File>
 	<File name="src/utils/Help.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -191,34 +269,34 @@
 			<Cursor1 position="16" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src/processing/SFBMCache.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="includes/matching/Match.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10162" topLine="298" />
+			<Cursor1 position="231" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="includes/data/ImageDataInput.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="69" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="includes/data/HistogramComparator.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="89" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="includes/matching/BasicFlannDetector.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1389" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="includes/data/HistogramsIO.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="112" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="includes/data/SingleImageDataInput.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="98" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/output/ResultWriter.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1609" topLine="39" />
-		</Cursor>
-	</File>
-	<File name="includes/processing/AnakinFlags.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="142" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/processing/BasicFlannTrainer.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="116" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="includes/processing/CommandRunner.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2176" topLine="60" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
