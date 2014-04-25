@@ -182,6 +182,11 @@ int CommandRunner::run() {
 	switch (action) {
         case CommandRunner::ADDIDXS: {
             std::vector<JSONValue*> inserts;
+            std::string duplicated;
+            if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+                this->out->error(this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING, "duplicated indexes on request: " + duplicated, "CommandRunner::run"));
+                return -1;
+            }
             for (uint i = 0; i < this->indexes.size(); i++) {
                 int idxID = std::stoi(this->indexes.at(i));
                 bool error;
@@ -197,6 +202,11 @@ int CommandRunner::run() {
         }
         case CommandRunner::DELIDXS: {
             std::vector<JSONValue*> deletes;
+            std::string duplicated;
+            if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+                this->out->error(this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING, "duplicated indexes on request: " + duplicated, "CommandRunner::run"));
+                return -1;
+            }
             for (uint i = 0; i < this->indexes.size(); i++) {
                 std::string smatcherID = this->indexes.at(i);
                 int idxID = std::stoi(smatcherID);
@@ -214,6 +224,11 @@ int CommandRunner::run() {
         }
         case CommandRunner::UPDIDXS: {
             std::vector<JSONValue*> updates;
+            std::string duplicated;
+            if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+                this->out->error(this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING, "duplicated indexes on request: " + duplicated, "CommandRunner::run"));
+                return -1;
+            }
             for (uint i = 0; i < this->indexes.size(); i++) {
                 std::string smatcherID = this->indexes.at(i);
                 int idxID = std::stoi(smatcherID);
@@ -230,6 +245,11 @@ int CommandRunner::run() {
         }
         case CommandRunner::MATCH: {
             std::vector<JSONValue*>* matches = new std::vector<JSONValue*>();
+            std::string duplicated;
+            if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+                this->out->error(this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING, "duplicated indexes on request: " + duplicated, "CommandRunner::run"));
+                return -1;
+            }
             bool loadSceneError;
             ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
             if (loadSceneError) {
@@ -265,4 +285,18 @@ int CommandRunner::run() {
 	}
 
 	return 0;
+}
+
+//PRIVATE
+
+bool CommandRunner::checkDuplicatedIndexes(std::vector<std::string> indexes, std::string * duplicated) {
+    std::map<std::string, int> visited;
+    for (uint i = 0; i < indexes.size(); i++) {
+        if (visited.find(indexes.at(i)) != visited.end()) {
+            *duplicated = indexes.at(i);
+            return false;
+        }
+        visited[indexes.at(i)] = 0;
+    }
+    return true;
 }
