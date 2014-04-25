@@ -15,21 +15,25 @@
 BOOST_AUTO_TEST_SUITE( test_suite_acceptance )
 
 BOOST_AUTO_TEST_CASE( test_case_basic ) {
-	system("dropdb --if-exists anakinAcceptanceTesting");
-	system("createdb anakinAcceptanceTesting");
+	//system("dropdb --if-exists anakinAcceptanceTesting");
+	//system("createdb anakinAcceptanceTesting");
 
-	int argc = 3;
+	int argc = 4;
 	const char * argv[argc];
 
-	argv[0] = "-iHTTP";
-	argv[1] = "8080";
-	argv[2] = "-oHTTP";
-	argv[3] = "-verbose";
+	argv[0] = "Anakin";
+	argv[1] = "-iHTTP";
+	argv[2] = "8080";
+	argv[3] = "-oHTTP";
+	argv[4] = "-verbose";
 
 	BOOST_REQUIRE(patternMatching(argc, argv));
 	BOOST_REQUIRE(
-			system("time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/"));
-
+			system(
+					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/"));
+	BOOST_REQUIRE(
+			system(
+					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[2], \"action\":\"matching\", \"scenario\":2}' --connect-timeout 10  -lv http://127.0.0.1:8080/"));
 	//system("psql -d anakinAcceptanceTesting -a -f script.sql");
 
 	//system("dropdb --if-exists anakinAcceptanceTesting");
