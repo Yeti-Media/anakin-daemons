@@ -1,11 +1,5 @@
-/**
- * Uncomment what project do you want to compile. Comment the others.
- */
-#define PATTERNMATCHING
-//#define MATCHERCACHE
-//#define DBCONNECTOR
-//#define EXTRACTOR
-//#define TRAINER
+//config the project in define.hpp file
+#include <CompileConfigurations.hpp>
 
 //=======================================================================================
 #ifdef PATTERNMATCHING
@@ -1212,6 +1206,7 @@ int trainer(int argc, const char * argv[])
 //=======================================================================================
 //=======================================================================================
 
+#ifndef UNIT_TEST
 int main(int argc, const char * argv[]) {
 #ifdef PATTERNMATCHING
 	return patternMatching(argc, argv);
@@ -1229,3 +1224,4 @@ int main(int argc, const char * argv[]) {
 	return trainer(argc,argv);
 #endif
 }
+#endif

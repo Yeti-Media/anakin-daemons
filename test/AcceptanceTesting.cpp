@@ -1,20 +1,40 @@
-#include <boost/test/test_tools.hpp>
-#include <boost/test/unit_test_log.hpp>
-#include <boost/test/unit_test_suite.hpp>
-#include <boost/test/unit_test_suite_impl.hpp>
-#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
-#include <boost/test/utils/basic_cstring/basic_cstring_fwd.hpp>
-#include <boost/test/utils/lazy_ostream.hpp>
-#include <cstdlib>
+/*
+ * AcceptanceTesting.cpp
+ *
+ *  Created on: 24/04/2014
+ *      Author: Franco Pellegrini
+ */
 
+#include <CompileConfigurations.hpp>
 
-#define BOOST_TEST_MODULE AcceptanceTesting
-#include <boost/test/unit_test.hpp>
+#ifdef UNIT_TEST
 
+#define BOOST_TEST_MODULE example
+#include <boost/test/included/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE( acceptance_testing )
-{
-	system("dropdb anakinAcceptanceTesting");
+BOOST_AUTO_TEST_SUITE( test_suite_acceptance )
 
-	BOOST_REQUIRE(system("createdb anakinAcceptanceTesting"));
+BOOST_AUTO_TEST_CASE( test_case_basic ) {
+	system("dropdb --if-exists anakinAcceptanceTesting");
+	system("createdb anakinAcceptanceTesting");
+
+	int argc = 3;
+	const char * argv[argc];
+
+	argv[0] = "-iHTTP";
+	argv[1] = "8080";
+	argv[2] = "-oHTTP";
+	argv[3] = "-verbose";
+
+	BOOST_REQUIRE(patternMatching(argc, argv));
+	BOOST_REQUIRE(
+			system("time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/"));
+
+	//system("psql -d anakinAcceptanceTesting -a -f script.sql");
+
+	//system("dropdb --if-exists anakinAcceptanceTesting");
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+#endif
