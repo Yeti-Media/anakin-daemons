@@ -23,6 +23,10 @@
  */
 #define UNIT_TEST
 
+
+/** ======================================================================
+ * header for main functions
+ */
 #ifdef PATTERNMATCHING
 	int patternMatching(int argc, const char * argv[]);
 #endif
