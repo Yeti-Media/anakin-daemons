@@ -4110,80 +4110,87 @@
 1397217442 /home/stein/Documents/ym/anakin/lib/quicklz.h
 	<string.h>
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/ATCPServerSocket.cpp
-	"connection/ATCPServerSocket.hpp"
-	"connection/ATCPSocket.hpp"
-	<boost/lexical_cast.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/ATCPServerSocket.hpp
-	"connection/ServerSocket.hpp"
-	<boost/asio.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/ServerSocket.hpp
+1397251675 source:/home/stein/Documents/ym/anakin/main.cpp
+	"processing/AnakinFlags.hpp"
+	"output/DataOutput.hpp"
 	"connection/Socket.hpp"
+	"connection/ATCPSocket.hpp"
+	"connection/AUDPSocket.hpp"
+	"connection/Server.hpp"
+	"connection/RequestServer.hpp"
+	"connection/DelimiterBasedTCPSocket.hpp"
+	"connection/DTCPServerSocket.hpp"
+	"connection/HTTPSocket.hpp"
+	<logging/Log.hpp>
+	<logging/OutputPolicyFile.hpp>
+	<iostream>
+	"db/DBDriver.hpp"
+	"processing/SFBMCache.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<string>
+	<vector>
+	<ctime>
+	"db/DBDriver.hpp"
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+	"db/DBHistogram.hpp"
+	"processing/Flags.hpp"
+	"utils/XMLoader.hpp"
+	"utils/Constants.hpp"
+	"data/ImageInfo.hpp"
+	<iostream>
+	"utils/Help.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/calib3d/calib3d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	"data/ImageDataInput.hpp"
+	"data/PatternLoader.hpp"
+	"data/SingleImageDataInput.hpp"
+	"data/HistogramComparator.hpp"
+	"processing/Flags.hpp"
+	"data/Histogram.hpp"
+	"data/HistogramsIO.hpp"
+	<opencv2/opencv.hpp>
+	<string>
+	<iostream>
+	"opencv2/core/core.hpp"
+	"opencv2/features2d/features2d.hpp"
+	"opencv2/nonfree/nonfree.hpp"
+	"processing/Trainer.hpp"
+	"data/PatternLoader.hpp"
+	"processing/BasicFlannTrainer.hpp"
+	"processing/Flags.hpp"
+	"processing/SerializedPatternDataInput.hpp"
+	"data/PatternLoader.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/processing/AnakinFlags.hpp
+	"processing/Flags.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/processing/Flags.hpp
+	<map>
+	<vector>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/output/DataOutput.hpp
+	"connection/Socket.hpp"
+	<iostream>
+	<semaphore.h>
+	"connection/HTTPSocket.hpp"
 
 1397217442 /home/stein/Documents/ym/anakin/includes/connection/Socket.hpp
 	<sstream>
 
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/ATCPSocket.hpp
-	"connection/Socket.hpp"
-	<boost/asio.hpp>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/ATCPSocket.cpp
-	"connection/ATCPSocket.hpp"
-	<boost/lexical_cast.hpp>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/AUDPServerSocket.cpp
-	"connection/AUDPServerSocket.hpp"
-	"connection/AUDPSocket.hpp"
-	<boost/lexical_cast.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/AUDPServerSocket.hpp
-	"connection/ServerSocket.hpp"
-	<boost/asio.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/AUDPSocket.hpp
-	"connection/Socket.hpp"
-	<boost/asio.hpp>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/AUDPSocket.cpp
-	"connection/AUDPSocket.hpp"
-	<boost/lexical_cast.hpp>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/DelimiterBasedTCPSocket.cpp
-	"connection/DelimiterBasedTCPSocket.hpp"
-	<boost/lexical_cast.hpp>
-	<boost/algorithm/string/predicate.hpp>
-	<boost/regex.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/DelimiterBasedTCPSocket.hpp
-	"connection/ATCPSocket.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/DTCPServerSocket.cpp
-	"connection/DTCPServerSocket.hpp"
-	"connection/DelimiterBasedTCPSocket.hpp"
-	<boost/lexical_cast.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/DTCPServerSocket.hpp
-	"connection/ATCPServerSocket.hpp"
-	<boost/asio.hpp>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/HTTPListener.cpp
-	<connection/HTTPListener.hpp>
-	<utils/Constants.hpp>
-	<cstdlib>
-	<cstring>
-	<ctime>
-	<iostream>
-	<string>
-	<mongoose.h>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/HTTPListener.hpp
-	<mongoose.h>
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/HTTPSocket.hpp
+	"mongoose.h"
 	<tbb/concurrent_queue.h>
+	"semaphore.h"
 	<vector>
-	"connection/HTTPSocket.hpp"
-	"output/ResultWriter.hpp"
+	<pthread.h>
 	"utils/BlockingMap.hpp"
 
 1397217442 /home/stein/Documents/ym/anakin/lib/tbb42_20131118oss/include/tbb/concurrent_queue.h
@@ -4373,25 +4380,73 @@
 	<utility>
 	<cstring>
 
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/HTTPSocket.hpp
-	"mongoose.h"
-	<tbb/concurrent_queue.h>
-	"semaphore.h"
-	<vector>
-	<pthread.h>
-	"utils/BlockingMap.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/utils/BlockingMap.hpp
+1398444788 /home/stein/Documents/ym/anakin/includes/utils/BlockingMap.hpp
 	<map>
 	<semaphore.h>
 	<vector>
 	<iostream>
 	<boost/foreach.hpp>
 
-1397245539 /home/stein/Documents/ym/anakin/includes/output/ResultWriter.hpp
-	"output/JSON.h"
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/ATCPSocket.hpp
+	"connection/Socket.hpp"
+	<boost/asio.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/AUDPSocket.hpp
+	"connection/Socket.hpp"
+	<boost/asio.hpp>
+
+1398444788 /home/stein/Documents/ym/anakin/includes/connection/Server.hpp
+	"connection/ServerSocket.hpp"
+	"processing/AnakinFlags.hpp"
+	"output/DataOutput.hpp"
+	"processing/SFBMCache.hpp"
+	"db/DBDriver.hpp"
+	"connection/HTTPSocket.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/ServerSocket.hpp
+	"connection/Socket.hpp"
+
+1398446445 /home/stein/Documents/ym/anakin/includes/processing/SFBMCache.hpp
+	"db/DBDriver.hpp"
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<map>
+	<vector>
+	<string>
+	<semaphore.h>
+	"data/ImageInfo.hpp"
 	"output/JSONValue.h"
+	"output/ResultWriter.hpp"
+
+1398445719 /home/stein/Documents/ym/anakin/includes/db/DBDriver.hpp
+	<postgresql/libpq-fe.h>
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+	"db/DBHistogram.hpp"
 	<opencv2/opencv.hpp>
+	"data/ImageInfo.hpp"
+	<string>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/db/DBUser.hpp
+	"DBPattern.hpp"
+	"DBHistogram.hpp"
+	<vector>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/db/DBPattern.hpp
+	<string>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/db/DBHistogram.hpp
+	<string>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/data/ImageInfo.hpp
+	<opencv2/opencv.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/matching/SerializableFlannBasedMatcher.hpp
+	"opencv2/features2d/features2d.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/output/JSONValue.h
+	<vector>
+	<string>
+	"JSON.h"
 
 1397217442 /home/stein/Documents/ym/anakin/includes/output/JSON.h
 	<vector>
@@ -4403,27 +4458,69 @@
 	<wchar.h>
 	"JSONValue.h"
 
-1397217442 /home/stein/Documents/ym/anakin/includes/output/JSONValue.h
+1398444788 /home/stein/Documents/ym/anakin/includes/output/ResultWriter.hpp
+	"output/JSON.h"
+	"output/JSONValue.h"
+	<opencv2/opencv.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/RequestServer.hpp
+	"Server.hpp"
+	<tbb/concurrent_queue.h>
 	<vector>
-	<string>
-	"JSON.h"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/DelimiterBasedTCPSocket.hpp
+	"connection/ATCPSocket.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/DTCPServerSocket.hpp
+	"connection/ATCPServerSocket.hpp"
+	<boost/asio.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/ATCPServerSocket.hpp
+	"connection/ServerSocket.hpp"
+	<boost/asio.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/utils/XMLoader.hpp
+	"db/DBHistogram.hpp"
+	"db/DBPattern.hpp"
+	"data/ImageInfo.hpp"
+	<vector>
 
 1397217442 /home/stein/Documents/ym/anakin/includes/utils/Constants.hpp
 	<string>
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/connection/HTTPSocket.cpp
-	"connection/HTTPSocket.hpp"
-	<iostream>
-	"connection/HTTPListener.hpp"
+1397217442 /home/stein/Documents/ym/anakin/includes/utils/Help.hpp
+	<string>
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/Histogram.cpp
-	"data/Histogram.hpp"
+1397217442 /home/stein/Documents/ym/anakin/includes/data/ImageDataInput.hpp
+	<data/DataInput.hpp>
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
 
-1397217442 /home/stein/Documents/ym/anakin/includes/data/Histogram.hpp
+1397217442 /home/stein/Documents/ym/anakin/includes/data/DataInput.hpp
+	"Img.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/data/Img.hpp
 	<opencv2/opencv.hpp>
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/HistogramComparator.cpp
-	"data/HistogramComparator.hpp"
+1398444788 /home/stein/Documents/ym/anakin/includes/data/PatternLoader.hpp
+	"data/DataInput.hpp"
+	"data/RichImg.hpp"
+	<opencv2/opencv.hpp>
+	"data/ImageInfo.hpp"
+	"processing/SerializedPatternDataInput.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/data/RichImg.hpp
+	<opencv2/opencv.hpp>
+	"data/Img.hpp"
+	"data/ImageInfo.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/processing/SerializedPatternDataInput.hpp
+	"data/ImageInfo.hpp"
+	"db/DBDriver.hpp"
+	"db/DBUser.hpp"
+	"db/DBPattern.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/data/SingleImageDataInput.hpp
 	"data/DataInput.hpp"
 
 1397217442 /home/stein/Documents/ym/anakin/includes/data/HistogramComparator.hpp
@@ -4432,195 +4529,83 @@
 	"data/Histogram.hpp"
 	"data/HistogramsIO.hpp"
 
-1397217442 /home/stein/Documents/ym/anakin/includes/data/Img.hpp
-	<opencv2/opencv.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/data/RichImg.hpp
-	<opencv2/opencv.hpp>
-	"data/Img.hpp"
-	"data/ImageInfo.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/data/ImageInfo.hpp
+1397217442 /home/stein/Documents/ym/anakin/includes/data/Histogram.hpp
 	<opencv2/opencv.hpp>
 
 1397217442 /home/stein/Documents/ym/anakin/includes/data/HistogramsIO.hpp
 	<opencv2/opencv.hpp>
 	"data/Histogram.hpp"
 
-1397217442 /home/stein/Documents/ym/anakin/includes/data/DataInput.hpp
-	"Img.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/HistogramsIO.cpp
-	"data/HistogramsIO.hpp"
-	"output/ResultWriter.hpp"
-	"boost/filesystem.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/ImageDataInput.cpp
-	"data/ImageDataInput.hpp"
-	"boost/filesystem.hpp"
-	<algorithm>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/data/ImageDataInput.hpp
-	<data/DataInput.hpp>
-	<opencv2/opencv.hpp>
-	"boost/filesystem.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/ImageInfo.cpp
-	"data/ImageInfo.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/Img.cpp
-	"data/Img.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/RichImg.cpp
+1397217442 /home/stein/Documents/ym/anakin/includes/processing/Trainer.hpp
 	"data/RichImg.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/data/SingleImageDataInput.cpp
-	"data/SingleImageDataInput.hpp"
-	<opencv2/opencv.hpp>
-	"boost/filesystem.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/data/SingleImageDataInput.hpp
-	"data/DataInput.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBHistogram.cpp
-	"db/DBHistogram.hpp"
-	"utils/Constants.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/db/DBHistogram.hpp
-	<string>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBPattern.cpp
-	"db/DBPattern.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/db/DBPattern.hpp
-	<string>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBUser.cpp
-	"db/DBUser.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/db/DBUser.hpp
-	"DBPattern.hpp"
-	"DBHistogram.hpp"
-	<vector>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/matching/BasicFlannDetector.cpp
-	"matching/BasicFlannDetector.hpp"
-	<time.h>
-	<boost/foreach.hpp>
-
-1397217442 /home/stein/Documents/ym/anakin/includes/matching/BasicFlannDetector.hpp
-	<map>
-	"matching/SerializableFlannBasedMatcher.hpp"
-	"matching/Match.hpp"
-	"processing/SFBMCache.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/matching/SerializableFlannBasedMatcher.hpp
-	"opencv2/features2d/features2d.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/matching/Match.hpp
-	"data/RichImg.hpp"
-	<opencv2/opencv.hpp>
-
-1397245539 /home/stein/Documents/ym/anakin/includes/processing/SFBMCache.hpp
-	"db/DBDriver.hpp"
-	"matching/SerializableFlannBasedMatcher.hpp"
-	<map>
-	<vector>
-	<string>
-	<semaphore.h>
-	"data/ImageInfo.hpp"
-	"output/JSONValue.h"
-	"output/ResultWriter.hpp"
-
-1397245539 /home/stein/Documents/ym/anakin/includes/db/DBDriver.hpp
-	<postgresql/libpq-fe.h>
-	"db/DBUser.hpp"
-	"db/DBPattern.hpp"
-	"db/DBHistogram.hpp"
-	<opencv2/opencv.hpp>
-	"data/ImageInfo.hpp"
-	<string>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/matching/FlannMatchingProcessor.cpp
-	"matching/FlannMatchingProcessor.hpp"
-	"matching/Match.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/matching/FlannMatchingProcessor.hpp
-	"matching/BasicFlannDetector.hpp"
-	"output/ResultWriter.hpp"
-	"data/RichImg.hpp"
-	"output/JSONValue.h"
-	<vector>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/matching/Match.cpp
-	"matching/Match.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/matching/SerializableFlannBasedMatcher.cpp
-	"matching/SerializableFlannBasedMatcher.hpp"
-	<iostream>
-	<stdio.h>
-	<fstream>
-	<sstream>
-	"quicklz.h"
-
-1397244294 source:/home/stein/Documents/ym/anakin/src/output/DataOutput.cpp
-	"output/DataOutput.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/output/DataOutput.hpp
-	"connection/Socket.hpp"
-	<iostream>
-	<semaphore.h>
-	"connection/HTTPSocket.hpp"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/output/JSON.cpp
-	"output/JSON.h"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/output/JSONValue.cpp
-	<stdio.h>
-	<string.h>
-	<stdlib.h>
-	<vector>
-	<string>
-	<sstream>
-	<iostream>
-	<math.h>
-	"output/JSONValue.h"
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/processing/AnakinFlags.cpp
-	"processing/AnakinFlags.hpp"
-	"utils/Constants.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/processing/AnakinFlags.hpp
-	"processing/Flags.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/processing/Flags.hpp
-	<map>
-	<vector>
-
-1397217442 source:/home/stein/Documents/ym/anakin/src/processing/BasicFlannTrainer.cpp
-	"processing/BasicFlannTrainer.hpp"
-	<time.h>
 
 1397217442 /home/stein/Documents/ym/anakin/includes/processing/BasicFlannTrainer.hpp
 	"processing/Trainer.hpp"
 	"matching/SerializableFlannBasedMatcher.hpp"
 	<map>
 
-1397217442 /home/stein/Documents/ym/anakin/includes/processing/Trainer.hpp
-	"data/RichImg.hpp"
+1397217442 source:/home/stein/Documents/ym/anakin/src/connection/ATCPServerSocket.cpp
+	"connection/ATCPServerSocket.hpp"
+	"connection/ATCPSocket.hpp"
+	<boost/lexical_cast.hpp>
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/processing/Flags.cpp
-	"processing/Flags.hpp"
-	<algorithm>
+1397217442 source:/home/stein/Documents/ym/anakin/src/connection/ATCPSocket.cpp
+	"connection/ATCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/connection/AUDPServerSocket.cpp
+	"connection/AUDPServerSocket.hpp"
+	"connection/AUDPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/AUDPServerSocket.hpp
+	"connection/ServerSocket.hpp"
+	<boost/asio.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/connection/AUDPSocket.cpp
+	"connection/AUDPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/connection/DelimiterBasedTCPSocket.cpp
+	"connection/DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+	<boost/algorithm/string/predicate.hpp>
+	<boost/regex.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/connection/DTCPServerSocket.cpp
+	"connection/DTCPServerSocket.hpp"
+	"connection/DelimiterBasedTCPSocket.hpp"
+	<boost/lexical_cast.hpp>
+
+1398445401 source:/home/stein/Documents/ym/anakin/src/connection/HTTPListener.cpp
+	<connection/HTTPListener.hpp>
+	<utils/Constants.hpp>
+	<cstdlib>
+	<cstring>
+	<ctime>
 	<iostream>
-	<boost/foreach.hpp>
+	<string>
+	<mongoose.h>
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/processing/Trainer.cpp
-	<opencv2/opencv.hpp>
-	"processing/Trainer.hpp"
+1397217442 /home/stein/Documents/ym/anakin/includes/connection/HTTPListener.hpp
+	<mongoose.h>
+	<tbb/concurrent_queue.h>
+	<vector>
+	"connection/HTTPSocket.hpp"
+	"output/ResultWriter.hpp"
+	"utils/BlockingMap.hpp"
 
-1397217442 source:/home/stein/Documents/ym/anakin/src/processing/Worker.cpp
+1398447426 source:/home/stein/Documents/ym/anakin/src/connection/HTTPSocket.cpp
+	"connection/HTTPSocket.hpp"
+	<iostream>
+	"connection/HTTPListener.hpp"
+
+1398444788 source:/home/stein/Documents/ym/anakin/src/connection/RequestServer.cpp
+	"connection/RequestServer.hpp"
 	"processing/Worker.hpp"
+	<pthread.h>
+	"connection/DTCPServerSocket.hpp"
+	<boost/regex.hpp>
 
 1397217442 /home/stein/Documents/ym/anakin/includes/processing/Worker.hpp
 	"processing/Flags.hpp"
@@ -4648,14 +4633,183 @@
 	"data/ImageInfo.hpp"
 	"matching/FlannMatchingProcessor.hpp"
 
+1397217442 /home/stein/Documents/ym/anakin/includes/matching/BasicFlannDetector.hpp
+	<map>
+	"matching/SerializableFlannBasedMatcher.hpp"
+	"matching/Match.hpp"
+	"processing/SFBMCache.hpp"
+
+1397217442 /home/stein/Documents/ym/anakin/includes/matching/Match.hpp
+	"data/RichImg.hpp"
+	<opencv2/opencv.hpp>
+
+1397217442 /home/stein/Documents/ym/anakin/includes/matching/FlannMatchingProcessor.hpp
+	"matching/BasicFlannDetector.hpp"
+	"output/ResultWriter.hpp"
+	"data/RichImg.hpp"
+	"output/JSONValue.h"
+	<vector>
+
+1398444788 source:/home/stein/Documents/ym/anakin/src/connection/Server.cpp
+	"connection/Server.hpp"
+	"connection/ATCPServerSocket.hpp"
+	"connection/AUDPServerSocket.hpp"
+	<sstream>
+	"processing/CommandRunner.hpp"
+	"connection/DTCPServerSocket.hpp"
+	<boost/regex.hpp>
+	<boost/algorithm/string.hpp>
+	"logging/Log.hpp"
+	"output/JSONValue.h"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/Histogram.cpp
+	"data/Histogram.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/HistogramComparator.cpp
+	"data/HistogramComparator.hpp"
+	"data/DataInput.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/HistogramsIO.cpp
+	"data/HistogramsIO.hpp"
+	"output/ResultWriter.hpp"
+	"boost/filesystem.hpp"
+
+1398445217 source:/home/stein/Documents/ym/anakin/src/data/ImageDataInput.cpp
+	"data/ImageDataInput.hpp"
+	"boost/filesystem.hpp"
+	<algorithm>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/ImageInfo.cpp
+	"data/ImageInfo.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/Img.cpp
+	"data/Img.hpp"
+
+1398444789 source:/home/stein/Documents/ym/anakin/src/data/PatternLoader.cpp
+	"data/PatternLoader.hpp"
+	"output/ResultWriter.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/RichImg.cpp
+	"data/RichImg.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/data/SingleImageDataInput.cpp
+	"data/SingleImageDataInput.hpp"
+	<opencv2/opencv.hpp>
+	"boost/filesystem.hpp"
+
+1397247472 source:/home/stein/Documents/ym/anakin/src/db/DBDriver.cpp
+	"db/DBDriver.hpp"
+	<iostream>
+	"utils/Constants.hpp"
+	<string>
+	<postgresql/libpq/libpq-fs.h>
+	<cstdio>
+	<fstream>
+	"utils/XMLoader.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBHistogram.cpp
+	"db/DBHistogram.hpp"
+	"utils/Constants.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBPattern.cpp
+	"db/DBPattern.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/db/DBUser.cpp
+	"db/DBUser.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/matching/BasicFlannDetector.cpp
+	"matching/BasicFlannDetector.hpp"
+	<time.h>
+	<boost/foreach.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/matching/FlannMatchingProcessor.cpp
+	"matching/FlannMatchingProcessor.hpp"
+	"matching/Match.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/matching/Match.cpp
+	"matching/Match.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/matching/SerializableFlannBasedMatcher.cpp
+	"matching/SerializableFlannBasedMatcher.hpp"
+	<iostream>
+	<stdio.h>
+	<fstream>
+	<sstream>
+	"quicklz.h"
+
+1397244294 source:/home/stein/Documents/ym/anakin/src/output/DataOutput.cpp
+	"output/DataOutput.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/output/JSON.cpp
+	"output/JSON.h"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/output/JSONValue.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<math.h>
+	"output/JSONValue.h"
+
+1398444789 source:/home/stein/Documents/ym/anakin/src/output/ResultWriter.cpp
+	"output/ResultWriter.hpp"
+	"utils/Constants.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/processing/AnakinFlags.cpp
+	"processing/AnakinFlags.hpp"
+	"utils/Constants.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/processing/BasicFlannTrainer.cpp
+	"processing/BasicFlannTrainer.hpp"
+	<time.h>
+
+1398451443 source:/home/stein/Documents/ym/anakin/src/processing/CommandRunner.cpp
+	"processing/CommandRunner.hpp"
+	"output/JSONValue.h"
+	<algorithm>
+	<iterator>
+	"utils/Constants.hpp"
+	<logging/Log.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/processing/Flags.cpp
+	"processing/Flags.hpp"
+	<algorithm>
+	<iostream>
+	<boost/foreach.hpp>
+
+1398444789 source:/home/stein/Documents/ym/anakin/src/processing/SerializedPatternDataInput.cpp
+	"processing/SerializedPatternDataInput.hpp"
+	"boost/filesystem.hpp"
+
+1398444788 /home/stein/Documents/ym/anakin/includes/logging/Log.hpp
+	<ctime>
+	<sstream>
+	<string>
+	<logging/OutputPolicyFile.hpp>
+
+1398444788 /home/stein/Documents/ym/anakin/includes/logging/OutputPolicyFile.hpp
+	<boost/thread/pthread/mutex.hpp>
+	<cstdio>
+	<string>
+
+1397245554 source:/home/stein/Documents/ym/anakin/src/logging/OutputPolicyFile.cpp
+	<logging/OutputPolicyFile.hpp>
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/processing/Trainer.cpp
+	<opencv2/opencv.hpp>
+	"processing/Trainer.hpp"
+
+1397217442 source:/home/stein/Documents/ym/anakin/src/processing/Worker.cpp
+	"processing/Worker.hpp"
+
 1397217442 source:/home/stein/Documents/ym/anakin/src/utils/Constants.cpp
 	"utils/Constants.hpp"
 
 1397217442 source:/home/stein/Documents/ym/anakin/src/utils/Help.cpp
 	"utils/Help.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/utils/Help.hpp
-	<string>
 
 1397217442 source:/home/stein/Documents/ym/anakin/src/utils/XMLoader.cpp
 	"utils/XMLoader.hpp"
@@ -4666,160 +4820,9 @@
 	"boost/filesystem.hpp"
 	<algorithm>
 
-1397217442 /home/stein/Documents/ym/anakin/includes/utils/XMLoader.hpp
-	"db/DBHistogram.hpp"
-	"db/DBPattern.hpp"
-	"data/ImageInfo.hpp"
-	<vector>
-
-1397245554 source:/home/stein/Documents/ym/anakin/main.cpp
-	"processing/AnakinFlags.hpp"
-	"output/DataOutput.hpp"
-	"connection/Socket.hpp"
-	"connection/ATCPSocket.hpp"
-	"connection/AUDPSocket.hpp"
-	"connection/Server.hpp"
-	"connection/RequestServer.hpp"
-	"connection/DelimiterBasedTCPSocket.hpp"
-	"connection/DTCPServerSocket.hpp"
-	"connection/HTTPSocket.hpp"
-	<logging/Log.hpp>
-	<logging/OutputPolicyFile.hpp>
-	<iostream>
-	"db/DBDriver.hpp"
-	"processing/SFBMCache.hpp"
-	"matching/SerializableFlannBasedMatcher.hpp"
-	<string>
-	<vector>
-	<ctime>
-	"db/DBDriver.hpp"
-	"db/DBUser.hpp"
-	"db/DBPattern.hpp"
-	"db/DBHistogram.hpp"
-	"processing/Flags.hpp"
-	"utils/XMLoader.hpp"
-	"utils/Constants.hpp"
-	"data/ImageInfo.hpp"
-	<iostream>
-	"utils/Help.hpp"
-	<opencv2/opencv.hpp>
-	"boost/filesystem.hpp"
-	<iostream>
-	"opencv2/core/core.hpp"
-	"opencv2/features2d/features2d.hpp"
-	"opencv2/highgui/highgui.hpp"
-	"opencv2/calib3d/calib3d.hpp"
-	"opencv2/nonfree/nonfree.hpp"
-	"data/ImageDataInput.hpp"
-	"data/PatternLoader.hpp"
-	"data/SingleImageDataInput.hpp"
-	"data/HistogramComparator.hpp"
-	"processing/Flags.hpp"
-	"data/Histogram.hpp"
-	"data/HistogramsIO.hpp"
-	<opencv2/opencv.hpp>
-	<string>
-	<iostream>
-	"opencv2/core/core.hpp"
-	"opencv2/features2d/features2d.hpp"
-	"opencv2/nonfree/nonfree.hpp"
-	"processing/Trainer.hpp"
-	"data/PatternLoader.hpp"
-	"processing/BasicFlannTrainer.hpp"
-	"processing/Flags.hpp"
-	"processing/SerializedPatternDataInput.hpp"
-	"data/PatternLoader.hpp"
-	"matching/SerializableFlannBasedMatcher.hpp"
-
-1397245539 /home/stein/Documents/ym/anakin/includes/connection/Server.hpp
-	"connection/ServerSocket.hpp"
-	"processing/AnakinFlags.hpp"
-	"output/DataOutput.hpp"
-	"processing/SFBMCache.hpp"
-	"db/DBDriver.hpp"
-	"connection/HTTPSocket.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/connection/RequestServer.hpp
-	"Server.hpp"
-	<tbb/concurrent_queue.h>
-	<vector>
-
-1397245554 /home/stein/Documents/ym/anakin/includes/logging/Log.hpp
-	<ctime>
-	<sstream>
-	<string>
-
-1397245554 /home/stein/Documents/ym/anakin/includes/logging/OutputPolicyFile.hpp
-	<boost/thread/pthread/mutex.hpp>
-	<cstdio>
-	<string>
-	<logging/Log.hpp>
-
-1397245554 /home/stein/Documents/ym/anakin/includes/data/PatternLoader.hpp
-	"data/DataInput.hpp"
-	"data/RichImg.hpp"
-	<opencv2/opencv.hpp>
-	"data/ImageInfo.hpp"
-	"processing/SerializedPatternDataInput.hpp"
-
-1397217442 /home/stein/Documents/ym/anakin/includes/processing/SerializedPatternDataInput.hpp
-	"data/ImageInfo.hpp"
-	"db/DBDriver.hpp"
-	"db/DBUser.hpp"
-	"db/DBPattern.hpp"
-
-1397245539 source:/home/stein/Documents/ym/anakin/src/connection/RequestServer.cpp
-	"connection/RequestServer.hpp"
-	"processing/Worker.hpp"
-	<pthread.h>
-	"connection/DTCPServerSocket.hpp"
-	<boost/regex.hpp>
-
-1397245554 source:/home/stein/Documents/ym/anakin/src/connection/Server.cpp
-	"connection/Server.hpp"
-	"connection/ATCPServerSocket.hpp"
-	"connection/AUDPServerSocket.hpp"
-	<sstream>
-	"processing/CommandRunner.hpp"
-	"connection/DTCPServerSocket.hpp"
-	<boost/regex.hpp>
-	<boost/algorithm/string.hpp>
-	<logging/OutputPolicyFile.hpp>
-
-1397245554 source:/home/stein/Documents/ym/anakin/src/data/PatternLoader.cpp
-	"data/PatternLoader.hpp"
-	"output/ResultWriter.hpp"
-
-1397245554 source:/home/stein/Documents/ym/anakin/src/db/DBDriver.cpp
-	"db/DBDriver.hpp"
-	<iostream>
-	"utils/Constants.hpp"
-	<string>
-	<postgresql/libpq/libpq-fs.h>
-	<cstdio>
-	<fstream>
-	"utils/XMLoader.hpp"
-
-1397245644 source:/home/stein/Documents/ym/anakin/src/output/ResultWriter.cpp
-	"output/ResultWriter.hpp"
-	"utils/Constants.hpp"
-
-1397245554 source:/home/stein/Documents/ym/anakin/src/processing/CommandRunner.cpp
-	"processing/CommandRunner.hpp"
-	"output/JSONValue.h"
-	<algorithm>
-	<iterator>
-	"utils/Constants.hpp"
-	<logging/Log.hpp>
-
-1397245539 source:/home/stein/Documents/ym/anakin/src/processing/SerializedPatternDataInput.cpp
-	"processing/SerializedPatternDataInput.hpp"
-	"boost/filesystem.hpp"
-
-1397245539 source:/home/stein/Documents/ym/anakin/src/processing/SFBMCache.cpp
+1398451895 source:/home/stein/Documents/ym/anakin/src/processing/SFBMCache.cpp
 	"processing/SFBMCache.hpp"
 	<boost/foreach.hpp>
 	<iostream>
 	<time.h>
 	<limits>
-

@@ -72,8 +72,7 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
 				//std::cout << "Loading image : " << itr->path().c_str() << "\n";
 				cv::Mat img = cv::imread(itr->path().c_str());
 				if (!img.data) {
-					std::cerr << "Error loading image : " << itr->path().c_str()
-							<< "\n";
+					std::cerr << "Error loading image : " << itr->path().c_str() << "\n";
 					exit(-1);
 				}
 				this->images->at(idx) = img;

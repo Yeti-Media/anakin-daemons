@@ -122,6 +122,11 @@ protected:
 	DataOutput* output;
 	SFBMCache* cache;
 	DBDriver* dbdriver;
+
+	bool initialization = false;
+	std::string initializationError;
+	bool cacheInitialization = false;
+	std::wstring cacheInitializationError;
 private:
 };
 
