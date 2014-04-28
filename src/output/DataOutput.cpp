@@ -1,4 +1,8 @@
-#include "output/DataOutput.hpp"
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
+#include <output/DataOutput.hpp>
+#include <cstdlib>
+#include <string>
 
 using namespace Anakin;
 using namespace std;
@@ -50,8 +54,10 @@ void DataOutput::error(std::string data) {
 		cerr << data << endl;
 	} else if (this->httpOutput) {
 		this->httpSocket->respond(data, false, -1);
+		LOG_F("ERROR") << data;
 	} else {
 		this->s->send(data);
+		LOG_F("ERROR") << data;
 	}
 	sem_post(&this->ssem);
 }
