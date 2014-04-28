@@ -58,7 +58,8 @@ public:
 	 *
 	 * returns true if the user exists
 	 */
-	bool retrieveUser(int id, bool * error, bool load = false, DBUser** result = NULL, bool full = false);
+	bool retrieveUser(int id, bool * error, bool load = false, DBUser** result =
+	NULL, bool full = false);
 	/**
 	 * id : the user's id
 	 * error : will store true if an error was found
@@ -139,7 +140,8 @@ public:
 	 *
 	 * returns true if the pattern exists
 	 */
-	bool retrievePattern(int id, bool * error, bool load = false, DBPattern** result = NULL);
+	bool retrievePattern(int id, bool * error, bool load = false,
+			DBPattern** result = NULL);
 
 	//HISTOGRAMS and LANDSCAPES
 	/**
@@ -152,7 +154,8 @@ public:
 	 *
 	 * returns true if the histogram exists
 	 */
-	bool retrieveHistogram(int id, bool * error, bool load = false, DBHistogram** result = NULL);
+	bool retrieveHistogram(int id, bool * error, bool load = false,
+			DBHistogram** result = NULL);
 	/**
 	 * search a landscape in the db, this function can be used just to check if
 	 * a particular landscape exists or to load one
@@ -163,7 +166,8 @@ public:
 	 *
 	 * returns true if the landscape exists
 	 */
-	bool retrieveLandscape(int id, bool * error, bool load = false, DBHistogram** result = NULL);
+	bool retrieveLandscape(int id, bool * error, bool load = false,
+			DBHistogram** result = NULL);
 
 	//SERIALIZED FLANN BASED MATCHER
 	/**
@@ -183,7 +187,8 @@ public:
 	 *
 	 * returns true if the SFBM was successfully saved
 	 */
-	bool storeSFBM(std::string filename, int * smatcher_id, int userID, bool checkExistence = false, bool delete_files = false);
+	bool storeSFBM(std::string filename, int * smatcher_id, int userID,
+			bool checkExistence = false, bool delete_files = false);
 	/**
 	 * If a trainer with id <smatcher_id> exists in the db
 	 * then this function will get the oid values for the xml and if files
@@ -232,7 +237,8 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern, bool * error);
+	bool retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern,
+			bool * error);
 
 	//SCENE
 	/**
@@ -253,16 +259,28 @@ public:
 	 */
 	bool retrieveScene(ImageInfo** scene, int sceneID, bool * error);
 
-	std::string getMessage(int msg=0, bool append=false);
+	std::string getMessage(int msg = 0, bool append = false);
 
 	int getLogSize();
 
 protected:
 private:
 
-    void logMessage(std::string message);
+	/**
 
-    /**
+	 *  @command SQL command used in PQexecParams and similar.
+	 *  @paramValues SQL paramValues used in PQexecParams and similar.
+	 *  @numParam paramValues size.
+	 *
+	 * replace $1, $2, etc from a prepared SQL statement with the actual parameters,
+	 * for debug/info.
+	 */
+	std::string parseSQLquery(const std::string command,
+			const char *paramValues[], const int numParam);
+
+	void logMessage(std::string message);
+
+	/**
 	 * Contains information about the last function called
 	 */
 	std::vector<std::string> dbdriverLog;
