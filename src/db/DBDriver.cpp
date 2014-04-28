@@ -1189,9 +1189,6 @@ std::string DBDriver::parseSQLquery(const std::string command,
 			lastIndex = index + param.size();
 		}
 	}
-	if (command.find("SELECT user_id FROM public.")!= std::string::npos) {
-		std::cout << "problema" << std::endl;
-	}
 	return sqlQuery;
 }
 
