@@ -1,11 +1,11 @@
 /**
  * Uncomment what project do you want to compile. Comment the others.
  */
-#define PATTERNMATCHING
+//#define PATTERNMATCHING
 //#define MATCHERCACHE
 //#define DBCONNECTOR
 //#define EXTRACTOR
-//#define TRAINER
+#define TRAINER
 
 //=======================================================================================
 #ifdef PATTERNMATCHING
@@ -286,10 +286,10 @@ int matcherCache(int argc, const char * argv[])
 	DBDriver* dbdriver = new DBDriver();
 	if (!dbdriver->connect())
 	{
-		std::cerr << dbdriver->lastMessageReceived << std::endl;
+		std::cerr << dbdriver->getMessage() << std::endl;
 		return -1;
 	}
-	std::cout << dbdriver->lastMessageReceived << std::endl;
+	std::cout << dbdriver->getMessage() << std::endl;
 	SFBMCache* cache = new SFBMCache(dbdriver, 9, true);
 	SerializableFlannBasedMatcher* sfbm;
 	std::vector<int> patternsID;
@@ -522,7 +522,7 @@ int dbConnector(int argc, const char * argv[])
 
 	DBDriver* driver = new DBDriver();
 	driver->connect();
-	std::cout << driver->lastMessageReceived << std::endl;
+	std::cout << driver->getMessage() << std::endl;
 
 	DBUser* user;
 	std::vector<DBPattern*>* patterns;
@@ -539,7 +539,7 @@ int dbConnector(int argc, const char * argv[])
 				std::vector<int> pattern_ids = driver->getUserPatterns(user->getID(), &error);
 				if (error)
 				{
-					std::cerr << driver->lastMessageReceived << std::endl;
+					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
 				for (uint i = 0; i < pattern_ids.size(); i++)
@@ -548,7 +548,7 @@ int dbConnector(int argc, const char * argv[])
 					DBPattern* pattern;
 					if (!driver->retrievePattern(pattern_ids.at(i), &patternError, true, &pattern))
 					{
-						std::cerr << driver->lastMessageReceived << std::endl;
+						std::cerr << driver->getMessage() << std::endl;
 						return -1;
 					}
 					//std::cout << "loaded pattern with label : " << pattern->getLabel() << " and id : " << pattern->getID() << std::endl;
@@ -561,7 +561,7 @@ int dbConnector(int argc, const char * argv[])
 				std::vector<int> histogram_ids = driver->getUserHistograms(user->getID(), &error);
 				if (error)
 				{
-					std::cerr << driver->lastMessageReceived << std::endl;
+					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
 				for (uint i = 0; i < histogram_ids.size(); i++)
@@ -570,7 +570,7 @@ int dbConnector(int argc, const char * argv[])
 					DBHistogram* histogram;
 					if (!driver->retrieveHistogram(histogram_ids.at(i), &histogramError, true, &histogram))
 					{
-						std::cerr << driver->lastMessageReceived << std::endl;
+						std::cerr << driver->getMessage() << std::endl;
 						return -1;
 					}
 					std::cout << "loaded histogram : " << histogram->getID() << std::endl;
@@ -582,7 +582,7 @@ int dbConnector(int argc, const char * argv[])
 				std::vector<int> landscape_ids = driver->getUserLandscapes(user->getID(), &error);
 				if (error)
 				{
-					std::cerr << driver->lastMessageReceived << std::endl;
+					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
 				for (uint i = 0; i < landscape_ids.size(); i++)
@@ -591,7 +591,7 @@ int dbConnector(int argc, const char * argv[])
 					DBHistogram* landscape;
 					if (!driver->retrieveHistogram(landscape_ids.at(i), &histogramError,true, &landscape))
 					{
-						std::cerr << driver->lastMessageReceived << std::endl;
+						std::cerr << driver->getMessage() << std::endl;
 						return -1;
 					}
 					std::cout << "loaded landscape : " << landscape->getID() << std::endl;
@@ -604,11 +604,11 @@ int dbConnector(int argc, const char * argv[])
 				bool SFBMError = false;
 				if (driver->retrieveSFBM(trainerID, &SFBMError))
 				{
-					std::cout << driver->lastMessageReceived << std::endl;
+					std::cout << driver->getMessage() << std::endl;
 				}
 				else
 				{
-					std::cerr << driver->lastMessageReceived << std::endl;
+					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
 				break;
@@ -619,11 +619,11 @@ int dbConnector(int argc, const char * argv[])
 				bool sceneError = false;
 				if (driver->retrieveScene(&scene, sceneID, &sceneError))
 				{
-					std::cout << driver->lastMessageReceived << std::endl;
+					std::cout << driver->getMessage() << std::endl;
 				}
 				else
 				{
-					std::cerr << driver->lastMessageReceived << std::endl;
+					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
 				break;
@@ -651,14 +651,14 @@ int dbConnector(int argc, const char * argv[])
 						user->addPattern(patterns->at(p));
 					}
 					driver->saveUserPatterns(user, true);
-					std::cout << driver->lastMessageReceived << std::endl;
+					std::cout << driver->getMessage() << std::endl;
 				}
 				else
 				{
 					for (uint p = 0; p < patterns->size(); p++)
 					{
 						driver->savePattern(patterns->at(p));
-						std::cout << driver->lastMessageReceived << std::endl;
+						std::cout << driver->getMessage() << std::endl;
 					}
 				}
 				break;
@@ -673,14 +673,14 @@ int dbConnector(int argc, const char * argv[])
 						user->addHistogram(histograms->at(p));
 					}
 					driver->saveUserHistograms(user, true);
-					std::cout << driver->lastMessageReceived << std::endl;
+					std::cout << driver->getMessage() << std::endl;
 				}
 				else
 				{
 					for (uint p = 0; p < histograms->size(); p++)
 					{
 						driver->saveHORL(histograms->at(p), true);
-						std::cout << driver->lastMessageReceived << std::endl;
+						std::cout << driver->getMessage() << std::endl;
 					}
 				}
 				break;
@@ -695,14 +695,14 @@ int dbConnector(int argc, const char * argv[])
 						user->addLandscape(landscapes->at(p));
 					}
 					driver->saveUserLandscapes(user, true);
-					std::cout << driver->lastMessageReceived << std::endl;
+					std::cout << driver->getMessage() << std::endl;
 				}
 				else
 				{
 					for (uint p = 0; p < landscapes->size(); p++)
 					{
 						driver->saveHORL(landscapes->at(p), true);
-						std::cout << driver->lastMessageReceived << std::endl;
+						std::cout << driver->getMessage() << std::endl;
 					}
 				}
 				break;
@@ -712,11 +712,11 @@ int dbConnector(int argc, const char * argv[])
 				int trainer_id;
 				if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true, false))
 				{
-					std::cout << driver->lastMessageReceived << std::endl;
+					std::cout << driver->getMessage() << std::endl;
 				}
 				else
 				{
-					std::cerr << driver->lastMessageReceived << std::endl;
+					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
 				if (savePatterns)
@@ -725,18 +725,18 @@ int dbConnector(int argc, const char * argv[])
 					std::vector<int> patterns = driver->getUserPatterns(userID, &error);
 					if (error)
 					{
-						std::cerr << driver->lastMessageReceived << std::endl;
+						std::cerr << driver->getMessage() << std::endl;
 						return -1;
 					}
 					for (uint p = 0; p < patterns.size(); p++)
 					{
 						if (driver->storeNthPattern(trainer_id, p, patterns.at(p)))
 						{
-							std::cout << driver->lastMessageReceived << std::endl;
+							std::cout << driver->getMessage() << std::endl;
 						}
 						else
 						{
-							std::cerr << driver->lastMessageReceived << std::endl;
+							std::cerr << driver->getMessage() << std::endl;
 						}
 					}
 				}
@@ -750,11 +750,11 @@ int dbConnector(int argc, const char * argv[])
 					DBPattern* sceneAsDBPattern = patterns->at(s);
 					if (driver->storeScene(sceneAsDBPattern))
 					{
-						std::cout << driver->lastMessageReceived << std::endl;
+						std::cout << driver->getMessage() << std::endl;
 					}
 					else
 					{
-						std::cerr << driver->lastMessageReceived << std::endl;
+						std::cerr << driver->getMessage() << std::endl;
 						return -1;
 					}
 				}
@@ -765,7 +765,7 @@ int dbConnector(int argc, const char * argv[])
 	else
 	{
 		driver->saveUser(user);
-		std::cout << driver->lastMessageReceived << std::endl;
+		std::cout << driver->getMessage() << std::endl;
 	}
 
 	return 0;
