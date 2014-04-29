@@ -1,12 +1,8 @@
 ---------------------------------------------------------------------------------------------------------------
 -- drop old tables
 
-DROP TABLE IF EXISTS "users" CASCADE;
-DROP TABLE IF EXISTS "trainers" CASCADE;
-DROP TABLE IF EXISTS "scenarios" CASCADE;
-DROP TABLE IF EXISTS "categories" CASCADE;
-DROP TABLE IF EXISTS "patterns" CASCADE;
-DROP TABLE IF EXISTS "descriptors" CASCADE;
+DROP DATABASE IF EXISTS anakin;
+CREATE DATABASE anakin;
 
 ---------------------------------------------------------------------------------------------------------------
 CREATE TABLE "users" (
@@ -15,7 +11,7 @@ CREATE TABLE "users" (
   OIDS=FALSE
 );
 ALTER TABLE "users"
-  OWNER TO postgres;
+  OWNER TO postgres
 ;
 
 ---------------------------------------------------------------------------------------------------------------  
@@ -31,7 +27,8 @@ CREATE TABLE "trainers" (
   OIDS=FALSE
 );
 ALTER TABLE "trainers"
-  OWNER TO postgres;
+  OWNER TO postgres
+;
   
 ---------------------------------------------------------------------------------------------------------------
 CREATE TABLE "categories" (
@@ -41,7 +38,7 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE "categories"
-  OWNER TO postgres;
+  OWNER TO postgres
 ;
 
 INSERT INTO "categories"(title) VALUES ('matching');
@@ -67,7 +64,7 @@ CREATE TABLE "patterns" (
   OIDS=FALSE
 );
 ALTER TABLE "patterns"
-  OWNER TO postgres;
+  OWNER TO postgres
 ;
   
 ---------------------------------------------------------------------------------------------------------------  
@@ -78,7 +75,7 @@ CREATE TABLE "scenarios" (
   OIDS=FALSE
 );
 ALTER TABLE "scenarios"
-  OWNER TO postgres;
+  OWNER TO postgres
 ;
 
 ---------------------------------------------------------------------------------------------------------------
@@ -93,5 +90,5 @@ CREATE TABLE "descriptors" (
   OIDS=FALSE
 );
 ALTER TABLE "descriptors"
-  OWNER TO postgres;
+  OWNER TO postgres
 ;
