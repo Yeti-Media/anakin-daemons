@@ -21,7 +21,7 @@ namespace Anakin {
  * PGUSER=<user name that will be used to connect to the db>
  * PGPASSWORD=<user's password>
  *
- * after almost every function call there will be a message stored in lastMessageReceived
+ * after almost every function call there will be a message stored in getMessage()
  *
  * db tables are defined by the sql files located in the sql folder
  */

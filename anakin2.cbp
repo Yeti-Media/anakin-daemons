@@ -93,6 +93,8 @@
 		<Unit filename="includes/db/DBHistogram.hpp" />
 		<Unit filename="includes/db/DBPattern.hpp" />
 		<Unit filename="includes/db/DBUser.hpp" />
+		<Unit filename="includes/logging/Log.hpp" />
+		<Unit filename="includes/logging/OutputPolicyFile.hpp" />
 		<Unit filename="includes/matching/BasicFlannDetector.hpp" />
 		<Unit filename="includes/matching/FlannMatchingProcessor.hpp" />
 		<Unit filename="includes/matching/Match.hpp" />
@@ -145,6 +147,7 @@
 		<Unit filename="src/db/DBHistogram.cpp" />
 		<Unit filename="src/db/DBPattern.cpp" />
 		<Unit filename="src/db/DBUser.cpp" />
+		<Unit filename="src/logging/OutputPolicyFile.cpp" />
 		<Unit filename="src/matching/BasicFlannDetector.cpp" />
 		<Unit filename="src/matching/FlannMatchingProcessor.cpp" />
 		<Unit filename="src/matching/Match.cpp" />
