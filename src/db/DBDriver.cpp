@@ -1171,23 +1171,22 @@ void DBDriver::logMessage(std::string message) {
 	this->dbdriverLog.push_back(message);
 }
 
-std::string DBDriver::parseSQLquery(const std::string command,
-		const char *paramValues[], const int numParam) {
+void DBDriver::replaceAll(std::string& str, const std::string& find, const std::string& replacement) {
+    if(find.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(find, start_pos)) != std::string::npos) {
+        str.replace(start_pos, find.length(), replacement);
+        start_pos += replacement.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
+
+std::string DBDriver::parseSQLquery(const std::string command, const char *paramValues[],
+		const int numParam) {
 	std::string sqlQuery = command;
-	size_t lastIndex = 0;
 	int i;
 	for (i = 0; i < numParam; i++) {
-		std::string toFind = "$" + std::to_string(i + 1);
-		std::string param = paramValues[i];
-		// Look in modifyMe for the "find string"
-		// starting at position lastIndex (last replace):
-		size_t index = sqlQuery.find(toFind, lastIndex);
-		// Did we find the string to replace?
-		if (index != std::string::npos) {
-			// Replace the find string with newChars:
-			sqlQuery.replace(index, toFind.size(), param);
-			lastIndex = index + param.size();
-		}
+		DBDriver::replaceAll(sqlQuery,std::string("$" + std::to_string(i + 1)),std::string(paramValues[i]));
 	}
 	return sqlQuery;
 }

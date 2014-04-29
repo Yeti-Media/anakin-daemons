@@ -3,7 +3,7 @@
  */
 //#define PATTERNMATCHING
 //#define MATCHERCACHE
-//#define DBCONNECTOR
+#define DBCONNECTOR
 //#define EXTRACTOR
 #define TRAINER
 
