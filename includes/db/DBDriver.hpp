@@ -267,6 +267,11 @@ protected:
 private:
 
 	/**
+	 * replace all "find" string to "replacement" in "str"
+	 */
+	void replaceAll(std::string& str, const std::string& find, const std::string& replacement);
+
+	/**
 
 	 *  @command SQL command used in PQexecParams and similar.
 	 *  @paramValues SQL paramValues used in PQexecParams and similar.
