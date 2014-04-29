@@ -3,23 +3,21 @@
 
 #include <logging/OutputPolicyFile.hpp>
 
-std::FILE*& Logging::OutputPolicyFile::StreamImpl() {
-	static std::FILE* pStream = stdout;
-	return pStream;
-}
+using namespace Logging;
+
+std::FILE* OutputPolicyFile::oFile = NULL;
 
 void Logging::OutputPolicyFile::SetStream(std::FILE* pFile) {
 	boost::mutex::scoped_lock l(Logging::OutputPolicyFile::GetMutex());
-	StreamImpl() = pFile;
+	OutputPolicyFile::oFile = pFile;
 }
 
 void Logging::OutputPolicyFile::Output(const std::string& msg) {
 	boost::mutex::scoped_lock l(Logging::OutputPolicyFile::GetMutex());
-	std::FILE* pStream = StreamImpl();
-	if (!pStream)
+	if (!oFile)
 		return;
-	fprintf(pStream, "%s", msg.c_str());
-	fflush(pStream);
+	fprintf(oFile, "%s", msg.c_str());
+	fflush(oFile);
 }
 
 #endif // OUTPUTPOLICYFILE_CPP

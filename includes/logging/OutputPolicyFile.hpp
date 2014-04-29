@@ -16,7 +16,7 @@ public:
 	static void Output(const std::string& msg);
 	static void SetStream(std::FILE* pFile);
 private:
-	static std::FILE*& StreamImpl();
+	static std::FILE* oFile;
 	static boost::mutex& GetMutex() {
 		static boost::mutex mutex;
 		return mutex;
