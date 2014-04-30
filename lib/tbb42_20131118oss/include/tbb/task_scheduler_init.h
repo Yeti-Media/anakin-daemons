@@ -123,8 +123,8 @@ public:
 				"Requested stack size is not aligned");
 #if TBB_USE_EXCEPTIONS
 		thread_stack_size |=
-				TBB_USE_CAPTURED_EXCEPTION ?
-						propagation_mode_captured : propagation_mode_exact;
+		TBB_USE_CAPTURED_EXCEPTION ?
+				propagation_mode_captured : propagation_mode_exact;
 #endif /* TBB_USE_EXCEPTIONS */
 #if __TBB_SUPPORTS_WORKERS_WAITING_IN_TERMINATE
 		if (wait_workers_in_terminate)

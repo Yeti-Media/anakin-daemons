@@ -75,9 +75,14 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 			std::string sreqID = std::to_string(reqID);
 			request += " -" + Constants::PARAM_REQID + " " + sreqID; //add a -reqID id to the request
 		}
-		char requestType = method == "POST" ? (method == "GET" ? HTTPSocket::GET : HTTPSocket::RESPONSE) : HTTPSocket::POST;
+		char requestType =
+				method == "POST" ?
+						(method == "GET" ?
+								HTTPSocket::GET : HTTPSocket::RESPONSE) :
+						HTTPSocket::POST;
 		int status = conn->status_code;
-		HTTPSocket::MessageData* md = new HTTPSocket::MessageData(action,request, requestType, status);
+		HTTPSocket::MessageData* md = new HTTPSocket::MessageData(action,
+				request, requestType, status);
 		HTTPListener::readingQueue->push(md); //pushes the message received
 		HTTPSocket::MessageData* rd;
 		if (!HTTPListener::running) {
@@ -85,7 +90,8 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 			//then we generate a response that will just return "stop received"
 			std::string r_action = "";
 			std::string r_body = "stop received";
-			rd = new HTTPSocket::MessageData(r_action.c_str(), r_body.c_str(), HTTPSocket::RESPONSE, 200);
+			rd = new HTTPSocket::MessageData(r_action.c_str(), r_body.c_str(),
+					HTTPSocket::RESPONSE, 200);
 			HTTPListener::writtingQueue->put(reqID, rd);
 		}
 		//we get the response corresponding with request reqID
@@ -128,7 +134,8 @@ int HTTPListener::generateRandomID() {
 	int r4 = rand() % 10;
 	int r5 = rand() % 10;
 	int r6 = rand() % 10;
-	int randomValue = r1 + (r2 * 10) + (r3 * 100) + (r4 * 1000) + (r5 * 10000) + (r6 * 100000);
+	int randomValue = r1 + (r2 * 10) + (r3 * 100) + (r4 * 1000) + (r5 * 10000)
+			+ (r6 * 100000);
 	//std::cout << "randomValue: " << randomValue << std::endl;
 	return randomValue;
 }

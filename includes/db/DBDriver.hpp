@@ -269,7 +269,8 @@ private:
 	/**
 	 * replace all "find" string to "replacement" in "str"
 	 */
-	void replaceAll(std::string& str, const std::string& find, const std::string& replacement);
+	void replaceAll(std::string& str, const std::string& find,
+			const std::string& replacement);
 
 	/**
 

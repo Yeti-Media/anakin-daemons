@@ -976,7 +976,7 @@ public:
 	bool insert(const_accessor &result, const value_type &value) {
 		result.release();
 		return lookup(/*insert*/true, value.first, &value.second, &result, /*write=*/
-				false);
+		false);
 	}
 
 	//! Insert item by copying if there is no such key present already and acquire a write lock on the item.
@@ -984,14 +984,14 @@ public:
 	bool insert(accessor &result, const value_type &value) {
 		result.release();
 		return lookup(/*insert*/true, value.first, &value.second, &result, /*write=*/
-				true);
+		true);
 	}
 
 	//! Insert item by copying if there is no such key present already
 	/** Returns true if item is inserted. */
 	bool insert(const value_type &value) {
 		return lookup(/*insert*/true, value.first, &value.second, NULL, /*write=*/
-				false);
+		false);
 	}
 
 	//! Insert range [first, last)

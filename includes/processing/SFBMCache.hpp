@@ -38,7 +38,9 @@ public:
 	 * scenesCacheSize       : scenes cache size (how many scenes can be stored in the cache)
 	 * scenesLife            : scenes starting life
 	 */
-	SFBMCache(DBDriver* dbdriver, int loadingTimeWeight = 0, bool discardLessValuable = false, int cacheSize = 4, int life = 10, int scenesCacheSize = 15, int scenesLife = 10);
+	SFBMCache(DBDriver* dbdriver, int loadingTimeWeight = 0,
+			bool discardLessValuable = false, int cacheSize = 4, int life = 10,
+			int scenesCacheSize = 15, int scenesLife = 10);
 	/**
 	 * load a matcher
 	 *
@@ -109,7 +111,7 @@ public:
 	 * @see ResultWriter.hpp
 	 * @see SFBMCache.cpp
 	 */
-	JSONValue* getLastOperationResult(bool * error=NULL);
+	JSONValue* getLastOperationResult(bool * error = NULL);
 protected:
 private:
 	//FIELDS
@@ -162,13 +164,16 @@ private:
 	void storeMatcher(int smatcher_id, SerializableFlannBasedMatcher* matcher);
 	void storeScene(int sceneID, ImageInfo* scene);
 	bool keyExist(std::map<int, int>* m, int key);
-	void getKeys(std::map<int, SerializableFlannBasedMatcher*>* m, std::vector<int>* keys);
+	void getKeys(std::map<int, SerializableFlannBasedMatcher*>* m,
+			std::vector<int>* keys);
 	void getKeys(std::map<int, int>* m, std::vector<int>* keys);
-	SerializableFlannBasedMatcher* loadMatcherFromDB(int smatcher_id, float* loadingTime, bool * error);
+	SerializableFlannBasedMatcher* loadMatcherFromDB(int smatcher_id,
+			float* loadingTime, bool * error);
 	ImageInfo* loadSceneFromDB(int sceneID, bool * error);
 	void incLife(int smatcher_id, bool matchersCache = true);
 	int decLife(int smatcher_id, bool matchersCache = true);
-	int updateLife(int smatcher_id, int life, bool bounded = true, bool matchersCache = true);
+	int updateLife(int smatcher_id, int life, bool bounded = true,
+			bool matchersCache = true);
 	void printLife();
 };
 }

@@ -67,17 +67,17 @@
 // ATTENTION: if you ever change argument types in machine-specific primitives,
 // please take care of atomic_word<> specializations in tbb/atomic.h
 extern "C" {
-__int8 __TBB_EXPORTED_FUNC  __TBB_machine_cmpswp1 (volatile void *ptr,
+__int8 __TBB_EXPORTED_FUNC   __TBB_machine_cmpswp1 (volatile void *ptr,
 		__int8 value, __int8 comparand);
-__int8 __TBB_EXPORTED_FUNC  __TBB_machine_fetchadd1 (volatile void *ptr,
+__int8 __TBB_EXPORTED_FUNC   __TBB_machine_fetchadd1 (volatile void *ptr,
 		__int8 addend);
-__int8 __TBB_EXPORTED_FUNC  __TBB_machine_fetchstore1 (volatile void *ptr,
+__int8 __TBB_EXPORTED_FUNC   __TBB_machine_fetchstore1 (volatile void *ptr,
 		__int8 value);
-__int16 __TBB_EXPORTED_FUNC  __TBB_machine_cmpswp2 (volatile void *ptr,
+__int16 __TBB_EXPORTED_FUNC   __TBB_machine_cmpswp2 (volatile void *ptr,
 		__int16 value, __int16 comparand);
-__int16 __TBB_EXPORTED_FUNC  __TBB_machine_fetchadd2 (volatile void *ptr,
+__int16 __TBB_EXPORTED_FUNC   __TBB_machine_fetchadd2 (volatile void *ptr,
 		__int16 addend);
-__int16 __TBB_EXPORTED_FUNC  __TBB_machine_fetchstore2 (volatile void *ptr,
+__int16 __TBB_EXPORTED_FUNC   __TBB_machine_fetchstore2 (volatile void *ptr,
 		__int16 value);
 }
 
@@ -92,14 +92,14 @@ inline long __TBB_machine_fetchstore4(volatile void *ptr, __int32 value) {
 	return _InterlockedExchange((long*) ptr, value);
 }
 
-inline __int64  __TBB_machine_cmpswp8 (volatile void *ptr, __int64 value,
+inline __int64   __TBB_machine_cmpswp8 (volatile void *ptr, __int64 value,
 		__int64 comparand) {
 	return _InterlockedCompareExchange64((__int64 *) ptr, value, comparand);
 }
-inline __int64  __TBB_machine_fetchadd8 (volatile void *ptr, __int64 addend) {
+inline __int64   __TBB_machine_fetchadd8 (volatile void *ptr, __int64 addend) {
 	return _InterlockedExchangeAdd64((__int64 *) ptr, addend);
 }
-inline __int64  __TBB_machine_fetchstore8 (volatile void *ptr, __int64 value) {
+inline __int64   __TBB_machine_fetchstore8 (volatile void *ptr, __int64 value) {
 	return _InterlockedExchange64((__int64 *) ptr, value);
 }
 

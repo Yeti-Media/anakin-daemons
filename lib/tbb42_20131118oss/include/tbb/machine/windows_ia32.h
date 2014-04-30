@@ -60,14 +60,14 @@
 #endif
 
 extern "C" {
-__int64 __TBB_EXPORTED_FUNC  __TBB_machine_cmpswp8 (volatile void *ptr,
+__int64 __TBB_EXPORTED_FUNC   __TBB_machine_cmpswp8 (volatile void *ptr,
 		__int64 value, __int64 comparand);
-__int64 __TBB_EXPORTED_FUNC  __TBB_machine_fetchadd8 (volatile void *ptr,
+__int64 __TBB_EXPORTED_FUNC   __TBB_machine_fetchadd8 (volatile void *ptr,
 		__int64 addend);
-__int64 __TBB_EXPORTED_FUNC  __TBB_machine_fetchstore8 (volatile void *ptr,
+__int64 __TBB_EXPORTED_FUNC   __TBB_machine_fetchstore8 (volatile void *ptr,
 		__int64 value);
 void __TBB_EXPORTED_FUNC __TBB_machine_store8 (volatile void *ptr, __int64 value );
-__int64 __TBB_EXPORTED_FUNC  __TBB_machine_load8 (const volatile void *ptr);
+__int64 __TBB_EXPORTED_FUNC   __TBB_machine_load8 (const volatile void *ptr);
 }
 
 //TODO: use _InterlockedXXX intrinsics as they available since VC 2005

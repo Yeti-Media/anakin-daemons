@@ -361,7 +361,7 @@ public:
 	enumerable_thread_specific_iterator(const Container &container,
 			typename Container::size_type index) :
 			my_container(&const_cast<Container &>(container)), my_index(index), my_value(
-					NULL) {
+			NULL) {
 	}
 
 	//! Default constructor
@@ -883,7 +883,7 @@ public:
 	enumerable_thread_specific() :
 			my_construct_callback(
 					internal::callback_leaf<T, internal::construct_by_default<T> >::make(
-							/*dummy argument*/0)) {
+					/*dummy argument*/0)) {
 	}
 
 	//! Constructor with initializer functor.  Each local instance of T is constructed by T(finit()).

@@ -54,7 +54,7 @@ void DataOutput::error(std::string data) {
 		cerr << data << endl;
 	} else if (this->httpOutput) {
 		this->httpSocket->respond(data, false, -1);
-		LOG_F("ERROR") << data;
+		LOG_F("ERROR")<< data;
 	} else {
 		this->s->send(data);
 		LOG_F("ERROR") << data;

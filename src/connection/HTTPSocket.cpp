@@ -40,13 +40,15 @@ void HTTPSocket::stop() {
 void HTTPSocket::startToListen(std::string port,
 		tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
 		BlockingMap<int, MessageData*>* writtingQueue, int threads) {
-	ListenerArgs* largs = new ListenerArgs(port, readingQueue, writtingQueue, threads);
+	ListenerArgs* largs = new ListenerArgs(port, readingQueue, writtingQueue,
+			threads);
 	pthread_create(&this->t, NULL, startListener, (void*) largs);
 }
 
 void * HTTPSocket::startListener(void *ptr) {
 	ListenerArgs* largs = (ListenerArgs*) ptr;
-	HTTPListener* listener = HTTPListener::getInstance(largs->port, largs->readingQueue, largs->writtingQueue, largs->threads);
+	HTTPListener* listener = HTTPListener::getInstance(largs->port,
+			largs->readingQueue, largs->writtingQueue, largs->threads);
 	listener->start();
 }
 

@@ -12,7 +12,8 @@ const std::string ResultWriter::RW_CACHE_IDX_DEL = "INDEX DELETE";
 const std::string ResultWriter::RW_CACHE_IDX_UPD = "INDEX UPDATE";
 const std::string ResultWriter::RW_CACHE_IDX_STATUS = "INDEX STATUS";
 
-wstring ResultWriter::outputMatch(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
+wstring ResultWriter::outputMatch(Point2f center, string label,
+		vector<KeyPoint> matchedKeypoints) {
 	return matchAsJSON(center, label, matchedKeypoints)->Stringify().c_str();
 }
 
@@ -20,15 +21,18 @@ wstring ResultWriter::outputMatches(string label, vector<JSONValue*> values) {
 	return matchesAsJSON(label, values)->Stringify().c_str();
 }
 
-wstring ResultWriter::outputResponse(string requestID, string category, vector<JSONValue*> jsonValues) {
+wstring ResultWriter::outputResponse(string requestID, string category,
+		vector<JSONValue*> jsonValues) {
 	return responseAsJSON(requestID, category, jsonValues)->Stringify().c_str();
 }
 
-wstring ResultWriter::outputError(const char errorType, std::string message, std::string origin) {
-    return errorAsJSON(errorType, message, origin)->Stringify().c_str();
+wstring ResultWriter::outputError(const char errorType, std::string message,
+		std::string origin) {
+	return errorAsJSON(errorType, message, origin)->Stringify().c_str();
 }
 
-JSONValue* ResultWriter::responseAsJSON(string requestID, string category, vector<JSONValue*> jsonValues) {
+JSONValue* ResultWriter::responseAsJSON(string requestID, string category,
+		vector<JSONValue*> jsonValues) {
 	/*  Result as JSONObject
 
 	 root    -> requestID (string)
@@ -55,22 +59,23 @@ JSONValue* ResultWriter::responseAsJSON(string requestID, string category, vecto
 	return value;
 }
 
-JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoint> matchedKeypoints) {
+JSONValue* ResultWriter::matchAsJSON(Point2f center, string label,
+		vector<KeyPoint> matchedKeypoints) {
 	/*  Result as JSONObject
 
-        root    -> center   -> x (float)
-                            -> y (float)
+	 root    -> center   -> x (float)
+	 -> y (float)
 
-                -> pattern label (string)
+	 -> pattern label (string)
 
-                -> keypoints (JSONArray)    -> pos      -> x (float)
-                                                        -> y (float)
+	 -> keypoints (JSONArray)    -> pos      -> x (float)
+	 -> y (float)
 
-                                            -> angle (float)
+	 -> angle (float)
 
-                                            -> size (float)
+	 -> size (float)
 
-                                            -> response (float)
+	 -> response (float)
 	 */
 	JSONObject root;
 	JSONObject jcenter;
@@ -97,19 +102,21 @@ JSONValue* ResultWriter::matchAsJSON(Point2f center, string label, vector<KeyPoi
 		keypoint[L"response"] = new JSONValue(current.response);
 		keypoints.push_back(new JSONValue(keypoint));
 	}
-	if (!LIGHT_RESULTS) root[L"keypoints"] = new JSONValue(keypoints);
+	if (!LIGHT_RESULTS)
+		root[L"keypoints"] = new JSONValue(keypoints);
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
 	return value;
 }
 
-JSONValue* ResultWriter::matchesAsJSON(string label, vector<JSONValue*> jsonValues) {
+JSONValue* ResultWriter::matchesAsJSON(string label,
+		vector<JSONValue*> jsonValues) {
 	/*  Result as JSONObject
 
-            root    -> scene label (string)
+	 root    -> scene label (string)
 
-                    -> values (JSONArray)    -> <see function above>
+	 -> values (JSONArray)    -> <see function above>
 	 */
 	JSONObject root;
 	wstringstream ws;
@@ -127,7 +134,8 @@ JSONValue* ResultWriter::matchesAsJSON(string label, vector<JSONValue*> jsonValu
 	return value;
 }
 
-JSONValue* ResultWriter::trainerAddAsJSON(int smatcher_id_added, int cacheFreeSpace, int smatcher_id_removed) {
+JSONValue* ResultWriter::trainerAddAsJSON(int smatcher_id_added,
+		int cacheFreeSpace, int smatcher_id_removed) {
 	/*  Result as JSONObject
 
 	 root    -> index_added (int)
@@ -147,7 +155,8 @@ JSONValue* ResultWriter::trainerAddAsJSON(int smatcher_id_added, int cacheFreeSp
 	return value;
 }
 
-JSONValue* ResultWriter::trainerDelAsJSON(int smatcher_id_deleted, int cacheFreeSpace) {
+JSONValue* ResultWriter::trainerDelAsJSON(int smatcher_id_deleted,
+		int cacheFreeSpace) {
 	return trainerAddAsJSON(-1, cacheFreeSpace, smatcher_id_deleted);
 }
 
@@ -162,12 +171,13 @@ JSONValue* ResultWriter::trainerUPDAsJSON(int smatcher_id_updated) {
 	return value;
 }
 
-JSONValue* ResultWriter::cacheStatusAsJSON(vector<int> smatchers_in_cache, int cacheFreeSpace) {
+JSONValue* ResultWriter::cacheStatusAsJSON(vector<int> smatchers_in_cache,
+		int cacheFreeSpace) {
 	/*  Result as JSONObject
 
 	 root       -> cache_free_space (int)
 
-                -> indexes (JSONArray)    -> index (int)
+	 -> indexes (JSONArray)    -> index (int)
 	 */
 	JSONObject root;
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);
@@ -184,39 +194,40 @@ JSONValue* ResultWriter::cacheStatusAsJSON(vector<int> smatchers_in_cache, int c
 	return value;
 }
 
-JSONValue* ResultWriter::errorAsJSON(const char errorType, std::string message, std::string origin) {
-    /*  Result as JSONObject
+JSONValue* ResultWriter::errorAsJSON(const char errorType, std::string message,
+		std::string origin) {
+	/*  Result as JSONObject
 
-        root    -> error_type (string)
+	 root    -> error_type (string)
 
-                -> message (string)
+	 -> message (string)
 
-                -> origin (string)
-    */
-    JSONObject root;
-    wstringstream wmessage;
-    wmessage << message.c_str();
-    wstringstream worigin;
-    worigin << origin.c_str();
-    std::wstring werror_type;
-    switch (errorType) {
-        case RW_ERROR_TYPE_WARNING : {
-            werror_type = L"WARNING";
-            break;
-        }
-        case RW_ERROR_TYPE_ERROR : {
-            werror_type = L"ERROR";
-            break;
-        }
-        case RW_ERROR_TYPE_FATAL : {
-            werror_type = L"FATAL";
-            break;
-        }
-    }
-    root[L"error_type"] = new JSONValue(werror_type);
-    root[L"message"] = new JSONValue(wmessage.str());
-    root[L"origin"] = new JSONValue(worigin.str());
-    JSONValue *value = new JSONValue(root);
+	 -> origin (string)
+	 */
+	JSONObject root;
+	wstringstream wmessage;
+	wmessage << message.c_str();
+	wstringstream worigin;
+	worigin << origin.c_str();
+	std::wstring werror_type;
+	switch (errorType) {
+	case RW_ERROR_TYPE_WARNING: {
+		werror_type = L"WARNING";
+		break;
+	}
+	case RW_ERROR_TYPE_ERROR: {
+		werror_type = L"ERROR";
+		break;
+	}
+	case RW_ERROR_TYPE_FATAL: {
+		werror_type = L"FATAL";
+		break;
+	}
+	}
+	root[L"error_type"] = new JSONValue(werror_type);
+	root[L"message"] = new JSONValue(wmessage.str());
+	root[L"origin"] = new JSONValue(worigin.str());
+	JSONValue *value = new JSONValue(root);
 	return value;
 }
 
@@ -243,19 +254,30 @@ std::string ResultWriter::jsonReqToString(JSONValue* req) {
 	}
 	if (req->HasChild(Constants::WPARAM_SCENEID.c_str())) {
 		request += "-" + Constants::PARAM_SCENEID + " ";
-		std::string scenario = std::to_string((int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
+		std::string scenario =
+				std::to_string(
+						(int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
 		request += scenario + " ";
 	}
 	if (req->HasChild(Constants::WOPTIONAL_FLAGS.c_str())) {
-		JSONObject optionalFlags = req->Child(Constants::WOPTIONAL_FLAGS.c_str())->AsObject();
-		if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str()) != optionalFlags.end()) {
+		JSONObject optionalFlags = req->Child(
+				Constants::WOPTIONAL_FLAGS.c_str())->AsObject();
+		if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())
+				!= optionalFlags.end()) {
 			request += "-" + Constants::PARAM_MIN_RATIO + " ";
-			std::string mr = std::to_string((float) optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
+			std::string mr =
+					std::to_string(
+							(float) optionalFlags.find(
+									Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
 			request += mr + " ";
 		}
-		if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str()) != optionalFlags.end()) {
+		if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())
+				!= optionalFlags.end()) {
 			request += "-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ";
-			std::string mma = std::to_string((int) optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
+			std::string mma =
+					std::to_string(
+							(int) optionalFlags.find(
+									Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
 			request += mma + " ";
 		}
 	}
@@ -266,15 +288,16 @@ wstring ResultWriter::output(char mode, string data, char colors) {
 	return resultAsJSONValue(mode, data, colors)->Stringify().c_str();
 }
 
-JSONValue* ResultWriter::resultAsJSONValue(char mode, string data, char colors) {
+JSONValue* ResultWriter::resultAsJSONValue(char mode, string data,
+		char colors) {
 	/*  Result as JSONObject
 
-        root    -> type ("pattern" | "histogram" | "landscape")
-                -> colors (only if type != "pattern")   ->  color (bool)
-                                                        ->  gray (bool)
-                                                        ->  hsv (bool)
-                -> dataType ("YML" | "XML")
-                -> data (string)
+	 root    -> type ("pattern" | "histogram" | "landscape")
+	 -> colors (only if type != "pattern")   ->  color (bool)
+	 ->  gray (bool)
+	 ->  hsv (bool)
+	 -> dataType ("YML" | "XML")
+	 -> data (string)
 	 */
 	JSONObject root;
 

@@ -23,24 +23,23 @@
  */
 #define UNIT_TEST
 
-
 /** ======================================================================
  * header for main functions
  */
 #ifdef PATTERNMATCHING
-	int patternMatching(int argc, const char * argv[]);
+int patternMatching(int argc, const char * argv[]);
 #endif
 #ifdef MATCHERCACHE
-	int matcherCache(int argc, const char * argv[]);
+int matcherCache(int argc, const char * argv[]);
 #endif
 #ifdef DBCONNECTOR
-	int dbConnector(int argc, const char * argv[]);
+int dbConnector(int argc, const char * argv[]);
 #endif
 #ifdef EXTRACTOR
-	int extractor(int argc, const char * argv[]);
+int extractor(int argc, const char * argv[]);
 #endif
 #ifdef TRAINER
-	int trainer(int argc, const char * argv[]);
+int trainer(int argc, const char * argv[]);
 #endif
 
 #endif /* COMPILECONFIGURATIONS_HPP_ */

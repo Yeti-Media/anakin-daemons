@@ -159,7 +159,7 @@ std::vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 					+ " = $1 AND " + param_name_category + " = $2"
 					+ " ORDER BY " + param_name_id + " ASC";
 			res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues,
-					NULL, NULL, 0);
+			NULL, NULL, 0);
 			LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
@@ -286,7 +286,7 @@ bool DBDriver::saveHORL(DBHistogram* h, bool saveNeededObjectsFirst) {
 				+ param_name_gray + ", " + param_name_hsv
 				+ ")  VALUES ($1::int, $2, $3, $4)";
 		res = PQexecParams(conn, command.c_str(), 4, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 			logMessage(PQerrorMessage(conn));
@@ -425,7 +425,7 @@ bool DBDriver::storeSFBM(std::string filename, int * smatcher_id, int userID,
 				+ param_name_user_id + ")  VALUES ($1, $2, $3) " + " RETURNING "
 				+ param_name_id;
 		res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -469,7 +469,7 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 				+ ", " + param_return_if + " FROM " + table + " WHERE "
 				+ param_name_id + " = $1";
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
@@ -524,7 +524,7 @@ bool DBDriver::sfbmExists(int smatcher_id, bool * error) {
 		std::string command = Constants::SELECT_COMMAND + param_name_id
 				+ " FROM " + table + " WHERE " + param_name_id + " = $1";
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -596,7 +596,7 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 				+ " AND " + param_name_pidx + " = $2" + " AND "
 				+ param_name_category + " = $3";
 		res = PQexecParams(conn, command.c_str(), 3, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -654,7 +654,7 @@ bool DBDriver::storeScene(DBPattern* scene) {
 		std::string command = Constants::INSERT_COMMAND + table + " ("
 				+ param_name_data + ")  VALUES ($1) RETURNING " + param_name_id;
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -691,7 +691,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 		std::string command = Constants::SELECT_COMMAND + param_name_data
 				+ " FROM " + table + " WHERE " + param_name_id + " = $1";
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
@@ -978,7 +978,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				+ ", " + param_name_gray + ", " + param_name_hsv + " FROM "
 				+ table + "WHERE " + param_name_id + " = $1";
 		res = PQexecParams(conn, command.c_str(), 1, NULL, paramValues, NULL,
-				NULL, 0);
+		NULL, 0);
 		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -1056,7 +1056,7 @@ std::vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 					+ " FROM " + table + " WHERE " + param_name_uid
 					+ " = $1 AND " + param_name_category + " = $2";
 			res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues,
-					NULL, NULL, 0);
+			NULL, NULL, 0);
 			LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
@@ -1171,22 +1171,24 @@ void DBDriver::logMessage(std::string message) {
 	this->dbdriverLog.push_back(message);
 }
 
-void DBDriver::replaceAll(std::string& str, const std::string& find, const std::string& replacement) {
-    if(find.empty())
-        return;
-    size_t start_pos = 0;
-    while((start_pos = str.find(find, start_pos)) != std::string::npos) {
-        str.replace(start_pos, find.length(), replacement);
-        start_pos += replacement.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-    }
+void DBDriver::replaceAll(std::string& str, const std::string& find,
+		const std::string& replacement) {
+	if (find.empty())
+		return;
+	size_t start_pos = 0;
+	while ((start_pos = str.find(find, start_pos)) != std::string::npos) {
+		str.replace(start_pos, find.length(), replacement);
+		start_pos += replacement.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+	}
 }
 
-std::string DBDriver::parseSQLquery(const std::string command, const char *paramValues[],
-		const int numParam) {
+std::string DBDriver::parseSQLquery(const std::string command,
+		const char *paramValues[], const int numParam) {
 	std::string sqlQuery = command;
 	int i;
 	for (i = 0; i < numParam; i++) {
-		DBDriver::replaceAll(sqlQuery,std::string("$" + std::to_string(i + 1)),std::string(paramValues[i]));
+		DBDriver::replaceAll(sqlQuery, std::string("$" + std::to_string(i + 1)),
+				std::string(paramValues[i]));
 	}
 	return sqlQuery;
 }
