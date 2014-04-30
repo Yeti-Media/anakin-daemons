@@ -13,6 +13,10 @@ void Flags::setVerbose(bool b) {
 	this->verbose = b;
 }
 
+void Flags::setIgnoreUnknownFlags(bool b) {
+	this->ignoreUnknownFlags = b;
+}
+
 bool findKey(map<string, vector<string>*> m, string key) {
 	if (m.find(key) == m.end()) {
 		return false;
@@ -310,9 +314,11 @@ bool Flags::validateInput(vector<string> *input) {
 				flagWasFound = true;
 				valuesFound = false;
 			} else {
-				if (this->verbose)
-					cout << flag << " is not a valid flag\n";
-				return false;
+				if (!this->ignoreUnknownFlags) {
+					if (this->verbose)
+						cout << flag << " is not a valid flag\n";
+					return false;
+				}
 			}
 		} else {
 			//a value

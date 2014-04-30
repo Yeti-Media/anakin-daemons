@@ -72,6 +72,11 @@ public:
 	 * set the minimum amount of flags required on the input
 	 */
 	void setMinCount(uint val);
+	/**
+	 * Ignore the unknown flags
+	 */
+	void setIgnoreUnknownFlags(bool b);
+
 
 	//GETTERS
 	vector<string>* getRequiredFlags();
@@ -116,6 +121,7 @@ private:
 	vector<string> foundFlags;
 	bool overridingFlagFound = false;
 	bool verbose = false;
+	bool ignoreUnknownFlags = false;
 	uint minCount;
 };
 

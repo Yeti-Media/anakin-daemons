@@ -8,7 +8,7 @@
 
 #include <CompileConfigurations.hpp>
 
-#ifdef UNIT_TEST
+#if COMPILE_MODE == COMPILE_FOR_UNIT_TESTING
 
 #include <iostream>
 #include <boost/test/included/unit_test.hpp>
@@ -28,7 +28,7 @@ std::string path_scriptSQL;
 
 //____________________________________________________________________________//
 
-void test_case_path_and_configs() {
+void test_case_paths() {
 	fs::path test_dir(path_test);
 	BOOST_REQUIRE(fs::is_directory(test_dir));
 
@@ -56,14 +56,17 @@ void test_case_path_and_configs() {
 	BOOST_REQUIRE(fs::is_regular_file(scriptSQL_file));
 }
 
-void test_case3() { /* : */
-}
-void test_case4() {
-	//	//system("dropdb --if-exists anakinAcceptanceTesting");
-	//	//system("createdb anakinAcceptanceTesting");
-	//	//system("psql -d anakinAcceptanceTesting -a -f script.sql");
-	//
-	//	//system("dropdb --if-exists anakinAcceptanceTesting");
+void test_case_SQL_script() {
+	std::string cmd;
+
+	cmd = "dropdb --if-exists anakinTesting";
+	BOOST_REQUIRE_MESSAGE(system(cmd.c_str())==0, "system command \""+cmd+"\" Failed");
+
+	cmd = "createdb anakinTesting";
+	BOOST_REQUIRE_MESSAGE(system(cmd.c_str())==0, "system command \""+cmd+"\" Failed");
+
+	cmd = "psql -d anakinTesting -a -f \""+path_scriptSQL+"\"";
+	BOOST_REQUIRE_MESSAGE(system(cmd.c_str())==0, "system command \""+cmd+"\" Failed");
 }
 
 //____________________________________________________________________________//
@@ -71,7 +74,7 @@ void test_case4() {
 test_suite*
 init_unit_test_suite(int argc, char* argv[]) {
 
-	if (argc!=2) {
+	if (argc != 2) {
 		std::cerr << "First param must be a testing directory.";
 		exit(-1);
 	} else {
@@ -79,17 +82,18 @@ init_unit_test_suite(int argc, char* argv[]) {
 	}
 
 	test_suite* ts1 = BOOST_TEST_SUITE("Acceptance_Testing");
-	ts1->add(BOOST_TEST_CASE(&test_case_path_and_configs));
+	ts1->add(BOOST_TEST_CASE(&test_case_paths));
+	//ts1->add(BOOST_TEST_CASE(&test_case_SQL_script));
 
-	test_suite* ts2 = BOOST_TEST_SUITE("test_suite2");
-	ts2->add(BOOST_TEST_CASE(&test_case3));
-	ts2->add(BOOST_TEST_CASE(&test_case4));
+//	test_suite* ts2 = BOOST_TEST_SUITE("test_suite2");
+//	ts2->add(BOOST_TEST_CASE(&test_case3));
+//	ts2->add(BOOST_TEST_CASE(&test_case4));
 
 	framework::master_test_suite().add(ts1);
-	framework::master_test_suite().add(ts2);
+//	framework::master_test_suite().add(ts2);
 
 	return 0;
 }
-
 //____________________________________________________________________________//
+
 #endif
