@@ -53,7 +53,7 @@ extern "C" void _MemoryBarrier();
 
 //todo: define __TBB_USE_FENCED_ATOMICS and define acquire/release primitives to maximize performance
 
-inline __int32  __TBB_machine_cmpswp4(volatile void *ptr, __int32 value, __int32 comparand)  {
+inline __int32   __TBB_machine_cmpswp4(volatile void *ptr, __int32 value, __int32 comparand)   {
 	__sync();
 	__int32 result = InterlockedCompareExchange((volatile LONG*) ptr, value,
 			comparand);
@@ -61,8 +61,8 @@ inline __int32  __TBB_machine_cmpswp4(volatile void *ptr, __int32 value, __int32
 	return result;
 }
 
-inline __int64  __TBB_machine_cmpswp8(volatile void *ptr, __int64 value, __int64 comparand)
- {
+inline __int64   __TBB_machine_cmpswp8(volatile void *ptr, __int64 value, __int64 comparand)
+  {
 	__sync();
 	__int64 result = InterlockedCompareExchange64((volatile LONG64*) ptr, value,
 			comparand);

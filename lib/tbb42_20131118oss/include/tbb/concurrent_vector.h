@@ -721,7 +721,7 @@ public:
 	iterator grow_by(size_type delta) {
 		return iterator(*this,
 				delta ? internal_grow_by(delta, sizeof(T), &initialize_array,
-								NULL) :
+				NULL) :
 						my_early_size.load());
 	}
 #endif

@@ -18,7 +18,8 @@ class ResultWriter {
 
 public:
 
-	ResultWriter() {}
+	ResultWriter() {
+	}
 
 	static const std::string RW_PATTERN_MATCHING;
 	static const std::string RW_CACHE_IDX_ADD;
@@ -32,7 +33,8 @@ public:
 	/**
 	 * returns a wstring representation of a JSONValue of a match (center, pattern label, matched keypoints)
 	 */
-	wstring outputMatch(Point2f center, string label, vector<KeyPoint> matchedKeypoints);
+	wstring outputMatch(Point2f center, string label,
+			vector<KeyPoint> matchedKeypoints);
 
 	/**
 	 * returns a wstring representation of a JSONValue of patterns matches in a scene
@@ -44,23 +46,27 @@ public:
 	 * returns a wstring representation of a JSONValue of a response
 	 * (requestID, category, <response values>)
 	 */
-	wstring outputResponse(string requestID, string category, vector<JSONValue*> jsonValues);
+	wstring outputResponse(string requestID, string category,
+			vector<JSONValue*> jsonValues);
 
 	/**
-	* returns a wstring representation of a JSONValue of an error message
-	* (error type : [WARNING/ERROR/FATALERROR], message, origin)
-	*/
-	wstring outputError(const char errorType, std::string message, std::string origin);
+	 * returns a wstring representation of a JSONValue of an error message
+	 * (error type : [WARNING/ERROR/FATALERROR], message, origin)
+	 */
+	wstring outputError(const char errorType, std::string message,
+			std::string origin);
 
 	/**
 	 * returns a JSONValue for a response
 	 */
-	JSONValue* responseAsJSON(string requestID, string category, vector<JSONValue*> jsonValues);
+	JSONValue* responseAsJSON(string requestID, string category,
+			vector<JSONValue*> jsonValues);
 
 	/**
 	 * returns a JSONValue for a match
 	 */
-	JSONValue* matchAsJSON(Point2f center, string label, vector<KeyPoint> matchedKeypoints);
+	JSONValue* matchAsJSON(Point2f center, string label,
+			vector<KeyPoint> matchedKeypoints);
 
 	/**
 	 * returns a JSONValue for all matches in a scene
@@ -70,7 +76,8 @@ public:
 	/**
 	 * returns a JSONValue of changes made after adding a trainer to the cache
 	 */
-	JSONValue* trainerAddAsJSON(int smatcher_id_added, int cacheFreeSpace, int smatcher_id_removed);
+	JSONValue* trainerAddAsJSON(int smatcher_id_added, int cacheFreeSpace,
+			int smatcher_id_removed);
 
 	/**
 	 * returns a JSONValue of changes made after deleting a trainer from the cache
@@ -85,7 +92,8 @@ public:
 	/**
 	 * returns a JSONValue of the cache status
 	 */
-	JSONValue* cacheStatusAsJSON(vector<int> smatchers_in_cache, int cacheFreeSpace);
+	JSONValue* cacheStatusAsJSON(vector<int> smatchers_in_cache,
+			int cacheFreeSpace);
 
 	/**
 	 * parses a request to a JSONValue
@@ -98,9 +106,10 @@ public:
 	std::string jsonReqToString(JSONValue* req);
 
 	/**
-	* returns a JSONValue of an error (error type : [WARNING/ERROR/FATALERROR], message, origin)
-	*/
-    JSONValue* errorAsJSON(const char errorType, std::string message, std::string origin);
+	 * returns a JSONValue of an error (error type : [WARNING/ERROR/FATALERROR], message, origin)
+	 */
+	JSONValue* errorAsJSON(const char errorType, std::string message,
+			std::string origin);
 
 	/** Result as JSONObject
 	 *    root    -> type ("pattern" | "histogram" | "landscape")
@@ -110,7 +119,8 @@ public:
 	 *            -> dataType ("YML" | "XML")
 	 *            -> data (string)
 	 */
-	static JSONValue* resultAsJSONValue(char mode, std::string data, char colors = 0);
+	static JSONValue* resultAsJSONValue(char mode, std::string data,
+			char colors = 0);
 
 	static std::wstring output(char mode, std::string data, char colors = 0);
 

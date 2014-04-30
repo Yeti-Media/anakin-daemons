@@ -109,7 +109,7 @@ inline static uint32_t __TBB_machine_begin_transaction()
 								 //  2f - 1b - 6 == that difference minus the size of the
 								 //  XBEGIN instruction.  This is the abort offset to
 								 //  2: below.
-			"    jmp   3f\n"//  success (leave -1 in res)
+			"    jmp   3f\n"	 //  success (leave -1 in res)
 			"2:  movl  %%eax,%0\n"//  store failure code in res
 			"3:"
 			:"=r"(res):"0"(res):"memory","%eax");

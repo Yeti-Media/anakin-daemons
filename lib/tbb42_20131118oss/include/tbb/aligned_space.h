@@ -40,7 +40,7 @@ namespace tbb {
 template<typename T, size_t N>
 class aligned_space {
 private:
-	typedef __TBB_TypeWithAlignmentAtLeastAsStrict(T)  element_type;
+	typedef __TBB_TypeWithAlignmentAtLeastAsStrict(T)   element_type;
 	element_type array[(sizeof(T) * N + sizeof(element_type) - 1)
 			/ sizeof(element_type)];
 public:

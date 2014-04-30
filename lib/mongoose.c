@@ -1160,7 +1160,7 @@ SSL_CERTIFICATE,
 URL_REWRITES, NUM_OPTIONS
 };
 
-static const char *static_config_options[] = { "access_control_list", NULL,
+static const char *static_config_options[] = {  "access_control_list", NULL,
 #ifndef MONGOOSE_NO_FILESYSTEM
 	"access_log_file", NULL,
 #ifndef MONGOOSE_NO_AUTH
@@ -3498,7 +3498,7 @@ if (gpass != NULL) {
 	if ((p = strrchr(path, '/')) == NULL)
 		p = path;
 	mg_snprintf(name, sizeof(name), "%.*s%c%s", (int) (p - path), path, '/',
-			PASSWORDS_FILE_NAME);
+	PASSWORDS_FILE_NAME);
 	fp = fopen(name, "r");
 }
 

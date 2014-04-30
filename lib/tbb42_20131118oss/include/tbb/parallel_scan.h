@@ -229,7 +229,7 @@ public:
 	start_scan(sum_node_type*& return_slot_, const Range& range_,
 			final_sum_type& body_, const Partitioner& partitioner_) :
 			my_body(&body_), my_sum(NULL), my_return_slot(&return_slot_), my_parent_sum(
-					NULL), my_is_final(true), my_is_right_child(false), my_range(
+			NULL), my_is_final(true), my_is_right_child(false), my_range(
 					range_), my_partition(partitioner_) {
 		__TBB_ASSERT(!*my_return_slot, NULL);
 	}
@@ -294,12 +294,12 @@ task* start_scan<Range, Body, Partitioner>::execute() {
 							my_range,/*my_left_is_final=*/my_is_final);
 		else
 			result = new (task::allocate_root()) sum_node_type(my_range,/*my_left_is_final=*/
-					my_is_final);
+			my_is_final);
 		finish_pass1_type& c = *new (allocate_continuation()) finish_pass1_type(
 				*my_return_slot, my_sum, *result);
 		// Split off right child
 		start_scan& b = *new (c.allocate_child()) start_scan(
-				/*my_return_slot=*/result->my_right, *this, result);
+		/*my_return_slot=*/result->my_right, *this, result);
 		b.my_is_right_child = true;
 		// Left child is recycling of *this.  Must recycle this before spawning b, 
 		// otherwise b might complete and decrement c.ref_count() to zero, which

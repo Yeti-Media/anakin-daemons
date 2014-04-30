@@ -15,11 +15,13 @@ public:
 
 	BlockingMap(V defaultValue) {
 		if (sem_init(&this->wsem, 0, 1) != 0) {
-			std::cout << "BlockingMap#BlockingMap: error initializing semaphore\n";
+			std::cout
+					<< "BlockingMap#BlockingMap: error initializing semaphore\n";
 			exit(-1);
 		}
 		if (sem_init(&this->ssem, 0, 1) != 0) {
-			std::cout << "BlockingMap#BlockingMap: error initializing semaphore\n";
+			std::cout
+					<< "BlockingMap#BlockingMap: error initializing semaphore\n";
 			exit(-1);
 		}
 		this->internalMap = *new std::map<K, V>();
@@ -59,8 +61,8 @@ public:
 		std::vector<K> keys;
 		std::pair<K, V> me;
 		BOOST_FOREACH(me, this->internalMap){
-            keys.push_back(me.first);
-        }
+		keys.push_back(me.first);
+	}
 		sem_post(&this->ssem);
 		return keys;
 	}

@@ -19,22 +19,23 @@ Server::Server(unsigned short port, bool verbose, char mode, std::string ld,
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
 	if (this->dbdriver->connect()) {
-        this->initialization = true;
+		this->initialization = true;
 		std::cout << this->dbdriver->getMessage() << std::endl;
-		LOG_F("INFO") << this->dbdriver->getMessage();
+		LOG_F("INFO")<< this->dbdriver->getMessage();
 	} else {
-        this->initialization = false;
-        this->initializationError = this->dbdriver->getMessage();
-        LOG_F("ERROR") << this->dbdriver->getMessage();
-        std::cout << this->dbdriver->getMessage() << std::endl;
+		this->initialization = false;
+		this->initializationError = this->dbdriver->getMessage();
+		LOG_F("ERROR") << this->dbdriver->getMessage();
+		std::cout << this->dbdriver->getMessage() << std::endl;
 		exit(-1);
 	}
 	if (this->initialization) {
-        this->cache = new SFBMCache(this->dbdriver, 9, true, 10);
-        JSONValue* cacheError = this->cache->getLastOperationResult(&this->cacheInitialization);
-        if (!this->cacheInitialization) {
-            this->cacheInitializationError = cacheError->Stringify().c_str();
-        }
+		this->cache = new SFBMCache(this->dbdriver, 9, true, 10);
+		JSONValue* cacheError = this->cache->getLastOperationResult(
+				&this->cacheInitialization);
+		if (!this->cacheInitialization) {
+			this->cacheInitializationError = cacheError->Stringify().c_str();
+		}
 	}
 	if (mode & TCP) {
 		this->server = new ATCPServerSocket(port);
@@ -103,11 +104,11 @@ std::string Server::read() {
 		return msg;
 	} else if (this->mode & HTTP) {
 		std::string msj = this->httpSocket->read();
-		LOG_F("Request") << msj;
+		LOG_F("Request")<< msj;
 		return msj;
 	} else {
 		std::string msj = this->socket->read();
-		LOG_F("Request") << msj;
+		LOG_F("Request")<< msj;
 		return msj;
 	}
 }

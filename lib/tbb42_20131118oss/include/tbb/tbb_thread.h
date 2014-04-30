@@ -209,7 +209,7 @@ private:
 
 	/** Runs start_routine(closure) on another thread and sets my_handle to the handle of the created thread. */
 	void __TBB_EXPORTED_METHOD internal_start(
-			__TBB_NATIVE_THREAD_ROUTINE_PTR(start_routine), void* closure);
+	__TBB_NATIVE_THREAD_ROUTINE_PTR(start_routine), void* closure);
 	friend void __TBB_EXPORTED_FUNC move_v3(tbb_thread_v3& t1,
 			tbb_thread_v3& t2);
 	friend void tbb::swap(tbb_thread_v3& t1, tbb_thread_v3& t2);

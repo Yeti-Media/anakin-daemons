@@ -6,13 +6,9 @@
 
 using namespace Anakin;
 
-RequestServer::RequestServer(   unsigned const short port,
-                                int cap,
-                                int threads,
-                                bool verbose,
-                                char mode,
-                                std::string ld,
-                                std::string md) : Server(port, verbose, mode, ld, md) {
+RequestServer::RequestServer(unsigned const short port, int cap, int threads,
+bool verbose, char mode, std::string ld, std::string md) :
+		Server(port, verbose, mode, ld, md) {
 	this->threads = threads;
 	this->workerThreads = new std::vector<pthread_t>(threads);
 	this->qcap = cap;

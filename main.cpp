@@ -1,14 +1,36 @@
-/**
- * Uncomment what project do you want to compile. Comment the others.
- */
-#define PATTERNMATCHING
-//#define MATCHERCACHE
-//#define DBCONNECTOR
-//#define EXTRACTOR
-//#define TRAINER
+//================================================================
+// PLEASE configure the project in CompileConfigurations.hpp file before
+// compile.
+//================================================================
+#include <CompileConfigurations.hpp>
+#include "processing/Flags.hpp"
+
+using namespace Anakin;
+
+void initModuleFlags(Flags* flags) {
+	flags->setNoValuesFlag("modepatternmatching");
+	flags->setNoValuesFlag("modematchercache");
+	flags->setNoValuesFlag("modedbconnector");
+	flags->setNoValuesFlag("modeextractor");
+	flags->setNoValuesFlag("modetrainer");
+
+	flags->setIncompatibility("modepatternmatching", "modematchercache");
+	flags->setIncompatibility("modepatternmatching", "modedbconnector");
+	flags->setIncompatibility("modepatternmatching", "modeextractor");
+	flags->setIncompatibility("modepatternmatching", "modetrainer");
+
+	flags->setIncompatibility("modematchercache", "modedbconnector");
+	flags->setIncompatibility("modematchercache", "modeextractor");
+	flags->setIncompatibility("modematchercache", "modetrainer");
+
+	flags->setIncompatibility("modedbconnector", "modeextractor");
+	flags->setIncompatibility("modedbconnector", "modetrainer");
+
+	flags->setIncompatibility("modeextractor", "modetrainer");
+}
 
 //=======================================================================================
-#ifdef PATTERNMATCHING
+#if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
 //=======================================================================================
 #include "processing/AnakinFlags.hpp"
 #include "output/DataOutput.hpp"
@@ -28,8 +50,6 @@
 #define UDP     4
 #define DTCP    8
 #define HTTP    16
-
-using namespace Anakin;
 
 int patternMatching(int argc, const char * argv[]) {
 	std::ios_base::sync_with_stdio(false);
@@ -74,6 +94,8 @@ int patternMatching(int argc, const char * argv[]) {
 	anakinInput->setIncompatibility("iTCP", "iDTCP");
 	anakinInput->setIncompatibility("iTCP", "iHTTP");
 	anakinInput->setIncompatibility("iDTCP", "iHTTP");
+
+	initModuleFlags(anakinInput);
 
 	//OUTPUT
 	anakinInput->setNoValuesFlag("oConsole");
@@ -263,7 +285,7 @@ int patternMatching(int argc, const char * argv[]) {
 
 //=======================================================================================
 #endif
-#ifdef MATCHERCACHE
+#if COMPILE_MODULE == MATCHERCACHE || COMPILE_MODULE == ALLMODULES
 //=======================================================================================
 
 #include <iostream>
@@ -274,18 +296,13 @@ int patternMatching(int argc, const char * argv[]) {
 #include <vector>
 #include <ctime>
 
-using namespace Anakin;
-
-void showHelp()
-{
+void showHelpMatcherCache() {
 
 }
 
-int matcherCache(int argc, const char * argv[])
-{
+int matcherCache(int argc, const char * argv[]) {
 	DBDriver* dbdriver = new DBDriver();
-	if (!dbdriver->connect())
-	{
+	if (!dbdriver->connect()) {
 		std::cerr << dbdriver->getMessage() << std::endl;
 		return -1;
 	}
@@ -297,13 +314,15 @@ int matcherCache(int argc, const char * argv[])
 	patternsID.push_back(6);
 	srand(time(0));
 	uint requests = 45;
-	for (uint r = 0; r < requests; r++)
-	{
+	for (uint r = 0; r < requests; r++) {
 		int id = rand() % 2;
 		bool matcherError = false;
-		sfbm = cache->loadMatcher(patternsID.at(id),&matcherError);
-		std::cout << "loaded matcher(" << patternsID.at(id) << "), matcher is " << (sfbm->empty()?"empty":"not empty") << std::endl;
-		std::cout << "current hit ratio: " << cache->getHitRatio() << " | current miss ratio: " << cache->getMissRatio() << std::endl;
+		sfbm = cache->loadMatcher(patternsID.at(id), &matcherError);
+		std::cout << "loaded matcher(" << patternsID.at(id) << "), matcher is "
+				<< (sfbm->empty() ? "empty" : "not empty") << std::endl;
+		std::cout << "current hit ratio: " << cache->getHitRatio()
+				<< " | current miss ratio: " << cache->getMissRatio()
+				<< std::endl;
 	}
 	cache->printLoadCount();
 	return 0;
@@ -311,34 +330,29 @@ int matcherCache(int argc, const char * argv[])
 
 //=======================================================================================
 #endif
-#ifdef DBCONNECTOR
+#if COMPILE_MODULE == DBCONNECTOR || COMPILE_MODULE == ALLMODULES
 //=======================================================================================
 
 #include "db/DBDriver.hpp"
 #include "db/DBUser.hpp"
 #include "db/DBPattern.hpp"
 #include "db/DBHistogram.hpp"
-#include "processing/Flags.hpp"
 #include "utils/XMLoader.hpp"
 #include "utils/Constants.hpp"
 #include "data/ImageInfo.hpp"
 #include <iostream>
 #include "utils/Help.hpp"
 
-using namespace Anakin;
-
-void showHelp()
-{
+void showHelpDbConnector() {
 	Help* h = new Help();
 	std::cout << h->getFullHelp() << std::endl;
 }
 
-int dbConnector(int argc, const char * argv[])
-{
+int dbConnector(int argc, const char * argv[]) {
 	std::string path;
-	bool saveObjects=false;
+	bool saveObjects = false;
 	int userID;
-	bool saveUser=false;
+	bool saveUser = false;
 	bool showhelp = false;
 	char objectsAs = 0;
 	bool load = false;
@@ -351,8 +365,7 @@ int dbConnector(int argc, const char * argv[])
 //    };
 //    int argc_ = 0;
 	vector<string> *input = new vector<string>(0);
-	for (int i = 1; i < argc; i++)
-	{
+	for (int i = 1; i < argc; i++) {
 		input->push_back(argv[i]);
 	}
 
@@ -367,6 +380,9 @@ int dbConnector(int argc, const char * argv[])
 	flags->setNoValuesFlag("landscapes");
 	flags->setOptionalFlag("index");
 	flags->setNoValuesFlag("savePatterns");
+
+	initModuleFlags(flags);
+
 	vector<string>* pathLooseDeps = new vector<string>(0);
 	pathLooseDeps->push_back("patterns");
 	pathLooseDeps->push_back("histograms");
@@ -401,122 +417,92 @@ int dbConnector(int argc, const char * argv[])
 	flags->setDependence("sceneID", "load");
 	flags->setDependence("sceneID", "scenes");
 
-	if (flags->validateInput(input))
-	{
-		if (flags->flagFound("help"))
-		{
+	if (flags->validateInput(input)) {
+		if (flags->flagFound("help")) {
 			showhelp = true;
 		}
 		std::vector<std::string>* values;
-		if (flags->flagFound("user"))
-		{
+		if (flags->flagFound("user")) {
 			saveUser = true;
 			values = flags->getFlagValues("user");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				userID = std::stoi(values->at(0));
-			}
-			else
-			{
+			} else {
 				std::cerr << "param user need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("path"))
-		{
+		if (flags->flagFound("path")) {
 			saveObjects = true;
 			values = flags->getFlagValues("path");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				path = values->at(0);
-			}
-			else
-			{
+			} else {
 				std::cerr << "param path need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("patterns"))
-		{
+		if (flags->flagFound("patterns")) {
 			objectsAs = Constants::PATTERN;
 		}
-		if (flags->flagFound("histograms"))
-		{
+		if (flags->flagFound("histograms")) {
 			objectsAs = Constants::HISTOGRAM;
 		}
-		if (flags->flagFound("landscapes"))
-		{
+		if (flags->flagFound("landscapes")) {
 			objectsAs = Constants::LANDSCAPE;
 		}
-		if (flags->flagFound("index"))
-		{
+		if (flags->flagFound("index")) {
 			objectsAs = Constants::INDEX;
 		}
-		if (flags->flagFound("scenes"))
-		{
+		if (flags->flagFound("scenes")) {
 			objectsAs = Constants::SCENE;
 		}
-		if (flags->flagFound("load"))
-		{
+		if (flags->flagFound("load")) {
 			load = true;
-			if (objectsAs == Constants::SCENE)
-			{
+			if (objectsAs == Constants::SCENE) {
 				loadingScenes = true;
 			}
 		}
-		if (flags->flagFound("sceneID"))
-		{
+		if (flags->flagFound("sceneID")) {
 			values = flags->getFlagValues("sceneID");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				sceneID = std::stoi(values->at(0));
-			}
-			else
-			{
+			} else {
 				std::cerr << "param sceneID need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("savePatterns"))
-		{
+		if (flags->flagFound("savePatterns")) {
 			savePatterns = true;
 		}
 
-		if (flags->flagFound("index"))
-		{
+		if (flags->flagFound("index")) {
 			saveObjects = true;
 			values = flags->getFlagValues("index");
-			if (values->size() == 1 && load)
-			{
+			if (values->size() == 1 && load) {
 				smatcher_id = values->at(0);
-			}
-			else if (values->size() == 2 && !load)
-			{
+			} else if (values->size() == 2 && !load) {
 				smatcher_id = values->at(0);
 				userID = std::stoi(values->at(1));
-			}
-			else
-			{
-				std::cerr << "param index need two values when saving and one value when loading\n";
+			} else {
+				std::cerr
+						<< "param index need two values when saving and one value when loading\n";
 				return -1;
 			}
 		}
 
 		if (loadingScenes && sceneID == -1)   //THIS MUST BE AT THE END
-		{
+				{
 			std::cerr << "Missing sceneID flag!" << std::endl;
 			return -1;
 		}
-	}
-	else
-	{
+	} else {
 		std::cerr << "Input error!" << std::endl;
 		return -1;
 	}
 
-	if (showhelp)
-	{
-		showHelp();
+	if (showhelp) {
+		showHelpDbConnector();
 		return 0;
 	}
 
@@ -528,242 +514,196 @@ int dbConnector(int argc, const char * argv[])
 	std::vector<DBPattern*>* patterns;
 	std::vector<DBHistogram*>* histograms;
 	std::vector<DBHistogram*>* landscapes;
-	if (load)
-	{
-		if (objectsAs != Constants::INDEX && objectsAs != Constants::SCENE) user = new DBUser(userID);
+	if (load) {
+		if (objectsAs != Constants::INDEX && objectsAs != Constants::SCENE)
+			user = new DBUser(userID);
 		bool error = false;
-		switch (objectsAs)
-		{
-			case Constants::PATTERN :
-			{
-				std::vector<int> pattern_ids = driver->getUserPatterns(user->getID(), &error);
-				if (error)
-				{
+		switch (objectsAs) {
+		case Constants::PATTERN: {
+			std::vector<int> pattern_ids = driver->getUserPatterns(
+					user->getID(), &error);
+			if (error) {
+				std::cerr << driver->getMessage() << std::endl;
+				return -1;
+			}
+			for (uint i = 0; i < pattern_ids.size(); i++) {
+				bool patternError = false;
+				DBPattern* pattern;
+				if (!driver->retrievePattern(pattern_ids.at(i), &patternError,
+				true, &pattern)) {
 					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
-				for (uint i = 0; i < pattern_ids.size(); i++)
-				{
-					bool patternError = false;
-					DBPattern* pattern;
-					if (!driver->retrievePattern(pattern_ids.at(i), &patternError, true, &pattern))
-					{
-						std::cerr << driver->getMessage() << std::endl;
-						return -1;
-					}
-					//std::cout << "loaded pattern with label : " << pattern->getLabel() << " and id : " << pattern->getID() << std::endl;
-				}
-				std::cout << "user " << user->getID() << " have " << pattern_ids.size() << " patterns" << std::endl;
-				break;
+				//std::cout << "loaded pattern with label : " << pattern->getLabel() << " and id : " << pattern->getID() << std::endl;
 			}
-			case Constants::HISTOGRAM :
-			{
-				std::vector<int> histogram_ids = driver->getUserHistograms(user->getID(), &error);
-				if (error)
-				{
+			std::cout << "user " << user->getID() << " have "
+					<< pattern_ids.size() << " patterns" << std::endl;
+			break;
+		}
+		case Constants::HISTOGRAM: {
+			std::vector<int> histogram_ids = driver->getUserHistograms(
+					user->getID(), &error);
+			if (error) {
+				std::cerr << driver->getMessage() << std::endl;
+				return -1;
+			}
+			for (uint i = 0; i < histogram_ids.size(); i++) {
+				bool histogramError = false;
+				DBHistogram* histogram;
+				if (!driver->retrieveHistogram(histogram_ids.at(i),
+						&histogramError, true, &histogram)) {
 					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
-				for (uint i = 0; i < histogram_ids.size(); i++)
-				{
-					bool histogramError = false;
-					DBHistogram* histogram;
-					if (!driver->retrieveHistogram(histogram_ids.at(i), &histogramError, true, &histogram))
-					{
-						std::cerr << driver->getMessage() << std::endl;
-						return -1;
-					}
-					std::cout << "loaded histogram : " << histogram->getID() << std::endl;
-				}
-				break;
+				std::cout << "loaded histogram : " << histogram->getID()
+						<< std::endl;
 			}
-			case Constants::LANDSCAPE :
-			{
-				std::vector<int> landscape_ids = driver->getUserLandscapes(user->getID(), &error);
-				if (error)
-				{
+			break;
+		}
+		case Constants::LANDSCAPE: {
+			std::vector<int> landscape_ids = driver->getUserLandscapes(
+					user->getID(), &error);
+			if (error) {
+				std::cerr << driver->getMessage() << std::endl;
+				return -1;
+			}
+			for (uint i = 0; i < landscape_ids.size(); i++) {
+				bool histogramError = false;
+				DBHistogram* landscape;
+				if (!driver->retrieveHistogram(landscape_ids.at(i),
+						&histogramError, true, &landscape)) {
 					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
-				for (uint i = 0; i < landscape_ids.size(); i++)
-				{
-					bool histogramError = false;
-					DBHistogram* landscape;
-					if (!driver->retrieveHistogram(landscape_ids.at(i), &histogramError,true, &landscape))
-					{
-						std::cerr << driver->getMessage() << std::endl;
-						return -1;
-					}
-					std::cout << "loaded landscape : " << landscape->getID() << std::endl;
-				}
-				break;
+				std::cout << "loaded landscape : " << landscape->getID()
+						<< std::endl;
 			}
-			case Constants::INDEX :
-			{
-				int trainerID = std::stoi(smatcher_id);
-				bool SFBMError = false;
-				if (driver->retrieveSFBM(trainerID, &SFBMError))
-				{
-					std::cout << driver->getMessage() << std::endl;
-				}
-				else
-				{
-					std::cerr << driver->getMessage() << std::endl;
-					return -1;
-				}
-				break;
+			break;
+		}
+		case Constants::INDEX: {
+			int trainerID = std::stoi(smatcher_id);
+			bool SFBMError = false;
+			if (driver->retrieveSFBM(trainerID, &SFBMError)) {
+				std::cout << driver->getMessage() << std::endl;
+			} else {
+				std::cerr << driver->getMessage() << std::endl;
+				return -1;
 			}
-			case Constants::SCENE :
-			{
-				ImageInfo* scene;
-				bool sceneError = false;
-				if (driver->retrieveScene(&scene, sceneID, &sceneError))
-				{
-					std::cout << driver->getMessage() << std::endl;
-				}
-				else
-				{
-					std::cerr << driver->getMessage() << std::endl;
-					return -1;
-				}
-				break;
+			break;
+		}
+		case Constants::SCENE: {
+			ImageInfo* scene;
+			bool sceneError = false;
+			if (driver->retrieveScene(&scene, sceneID, &sceneError)) {
+				std::cout << driver->getMessage() << std::endl;
+			} else {
+				std::cerr << driver->getMessage() << std::endl;
+				return -1;
 			}
+			break;
+		}
 		}
 		return 0;
 	}
-	if (saveUser)
-	{
+	if (saveUser) {
 		user = new DBUser(userID);
 	}
-	if (saveObjects)
-	{
+	if (saveObjects) {
 		XMLoader* loader;
-		if (objectsAs != Constants::INDEX) loader = new XMLoader(path);
-		switch (objectsAs)
-		{
-			case Constants::PATTERN :
-			{
-				patterns = loader->loadAsPattern();
-				if (saveUser)
-				{
-					for (uint p = 0; p < patterns->size(); p++)
-					{
-						user->addPattern(patterns->at(p));
-					}
-					driver->saveUserPatterns(user, true);
+		if (objectsAs != Constants::INDEX)
+			loader = new XMLoader(path);
+		switch (objectsAs) {
+		case Constants::PATTERN: {
+			patterns = loader->loadAsPattern();
+			if (saveUser) {
+				for (uint p = 0; p < patterns->size(); p++) {
+					user->addPattern(patterns->at(p));
+				}
+				driver->saveUserPatterns(user, true);
+				std::cout << driver->getMessage() << std::endl;
+			} else {
+				for (uint p = 0; p < patterns->size(); p++) {
+					driver->savePattern(patterns->at(p));
 					std::cout << driver->getMessage() << std::endl;
 				}
-				else
-				{
-					for (uint p = 0; p < patterns->size(); p++)
-					{
-						driver->savePattern(patterns->at(p));
-						std::cout << driver->getMessage() << std::endl;
-					}
-				}
-				break;
 			}
-			case Constants::HISTOGRAM :
-			{
-				histograms = loader->loadAsHistogram();
-				if (saveUser)
-				{
-					for (uint p = 0; p < histograms->size(); p++)
-					{
-						user->addHistogram(histograms->at(p));
-					}
-					driver->saveUserHistograms(user, true);
+			break;
+		}
+		case Constants::HISTOGRAM: {
+			histograms = loader->loadAsHistogram();
+			if (saveUser) {
+				for (uint p = 0; p < histograms->size(); p++) {
+					user->addHistogram(histograms->at(p));
+				}
+				driver->saveUserHistograms(user, true);
+				std::cout << driver->getMessage() << std::endl;
+			} else {
+				for (uint p = 0; p < histograms->size(); p++) {
+					driver->saveHORL(histograms->at(p), true);
 					std::cout << driver->getMessage() << std::endl;
 				}
-				else
-				{
-					for (uint p = 0; p < histograms->size(); p++)
-					{
-						driver->saveHORL(histograms->at(p), true);
-						std::cout << driver->getMessage() << std::endl;
-					}
-				}
-				break;
 			}
-			case Constants::LANDSCAPE :
-			{
-				landscapes = loader->loadAsLandscape();
-				if (saveUser)
-				{
-					for (uint p = 0; p < landscapes->size(); p++)
-					{
-						user->addLandscape(landscapes->at(p));
-					}
-					driver->saveUserLandscapes(user, true);
+			break;
+		}
+		case Constants::LANDSCAPE: {
+			landscapes = loader->loadAsLandscape();
+			if (saveUser) {
+				for (uint p = 0; p < landscapes->size(); p++) {
+					user->addLandscape(landscapes->at(p));
+				}
+				driver->saveUserLandscapes(user, true);
+				std::cout << driver->getMessage() << std::endl;
+			} else {
+				for (uint p = 0; p < landscapes->size(); p++) {
+					driver->saveHORL(landscapes->at(p), true);
 					std::cout << driver->getMessage() << std::endl;
 				}
-				else
-				{
-					for (uint p = 0; p < landscapes->size(); p++)
-					{
-						driver->saveHORL(landscapes->at(p), true);
-						std::cout << driver->getMessage() << std::endl;
-					}
-				}
-				break;
 			}
-			case Constants::INDEX :
-			{
-				int trainer_id;
-				if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true, false))
-				{
-					std::cout << driver->getMessage() << std::endl;
-				}
-				else
-				{
+			break;
+		}
+		case Constants::INDEX: {
+			int trainer_id;
+			if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true,
+			false)) {
+				std::cout << driver->getMessage() << std::endl;
+			} else {
+				std::cerr << driver->getMessage() << std::endl;
+				return -1;
+			}
+			if (savePatterns) {
+				bool error;
+				std::vector<int> patterns = driver->getUserPatterns(userID,
+						&error);
+				if (error) {
 					std::cerr << driver->getMessage() << std::endl;
 					return -1;
 				}
-				if (savePatterns)
-				{
-					bool error;
-					std::vector<int> patterns = driver->getUserPatterns(userID, &error);
-					if (error)
-					{
-						std::cerr << driver->getMessage() << std::endl;
-						return -1;
-					}
-					for (uint p = 0; p < patterns.size(); p++)
-					{
-						if (driver->storeNthPattern(trainer_id, p, patterns.at(p)))
-						{
-							std::cout << driver->getMessage() << std::endl;
-						}
-						else
-						{
-							std::cerr << driver->getMessage() << std::endl;
-						}
-					}
-				}
-				break;
-			}
-			case Constants::SCENE :
-			{
-				patterns = loader->loadAsPattern();
-				for (uint s = 0; s < patterns->size(); s++)
-				{
-					DBPattern* sceneAsDBPattern = patterns->at(s);
-					if (driver->storeScene(sceneAsDBPattern))
-					{
+				for (uint p = 0; p < patterns.size(); p++) {
+					if (driver->storeNthPattern(trainer_id, p,
+							patterns.at(p))) {
 						std::cout << driver->getMessage() << std::endl;
-					}
-					else
-					{
+					} else {
 						std::cerr << driver->getMessage() << std::endl;
-						return -1;
 					}
 				}
-				break;
 			}
+			break;
 		}
-	}
-	else
-	{
+		case Constants::SCENE: {
+			patterns = loader->loadAsPattern();
+			for (uint s = 0; s < patterns->size(); s++) {
+				DBPattern* sceneAsDBPattern = patterns->at(s);
+				if (driver->storeScene(sceneAsDBPattern)) {
+					std::cout << driver->getMessage() << std::endl;
+				} else {
+					std::cerr << driver->getMessage() << std::endl;
+					return -1;
+				}
+			}
+			break;
+		}
+		}
+	} else {
 		driver->saveUser(user);
 		std::cout << driver->getMessage() << std::endl;
 	}
@@ -773,7 +713,7 @@ int dbConnector(int argc, const char * argv[])
 
 //=======================================================================================
 #endif
-#ifdef EXTRACTOR
+#if COMPILE_MODULE == EXTRACTOR || COMPILE_MODULE == ALLMODULES
 //=======================================================================================
 
 #include <opencv2/opencv.hpp>
@@ -789,7 +729,6 @@ int dbConnector(int argc, const char * argv[])
 #include "data/PatternLoader.hpp"
 #include "data/SingleImageDataInput.hpp"
 #include "data/HistogramComparator.hpp"
-#include "processing/Flags.hpp"
 #include "data/Histogram.hpp"
 #include "data/HistogramsIO.hpp"
 
@@ -803,43 +742,45 @@ int dbConnector(int argc, const char * argv[])
 #define MINMAX 8    //FOR LATER USE
 #define AVG 16      //FOR LATER USE
 
-using namespace Anakin;
-
 namespace fs = boost::filesystem;
 
-void showHelp()
-{
+void showHelpExtractor() {
 	cout << "Extractor help\n\n";
 	cout << "usage: ./extractor -help";
-	cout << "usage: ./extractor (I/O arguments) (paths arguments) ((landscape arguments)|(histograms arguments))\n\n";
+	cout
+			<< "usage: ./extractor (I/O arguments) (paths arguments) ((landscape arguments)|(histograms arguments))\n\n";
 	cout << "where I/O arguments are:\n";
-	cout << "-landscape : will construct histograms to use with landscape detection\n";
+	cout
+			<< "-landscape : will construct histograms to use with landscape detection\n";
 	cout << "-histograms : will construct one histogram per pattern\n";
 	cout << "-patterns : will extract descriptors and keypoints\n";
 	cout << "\n";
 	cout << "where paths arguments are:\n";
-	cout << "-iFile|iFolder <path> : sets the input as a file or folder path respectively\n";
-	cout << "-oPath <path> : sets the path for where to store the serialized data\n";
+	cout
+			<< "-iFile|iFolder <path> : sets the input as a file or folder path respectively\n";
+	cout
+			<< "-oPath <path> : sets the path for where to store the serialized data\n";
 	cout << "-toJson : this will make output serialized data to the console\n";
 	cout << "\n";
 	cout << "where landscape exclusive arguments are:\n";
-	cout << "-label <label> : the label to use when serializing landscape histogram\n";
+	cout
+			<< "-label <label> : the label to use when serializing landscape histogram\n";
 	cout << "where landscape and histogram's common arguments are:\n";
 	cout << "-color : will use RGB to generate histograms and landscape\n";
 	cout << "-gray : will use grayscale to generate histograms and landscape\n";
-	cout << "-hsv : will use hue and saturation to generate histograms and landscape\n";
+	cout
+			<< "-hsv : will use hue and saturation to generate histograms and landscape\n";
 }
 
-int extractor(int argc, const char * argv[])
-{
+int extractor(int argc, const char * argv[]) {
 	bool useInputPathAsDir = false;
 	char mode = 0;
 	char inputMode = 0;
 	std::string label = "";
 	std::string inputDir = "";
 	string outputDir = "";
-	bool showhelp=false;
-	bool saveToFile=true;
+	bool showhelp = false;
+	bool saveToFile = true;
 	bool useYaml = true;
 	bool loadOnDemand = false;
 
@@ -852,14 +793,14 @@ int extractor(int argc, const char * argv[])
 //    };
 //    int argc_ = 7;
 	vector<string> *input = new vector<string>(0);
-	for (int i = 1; i < argc; i++)
-	{
+	for (int i = 1; i < argc; i++) {
 		input->push_back(argv[i]);
 	}
 
 	Flags* flags = new Flags();
 	flags->setMinCount(1);
 	flags->setOverridingFlag("help");
+	initModuleFlags(flags);
 	//I/O MODE
 	flags->setNoValuesFlag("landscape");
 	flags->setNoValuesFlag("histograms");
@@ -917,117 +858,86 @@ int extractor(int argc, const char * argv[])
 
 	flags->setVerbose(true);
 
-	if (flags->validateInput(input))
-	{
+	if (flags->validateInput(input)) {
 		vector<string>* values;
-		if (flags->flagFound("help"))
-		{
+		if (flags->flagFound("help")) {
 			showhelp = true;
 		}
-		if (flags->flagFound("landscape"))
-		{
+		if (flags->flagFound("landscape")) {
 			inputMode = LANDSCAPE;
 		}
-		if (flags->flagFound("histograms"))
-		{
+		if (flags->flagFound("histograms")) {
 			inputMode = HISTOGRAMS;
 		}
-		if (flags->flagFound("matching"))
-		{
+		if (flags->flagFound("matching")) {
 			inputMode = PATTERNS;
 		}
-		if (flags->flagFound("iFile"))
-		{
+		if (flags->flagFound("iFile")) {
 			useInputPathAsDir = false;
 			values = flags->getFlagValues("iFile");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				inputDir = values->at(0);
-			}
-			else
-			{
+			} else {
 				cerr << "param iFile need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("iFolder"))
-		{
+		if (flags->flagFound("iFolder")) {
 			useInputPathAsDir = true;
 			values = flags->getFlagValues("iFolder");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				inputDir = values->at(0);
-			}
-			else
-			{
+			} else {
 				cerr << "param iFolder need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("oPath"))
-		{
+		if (flags->flagFound("oPath")) {
 			values = flags->getFlagValues("oPath");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				outputDir = values->at(0);
-			}
-			else
-			{
+			} else {
 				cerr << "param oPath need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("label"))
-		{
+		if (flags->flagFound("label")) {
 			values = flags->getFlagValues("label");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				label = values->at(0);
-			}
-			else
-			{
+			} else {
 				cerr << "param label need only one value\n";
 				return -1;
 			}
 		}
-		if (flags->flagFound("color"))
-		{
+		if (flags->flagFound("color")) {
 			mode = mode | COLOR;
 		}
-		if (flags->flagFound("gray"))
-		{
+		if (flags->flagFound("gray")) {
 			mode = mode | GRAY;
 		}
-		if (flags->flagFound("hsv"))
-		{
+		if (flags->flagFound("hsv")) {
 			mode = mode | HSV;
 		}
-		if (flags->flagFound("toJson"))
-		{
+		if (flags->flagFound("toJson")) {
 			saveToFile = false;
 		}
-		if (flags->flagFound("xml"))
-		{
+		if (flags->flagFound("xml")) {
 			useYaml = false;
 		}
-		if (flags->flagFound("yml"))
-		{
+		if (flags->flagFound("yml")) {
 			useYaml = true;
 		}
-		if (flags->flagFound("lod"))
-		{
+		if (flags->flagFound("lod")) {
 			loadOnDemand = true;
 		}
-	}
-	else
-	{
+	} else {
 		cerr << "input error!\n";
 		return -1;
 	}
 
-	if (showhelp)
-	{
-		showHelp();
+	if (showhelp) {
+		showHelpExtractor();
 		return -1;
 	}
 
@@ -1038,46 +948,36 @@ int extractor(int argc, const char * argv[])
 	DataInput* patternsDataInput;
 	PatternLoader* patternsLoader;
 
-	if (!useInputPathAsDir)
-	{
+	if (!useInputPathAsDir) {
 		patternsDataInput = new SingleImageDataInput(inputDir);
-	}
-	else
-	{
+	} else {
 		patternsDataInput = new ImageDataInput(inputDir, loadOnDemand);
 	}
 
-	if (inputMode & PATTERNS)
-	{
+	if (inputMode & PATTERNS) {
 		fdetector = new cv::SurfFeatureDetector(400);
 		dextractor = new cv::SurfDescriptorExtractor();
-		patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
-		char mode = useYaml? PatternLoader::YAML : PatternLoader::XML;
+		patternsLoader = new PatternLoader(patternsDataInput, patterns,
+				fdetector, dextractor);
+		char mode = useYaml ? PatternLoader::YAML : PatternLoader::XML;
 		patternsLoader->load_and_save(outputDir, saveToFile, mode);
 		return 0;
-	}
-	else
-	{
-		patternsLoader = new PatternLoader(patternsDataInput, patterns, fdetector, dextractor);
+	} else {
+		patternsLoader = new PatternLoader(patternsDataInput, patterns,
+				fdetector, dextractor);
 		patternsLoader->load();
 	}
 
 	HistogramsIO* io = new HistogramsIO(outputDir);
 	HistogramComparator* hComparator = new HistogramComparator(patterns, io);
-	if (useYaml)
-	{
+	if (useYaml) {
 		mode = mode | HistogramComparator::YAML;
-	}
-	else
-	{
+	} else {
 		mode = mode | HistogramComparator::XML;
 	}
-	if (inputMode & HISTOGRAMS)
-	{
-		hComparator->makeAndSaveHistograms(mode,saveToFile);
-	}
-	else if (inputMode & LANDSCAPE)
-	{
+	if (inputMode & HISTOGRAMS) {
+		hComparator->makeAndSaveHistograms(mode, saveToFile);
+	} else if (inputMode & LANDSCAPE) {
 		hComparator->makeAndSaveLandscape(mode, label, saveToFile);
 	}
 
@@ -1086,7 +986,7 @@ int extractor(int argc, const char * argv[])
 
 //=======================================================================================
 #endif
-#ifdef TRAINER
+#if COMPILE_MODULE == TRAINER || COMPILE_MODULE == ALLMODULES
 //=======================================================================================
 
 #include <opencv2/opencv.hpp>
@@ -1099,26 +999,23 @@ int extractor(int argc, const char * argv[])
 #include "processing/Trainer.hpp"
 #include "data/PatternLoader.hpp"
 #include "processing/BasicFlannTrainer.hpp"
-#include "processing/Flags.hpp"
 #include "processing/SerializedPatternDataInput.hpp"
 #include "data/PatternLoader.hpp"
 #include "matching/SerializableFlannBasedMatcher.hpp"
 
-using namespace Anakin;
 using namespace cv;
 
-void showHelp()
-{
+void showHelpTrainer() {
 	std::cout << "trainer help" << std::endl;
 	std::cout << std::endl;
 	std::cout << "usage: " << std::endl;
 	std::cout << "./trainer -help" << std::endl;
-	std::cout << "./trainer -user <userID> -saveToFile [<folder>] <filename>" << std::endl;
+	std::cout << "./trainer -user <userID> -saveToFile [<folder>] <filename>"
+			<< std::endl;
 	std::cout << std::endl;
 }
 
-int trainer(int argc, const char * argv[])
-{
+int trainer(int argc, const char * argv[]) {
 	std::string userID;
 	//char mode = 0;
 	std::string folder;
@@ -1128,6 +1025,7 @@ int trainer(int argc, const char * argv[])
 	Flags* flags = new Flags();
 	flags->setMinCount(2);
 	flags->setOverridingFlag("help");
+	initModuleFlags(flags);
 	flags->setRequiredFlag("user");
 	//flags->setNoValuesFlag("patterns");
 	flags->setOptionalFlag("saveToFile");
@@ -1138,62 +1036,50 @@ int trainer(int argc, const char * argv[])
 	//};
 	//int argc_ = 0;
 	std::vector<std::string> *input = new std::vector<std::string>(0);
-	for (int i = 1; i < argc; i++)
-	{
+	for (int i = 1; i < argc; i++) {
 		input->push_back(argv[i]);
 	}
 
-	if (flags->validateInput(input))
-	{
-		if (flags->flagFound("help"))
-		{
-			showHelp();
+	if (flags->validateInput(input)) {
+		if (flags->flagFound("help")) {
+			showHelpTrainer();
 			return 0;
 		}
 		std::vector<std::string>* values;
-		if (flags->flagFound("user"))
-		{
+		if (flags->flagFound("user")) {
 			values = flags->getFlagValues("user");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				userID = values->at(0);
-			}
-			else
-			{
+			} else {
 				std::cerr << "flag user need only one value" << std::endl;
 				return -1;
 			}
 		}
-		if (flags->flagFound("saveToFile"))
-		{
+		if (flags->flagFound("saveToFile")) {
 			values = flags->getFlagValues("saveToFile");
-			if (values->size() == 1)
-			{
+			if (values->size() == 1) {
 				folder = "";
 				fileName = values->at(0);
-			}
-			else if (values->size() == 2)
-			{
+			} else if (values->size() == 2) {
 				folder = values->at(0);
 				fileName = values->at(1);
-			}
-			else
-			{
-				std::cerr << "flag saveToFile need between one and two values" << std::endl;
+			} else {
+				std::cerr << "flag saveToFile need between one and two values"
+						<< std::endl;
 				return -1;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		std::cerr << "Input error!" << std::endl;
 		exit(-1);
 	}
 
 	//TRAINING
-	const Ptr<flann::IndexParams>& indexParams=new flann::KDTreeIndexParams(4);
-	const Ptr<flann::SearchParams>& searchParams=new flann::SearchParams();
-	cv::Ptr<cv::DescriptorMatcher> matcher = cv::Ptr<FlannBasedMatcher>(new SerializableFlannBasedMatcher(indexParams, searchParams));
+	const Ptr<flann::IndexParams>& indexParams = new flann::KDTreeIndexParams(
+			4);
+	const Ptr<flann::SearchParams>& searchParams = new flann::SearchParams();
+	cv::Ptr<cv::DescriptorMatcher> matcher = cv::Ptr<FlannBasedMatcher>(
+			new SerializableFlannBasedMatcher(indexParams, searchParams));
 	matcher->clear();
 	std::vector<RichImg*> patterns;
 
@@ -1201,7 +1087,8 @@ int trainer(int argc, const char * argv[])
 	PatternLoader* loader = new PatternLoader(sinput, patterns);
 	loader->load();
 
-	Trainer* trainer = new BasicFlannTrainer(matcher, patterns, folder, fileName);
+	Trainer* trainer = new BasicFlannTrainer(matcher, patterns, folder,
+			fileName);
 	trainer->train_and_save();
 
 	return 0;
@@ -1209,23 +1096,70 @@ int trainer(int argc, const char * argv[])
 
 #endif
 
+#if COMPILE_MODE == COMPILE_FOR_PRODUCTION
 //=======================================================================================
+// MAIN for COMPILE_FOR_PRODUCTION
 //=======================================================================================
 
 int main(int argc, const char * argv[]) {
-#ifdef PATTERNMATCHING
+#if COMPILE_MODULE == PATTERNMATCHING
 	return patternMatching(argc, argv);
 #endif
-#ifdef MATCHERCACHE
+#if COMPILE_MODULE == MATCHERCACHE
 	return matcherCache(argc,argv);
 #endif
-#ifdef DBCONNECTOR
+#if COMPILE_MODULE == DBCONNECTOR
 	return dbConnector(argc,argv);
 #endif
-#ifdef EXTRACTOR
+#if COMPILE_MODULE == EXTRACTOR
 	return extractor(argc,argv);
 #endif
-#ifdef TRAINER
+#if COMPILE_MODULE == TRAINER
 	return trainer(argc,argv);
 #endif
 }
+
+#endif
+
+#if COMPILE_MODE == COMPILE_FOR_TESTING
+//=======================================================================================
+// MAIN for COMPILE_FOR_TESTING
+//=======================================================================================
+
+int main(int argc, const char * argv[]) {
+
+	vector<string> *input = new vector<string>(0);
+	for (int i = 1; i < argc; i++) {
+		input->push_back(argv[i]);
+	}
+
+	Flags* anakinInput = new Flags();
+	anakinInput->setVerbose(true);
+	anakinInput->setIgnoreUnknownFlags(true);
+	initModuleFlags(anakinInput);
+
+	if (anakinInput->validateInput(input)) {
+		if (anakinInput->flagFound("modepatternmatching")) {
+			return patternMatching(argc, argv);
+		} else if (anakinInput->flagFound("modematchercache")) {
+			return matcherCache(argc, argv);
+		} else if (anakinInput->flagFound("modedbconnector")) {
+			return dbConnector(argc, argv);
+		} else if (anakinInput->flagFound("modeextractor")) {
+			return extractor(argc, argv);
+		} else if (anakinInput->flagFound("modetrainer")) {
+			return trainer(argc, argv);
+		} else {
+			cout << "Input error! Expected flag "
+					<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer\n";
+			return -1;
+		}
+	} else {
+		cout << "Input error! Expected flag "
+				<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer\n";
+		return -1;
+	}
+
+}
+
+#endif
