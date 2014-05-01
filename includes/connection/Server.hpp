@@ -101,6 +101,10 @@ protected:
 	 */
 	virtual bool stopMessageReceived(std::string rawMsg);
 	/**
+	 * will return true if rawMsg is a stop message in HTTP
+	 */
+	virtual bool stopMessageReceivedHTTP(std::string rawMsg);
+	/**
 	 * this is used to execute anything needed before starting to receiving messages
 	 */
 	virtual void startServer();
