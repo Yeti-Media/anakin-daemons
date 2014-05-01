@@ -1,7 +1,7 @@
 PatternMatching
 
-Starts N threads and process requests to add, delete or update trainers to the cache, and to process pattern matching requests. This application
-only uses data from the db.
+Starts N threads and process requests to add, delete or update trainers to the cache, and to process pattern matching requests. This application only uses data from the db.
+The program can be shutdown with the command stop (or "action":"stop" in json). 
 
 the following commands must be runned from the bin/Debug or bin/Release folders (just once per session)
 
