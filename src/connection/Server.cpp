@@ -71,12 +71,13 @@ void Server::start(AnakinFlags* aflags, DataOutput* output) {
 			std::cout << "MESSAGE RECEIVED:\n" << msg << std::endl;
 			std::vector<std::vector<std::string>*>* inputs = getInputs(msg,
 					&stopReceivedInsideInput);
-			for (uint i = 0; i < inputs->size(); i++) {
-				execute(inputs->at(i));
-			}
 			if (stopReceivedInsideInput) {
 				stopReceived();
 				run = false;
+			} else {
+				for (uint i = 0; i < inputs->size(); i++) {
+					execute(inputs->at(i));
+				}
 			}
 		} else {
 			stopReceived();
@@ -140,7 +141,15 @@ bool * stopReceivedInsideInput) {
 			}
 			inputs->push_back(rawToInput(line));
 		}
+	} else if (this->mode & HTTP) {
+		if (stopMessageReceivedHTTP(rawInput)) {
+			*stopReceivedInsideInput = true;
+		}
+		inputs->push_back(rawToInput(rawInput));
 	} else {
+		if (stopMessageReceived(rawInput)) {
+			*stopReceivedInsideInput = true;
+		}
 		inputs->push_back(rawToInput(rawInput));
 	}
 	return inputs;
@@ -164,6 +173,10 @@ void Server::execute(std::vector<std::string>* input) {
 }
 
 void Server::executeStop() {
+}
+
+bool Server::stopMessageReceivedHTTP(std::string rawMsg) {
+	return rawMsg.find("-stop ") != std::string::npos;
 }
 
 bool Server::stopMessageReceived(std::string rawMsg) {
