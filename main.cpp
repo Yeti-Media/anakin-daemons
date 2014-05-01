@@ -3,11 +3,10 @@
 // compile.
 //================================================================
 #include <CompileConfigurations.hpp>
-#include "processing/Flags.hpp"
 
 using namespace Anakin;
 
-void initModuleFlags(Flags* flags) {
+void Anakin::initModuleFlags(Flags* flags) {
 	flags->setNoValuesFlag("modepatternmatching");
 	flags->setNoValuesFlag("modematchercache");
 	flags->setNoValuesFlag("modedbconnector");
@@ -51,7 +50,7 @@ void initModuleFlags(Flags* flags) {
 #define DTCP    8
 #define HTTP    16
 
-int patternMatching(int argc, const char * argv[]) {
+int Anakin::patternMatching(int argc, const char * argv[]) {
 	std::ios_base::sync_with_stdio(false);
 	std::cin.tie(nullptr);
 	std::cerr.tie(nullptr);
@@ -296,11 +295,11 @@ int patternMatching(int argc, const char * argv[]) {
 #include <vector>
 #include <ctime>
 
-void showHelpMatcherCache() {
+void Anakin::showHelpMatcherCache() {
 
 }
 
-int matcherCache(int argc, const char * argv[]) {
+int Anakin::matcherCache(int argc, const char * argv[]) {
 	DBDriver* dbdriver = new DBDriver();
 	if (!dbdriver->connect()) {
 		std::cerr << dbdriver->getMessage() << std::endl;
@@ -343,12 +342,12 @@ int matcherCache(int argc, const char * argv[]) {
 #include <iostream>
 #include "utils/Help.hpp"
 
-void showHelpDbConnector() {
+void Anakin::showHelpDbConnector() {
 	Help* h = new Help();
 	std::cout << h->getFullHelp() << std::endl;
 }
 
-int dbConnector(int argc, const char * argv[]) {
+int Anakin::dbConnector(int argc, const char * argv[]) {
 	std::string path;
 	bool saveObjects = false;
 	int userID;
@@ -744,7 +743,7 @@ int dbConnector(int argc, const char * argv[]) {
 
 namespace fs = boost::filesystem;
 
-void showHelpExtractor() {
+void Anakin::showHelpExtractor() {
 	cout << "Extractor help\n\n";
 	cout << "usage: ./extractor -help";
 	cout
@@ -772,7 +771,7 @@ void showHelpExtractor() {
 			<< "-hsv : will use hue and saturation to generate histograms and landscape\n";
 }
 
-int extractor(int argc, const char * argv[]) {
+int Anakin::extractor(int argc, const char * argv[]) {
 	bool useInputPathAsDir = false;
 	char mode = 0;
 	char inputMode = 0;
@@ -1005,7 +1004,7 @@ int extractor(int argc, const char * argv[]) {
 
 using namespace cv;
 
-void showHelpTrainer() {
+void Anakin::showHelpTrainer() {
 	std::cout << "trainer help" << std::endl;
 	std::cout << std::endl;
 	std::cout << "usage: " << std::endl;
@@ -1015,7 +1014,7 @@ void showHelpTrainer() {
 	std::cout << std::endl;
 }
 
-int trainer(int argc, const char * argv[]) {
+int Anakin::trainer(int argc, const char * argv[]) {
 	std::string userID;
 	//char mode = 0;
 	std::string folder;
