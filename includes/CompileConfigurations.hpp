@@ -6,7 +6,7 @@
  */
 #ifndef COMPILECONFIGURATIONS_HPP_
 #define COMPILECONFIGURATIONS_HPP_
-
+#include "processing/Flags.hpp"
 /**
  * Constants for compiling options (do not modify)
  */
@@ -73,7 +73,7 @@
 
 #else
 #define COMPILE_MODULE ALLMODULES
-#endif
+#endif //COMPILE_MODE == COMPILE_FOR_PRODUCTION
 
 /** ======================================================================
  *  ======================================================================
@@ -85,20 +85,35 @@
 /** ----------------------------------------------------------------------
  * header for main functions
  *  ----------------------------------------------------------------------*/
+
+namespace Anakin {
+
+void initModuleFlags(Flags* flags);
+
 #if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
 int patternMatching(int argc, const char * argv[]);
 #endif
+
 #if COMPILE_MODULE == MATCHERCACHE || COMPILE_MODULE == ALLMODULES
+void showHelpMatcherCache();
 int matcherCache(int argc, const char * argv[]);
 #endif
+
 #if COMPILE_MODULE == DBCONNECTOR || COMPILE_MODULE == ALLMODULES
+void showHelpDbConnector();
 int dbConnector(int argc, const char * argv[]);
 #endif
+
 #if COMPILE_MODULE == EXTRACTOR || COMPILE_MODULE == ALLMODULES
+void showHelpExtractor();
 int extractor(int argc, const char * argv[]);
 #endif
+
 #if COMPILE_MODULE == TRAINER || COMPILE_MODULE == ALLMODULES
+void showHelpTrainer();
 int trainer(int argc, const char * argv[]);
 #endif
+
+}
 
 #endif /* COMPILECONFIGURATIONS_HPP_ */
