@@ -65,11 +65,11 @@
  *  TRAINER
  *  ======================================================================
  */
-#define COMPILE_MODULE PATTERNMATCHING
+//#define COMPILE_MODULE PATTERNMATCHING
 //#define COMPILE_MODULE MATCHERCACHE
 //#define COMPILE_MODULE DBCONNECTOR
 //#define COMPILE_MODULE EXTRACTOR
-//#define COMPILE_MODULE TRAINER
+#define COMPILE_MODULE TRAINER
 
 #else
 #define COMPILE_MODULE ALLMODULES
