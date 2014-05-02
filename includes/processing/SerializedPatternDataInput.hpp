@@ -11,6 +11,7 @@ namespace Anakin {
 class SerializedPatternDataInput {
 public:
 	SerializedPatternDataInput(std::string userID);
+	SerializedPatternDataInput(std::vector<int>* patternsToFind);
 	bool nextInput(ImageInfo** output);
 	void reload();
 protected:
@@ -26,6 +27,7 @@ private:
 			const ImageInfo& default_value = ImageInfo());
 	std::string userID;
 	DBDriver* driver;
+	std::vector<int>* patternsToFind;
 };
 }
 ;

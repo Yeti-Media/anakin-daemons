@@ -32,13 +32,11 @@ void PatternLoader::load() {
 			this->patterns->push_back(richImage);
 		}
 	} else {
-//Inicio simon
 		ImageInfo* ii;
 		while (this->sinput->nextInput(&ii)) {
 			RichImg* richImg = new RichImg(ii);
 			this->patterns->push_back(richImg);
 		}
-//Fin simon
 	}
 
 }

@@ -14,6 +14,18 @@ SerializedPatternDataInput::SerializedPatternDataInput(std::string userID) {
 	this->cache = new vector<ImageInfo*>(0);
 	this->loaded = false;
 	this->current = -1;
+	this->patternsToFind = NULL;
+}
+
+SerializedPatternDataInput::SerializedPatternDataInput(vector<int>* patternsToFind) {
+	if (!initAndConnectDriver()) {
+		reportDBDriverError();
+		exit(-1);
+	}
+	this->patternsToFind = patternsToFind;
+	this->cache = new vector<ImageInfo*>(0);
+	this->loaded = false;
+	this->current = -1;
 }
 
 bool SerializedPatternDataInput::nextInput(ImageInfo** output) {
@@ -73,13 +85,44 @@ void SerializedPatternDataInput::reportDBDriverError() {
 	std::cerr << this->driver->getMessage() << std::endl;
 }
 
+//bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {
+//	bool error = false;
+////	int uid = std::stoi(this->userID);
+////	std::vector<int> userPatterns = this->driver->getUserPatterns(uid, &error);
+////	if (error) {
+////		return false;
+////	}
+//	for (uint up = 0; up < /*aca reemplazar linea 83*/userPatterns.size(); up++) {
+//		int pid = userPatterns.at(up);
+//		DBPattern* dbp;
+//		bool patternError = false;
+//		if (!this->driver->retrievePattern(pid, &patternError, true, &dbp)) {
+//			return false;
+//		}
+//		loadData(data, dbp->getData());
+//	}
+//	return true;
+//}
+
 bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {
 	bool error = false;
-	int uid = std::stoi(this->userID);
-	std::vector<int> userPatterns = this->driver->getUserPatterns(uid, &error);
-	if (error) {
-		return false;
+	std::vector<int> userPatterns;
+	if (!this->userID.empty()){
+		int uid = std::stoi(this->userID);
+		userPatterns = this->driver->getUserPatterns(uid, &error);
+		if (error) {
+			return false;
+		}
+	}else {
+		if(this->patternsToFind != NULL){
+			for(int i = 0; i < this->patternsToFind->size(); i++){
+				userPatterns.push_back((*patternsToFind)[i]);
+			}
+		}else{
+			return(false);
+		}
 	}
+
 	for (uint up = 0; up < userPatterns.size(); up++) {
 		int pid = userPatterns.at(up);
 		DBPattern* dbp;
