@@ -1,6 +1,9 @@
-#include "connection/HTTPSocket.hpp"
+#include <connection/HTTPListener.hpp>
+#include <connection/HTTPSocket.hpp>
+#include <csignal>
+#include <cstdlib>
 #include <iostream>
-#include "connection/HTTPListener.hpp"
+#include <string>
 
 using namespace Anakin;
 
@@ -31,6 +34,7 @@ std::string HTTPSocket::read() {
 
 void HTTPSocket::stop() {
 	pthread_join(this->t, NULL);
+	//FIXME memory leaks?
 }
 
 //PROTECTED
@@ -45,7 +49,7 @@ void HTTPSocket::startToListen(std::string port,
 	pthread_create(&this->t, NULL, startListener, (void*) largs);
 }
 
-void * HTTPSocket::startListener(void *ptr) {
+void* HTTPSocket::startListener(void *ptr) {
 	ListenerArgs* largs = (ListenerArgs*) ptr;
 	HTTPListener* listener = HTTPListener::getInstance(largs->port,
 			largs->readingQueue, largs->writtingQueue, largs->threads);

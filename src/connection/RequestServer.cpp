@@ -42,6 +42,7 @@ bool RequestServer::stopMessageReceived(std::string rawMsg) {
 		msg = boost::regex_replace(msg, mdRx, mdfmt,
 				boost::match_default | boost::format_all);
 	}
+	//FIXME possible bug with "stop" and "-stop"
 	return msg == "stop";
 }
 

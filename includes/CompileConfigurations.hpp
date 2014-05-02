@@ -33,7 +33,8 @@
  *  Select a Compilation mode:
  *
  *	    1) COMPILE_MODE_PRODUCTION: compile only the selected subprogram
- *	       ready for release.
+ *	       ready for production. You have to choose one subprogram later on this
+ *	       file.
  *
  *	    2) COMPILE_MODE_TESTING: it will configure and merge all the
  *	       subprograms in one bin (useful for unit testing). You need to
@@ -49,8 +50,8 @@
  *	       run testing on a COMPILE_MODE_TESTING bin.
  *  ======================================================================
  */
-#define COMPILE_MODE COMPILE_FOR_PRODUCTION
-//#define COMPILE_MODE COMPILE_FOR_TESTING
+//#define COMPILE_MODE COMPILE_FOR_PRODUCTION
+#define COMPILE_MODE COMPILE_FOR_TESTING
 //#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION

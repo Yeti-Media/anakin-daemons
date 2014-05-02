@@ -19,12 +19,14 @@ DataOutput::DataOutput(HTTPSocket* httpSocket) {
 	this->httpSocket = httpSocket;
 	this->consoleOutput = false;
 	this->httpOutput = true;
+	this->s = NULL;
 }
 
 DataOutput::DataOutput() {
 	initSem();
 	this->consoleOutput = true;
 	this->httpOutput = false;
+	this->s = NULL;
 }
 
 void DataOutput::output(string data, int reqID) {
@@ -70,7 +72,7 @@ void DataOutput::error(std::wstring data) {
 }
 
 void DataOutput::close() {
-	if (!this->consoleOutput) {
+	if (this->s) {
 		this->s->sendStop();
 	}
 }

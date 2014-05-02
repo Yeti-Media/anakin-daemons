@@ -31,6 +31,7 @@ public:
 	/**
 	 * stops the server
 	 */
+	//FIXME possible bug?? test needed
 	virtual void stopServer() = 0;
 protected:
 	bool showComs = false;
