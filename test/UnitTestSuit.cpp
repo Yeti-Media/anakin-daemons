@@ -26,7 +26,7 @@ test_suite*
 init_unit_test_suite(int argc, char* argv[]) {
 
 	if (argc != 2) {
-		std::cerr << "First param must be a testing directory.";
+		std::cerr << "First param must be a testing directory.\n";
 		exit(-1);
 	}
 

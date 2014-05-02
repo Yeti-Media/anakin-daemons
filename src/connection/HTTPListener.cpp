@@ -63,7 +63,7 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 		std::string body(conn->content, conn->content_len); //request's body
 		std::string request;
 		int reqID;
-		if (strcmp(body.c_str(), "stop") == 0) {
+		if (body.find("\"action\":\"stop\"") != std::string::npos) {
 			//the request is a stop message
 			HTTPListener::running = false; //will stop the HTTP server
 			request = body;
