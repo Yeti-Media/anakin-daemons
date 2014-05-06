@@ -2,9 +2,9 @@
 #define OUTPUTPOLICYFILE_H
 
 #include <boost/thread/pthread/mutex.hpp>
-#include <cstdio>
-#include <string>
 #include <logging/Log.hpp>
+#include <iostream>
+#include <string>
 
 namespace Logging {
 
@@ -14,9 +14,9 @@ namespace Logging {
 class OutputPolicyFile {
 public:
 	static void Output(const std::string& msg);
-	static void SetStream(std::FILE* pFile);
+	static bool SetFileStream(std::string oFile);
 private:
-	static std::FILE* oFile;
+	static std::ofstream oFileStream;
 	static boost::mutex& GetMutex() {
 		static boost::mutex mutex;
 		return mutex;

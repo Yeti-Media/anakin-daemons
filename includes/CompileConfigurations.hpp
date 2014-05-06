@@ -7,6 +7,7 @@
 #ifndef COMPILECONFIGURATIONS_HPP_
 #define COMPILECONFIGURATIONS_HPP_
 #include "processing/Flags.hpp"
+#include <boost/filesystem/path.hpp>
 /**
  * Constants for compiling options (do not modify)
  */
@@ -51,8 +52,8 @@
  *  ======================================================================
  */
 //#define COMPILE_MODE COMPILE_FOR_PRODUCTION
-#define COMPILE_MODE COMPILE_FOR_TESTING
-//#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
+//#define COMPILE_MODE COMPILE_FOR_TESTING
+#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
 /** ======================================================================
