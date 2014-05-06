@@ -240,13 +240,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	}
 
 	//logger initialization
-	FILE* pFile = fopen(logFile.c_str(), "a");
-	Logging::OutputPolicyFile::SetStream(pFile);
-
-	if (NULL == pFile) {
-		cout << "the logging file is not valid\n";
-		return -1;
-	}
+	Logging::OutputPolicyFile::SetFileStream(logFile);
 
 	Socket* soutput;
 	HTTPSocket* httpSocket;

@@ -1,3 +1,9 @@
+/*
+ * Log.hpp
+ *
+ *  Created on: 18/04/2014
+ *      Author: Franco Pellegrini
+ */
 #ifndef LOG_H
 #define LOG_H
 
