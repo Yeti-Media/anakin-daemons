@@ -1160,7 +1160,7 @@ SSL_CERTIFICATE,
 URL_REWRITES, NUM_OPTIONS
 };
 
-static const char *static_config_options[] = {  "access_control_list", NULL,
+static const char *static_config_options[] = { "access_control_list", NULL,
 #ifndef MONGOOSE_NO_FILESYSTEM
 	"access_log_file", NULL,
 #ifndef MONGOOSE_NO_AUTH
