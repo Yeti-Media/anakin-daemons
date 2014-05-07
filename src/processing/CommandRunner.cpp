@@ -10,6 +10,7 @@ using namespace cv;
 
 CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
 		std::vector<std::string> *input) {
+	this->flags = flags;
 	this->out = out;
 	this->rw = new ResultWriter();
 	this->cache = cache;
@@ -205,7 +206,7 @@ int CommandRunner::run() {
 		}
 		for (uint i = 0; i < this->indexes.size(); i++) {
 			int idxID = std::stoi(this->indexes.at(i));
-			bool error;
+			bool error = false;
 			this->cache->loadMatcher(idxID, &error);
 			if (error) {
 				this->out->error(
@@ -261,7 +262,7 @@ int CommandRunner::run() {
 		for (uint i = 0; i < this->indexes.size(); i++) {
 			std::string smatcherID = this->indexes.at(i);
 			int idxID = std::stoi(smatcherID);
-			bool error;
+			bool error = false;
 			this->cache->updateMatcher(idxID, &error);
 			if (error) {
 				this->out->error(
@@ -285,7 +286,7 @@ int CommandRunner::run() {
 							"CommandRunner::run"));
 			return -1;
 		}
-		bool loadSceneError;
+		bool loadSceneError = false;
 		ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
 		if (loadSceneError) {
 			this->out->error(
@@ -296,7 +297,7 @@ int CommandRunner::run() {
 		for (uint i = 0; i < this->indexes.size(); i++) {
 			std::string smatcherID = this->indexes.at(i);
 			int idxID = std::stoi(smatcherID);
-			bool matcherError;
+			bool matcherError = false;
 			SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(
 					idxID, &matcherError);
 			if (matcherError) {
@@ -308,7 +309,7 @@ int CommandRunner::run() {
 					this->mr, this->mma);
 			this->processor = new FlannMatchingProcessor(this->detector,
 					this->rw);
-			bool processingError;
+			bool processingError = false;
 			std::vector<JSONValue*>* cmatches = this->processor->process(rscene,
 					&processingError);
 			if (processingError) {

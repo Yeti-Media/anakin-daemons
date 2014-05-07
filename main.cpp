@@ -123,11 +123,13 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	if (anakinInput->validateInput(input)) {
 		if (anakinInput->flagFound("help")) {
 			cout << "Anakin help\n\n";
-			cout << "usage: ./anakin2 -help\n";
+			cout << "usage : ./anakin2 -help\n";
 			cout
-			<< "usage: ./anakin2 (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n";
+			<< "usage : ./anakin2 (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n";
 			cout
-			<< "-iConsole/oConsole: use console to input or output respectively\n";
+			<< "-iConsole/oConsole : use console to input or output respectively\n";
+			cout
+			<< "-oLogFile : path to the output logging file\n";
 			cout
 			<< "-iTCP/oTCP <ip> <port> : use a TCP connection with ip and port for input or output respectively\n";
 			cout

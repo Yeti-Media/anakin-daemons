@@ -12,6 +12,7 @@ FlannMatchingProcessor::FlannMatchingProcessor(BasicFlannDetector* detector,
 
 std::vector<JSONValue*>* FlannMatchingProcessor::process(RichImg* scene,
 		bool * error) {
+	//internal function, do not init *error=false
 	std::vector<JSONValue*>* sceneResult = new std::vector<JSONValue*>(0);
 	std::vector<Match>* matches = this->detector->findPatterns(scene, error);
 	for (uint m = 0; m < matches->size() && !*error; m++) {

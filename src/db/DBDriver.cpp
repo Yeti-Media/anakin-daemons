@@ -69,7 +69,7 @@ bool DBDriver::saveUser(DBUser* u) {
 
 bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
 		bool full) {
-	*error = false;
+	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
 		std::string user_id = std::to_string(id);
@@ -184,7 +184,7 @@ std::vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 bool DBDriver::saveUserPatterns(DBUser* u, bool saveNeededObjectsFirst) {
 	std::vector<DBPattern*>* patterns = u->getPatterns();
 	std::string spatterns = "";
-	bool error;
+	bool error = false;
 	bool userExist = retrieveUser(u->getID(), &error);
 	if (!userExist && !error) {
 		if (saveNeededObjectsFirst) {
@@ -229,7 +229,7 @@ bool DBDriver::saveHORL(DBHistogram* h, bool saveNeededObjectsFirst) {
 		std::string object =
 				(h->getMode() & Constants::HISTOGRAM) ?
 						"histogram" : "landscape";
-		bool error;
+		bool error = false;
 		bool userExist = retrieveUser(h->getUserID(), &error);
 		if (!userExist && !error) {
 			if (saveNeededObjectsFirst) {
@@ -342,7 +342,7 @@ bool DBDriver::savePattern(DBPattern* p) {
 
 bool DBDriver::retrievePattern(int id, bool * error, bool load,
 		DBPattern** result) {
-	*error = false;
+	//internal function, do not init *error=false
 	if (checkConn()) {
 		int user_id;
 		std::string data;
@@ -385,7 +385,7 @@ bool DBDriver::retrieveLandscape(int id, bool * error, bool load,
 bool DBDriver::storeSFBM(std::string filename, int * smatcher_id, int userID,
 		bool checkExistence, bool delete_files) {
 	bool exists = false;
-	bool error;
+	bool error=false;
 	if (checkExistence && !retrieveUser(userID, &error)) {
 		DBUser* u = new DBUser(userID);
 		if (!saveUser(u))
@@ -452,7 +452,7 @@ bool DBDriver::storeSFBM(std::string filename, int * smatcher_id, int userID,
 }
 
 bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
-	*error = false;
+	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
 		std::string sid = std::to_string(smatcher_id);
@@ -510,7 +510,7 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 }
 
 bool DBDriver::sfbmExists(int smatcher_id, bool * error) {
-	*error = false;
+	*error = false; //FIXME check this init
 	if (checkConn()) {
 		PGresult *res;
 		std::string sid = std::to_string(smatcher_id);
@@ -570,7 +570,7 @@ bool DBDriver::storeNthPattern(int smatcher_id, int pidx, DBPattern* p) {
 
 bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 		ImageInfo** pattern, bool * error) {
-	*error = false;
+	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
 		std::string sid = std::to_string(smatcher_id);
@@ -677,7 +677,7 @@ bool DBDriver::storeScene(DBPattern* scene) {
 }
 
 bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
-	*error = false;
+	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
 		std::string sid = std::to_string(sceneID);
@@ -770,7 +770,7 @@ bool DBDriver::savePatternDescriptors(int id, std::string data) {
 }
 
 bool DBDriver::getPatternDescriptors(int id, std::string * data, bool * error) {
-	*error = false;
+	//internal function, do not init *error=false
 	PGresult *res;
 	std::string sid = std::to_string(id);
 	const int numParam = 1;
@@ -842,7 +842,7 @@ bool DBDriver::savePatternBasicInfo(int user_id, int category_id, int * pid) {
 }
 
 bool DBDriver::getPatternBasicInfo(int id, int * user_id, bool * error) {
-	*error = false;
+	//internal function, do not init *error=false
 	PGresult *res;
 	std::string sid = std::to_string(id);
 	const int numParam = 1;
@@ -910,6 +910,7 @@ bool DBDriver::updatePatternTrainerInfo(int id, int trainer_id, int position) {
 }
 
 int DBDriver::getCategoryID(std::string name, bool * error) {
+	//internal function, do not init *error=false
 	PGresult *res;
 	const int numParam = 1;
 	const char *paramValues[numParam] = { name.c_str() };

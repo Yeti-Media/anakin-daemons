@@ -67,6 +67,7 @@ void BasicFlannDetector::getKeys(map<int, vector<DMatch>*>* m,
 
 vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 		Anakin::RichImg* scene, bool * error) {
+	//internal function, do not init *error=false
 	vector<Match>* result = new std::vector<Match>();
 	vector<DMatch>* good_matches = new vector<DMatch>(0);
 	getMatches(scene->getDescriptors(), *good_matches);
