@@ -51,9 +51,9 @@
  *	       run testing on a COMPILE_MODE_TESTING bin.
  *  ======================================================================
  */
-//#define COMPILE_MODE COMPILE_FOR_PRODUCTION
+#define COMPILE_MODE COMPILE_FOR_PRODUCTION
 //#define COMPILE_MODE COMPILE_FOR_TESTING
-#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
+//#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
 /** ======================================================================
@@ -67,11 +67,11 @@
  *  TRAINER
  *  ======================================================================
  */
-//#define COMPILE_MODULE PATTERNMATCHING
+#define COMPILE_MODULE PATTERNMATCHING
 //#define COMPILE_MODULE MATCHERCACHE
 //#define COMPILE_MODULE DBCONNECTOR
 //#define COMPILE_MODULE EXTRACTOR
-#define COMPILE_MODULE TRAINER
+//#define COMPILE_MODULE TRAINER
 
 #else
 #define COMPILE_MODULE ALLMODULES

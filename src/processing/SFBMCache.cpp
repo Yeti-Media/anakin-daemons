@@ -49,6 +49,7 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, int loadingTimeWeight,
 SerializableFlannBasedMatcher* SFBMCache::loadMatcher(int smatcher_id,
 		bool * error) {
 	sem_wait(&this->sem);
+	//internal function, do not init *error=false
 	this->requests++;
 	SerializableFlannBasedMatcher* matcher;
 	if (keyExist(this->matchersLife, smatcher_id)) {
@@ -104,6 +105,7 @@ void SFBMCache::unloadMatcher(int smatcher_id, bool keepPatterns) {
 
 void SFBMCache::updateMatcher(int smatcher_id, bool * error) {
 	//VERY DUMB IMPLEMENTATION FOR THE MOMENT
+	//internal function, do not init *error=false
 	unloadMatcher(smatcher_id, true);
 	loadMatcher(smatcher_id, error);
 	if (!*error)
@@ -119,6 +121,7 @@ JSONValue* SFBMCache::indexCacheStatus() {
 
 ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
 	sem_wait(&this->sem);
+	//internal function, do not init *error=false
 	this->sceneRequests++;
 	ImageInfo* scene;
 	if (keyExist(this->scenesLife, sceneID)) {
@@ -142,6 +145,7 @@ ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
 
 ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 	sem_wait(&this->sem);
+	//internal function, do not init *error=false
 	ImageInfo* pattern;
 	std::map<int, ImageInfo*>* smatcherPatterns;
 	if (this->pcache->find(smatcherID) == this->pcache->end()) {
@@ -213,6 +217,7 @@ void SFBMCache::printLoadCount() {
 }
 
 JSONValue* SFBMCache::getLastOperationResult(bool * error) {
+	//internal function, do not init *error=false
 	if (error != NULL)
 		*error = false;
 	JSONValue* result;
@@ -332,6 +337,7 @@ void SFBMCache::getKeys(std::map<int, int>* m, std::vector<int>* keys) {
 
 SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id,
 		float* loadingTime, bool * error) {
+	//internal function, do not init *error=false
 	int loadCount = 0;
 	if (keyExist(this->loadingCount, smatcher_id)) {
 		loadCount = this->loadingCount->find(smatcher_id)->second;
@@ -364,6 +370,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id,
 
 ImageInfo* SFBMCache::loadSceneFromDB(int sceneID, bool * error) {
 	ImageInfo* scene;
+	//internal function, do not init *error=false
 	bool sceneFound;
 	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error);
 	if (!sceneFound) {

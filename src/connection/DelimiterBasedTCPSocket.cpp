@@ -109,6 +109,7 @@ std::string DelimiterBasedTCPSocket::sread(int lenght) {
 
 std::string DelimiterBasedTCPSocket::read_until(std::string ld, std::string md,
 bool * eom, bool * error) {
+	*error = false;
 	bool stop = false;
 	bool eomFound = false;
 	std::string msg = "";
