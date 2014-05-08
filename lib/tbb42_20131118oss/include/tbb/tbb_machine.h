@@ -806,7 +806,7 @@ __TBB_DefineTypeWithAlignment(16)
 __TBB_DefineTypeWithAlignment(32)
 __TBB_DefineTypeWithAlignment(64)
 
-typedef __TBB_machine_type_with_alignment_64   __TBB_machine_type_with_strictest_alignment;// Primary template is a declaration of incomplete type so that it fails with unknown alignments
+typedef __TBB_machine_type_with_alignment_64    __TBB_machine_type_with_strictest_alignment;// Primary template is a declaration of incomplete type so that it fails with unknown alignments
 template<size_t N> struct type_with_alignment;
 
 // Specializations for allowed alignments
@@ -940,7 +940,7 @@ inline void __TBB_AtomicAND( volatile void *operand, uintptr_t addend ) {
 #ifndef __TBB_Flag
 typedef unsigned char __TBB_Flag;
 #endif
-typedef __TBB_atomic   __TBB_Flag   __TBB_atomic_flag;
+typedef __TBB_atomic    __TBB_Flag    __TBB_atomic_flag;
 #ifndef __TBB_TryLockByte
 inline
 bool __TBB_TryLockByte(__TBB_atomic_flag &flag) {
@@ -949,7 +949,7 @@ bool __TBB_TryLockByte(__TBB_atomic_flag &flag) {
 #endif
 
 #ifndef __TBB_LockByte
-inline __TBB_Flag   __TBB_LockByte( __TBB_atomic_flag& flag)   {
+inline __TBB_Flag    __TBB_LockByte( __TBB_atomic_flag& flag)    {
 	tbb::internal::atomic_backoff backoff;
 	while (!__TBB_TryLockByte(flag))
 		backoff.pause();

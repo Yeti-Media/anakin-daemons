@@ -1,6 +1,5 @@
 #include "processing/BasicFlannTrainer.hpp"
-#include <time.h> // for benchmark#include <boost/foreach.hpp>#define DEBUG 0
-
+#include <time.h> // for benchmark#include <boost/foreach.hpp>#define DEBUG 0
 using namespace Anakin;
 using namespace cv;
 using namespace std;

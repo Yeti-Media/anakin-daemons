@@ -35,7 +35,7 @@ Server::Server(unsigned short port, bool verbose, char mode, std::string ld,
 				&this->cacheInitialization);
 		if (!this->cacheInitialization) {
 			this->cacheInitializationError = cacheError->Stringify().c_str();
-			LOG_F("ERROR") << cacheError->Stringify().c_str();
+			LOG_F("ERROR")<< cacheError->Stringify().c_str();
 		}
 	}
 	if (mode & TCP) {
@@ -173,7 +173,8 @@ void Server::executeStop() {
 }
 
 bool Server::stopMessageReceived(std::string rawMsg) {
-	return (rawMsg.find("-stop") != std::string::npos) || (rawMsg.find("\"action\":\"stop\"") != std::string::npos);
+	return (rawMsg.find("-stop") != std::string::npos)
+			|| (rawMsg.find("\"action\":\"stop\"") != std::string::npos);
 }
 
 void Server::endServer() {

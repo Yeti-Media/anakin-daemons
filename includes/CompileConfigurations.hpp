@@ -14,6 +14,7 @@
 #define COMPILE_FOR_PRODUCTION 0
 #define COMPILE_FOR_TESTING 1
 #define COMPILE_FOR_UNIT_TESTING 2
+#define COMPILE_FOR_BIN_ACCEPTANCE_TESTING 3
 
 #define PATTERNMATCHING 0
 #define MATCHERCACHE 1
@@ -49,11 +50,24 @@
  *
  *	    3) COMPILE_FOR_UNIT_TESTING: generate a Unit Testing bin that can
  *	       run testing on a COMPILE_MODE_TESTING bin.
+ *	       The first param must be a valid path to a testing directory.
+ *	       For example:
+ *
+ *	       anakin "/home/franco/Trabajos/Yeti-Media/TestDir/"
+ *
+ *	    4) COMPILE_FOR_BIN_ACCEPTANCE_TESTING: generate an Acceptance Testing bin
+ *	       that can run binary/program testing on a COMPILE_MODE_TESTING bin.
+ *	       The first param must be a valid path to a testing directory.
+ *	       For example:
+ *
+ *	       anakin "/home/franco/Trabajos/Yeti-Media/TestDir/"
+ *
  *  ======================================================================
  */
-#define COMPILE_MODE COMPILE_FOR_PRODUCTION
+//#define COMPILE_MODE COMPILE_FOR_PRODUCTION
 //#define COMPILE_MODE COMPILE_FOR_TESTING
 //#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
+#define COMPILE_MODE COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
 /** ======================================================================

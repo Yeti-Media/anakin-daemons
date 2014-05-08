@@ -17,7 +17,8 @@ SerializedPatternDataInput::SerializedPatternDataInput(std::string userID) {
 	this->patternsToFind = NULL;
 }
 
-SerializedPatternDataInput::SerializedPatternDataInput(vector<int>* patternsToFind) {
+SerializedPatternDataInput::SerializedPatternDataInput(
+		vector<int>* patternsToFind) {
 	if (!initAndConnectDriver()) {
 		reportDBDriverError();
 		exit(-1);
@@ -88,19 +89,19 @@ void SerializedPatternDataInput::reportDBDriverError() {
 bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {
 	bool error = false;
 	std::vector<int> userPatterns;
-	if (!this->userID.empty()){
+	if (!this->userID.empty()) {
 		int uid = std::stoi(this->userID);
 		userPatterns = this->driver->getUserPatterns(uid, &error);
 		if (error) {
 			return false;
 		}
-	}else {
-		if(this->patternsToFind != NULL){
-			for(unsigned int i = 0; i < this->patternsToFind->size(); i++){
+	} else {
+		if (this->patternsToFind != NULL) {
+			for (unsigned int i = 0; i < this->patternsToFind->size(); i++) {
 				userPatterns.push_back((*patternsToFind)[i]);
 			}
-		}else{
-			return(false);
+		} else {
+			return (false);
 		}
 	}
 

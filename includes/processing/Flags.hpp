@@ -77,7 +77,6 @@ public:
 	 */
 	void setIgnoreUnknownFlags(bool b);
 
-
 	//GETTERS
 	vector<string>* getRequiredFlags();
 	vector<string>* getOptionalFlags();
