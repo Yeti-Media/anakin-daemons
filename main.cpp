@@ -778,14 +778,6 @@ int Anakin::extractor(int argc, const char * argv[]) {
 	bool useYaml = true;
 	bool loadOnDemand = false;
 
-//    const char * argv_[] = {
-//        "./extractor",
-//        "-iFolder", "/home/stein/Downloads/interesante_images_5K/",
-//        "-oPath", "../../dbtest/bin/Debug/interesante_images_patterns/",
-//        "-patterns",
-//        "-xml"
-//    };
-//    int argc_ = 7;
 	vector<string> *input = new vector<string>(0);
 	for (int i = 1; i < argc; i++) {
 		input->push_back(argv[i]);
