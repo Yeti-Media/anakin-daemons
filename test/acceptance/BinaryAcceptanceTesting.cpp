@@ -20,6 +20,18 @@ using namespace Anakin;
 namespace fs = boost::filesystem;
 
 /**
+ * Execute a system call to a specific program
+ */
+void command(string command) {
+	if (system(command.c_str()) != 0) {
+		cerr << "Command \"" << command << "\" fail" << endl;
+		cerr << "\n===============================================\n"
+				<< "Acceptance test result: FAIL" << endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+/**
  * Files and Dir validation
  */
 void testingDirCheck(int argc, const char * argv[]) {
@@ -68,20 +80,40 @@ void testingDirCheck(int argc, const char * argv[]) {
 	}
 }
 
-int main(int argc, const char * argv[]) {
+/**
+ * This is a very simple test used as an example, and for quickly test all the
+ * programs and subprograms from Anakin.
+ */
+void simpleTest(int argc, const char * argv[]) {
+	//testing database name
 	string anakinDB = "AnakinAcceptanceTesting";
+	//username for database
+	string userDB = "postgres";
+
+	fs::path testDir = argv[1];
+	fs::path anakinPath = testDir / "Anakin";
+	fs::path sqlScriptPath = testDir / "script.sql";
+
+	//testing database cleanup
+	command("dropdb --if-exists " + anakinDB);
+
+	//testing database creation.
+	command("createdb " + anakinDB);
+
+	//run SQL script into database.
+	command(
+			"psql -U " + userDB + " -d " + anakinDB + " -q -f "
+					+ sqlScriptPath.string());
+
+}
+
+int main(int argc, const char * argv[]) {
 
 	testingDirCheck(argc, argv);
 
-	//Testing database creation.
-//	string command = "createdb " + anakinDB;
-//	if (system(command.c_str())==0) {
-//		ascasascac
-//	}
+	simpleTest(argc, argv);
 
-	//psql -U username -d myDataBase -a -f myInsertFile
-
-	cout << "Acceptance test passed" << endl;
+	cout << "Acceptance test result: SUCCESS" << endl;
 	exit(EXIT_SUCCESS);
 }
 
