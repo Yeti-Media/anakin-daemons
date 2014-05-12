@@ -13,6 +13,44 @@
 
 namespace Anakin {
 
+typedef struct CacheConfig {
+	/**
+	 * how many importance the loading time of a trainer will influence on his life
+	 */
+	int cacheLoadingTimeWeight;
+
+	/**
+	 * If a trainer is loaded from the db whose life is less than the object to be dropped then the new object will not be stored in the cache.
+	 * The default value will discard less valuable.
+	 */
+	bool cacheNoDiscardLessValuable;
+
+	/**
+	 * trainers cache size (how many trainers can be stored in the cache)
+	 */
+	int cacheSize;
+
+	/**
+	 * trainers starting life
+	 */
+	int cacheLife;
+
+	/**
+	 * scenes cache size (how many scenes can be stored in the cache)
+	 */
+	int cacheScenesSize;
+
+	/**
+	 * scenes starting life
+	 */
+	int cacheScenesLife;
+
+	CacheConfig() :
+			cacheLoadingTimeWeight(9), cacheNoDiscardLessValuable(false), cacheSize(
+					10), cacheLife(1), cacheScenesSize(15), cacheScenesLife(10) {
+	}
+} CacheConfig;
+
 /**
  * This class is used to obtain Trainers, Patterns and Scenes
  * the steps followed when an object is requested are
@@ -31,16 +69,8 @@ public:
 	 * Constructor
 	 *
 	 * dbdriver              : used to make requests to the db
-	 * loadingTimeWeight     : how many importance the loading time of a trainer will influence on his life
-	 * discardLessValuable   : if a trainer is loaded from the db whose life is less than the object to be dropped then the new object will not be stored in the cache
-	 * cacheSize             : trainers cache size (how many trainers can be stored in the cache)
-	 * life                  : trainers starting life
-	 * scenesCacheSize       : scenes cache size (how many scenes can be stored in the cache)
-	 * scenesLife            : scenes starting life
 	 */
-	SFBMCache(DBDriver* dbdriver, int loadingTimeWeight = 0,
-			bool discardLessValuable = false, int cacheSize = 4, int life = 10,
-			int scenesCacheSize = 15, int scenesLife = 10);
+	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig);
 	/**
 	 * load a matcher
 	 *

@@ -6,9 +6,7 @@
 
 using namespace Anakin;
 
-SFBMCache::SFBMCache(DBDriver* dbdriver, int loadingTimeWeight,
-		bool discardLessValuable, int cacheSize, int life, int scenesCacheSize,
-		int scenesLife) {
+SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	if (sem_init(&this->sem, 0, 1) != 0) {
 		//std::cout << "SFBMCache#SFBMCache: error initializing semaphore\n";
 		this->errorType = ResultWriter::RW_ERROR_TYPE_FATAL;
@@ -20,21 +18,21 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, int loadingTimeWeight,
 	this->dbdriver = dbdriver;
 	this->rw = new ResultWriter();
 	//MATCHES CACHE
-	this->cacheMaxSize = cacheSize;
+	this->cacheMaxSize = cacheConfig->cacheSize;
 	this->cacheSize = 0;
-	this->loadingTimeWeight = loadingTimeWeight;
-	this->life = life;
+	this->loadingTimeWeight = cacheConfig->cacheLoadingTimeWeight;
+	this->life = cacheConfig->cacheLife;
 	this->hits = 0;
 	this->misses = 0;
 	this->requests = 0;
-	this->discardLessValuable = discardLessValuable;
+	this->discardLessValuable = !cacheConfig->cacheNoDiscardLessValuable;
 	this->cache = new std::map<int, SerializableFlannBasedMatcher*>();
 	this->matchersLife = new std::map<int, int>();
 	this->loadingCount = new std::map<int, int>();
 
 	//SCENES CACHE
-	this->slife = scenesLife;
-	this->scenesCacheMaxSize = scenesCacheSize;
+	this->slife = cacheConfig->cacheScenesLife;
+	this->scenesCacheMaxSize = cacheConfig->cacheScenesSize;
 	this->scenesCacheSize = 0;
 	this->sceneHits = 0;
 	this->sceneMisses = 0;

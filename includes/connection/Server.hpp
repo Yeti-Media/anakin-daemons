@@ -51,7 +51,7 @@ public:
 	 * ld (only for DTCP) : the line delimiter
 	 * md (only for DTCP) : the message delimiter
 	 */
-	Server(unsigned const short port, bool verbose, char mode = TCP,
+	Server(CacheConfig * cacheConfig, unsigned const short port, bool verbose, char mode = TCP,
 			std::string ld = "", std::string md = "");
 	/**
 	 * this will start the skeleton algorithm shown above
