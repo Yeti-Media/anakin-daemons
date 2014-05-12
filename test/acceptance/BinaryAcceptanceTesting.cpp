@@ -1,6 +1,8 @@
 /*
  * BinaryAcceptanceTesting.cpp
  *
+ * For a more detailed output use #define TESTING_DEBUGMODE
+ *
  *  Created on: 06/05/2014
  *      Author: Franco Pellegrini
  */
@@ -8,7 +10,7 @@
 #include <CompileConfigurations.hpp>
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
-//#define TESTING_DEBUGMODE
+#define TESTING_DEBUGMODE
 
 #include <string>
 #include <iostream>
@@ -16,6 +18,9 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <utils/Files.hpp>
+#include <signal.h>
+#include <utils/Files.hpp>
+#include <regex>
 
 using namespace std;
 using namespace Anakin;
@@ -33,9 +38,28 @@ void exitWithSucces() {
 }
 
 /**
- * Execute a system call to a specific program
+ * kill the process with pid = childPIDtoKill, and pid>0
  */
-void command(string command, bool showLogMsjIfFail = false) {
+void killPID(pid_t childPIDtoKill) {
+	if (childPIDtoKill > 0) {
+		if (kill(childPIDtoKill, SIGTERM) == -1) {
+			cerr << "pid " << childPIDtoKill << " can't be killed" << endl;
+		}
+#ifdef TESTING_DEBUGMODE
+		else {
+			cout << "pid " << childPIDtoKill << " killed" << endl;
+		}
+#endif
+	}
+}
+
+/**
+ * Execute a system call to a specific program. If vforkExit is true, _exit() will be
+ * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
+ * the child PID will be killed by a signal before exit;
+ */
+void command(string command, bool showLogMsjIfFail = false, bool forkExit =
+		false, pid_t childPIDtoKill = 0) {
 #ifdef TESTING_DEBUGMODE
 	cout << "Command \"" << command << "\" executed" << endl;
 #endif
@@ -44,7 +68,12 @@ void command(string command, bool showLogMsjIfFail = false) {
 		if (showLogMsjIfFail) {
 			cerr << "See log directory for program error outputs" << endl;
 		}
-		exitWithError();
+		killPID(childPIDtoKill);
+		if (forkExit) {
+			_exit(EXIT_FAILURE);
+		} else {
+			exitWithError();
+		}
 	}
 }
 
@@ -96,9 +125,11 @@ void testingDirCheck(int argc, const char * argv[]) {
 	validateDir(testDir / "logs", "Logs");
 
 	fs::path simpleTest = testDir / "examples" / "simpleTest";
-	validateDir(simpleTest / "input-logos", "Extractor input logos (examples)");
+	validateDir(simpleTest / "input-logos",
+			"Extractor input logos (for examples)");
 	validateDir(simpleTest / "output-logos",
-			"Extractor output Logos (examples)");
+			"Extractor output Logos (for examples)");
+	validateDir(simpleTest / "outputs", "Program outputs (from examples)");
 
 	//--------------------------------------------------------------
 	//  Files validation
@@ -160,6 +191,14 @@ string pathToAnakinDir(fs::path path) {
 	return out;
 }
 
+void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
+	command(
+			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
+					+ (logsDir / "stopAnakinStdoutHTTP").string() + " 2> "
+					+ (logsDir / "stopAnakinStderrHTTP").string(), true, false,
+			pID);
+}
+
 /**
  * This is a very simple test used as an example, and for quickly test all the
  * programs and subprograms from Anakin.
@@ -183,11 +222,17 @@ void simpleTest(int argc, const char * argv[]) {
 	fs::path simpleTest = examplesDir / "simpleTest";
 	fs::path inputLogos = simpleTest / "input-logos";
 	fs::path outputLogos = simpleTest / "output-logos";
+	fs::path outputs = simpleTest / "outputs";
 	fs::path severalJPG = simpleTest / "several.jpg";
-	fs::path severalXML = simpleTest / "several.xml";
+	fs::path severalXML = outputs / "several.xml";
 	fs::path logsDir = testDir / "logs";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
+	fs::path patternMatchingLastStderr = logsDir
+			/ "patternMatchingLastStderr.txt";
+	fs::path patternMatchingLastStdout = logsDir
+			/ "patternMatchingLastStdout.txt";
+	fs::path trainerOutput = outputs / "trainerOutput";
 
 	//testing database cleanup
 	command("dropdb --if-exists " + database);
@@ -203,13 +248,16 @@ void simpleTest(int argc, const char * argv[]) {
 	//dir cleanups
 	dirCleanup(outputLogos);
 	dirCleanup(logsDir);
+	dirCleanup(outputs);
 	command("rm -f " + severalXML.string());
 
 	//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);
 
+	//TODO verify stdout!
+
 	//--------------------------------------------------------------
-	//  Extractor Basic Test
+	//  Step 1 - Extractor Basic Test
 	//--------------------------------------------------------------
 
 	command(
@@ -220,34 +268,103 @@ void simpleTest(int argc, const char * argv[]) {
 	command(
 			anakinPath.string() + " -modeextractor -matching -iFile "
 					+ severalJPG.string() + " -oPath "
-					+ pathToAnakinDir(simpleTest) + " -lod -xml > "
+					+ pathToAnakinDir(outputs) + " -lod -xml > "
+					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
+	//--------------------------------------------------------------
+	//  Step 2 - DBconnector Basic Test
+	//--------------------------------------------------------------
+
+	command(
+			anakinPath.string() + " -modedbconnector  -scenes -path "
+					+ severalXML.string() + " > " + lastStdout.string() + " 2> "
+					+ lastStderr.string(), true);
+
+	command(
+			anakinPath.string() + " -modedbconnector -user 1 -path "
+					+ pathToAnakinDir(outputLogos) + " -patterns > "
 					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
 
 	//--------------------------------------------------------------
-	//  Trainer Basic Test
+	//  Step 3 - Trainer Basic Test
 	//--------------------------------------------------------------
 
-//	command(
-//			anakinPath.string() + " -modetrainer -user 1 -saveToFile "
-//					+ severalXML.string() + " > " + lastStdout.string() + " 2> "
-//					+ lastStderr.string(), true);
-//
-//	command(
-//			anakinPath.string() + " -modetrainer -user 1 -path "
-//					+ pathToAnakinDir(outputLogos) + " -patterns > "
-//					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
-	//TODO verify stdout!
+	command(
+			anakinPath.string() + " -modetrainer -user 1 -saveToFile "
+					+ trainerOutput.string() + " > " + lastStdout.string()
+					+ " 2> " + lastStderr.string(), true);
 
+	//--------------------------------------------------------------
+	//  Step 4 - DBconnector Basic Test (continue)
+	//--------------------------------------------------------------
 
+	command(
+			anakinPath.string() + " -modedbconnector -index "
+					+ trainerOutput.string() + " 1 -savePatterns " + " > "
+					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
+
+	//--------------------------------------------------------------
+	//  Step 5 - PatternMatching Basic Test
+	//--------------------------------------------------------------
+
+	pid_t pID = fork();
+	if (pID == 0) { // child
+		// Code only executed by child process
+
+		command(
+				anakinPath.string()
+						+ " -modepatternmatching -iHTTP 8080 -oHTTP -verbose "
+						+ " > " + patternMatchingLastStdout.string() + " 2> "
+						+ patternMatchingLastStderr.string(), true, true);
+		_exit(EXIT_SUCCESS);
+	} else if (pID < 0) { // failed to fork
+		cerr << "Step 5 - Failed to fork for PatternMatching" << endl;
+		exitWithError();
+	} else { // parent
+		// Code only executed by parent process
+		sleep(2);
+		//repeated 3 times, to obtain solid outputs
+		for (int i = 0; i < 3; i++) {
+			command(
+					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
+							+ lastStdout.string() + " 2> "
+							+ lastStderr.string(), true, false, pID);
+
+			//Analyzing output
+			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
+			std::string capture = get_file_contents(lastStdout.c_str());
+			if (capture.find(pattern) == std::string::npos) {
+				cerr
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< "\n\n" << capture << "\n\n"
+						<< "and should replied something that start with:"
+						<< "\n\n" << pattern << endl;
+				stopAnakinHTTP(pID, logsDir);
+				exitWithError();
+			}
+
+			pattern =
+					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
+			if (capture.find(pattern) == std::string::npos) {
+				cerr
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< "\n\n" << capture << "\n\n"
+						<< "and should replied something that end with:"
+						<< "\n\n" << pattern << endl;
+				stopAnakinHTTP(pID, logsDir);
+				exitWithError();
+			}
+		}
+		stopAnakinHTTP(pID, logsDir);
+	}
 }
 
 int main(int argc, const char * argv[]) {
 
-testingDirCheck(argc, argv);
+	testingDirCheck(argc, argv);
 
-simpleTest(argc, argv);
+	simpleTest(argc, argv);
 
-exitWithSucces();
+	exitWithSucces();
 }
 
 #endif  /*COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING*/
