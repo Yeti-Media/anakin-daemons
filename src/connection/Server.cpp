@@ -13,7 +13,7 @@
 using namespace Anakin;
 using namespace std;
 
-Server::Server(unsigned short port, bool verbose, char mode, std::string ld,
+Server::Server(CacheConfig * cacheConfig, unsigned short port,  bool verbose, char mode, std::string ld,
 		std::string md) {
 	this->port = port;
 	this->mode = mode;
@@ -30,7 +30,7 @@ Server::Server(unsigned short port, bool verbose, char mode, std::string ld,
 		exit(-1);
 	}
 	if (this->initialization) {
-		this->cache = new SFBMCache(this->dbdriver, 9, true, 10);
+		this->cache = new SFBMCache(this->dbdriver, cacheConfig);
 		JSONValue* cacheError = this->cache->getLastOperationResult(
 				&this->cacheInitialization);
 		if (!this->cacheInitialization) {
