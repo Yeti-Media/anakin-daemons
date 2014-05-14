@@ -1,6 +1,8 @@
 #include "data/HistogramsIO.hpp"
 #include "output/ResultWriter.hpp"
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 namespace fs = boost::filesystem;
 
 using namespace Anakin;
@@ -120,7 +122,9 @@ void HistogramsIO::loadData(vector<Histogram*>* data, string folder) {
 
 	} else {
 		std::cerr << "HistogramsIO#loadData : directory : " << folder
-				<< " doesn't exist\n";
-		exit(-1);
+				<< " doesn't exist" << std::endl;
+		LOG_F("ERROR")<< "HistogramsIO#loadData : directory : " << folder
+		<< " doesn't exist";
+		exit(EXIT_FAILURE);
 	}
 }

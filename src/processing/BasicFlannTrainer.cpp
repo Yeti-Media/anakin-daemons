@@ -1,11 +1,9 @@
 #include "processing/BasicFlannTrainer.hpp"
-#include <time.h> // for benchmark#include <boost/foreach.hpp>#define DEBUG 0
-using namespace Anakin;
-using namespace cv;
+#include <time.h> // for benchmark#include <boost/foreach.hpp>#define DEBUG 0using namespace Anakin;using namespace cv;
 using namespace std;
 
 void BasicFlannTrainer::train_and_save() {
-	std::vector<cv::Mat> pdescriptors(this->patterns->size());
+	std::vector < cv::Mat > pdescriptors(this->patterns->size());
 	for (uint i = 0; i < this->patterns->size(); i++) {
 		RichImg* p = this->patterns->at(i);
 		pdescriptors.at(i) = p->getDescriptors().clone();

@@ -13,8 +13,8 @@
 using namespace Anakin;
 using namespace std;
 
-Server::Server(CacheConfig * cacheConfig, unsigned short port,  bool verbose, char mode, std::string ld,
-		std::string md) {
+Server::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
+		char mode, std::string ld, std::string md) {
 	this->port = port;
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
@@ -27,15 +27,16 @@ Server::Server(CacheConfig * cacheConfig, unsigned short port,  bool verbose, ch
 		this->initializationError = this->dbdriver->getMessage();
 		LOG_F("ERROR") << this->dbdriver->getMessage();
 		std::cout << this->dbdriver->getMessage() << std::endl;
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	if (this->initialization) {
 		this->cache = new SFBMCache(this->dbdriver, cacheConfig);
+		this->cacheInitializationError = false;
 		JSONValue* cacheError = this->cache->getLastOperationResult(
-				&this->cacheInitialization);
-		if (!this->cacheInitialization) {
-			this->cacheInitializationError = cacheError->Stringify().c_str();
-			LOG_F("ERROR")<< cacheError->Stringify().c_str();
+				&this->cacheInitializationError);
+		if (this->cacheInitializationError) {
+			this->cacheInitializationErrorMsj = cacheError->Stringify().c_str();
+			LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
 		}
 	}
 	if (mode & TCP) {

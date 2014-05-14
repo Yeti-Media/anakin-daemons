@@ -36,6 +36,7 @@ private:
 					"./dbtest -index <ID UID> [(-load)|-savePatterns)]	                			(4)\n";
 	std::string flags =
 			"flags:\n\n"
+					"-oLogFile          : path to the output logging file\n"
 					"-user <ID> 		: 	sets the user ID, when used with -patterns, -landscapes or -histograms flags then the saving or loading of patterns,\n"
 					"                       landscapes or histograms will be related to that particular user. A user can be saved without specifying any other flag\n"
 					"                       but a user can't be loaded, only it's patterns, landscapes or histograms.\n"

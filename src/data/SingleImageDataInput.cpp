@@ -1,6 +1,8 @@
 #include "data/SingleImageDataInput.hpp"
 #include <opencv2/opencv.hpp>
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -21,7 +23,8 @@ bool SingleImageDataInput::nextInput(Img** output) {
 		Mat nextMat = imread(this->pathToImage);
 		if (!nextMat.data) {
 			std::cerr << "error reading image: " << this->pathToImage << "\n";
-			exit(-1);
+			LOG_F("ERROR")<< "error reading image: " << this->pathToImage;
+			exit(EXIT_FAILURE);
 		}
 		Img* nextImg = new Img(nextMat, this->pathToImage);
 		*output = nextImg;

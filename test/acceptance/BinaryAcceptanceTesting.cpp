@@ -54,6 +54,19 @@ void killPID(pid_t childPIDtoKill) {
 }
 
 /**
+ * adapt a path to anakin compatible directory style
+ */
+string pathToAnakinPath(fs::path path) {
+	string out = path.string();
+	if (fs::is_directory(path)) {
+		if (out.back() != '/') {
+			out = out + "/";
+		}
+	}
+	return "\"" + out + "\"";
+}
+
+/**
  * Execute a system call to a specific program. If vforkExit is true, _exit() will be
  * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
  * the child PID will be killed by a signal before exit;
@@ -180,23 +193,13 @@ void setTestingEnvironmentVariables(string host, string database, string user,
 #endif
 }
 
-/**
- * adapt a path to anakin compatible directory style
- */
-string pathToAnakinDir(fs::path path) {
-	string out = path.string();
-	if (out.back() != '/') {
-		return out + "/";
-	}
-	return out;
-}
-
 void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
 	command(
 			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-					+ (logsDir / "stopAnakinStdoutHTTP").string() + " 2> "
-					+ (logsDir / "stopAnakinStderrHTTP").string(), true, false,
-			pID);
+					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
+					+ " 2> "
+					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
+			true, false, pID);
 }
 
 /**
@@ -234,6 +237,11 @@ void simpleTest(int argc, const char * argv[]) {
 			/ "patternMatchingLastStdout.txt";
 	fs::path trainerOutput = outputs / "trainerOutput";
 
+	fs::path logsAnakin = logsDir / "anakin.log";
+	fs::path logsDbConnector = logsDir / "dbconnector.log";
+	fs::path logsTrainer = logsDir / "trainer.log";
+	fs::path logsExtractor = logsDir / "extractor.log";
+
 	//testing database cleanup
 	command("dropdb --if-exists " + database);
 
@@ -243,13 +251,13 @@ void simpleTest(int argc, const char * argv[]) {
 	//run SQL script into database.
 	command(
 			"psql -U " + userDB + " -d " + database + " -q -f "
-					+ sqlScriptPath.string());
+					+ pathToAnakinPath(sqlScriptPath));
 
 	//dir cleanups
 	dirCleanup(outputLogos);
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
-	command("rm -f " + severalXML.string());
+	command("rm -f " + pathToAnakinPath(severalXML));
 
 	//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);
@@ -261,46 +269,58 @@ void simpleTest(int argc, const char * argv[]) {
 	//--------------------------------------------------------------
 
 	command(
-			anakinPath.string() + " -modeextractor -matching -iFolder "
-					+ pathToAnakinDir(inputLogos) + " -oPath "
-					+ pathToAnakinDir(outputLogos) + " -lod -xml > "
-					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
+			pathToAnakinPath(anakinPath) + " -modeextractor -oLogFile "
+					+ pathToAnakinPath(logsExtractor) + " -matching -iFolder "
+					+ pathToAnakinPath(inputLogos) + " -oPath "
+					+ pathToAnakinPath(outputLogos) + " -lod -xml > "
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 	command(
-			anakinPath.string() + " -modeextractor -matching -iFile "
-					+ severalJPG.string() + " -oPath "
-					+ pathToAnakinDir(outputs) + " -lod -xml > "
-					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
+			pathToAnakinPath(anakinPath) + " -modeextractor -oLogFile "
+					+ pathToAnakinPath(logsExtractor) + " -matching -iFile "
+					+ pathToAnakinPath(severalJPG) + " -oPath "
+					+ pathToAnakinPath(outputs) + " -lod -xml > "
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 	//--------------------------------------------------------------
 	//  Step 2 - DBconnector Basic Test
 	//--------------------------------------------------------------
 
 	command(
-			anakinPath.string() + " -modedbconnector  -scenes -path "
-					+ severalXML.string() + " > " + lastStdout.string() + " 2> "
-					+ lastStderr.string(), true);
+			pathToAnakinPath(anakinPath) + " -modedbconnector -oLogFile "
+					+ pathToAnakinPath(logsDbConnector) + " -scenes -path "
+					+ pathToAnakinPath(severalXML) + " > "
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 
 	command(
-			anakinPath.string() + " -modedbconnector -user 1 -path "
-					+ pathToAnakinDir(outputLogos) + " -patterns > "
-					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
+			pathToAnakinPath(anakinPath) + " -modedbconnector -oLogFile "
+					+ pathToAnakinPath(logsDbConnector) + " -user 1 -path "
+					+ pathToAnakinPath(outputLogos) + " -patterns > "
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 
 	//--------------------------------------------------------------
 	//  Step 3 - Trainer Basic Test
 	//--------------------------------------------------------------
 
 	command(
-			anakinPath.string() + " -modetrainer -user 1 -saveToFile "
-					+ trainerOutput.string() + " > " + lastStdout.string()
-					+ " 2> " + lastStderr.string(), true);
+			pathToAnakinPath(anakinPath) + " -modetrainer -oLogFile "
+					+ pathToAnakinPath(logsTrainer) + " -user 1 -saveToFile "
+					+ pathToAnakinPath(trainerOutput) + " > "
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 
 	//--------------------------------------------------------------
 	//  Step 4 - DBconnector Basic Test (continue)
 	//--------------------------------------------------------------
 
 	command(
-			anakinPath.string() + " -modedbconnector -index "
-					+ trainerOutput.string() + " 1 -savePatterns " + " > "
-					+ lastStdout.string() + " 2> " + lastStderr.string(), true);
+			pathToAnakinPath(anakinPath) + " -modedbconnector -oLogFile "
+					+ pathToAnakinPath(logsDbConnector) + " -index "
+					+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns > "
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 
 	//--------------------------------------------------------------
 	//  Step 5 - PatternMatching Basic Test
@@ -311,10 +331,13 @@ void simpleTest(int argc, const char * argv[]) {
 		// Code only executed by child process
 
 		command(
-				anakinPath.string()
-						+ " -modepatternmatching -iHTTP 8080 -oHTTP -verbose "
-						+ " > " + patternMatchingLastStdout.string() + " 2> "
-						+ patternMatchingLastStderr.string(), true, true);
+				pathToAnakinPath(anakinPath)
+						+ " -modepatternmatching -oLogFile "
+						+ pathToAnakinPath(logsAnakin)
+						+ " -iHTTP 8080 -oHTTP -verbose > "
+						+ pathToAnakinPath(patternMatchingLastStdout) + " 2> "
+						+ pathToAnakinPath(patternMatchingLastStderr), true,
+				true);
 		_exit(EXIT_SUCCESS);
 	} else if (pID < 0) { // failed to fork
 		cerr << "Step 5 - Failed to fork for PatternMatching" << endl;
@@ -326,8 +349,8 @@ void simpleTest(int argc, const char * argv[]) {
 		for (int i = 0; i < 3; i++) {
 			command(
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-							+ lastStdout.string() + " 2> "
-							+ lastStderr.string(), true, false, pID);
+							+ pathToAnakinPath(lastStdout) + " 2> "
+							+ pathToAnakinPath(lastStderr), true, false, pID);
 
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
