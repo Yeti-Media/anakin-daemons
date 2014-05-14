@@ -11,11 +11,12 @@ Only the table name is hardcoded (this will be fixed in the future), all other a
 
 Keep in mind that training requires a good amount of time, it is preferred to construct several indexes instead of one really big one.
 
-usage: ./trainer -user <userID> -saveToFile [<folder>] <filename>
+usage:  ./trainer -user <userID> -saveToFile [<folder>] <filename>             or
+        ./trainer -patternsId <id id ...> -saveToFile [<folder>] <filename>
 
 -user <userID>              : the user's id, patterns from this user will be used to train the matcher
 -saveToFile [<folder>] <filename>   : two files will be created, folder+filename+.xml and folder+filename+.if
-
+-patternsId <id id ...>		: a spaced separated list of patterns id, which will be used to train the matcher
 
 
 the following commands must be runned from the bin/Debug or bin/Release folders (just once per session)
