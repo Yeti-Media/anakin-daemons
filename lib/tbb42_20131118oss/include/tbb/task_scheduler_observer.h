@@ -74,7 +74,7 @@ public:
 	//! Construct observer with observation disabled.
 	task_scheduler_observer_v3() :
 			my_proxy(NULL) {
-		my_busy_count.store<relaxed>(0);
+		my_busy_count.store < relaxed > (0);
 	}
 
 	//! Entry notification

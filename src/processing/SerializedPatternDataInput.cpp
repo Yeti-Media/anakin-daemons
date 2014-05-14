@@ -1,5 +1,7 @@
 #include "processing/SerializedPatternDataInput.hpp"
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 namespace fs = boost::filesystem;
 
 using namespace Anakin;
@@ -8,7 +10,7 @@ using namespace std;
 SerializedPatternDataInput::SerializedPatternDataInput(std::string userID) {
 	if (!initAndConnectDriver()) {
 		reportDBDriverError();
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	this->userID = userID;
 	this->cache = new vector<ImageInfo*>(0);
@@ -21,7 +23,7 @@ SerializedPatternDataInput::SerializedPatternDataInput(
 		vector<int>* patternsToFind) {
 	if (!initAndConnectDriver()) {
 		reportDBDriverError();
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	this->patternsToFind = patternsToFind;
 	this->cache = new vector<ImageInfo*>(0);
@@ -35,7 +37,7 @@ bool SerializedPatternDataInput::nextInput(ImageInfo** output) {
 			this->cache->clear();
 			if (!loadDataFromDB(this->cache)) {
 				reportDBDriverError();
-				exit(-1);
+				exit(EXIT_FAILURE);
 			}
 			this->loaded = true;
 		}
@@ -84,6 +86,7 @@ bool SerializedPatternDataInput::initAndConnectDriver() {
 
 void SerializedPatternDataInput::reportDBDriverError() {
 	std::cerr << this->driver->getMessage() << std::endl;
+	LOG_F("ERROR")<< this->driver->getMessage();
 }
 
 bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {

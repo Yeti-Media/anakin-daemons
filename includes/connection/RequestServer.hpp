@@ -21,9 +21,9 @@ public:
 	 * a blocking queue with a capacity of <cap>
 	 * a vector of threads of size <threads>
 	 */
-	RequestServer(CacheConfig * cacheConfig, unsigned const short port, int cap, int threads,
-			bool verbose = false, char mode = TCP, std::string ld = "",
-			std::string md = "");
+	RequestServer(CacheConfig * cacheConfig, unsigned const short port, int cap,
+			int threads, bool verbose = false, char mode = TCP, std::string ld =
+					"", std::string md = "");
 protected:
 	/**
 	 * pushes the input to the blocking queue

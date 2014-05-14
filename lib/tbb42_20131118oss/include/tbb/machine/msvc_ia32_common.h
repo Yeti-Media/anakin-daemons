@@ -192,7 +192,7 @@ extern "C" __declspec(dllimport) int __stdcall SwitchToThread(void);
 #undef __TBB_r
 
 extern "C" {
-__int8 __TBB_EXPORTED_FUNC    __TBB_machine_try_lock_elided (volatile void* ptr);
+__int8 __TBB_EXPORTED_FUNC      __TBB_machine_try_lock_elided (volatile void* ptr);
 void __TBB_EXPORTED_FUNC __TBB_machine_unlock_elided (volatile void* ptr);
 
  // 'pause' instruction aborts HLE/RTM transactions
@@ -206,7 +206,7 @@ _asm pause;
 #if __TBB_TSX_INTRINSICS_PRESENT
 #define __TBB_machine_is_in_transaction _xtest
 #else
-__int8 __TBB_EXPORTED_FUNC    __TBB_machine_is_in_transaction();
+__int8 __TBB_EXPORTED_FUNC      __TBB_machine_is_in_transaction();
 #endif /* __TBB_TSX_INTRINSICS_PRESENT */
 #if TBB_PREVIEW_SPECULATIVE_SPIN_RW_MUTEX
 #if __TBB_TSX_INTRINSICS_PRESENT
@@ -216,7 +216,7 @@ __int8 __TBB_EXPORTED_FUNC    __TBB_machine_is_in_transaction();
 // Intel(R) 64 and IA-32 Architectures Optimization Reference Manual 12.4.5 lock not free
 #define __TBB_machine_transaction_conflict_abort() _xabort(0xFF)
 #else
-unsigned __int32    __TBB_EXPORTED_FUNC    __TBB_machine_begin_transaction(); void __TBB_EXPORTED_FUNC __TBB_machine_end_transaction();
+unsigned __int32      __TBB_EXPORTED_FUNC      __TBB_machine_begin_transaction(); void __TBB_EXPORTED_FUNC __TBB_machine_end_transaction();
 void __TBB_EXPORTED_FUNC __TBB_machine_transaction_conflict_abort();
 
 #endif /* __TBB_TSX_INTRINSICS_PRESENT */

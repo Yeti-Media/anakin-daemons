@@ -385,7 +385,7 @@ bool DBDriver::retrieveLandscape(int id, bool * error, bool load,
 bool DBDriver::storeSFBM(std::string filename, int * smatcher_id, int userID,
 		bool checkExistence, bool delete_files) {
 	bool exists = false;
-	bool error=false;
+	bool error = false;
 	if (checkExistence && !retrieveUser(userID, &error)) {
 		DBUser* u = new DBUser(userID);
 		if (!saveUser(u))

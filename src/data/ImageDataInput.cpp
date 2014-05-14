@@ -2,6 +2,8 @@
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 namespace fs = boost::filesystem;
 #include <algorithm>
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 
 using namespace Anakin;
 
@@ -74,7 +76,8 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
 				if (!img.data) {
 					std::cerr << "Error loading image : " << itr->path().c_str()
 							<< "\n";
-					exit(-1);
+					LOG_F("ERROR")<< "Error loading image : " << itr->path().c_str();
+					exit(EXIT_FAILURE);
 				}
 				this->images->at(idx) = img;
 				std::string label(itr->path().string());
@@ -86,8 +89,10 @@ void ImageDataInput::loadImages(std::vector<cv::Mat>* images) {
 		}
 
 	} else {
-		std::cerr << "directory : " << imagesFolder << " doesn't exist\n";
-		exit(-1);
+		std::cerr << "directory : " << imagesFolder << " doesn't exist"
+				<< std::endl;
+		LOG_F("ERROR")<< "directory : " << imagesFolder << " doesn't exist";
+		exit(EXIT_FAILURE);
 	}
 	//std::cout << "total loaded files : " << loadedFiles << std::endl;
 }
@@ -96,8 +101,10 @@ void ImageDataInput::initializeIterator() {
 	if (fs::exists(imagesFolder)) {
 		orderFiles();
 	} else {
-		std::cerr << "directory : " << imagesFolder << " doesn't exist\n";
-		exit(-1);
+		std::cerr << "directory : " << imagesFolder << " doesn't exist"
+				<< std::endl;
+		LOG_F("ERROR")<< "directory : " << imagesFolder << " doesn't exist";
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -109,8 +116,9 @@ bool ImageDataInput::nextFile(cv::Mat* imat, std::string * label) {
 			//std::cout << "reading " << *di << std::endl;
 			cv::Mat img = cv::imread((*di).string().c_str());
 			if (!img.data) {
-				std::cerr << "Error loading image : " << *di << "\n";
-				exit(-1);
+				std::cerr << "Error loading image : " << *di << std::endl;
+				LOG_F("ERROR")<< "Error loading image : " << *di;
+				exit(EXIT_FAILURE);
 			}
 			*imat = img;
 			*label = (*di).string();

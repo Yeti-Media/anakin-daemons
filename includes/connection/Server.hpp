@@ -51,8 +51,8 @@ public:
 	 * ld (only for DTCP) : the line delimiter
 	 * md (only for DTCP) : the message delimiter
 	 */
-	Server(CacheConfig * cacheConfig, unsigned const short port, bool verbose, char mode = TCP,
-			std::string ld = "", std::string md = "");
+	Server(CacheConfig * cacheConfig, unsigned const short port, bool verbose,
+			char mode = TCP, std::string ld = "", std::string md = "");
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * aflags : this will check the message and validate that have the required flags and values
@@ -126,8 +126,8 @@ protected:
 
 	bool initialization = false;
 	std::string initializationError;
-	bool cacheInitialization = false;
-	std::wstring cacheInitializationError;
+	bool cacheInitializationError;
+	std::wstring cacheInitializationErrorMsj;
 private:
 };
 

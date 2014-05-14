@@ -216,8 +216,6 @@ void SFBMCache::printLoadCount() {
 
 JSONValue* SFBMCache::getLastOperationResult(bool * error) {
 	//internal function, do not init *error=false
-	if (error != NULL)
-		*error = false;
 	JSONValue* result;
 	switch (operation) {
 	case SFBMCache::INSERTOP: {
@@ -235,8 +233,7 @@ JSONValue* SFBMCache::getLastOperationResult(bool * error) {
 		break;
 	}
 	case SFBMCache::ERROR: {
-		if (error != NULL)
-			*error = true;
+		*error = true;
 		result = this->rw->errorAsJSON(this->errorType, this->errorMessage,
 				this->origin);
 		break;
