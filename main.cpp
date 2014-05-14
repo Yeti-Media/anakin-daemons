@@ -136,8 +136,8 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 
 			cout << "Anakin help\n\n" << "usage : ./anakin2 -help\n"
 					<< "usage : ./anakin2 [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife] (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n"
-					<< "-iConsole/oConsole : use console to input or output respectively\n"
-					<< "-oLogFile : path to the output logging file\n"
+					<< "-iConsole/oConsole         : use console to input or output respectively\n"
+					<< "-oLogFile                  : path to the output logging file\n"
 					<< "-iTCP/oTCP <ip> <port>     : use a TCP connection with ip and port for input or output respectively\n"
 					<< "-iUDP/oUDP <ip> <port>     : use a UDP connection with ip and port for input or output respectively\n"
 					<< "-cacheLoadingTimeWeight    : (default 9) how many importance the loading time of a trainer will influence on his life\n"
