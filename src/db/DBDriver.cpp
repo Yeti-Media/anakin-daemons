@@ -154,12 +154,14 @@ std::vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 			std::string param_name_category =
 					Constants::PATTERN_TABLE_CATEGORY_ID;
 			std::string return_name_id = Constants::PATTERN_TABLE_ID;
+			std::string order_by = Constants::PATTERN_TABLE_ID;
 			std::string command = Constants::SELECT_COMMAND + return_name_id
 					+ " FROM " + table + " WHERE " + param_name_id
 					+ " = $1 AND " + param_name_category + " = $2"
-					+ " ORDER BY " + param_name_id + " ASC";
+					+ " ORDER BY " + order_by + " ASC";
 			res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues,
 			NULL, NULL, 0);
+			std::cout << "comando sql del trainer = " << command.c_str() << std::endl;
 			LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
