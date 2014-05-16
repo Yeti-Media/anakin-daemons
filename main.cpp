@@ -44,13 +44,8 @@ void Anakin::initModuleFlags(Flags* flags) {
 //=======================================================================================
 #include "processing/AnakinFlags.hpp"
 #include "output/DataOutput.hpp"
-#include "connection/Socket.hpp"
-#include "connection/ATCPSocket.hpp"
-#include "connection/AUDPSocket.hpp"
 #include "connection/Server.hpp"
 #include "connection/RequestServer.hpp"
-#include "connection/DelimiterBasedTCPSocket.hpp"
-#include "connection/DTCPServerSocket.hpp"
 #include "connection/HTTPSocket.hpp"
 
 #define CONSOLE 1
@@ -325,19 +320,20 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	Logging::OutputPolicyFile::SetFileStream(logFile);
 	logProgramArguments(argc, argv);
 
-	Socket* soutput;
 	HTTPSocket* httpSocket;
-	if (oMode & TCP) {
-		soutput = new ATCPSocket(ipOut, portOut);
-	} else if (oMode & UDP) {
-		soutput = new AUDPSocket(ipOut, portOut);
-	} else if (oMode & DTCP) {
-		soutput = new DelimiterBasedTCPSocket(ipOut, portOut, "<line>",
-				"<stop>");
-	}
-	if ((oMode & TCP) || (oMode & UDP) || (oMode & DTCP)) {
-		soutput->connect();
-	}
+//	Socket* soutput;
+//
+//	if (oMode & TCP) {
+//		soutput = new ATCPSocket(ipOut, portOut);
+//	} else if (oMode & UDP) {
+//		soutput = new AUDPSocket(ipOut, portOut);
+//	} else if (oMode & DTCP) {
+//		soutput = new DelimiterBasedTCPSocket(ipOut, portOut, "<line>",
+//				"<stop>");
+//	}
+//	if ((oMode & TCP) || (oMode & UDP) || (oMode & DTCP)) {
+//		soutput->connect();
+//	}
 
 	AnakinFlags* aflags = new AnakinFlags();
 
@@ -350,9 +346,10 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	} else if (oMode & HTTP) {
 		httpSocket = server->getHttpSocket();
 		output = new DataOutput(httpSocket);
-	} else {
-		output = new DataOutput(soutput);
 	}
+//	else {
+//		output = new DataOutput(soutput);
+//	}
 
 	server->start(aflags, output);
 

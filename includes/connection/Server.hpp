@@ -1,6 +1,5 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
-#include "connection/ServerSocket.hpp"
 #include "processing/AnakinFlags.hpp"
 #include "output/DataOutput.hpp"
 #include "processing/SFBMCache.hpp"
@@ -114,9 +113,9 @@ protected:
 	 */
 	void stopReceived();
 	unsigned short port;
-	ServerSocket* server;
+	//ServerSocket* server;
 	bool verbose;
-	Socket* socket;
+	//Socket* socket;
 	HTTPSocket* httpSocket;
 	char mode;
 	AnakinFlags* aflags;

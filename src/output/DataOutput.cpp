@@ -7,26 +7,26 @@
 using namespace Anakin;
 using namespace std;
 
-DataOutput::DataOutput(Socket* s) {
-	initSem();
-	this->s = s;
-	this->consoleOutput = false;
-	this->httpOutput = false;
-}
+//DataOutput::DataOutput(Socket* s) {
+//	initSem();
+//	this->s = s;
+//	this->consoleOutput = false;
+//	this->httpOutput = false;
+//}
 
 DataOutput::DataOutput(HTTPSocket* httpSocket) {
 	initSem();
 	this->httpSocket = httpSocket;
 	this->consoleOutput = false;
 	this->httpOutput = true;
-	this->s = NULL;
+	//this->s = NULL;
 }
 
 DataOutput::DataOutput() {
 	initSem();
 	this->consoleOutput = true;
 	this->httpOutput = false;
-	this->s = NULL;
+	//this->s = NULL;
 }
 
 void DataOutput::output(string data, int reqID) {
@@ -36,9 +36,10 @@ void DataOutput::output(string data, int reqID) {
 		cout << data << endl;
 	} else if (this->httpOutput) {
 		this->httpSocket->respond(data, true, reqID);
-	} else {
-		this->s->send(data);
 	}
+//	else {
+//		this->s->send(data);
+//	}
 	sem_post(&this->ssem);
 }
 
@@ -57,10 +58,11 @@ void DataOutput::error(std::string data) {
 	} else if (this->httpOutput) {
 		this->httpSocket->respond(data, false, -1);
 		LOG_F("ERROR")<< data;
-	} else {
-		this->s->send(data);
-		LOG_F("ERROR") << data;
 	}
+//	else {
+//		this->s->send(data);
+//		LOG_F("ERROR") << data;
+//	}
 	sem_post(&this->ssem);
 }
 
@@ -72,9 +74,9 @@ void DataOutput::error(std::wstring data) {
 }
 
 void DataOutput::close() {
-	if (this->s) {
-		this->s->sendStop();
-	}
+//	if (this->s) {
+//		this->s->sendStop();
+//	}
 }
 
 //PRIVATE

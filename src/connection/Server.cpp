@@ -1,10 +1,7 @@
 #include "connection/Server.hpp"
 
-#include "connection/ATCPServerSocket.hpp"
-#include "connection/AUDPServerSocket.hpp"
 #include <sstream>
 #include "processing/CommandRunner.hpp"
-#include "connection/DTCPServerSocket.hpp"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <logging/OutputPolicyFile.hpp>
@@ -39,16 +36,17 @@ Server::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
 			LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
 		}
 	}
-	if (mode & TCP) {
-		this->server = new ATCPServerSocket(port);
-		this->server->setShowComs(verbose);
-	} else if (mode & UDP) {
-		this->server = new AUDPServerSocket(port);
-		this->server->setShowComs(verbose);
-	} else if (mode & DTCP) {
-		this->server = new DTCPServerSocket(port, ld, md);
-		this->server->setShowComs(verbose);
-	} else if (mode & HTTP) {
+//	if (mode & TCP) {
+//		this->server = new ATCPServerSocket(port);
+//		this->server->setShowComs(verbose);
+//	} else if (mode & UDP) {
+//		this->server = new AUDPServerSocket(port);
+//		this->server->setShowComs(verbose);
+//	} else if (mode & DTCP) {
+//		this->server = new DTCPServerSocket(port, ld, md);
+//		this->server->setShowComs(verbose);
+//	} else
+		if (mode & HTTP) {
 		std::string sport = std::to_string(port);
 		this->httpSocket = new HTTPSocket(sport, 15);
 		this->httpSocket->setShowComs(verbose);
@@ -57,10 +55,10 @@ Server::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
 }
 
 void Server::start(AnakinFlags* aflags, DataOutput* output) {
-	if ((this->mode & TCP) || (this->mode & UDP) || (this->mode & DTCP)) {
-		this->socket = this->server->waitForConnection();
-		this->socket->setShowComs(this->verbose);
-	}
+//	if ((this->mode & TCP) || (this->mode & UDP) || (this->mode & DTCP)) {
+//		this->socket = this->server->waitForConnection();
+//		this->socket->setShowComs(this->verbose);
+//	}
 	this->aflags = aflags;
 	this->output = output;
 	startServer();
@@ -88,8 +86,8 @@ void Server::start(AnakinFlags* aflags, DataOutput* output) {
 	} while (run);
 	endServer();
 	output->close();
-	if ((this->mode & TCP) || (this->mode & UDP) || (this->mode & DTCP))
-		this->server->stopServer();
+//	if ((this->mode & TCP) || (this->mode & UDP) || (this->mode & DTCP))
+//		this->server->stopServer();
 	if (this->mode & HTTP)
 		this->httpSocket->stop();
 }
@@ -109,11 +107,13 @@ std::string Server::read() {
 		std::string msj = this->httpSocket->read();
 		LOG_F("Request")<< msj;
 		return msj;
-	} else {
-		std::string msj = this->socket->read();
-		LOG_F("Request")<< msj;
-		return msj;
 	}
+	cout << "Server::read(): mode not recognized = " << this->mode << endl;
+//	else {
+//		std::string msj = this->socket->read();
+//		LOG_F("Request")<< msj;
+//		return msj;
+//	}
 }
 
 std::vector<std::vector<std::string>*>* Server::getInputs(std::string rawInput,
@@ -121,35 +121,35 @@ bool * stopReceivedInsideInput) {
 	std::vector<std::vector<std::string>*>* inputs = new std::vector<
 			std::vector<std::string>*>(0);
 	std::string msg = rawInput;
-	if (this->mode & DTCP) {
-		std::string ld = ((DTCPServerSocket*) this->server)->getLineDelimiter();
-		std::string md =
-				((DTCPServerSocket*) this->server)->getMessageDelimiter();
-		boost::regex ldRx(ld);
-		boost::regex mdRx(md);
-		std::string ldfmt("\n");
-		std::string mdfmt("");
-		msg = boost::regex_replace(msg, ldRx, ldfmt,
-				boost::match_default | boost::format_all);
-		msg = boost::regex_replace(msg, mdRx, mdfmt,
-				boost::match_default | boost::format_all);
-		std::istringstream iss(msg);
-		std::string line;
-		while (std::getline(iss, line)) {
-			boost::algorithm::trim_right(line);
-			if (stopMessageReceived(line)) {
-				*stopReceivedInsideInput = true;
-				break;
-			}
-			inputs->push_back(rawToInput(line));
-
-		}
-	} else {
+//	if (this->mode & DTCP) {
+//		std::string ld = ((DTCPServerSocket*) this->server)->getLineDelimiter();
+//		std::string md =
+//				((DTCPServerSocket*) this->server)->getMessageDelimiter();
+//		boost::regex ldRx(ld);
+//		boost::regex mdRx(md);
+//		std::string ldfmt("\n");
+//		std::string mdfmt("");
+//		msg = boost::regex_replace(msg, ldRx, ldfmt,
+//				boost::match_default | boost::format_all);
+//		msg = boost::regex_replace(msg, mdRx, mdfmt,
+//				boost::match_default | boost::format_all);
+//		std::istringstream iss(msg);
+//		std::string line;
+//		while (std::getline(iss, line)) {
+//			boost::algorithm::trim_right(line);
+//			if (stopMessageReceived(line)) {
+//				*stopReceivedInsideInput = true;
+//				break;
+//			}
+//			inputs->push_back(rawToInput(line));
+//
+//		}
+//	} else {
 		if (Server::stopMessageReceived(rawInput)) {
 			*stopReceivedInsideInput = true;
 		}
 		inputs->push_back(rawToInput(rawInput));
-	}
+	//}
 	return inputs;
 }
 

@@ -1,7 +1,6 @@
 #ifndef DATAOUTPUT_HPP
 #define DATAOUTPUT_HPP
 
-#include "connection/Socket.hpp"
 #include <iostream>
 #include <semaphore.h>
 #include "connection/HTTPSocket.hpp"
@@ -18,7 +17,8 @@ public:
 	 * Constructor (to use Socket to output data)
 	 * s : a Socket object used to output data
 	 */
-	DataOutput(Socket* s);
+	//DataOutput(Socket* s);
+
 	/**
 	 * Constructor (to use HTTP socket to output data)
 	 * httpSocket : the http socket to output data
@@ -65,7 +65,7 @@ private:
 	 * initialize the internal semaphores
 	 */
 	void initSem();
-	Socket* s;
+	//Socket* s;
 	HTTPSocket* httpSocket;
 	bool consoleOutput = true;
 	bool httpOutput = false;

@@ -33,6 +33,9 @@ void exitWithError() {
 }
 
 void exitWithSucces() {
+#ifdef TESTING_DEBUGMODE
+	cout << "\n===============================================\n";
+#endif
 	cout << "Acceptance test result: SUCCESS" << endl;
 	exit(EXIT_SUCCESS);
 }

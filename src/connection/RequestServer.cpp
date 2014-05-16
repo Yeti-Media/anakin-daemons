@@ -1,7 +1,6 @@
 #include "connection/RequestServer.hpp"
 #include "processing/Worker.hpp"
 #include <pthread.h>
-#include "connection/DTCPServerSocket.hpp"
 #include <boost/regex.hpp>
 
 using namespace Anakin;
@@ -30,19 +29,19 @@ void RequestServer::executeStop() {
 
 bool RequestServer::stopMessageReceived(std::string rawMsg) {
 	std::string msg = rawMsg;
-	if (this->mode & DTCP) {
-		std::string ld = ((DTCPServerSocket*) this->server)->getLineDelimiter();
-		std::string md =
-				((DTCPServerSocket*) this->server)->getMessageDelimiter();
-		boost::regex ldRx(ld);
-		boost::regex mdRx(md);
-		std::string ldfmt("");
-		std::string mdfmt("");
-		msg = boost::regex_replace(msg, ldRx, ldfmt,
-				boost::match_default | boost::format_all);
-		msg = boost::regex_replace(msg, mdRx, mdfmt,
-				boost::match_default | boost::format_all);
-	}
+//	if (this->mode & DTCP) {
+//		std::string ld = ((DTCPServerSocket*) this->server)->getLineDelimiter();
+//		std::string md =
+//				((DTCPServerSocket*) this->server)->getMessageDelimiter();
+//		boost::regex ldRx(ld);
+//		boost::regex mdRx(md);
+//		std::string ldfmt("");
+//		std::string mdfmt("");
+//		msg = boost::regex_replace(msg, ldRx, ldfmt,
+//				boost::match_default | boost::format_all);
+//		msg = boost::regex_replace(msg, mdRx, mdfmt,
+//				boost::match_default | boost::format_all);
+//	}
 	//FIXME possible bug with "stop" and "-stop"
 	return msg == "stop";
 }
