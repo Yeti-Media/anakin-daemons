@@ -18,6 +18,7 @@ void logProgramArguments(int argc, const char * argv[]) {
 }
 
 void Anakin::initModuleFlags(Flags* flags) {
+#if COMPILE_MODULE == ALLMODULES
 	flags->setNoValuesFlag("modepatternmatching");
 	flags->setNoValuesFlag("modematchercache");
 	flags->setNoValuesFlag("modedbconnector");
@@ -37,6 +38,7 @@ void Anakin::initModuleFlags(Flags* flags) {
 	flags->setIncompatibility("modedbconnector", "modetrainer");
 
 	flags->setIncompatibility("modeextractor", "modetrainer");
+#endif
 }
 
 //=======================================================================================
@@ -54,6 +56,22 @@ void Anakin::initModuleFlags(Flags* flags) {
 #define DTCP    8
 #define HTTP    16
 
+void Anakin::showHelpPatternMatching() {
+	cout << "Anakin help\n\n" << "usage : ./anakin2 -help\n"
+			<< "usage : ./anakin2 [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife] (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n"
+			<< "-iConsole/oConsole         : use console to input or output respectively\n"
+			<< "-oLogFile                  : path to the output logging file\n"
+			//FIXME actualizar!!!
+			//<< "-iTCP/oTCP <ip> <port>     : use a TCP connection with ip and port for input or output respectively\n"
+			//<< "-iUDP/oUDP <ip> <port>     : use a UDP connection with ip and port for input or output respectively\n"
+			<< "-cacheLoadingTimeWeight    : (default 9) how many importance the loading time of a trainer will influence on his life\n"
+			<< "-cacheNoDiscardLessValuable: (default not defined = true) if a trainer is loaded from the db whose life is less than the object to be dropped then the new object will not be stored in the cache\n"
+			<< "-cacheSize                 : (default 10) trainers cache size (how many trainers can be stored in the cache)\n"
+			<< "-cacheLife                 : (default 1) trainers starting life\n"
+			<< "-cacheScenesSize           : (default 15) scenes cache size (how many scenes can be stored in the cache)\n"
+			<< "-cacheScenesLife           : (default 10) scenes starting life";
+}
+
 int Anakin::patternMatching(int argc, const char * argv[]) {
 	std::ios_base::sync_with_stdio(false);
 	std::cin.tie(nullptr);
@@ -61,8 +79,6 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	char iMode = CONSOLE;
 	char oMode = CONSOLE;
 	unsigned short portIn = 18003;
-	std::string ipOut = "127.0.0.1";
-	std::string portOut = "18002";
 	std::string logFile = "anakin.log";
 	bool verbose = false;
 	CacheConfig cacheConfig;
@@ -87,41 +103,16 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 
 	//INPUT
 	anakinInput->setNoValuesFlag("iConsole");
-	anakinInput->setOptionalFlag("iTCP");
-	anakinInput->setOptionalFlag("iUDP");
-	anakinInput->setOptionalFlag("iDTCP");
 	anakinInput->setOptionalFlag("iHTTP");
-	anakinInput->setIncompatibility("iConsole", "iTCP");
-	anakinInput->setIncompatibility("iConsole", "iUDP");
-	anakinInput->setIncompatibility("iConsole", "iDTCP");
 	anakinInput->setIncompatibility("iConsole", "iHTTP");
-	anakinInput->setIncompatibility("iUDP", "iTCP");
-	anakinInput->setIncompatibility("iUDP", "iDTCP");
-	anakinInput->setIncompatibility("iUDP", "iHTTP");
-	anakinInput->setIncompatibility("iTCP", "iDTCP");
-	anakinInput->setIncompatibility("iTCP", "iHTTP");
-	anakinInput->setIncompatibility("iDTCP", "iHTTP");
 
 	initModuleFlags(anakinInput);
 
 	//OUTPUT
 	anakinInput->setNoValuesFlag("oConsole");
 	anakinInput->setOptionalFlag("oLogFile");
-	anakinInput->setOptionalFlag("oTCP");
-	anakinInput->setOptionalFlag("oUDP");
-	anakinInput->setOptionalFlag("oDTCP");
 	anakinInput->setNoValuesFlag("oHTTP");
-	anakinInput->setIncompatibility("oConsole", "oTCP");
-	anakinInput->setIncompatibility("oConsole", "oUDP");
-	anakinInput->setIncompatibility("oConsole", "oDTCP");
-	anakinInput->setIncompatibility("oUDP", "oTCP");
-	anakinInput->setIncompatibility("oUDP", "oDTCP");
-	anakinInput->setIncompatibility("oTCP", "oDTCP");
 	anakinInput->setIncompatibility("oHTTP", "oConsole");
-	anakinInput->setIncompatibility("oHTTP", "oTCP");
-	anakinInput->setIncompatibility("oHTTP", "oDTCP");
-	anakinInput->setIncompatibility("oHTTP", "oDTCP");
-
 	anakinInput->setDependence("iHTTP", "oHTTP");
 	anakinInput->setDependence("oHTTP", "iHTTP");
 
@@ -130,32 +121,12 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 
 	if (anakinInput->validateInput(input)) {
 		if (anakinInput->flagFound("help")) {
-
-			anakinInput->setOptionalFlag("cacheLoadingTimeWeight");
-			anakinInput->setOptionalFlag("cacheNoDiscardLessValuable");
-			anakinInput->setOptionalFlag("cacheSize");
-			anakinInput->setOptionalFlag("cacheLife");
-			anakinInput->setOptionalFlag("cacheScenesSize");
-			anakinInput->setOptionalFlag("cacheScenesLife");
-
-			cout << "Anakin help\n\n" << "usage : ./anakin2 -help\n"
-					<< "usage : ./anakin2 [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife] (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n"
-					<< "-iConsole/oConsole         : use console to input or output respectively\n"
-					<< "-oLogFile                  : path to the output logging file\n"
-					<< "-iTCP/oTCP <ip> <port>     : use a TCP connection with ip and port for input or output respectively\n"
-					<< "-iUDP/oUDP <ip> <port>     : use a UDP connection with ip and port for input or output respectively\n"
-					<< "-cacheLoadingTimeWeight    : (default 9) how many importance the loading time of a trainer will influence on his life\n"
-					<< "-cacheNoDiscardLessValuable: (default not defined = true) if a trainer is loaded from the db whose life is less than the object to be dropped then the new object will not be stored in the cache\n"
-					<< "-cacheSize                 : (default 10) trainers cache size (how many trainers can be stored in the cache)\n"
-					<< "-cacheLife                 : (default 1) trainers starting life\n"
-					<< "-cacheScenesSize           : (default 15) scenes cache size (how many scenes can be stored in the cache)\n"
-					<< "-cacheScenesLife           : (default 10) scenes starting life";
+			showHelpPatternMatching();
 			exit(EXIT_SUCCESS);
 		}
 		if (anakinInput->flagFound("verbose")) {
 			verbose = true;
 		}
-
 		vector<string>* values;
 
 		//CACHE CONFIG
@@ -220,36 +191,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 		if (anakinInput->flagFound("iConsole")) {
 			iMode = CONSOLE;
 		}
-		if (anakinInput->flagFound("iTCP")) {
-			iMode = TCP;
-			values = anakinInput->getFlagValues("iTCP");
-			if (values->size() == 1) {
-				portIn = stoi(values->at(0));
-			} else {
-				cout << "param iTCP needs only one value" << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (anakinInput->flagFound("iUDP")) {
-			iMode = UDP;
-			values = anakinInput->getFlagValues("iUDP");
-			if (values->size() == 1) {
-				portIn = stoi(values->at(0));
-			} else {
-				cout << "param iUDP needs only one value" << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (anakinInput->flagFound("iDTCP")) {
-			iMode = DTCP;
-			values = anakinInput->getFlagValues("iDTCP");
-			if (values->size() == 1) {
-				portIn = stoi(values->at(0));
-			} else {
-				cout << "param iDTCP needs only one value" << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
+
 		if (anakinInput->flagFound("iHTTP")) {
 			iMode = HTTP;
 			values = anakinInput->getFlagValues("iHTTP");
@@ -275,39 +217,6 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			}
 		}
 
-		if (anakinInput->flagFound("oTCP")) {
-			oMode = TCP;
-			values = anakinInput->getFlagValues("oTCP");
-			if (values->size() == 2) {
-				ipOut = values->at(0);
-				portOut = values->at(1);
-			} else {
-				cout << "param oTCP needs two values" << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (anakinInput->flagFound("oUDP")) {
-			oMode = UDP;
-			values = anakinInput->getFlagValues("oUDP");
-			if (values->size() == 2) {
-				ipOut = values->at(0);
-				portOut = values->at(1);
-			} else {
-				cout << "param oUDP needs two values" << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (anakinInput->flagFound("oDTCP")) {
-			oMode = DTCP;
-			values = anakinInput->getFlagValues("oDTCP");
-			if (values->size() == 2) {
-				ipOut = values->at(0);
-				portOut = values->at(1);
-			} else {
-				cout << "param oDTCP needs two values" << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
 		if (anakinInput->flagFound("oHTTP")) {
 			oMode = HTTP;
 		}
@@ -321,24 +230,11 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	logProgramArguments(argc, argv);
 
 	HTTPSocket* httpSocket;
-//	Socket* soutput;
-//
-//	if (oMode & TCP) {
-//		soutput = new ATCPSocket(ipOut, portOut);
-//	} else if (oMode & UDP) {
-//		soutput = new AUDPSocket(ipOut, portOut);
-//	} else if (oMode & DTCP) {
-//		soutput = new DelimiterBasedTCPSocket(ipOut, portOut, "<line>",
-//				"<stop>");
-//	}
-//	if ((oMode & TCP) || (oMode & UDP) || (oMode & DTCP)) {
-//		soutput->connect();
-//	}
 
 	AnakinFlags* aflags = new AnakinFlags();
 
 	Server* server = new RequestServer(pCacheConfig, portIn, 10, 4, verbose,
-			iMode, "<line>", "<end>");
+			iMode);
 
 	DataOutput* output;
 	if (oMode & CONSOLE) {
@@ -346,10 +242,10 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 	} else if (oMode & HTTP) {
 		httpSocket = server->getHttpSocket();
 		output = new DataOutput(httpSocket);
+	} else {
+		cerr << "unknown output mode \"" << oMode << "\"" << std::endl;
+		exit(EXIT_FAILURE);
 	}
-//	else {
-//		output = new DataOutput(soutput);
-//	}
 
 	server->start(aflags, output);
 
@@ -624,7 +520,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 				bool patternError = false;
 				DBPattern* pattern;
 				if (!driver->retrievePattern(pattern_ids.at(i), &patternError,
-				true, &pattern)) {
+						true, &pattern)) {
 					std::cerr << driver->getMessage() << std::endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					exit(EXIT_FAILURE);
@@ -777,7 +673,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 		case Constants::INDEX: {
 			int trainer_id;
 			if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true,
-			false)) {
+					false)) {
 				std::cout << driver->getMessage() << std::endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -912,7 +808,6 @@ int Anakin::extractor(int argc, const char * argv[]) {
 	std::string label = "";
 	std::string inputDir = "";
 	string outputDir = "";
-	bool showhelp = false;
 	bool saveToFile = true;
 	bool useYaml = true;
 	bool loadOnDemand = false;
@@ -988,7 +883,8 @@ int Anakin::extractor(int argc, const char * argv[]) {
 	if (flags->validateInput(input)) {
 		vector<string>* values;
 		if (flags->flagFound("help")) {
-			showhelp = true;
+			showHelpExtractor();
+			exit(EXIT_SUCCESS);
 		}
 		if (flags->flagFound("oLogFile")) {
 			values = flags->getFlagValues("oLogFile");
@@ -1070,11 +966,6 @@ int Anakin::extractor(int argc, const char * argv[]) {
 	} else {
 		cerr << "input error!" << std::endl;
 		exit(EXIT_FAILURE);
-	}
-
-	if (showhelp) {
-		showHelpExtractor();
-		exit(EXIT_SUCCESS);
 	}
 
 	//logger initialization
@@ -1329,14 +1220,14 @@ int main(int argc, const char * argv[]) {
 			return trainer(argc, argv);
 		} else {
 			cout << "Input error! Expected flag "
-			<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
-			<< std::endl;
+					<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
+					<< std::endl;
 			exit(EXIT_FAILURE);
 		}
 	} else {
 		cout << "Input error! Expected flag "
-		<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
-		<< std::endl;
+				<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
+				<< std::endl;
 		exit(EXIT_FAILURE);
 	}
 

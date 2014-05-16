@@ -11,7 +11,7 @@ using namespace Anakin;
 using namespace std;
 
 Server::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
-		char mode, std::string ld, std::string md) {
+		char mode) {
 	this->port = port;
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
@@ -46,7 +46,7 @@ Server::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
 //		this->server = new DTCPServerSocket(port, ld, md);
 //		this->server->setShowComs(verbose);
 //	} else
-		if (mode & HTTP) {
+	if (mode & HTTP) {
 		std::string sport = std::to_string(port);
 		this->httpSocket = new HTTPSocket(sport, 15);
 		this->httpSocket->setShowComs(verbose);
@@ -117,7 +117,7 @@ std::string Server::read() {
 }
 
 std::vector<std::vector<std::string>*>* Server::getInputs(std::string rawInput,
-bool * stopReceivedInsideInput) {
+		bool * stopReceivedInsideInput) {
 	std::vector<std::vector<std::string>*>* inputs = new std::vector<
 			std::vector<std::string>*>(0);
 	std::string msg = rawInput;
@@ -145,10 +145,10 @@ bool * stopReceivedInsideInput) {
 //
 //		}
 //	} else {
-		if (Server::stopMessageReceived(rawInput)) {
-			*stopReceivedInsideInput = true;
-		}
-		inputs->push_back(rawToInput(rawInput));
+	if (Server::stopMessageReceived(rawInput)) {
+		*stopReceivedInsideInput = true;
+	}
+	inputs->push_back(rawToInput(rawInput));
 	//}
 	return inputs;
 }

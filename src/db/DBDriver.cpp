@@ -161,7 +161,8 @@ std::vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 					+ " ORDER BY " + order_by + " ASC";
 			res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues,
 			NULL, NULL, 0);
-			std::cout << "comando sql del trainer = " << command.c_str() << std::endl;
+			std::cout << "comando sql del trainer = " << command.c_str()
+					<< std::endl;
 			LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);

@@ -10,8 +10,8 @@ namespace Anakin {
 
 /**
  * This class extends from Server and it receives and process requests
- * it uses a blocking queue to pass each request to the workers (objects that process a request)
- * it sends a NULL value to each worker when receiving a stop message
+ * it uses a blocking queue to pass each request to the workers (objects that process
+ * a request). It sends a NULL value to each worker when receiving a stop message.
  */
 class RequestServer: public Server {
 public:
@@ -22,8 +22,7 @@ public:
 	 * a vector of threads of size <threads>
 	 */
 	RequestServer(CacheConfig * cacheConfig, unsigned const short port, int cap,
-			int threads, bool verbose = false, char mode = TCP, std::string ld =
-					"", std::string md = "");
+			int threads, bool verbose = false, char mode = HTTP);
 protected:
 	/**
 	 * pushes the input to the blocking queue
@@ -33,10 +32,7 @@ protected:
 	 * calls the function stopWorkers
 	 */
 	void executeStop();
-	/**
-	 * TODO: MOVE IMPLEMENTATION TO SERVER AND REMOVE FROM THIS CLASS
-	 */
-	bool stopMessageReceived(std::string rawMsg);
+
 	/**
 	 * calls the function startWorkers
 	 */

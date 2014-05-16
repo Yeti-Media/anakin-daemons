@@ -47,11 +47,9 @@ public:
 	 * port : the port to listen
 	 * verbose : if the server will output information to console or not
 	 * mode : how to listen to requests (CONSOLE, TCP, UDP, DTCP, HTTP)
-	 * ld (only for DTCP) : the line delimiter
-	 * md (only for DTCP) : the message delimiter
 	 */
 	Server(CacheConfig * cacheConfig, unsigned const short port, bool verbose,
-			char mode = TCP, std::string ld = "", std::string md = "");
+			char mode = HTTP);
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * aflags : this will check the message and validate that have the required flags and values
@@ -59,9 +57,9 @@ public:
 	 */
 	void start(AnakinFlags* aflags, DataOutput* output);
 	static const char CONSOLE = 1;
-	static const char TCP = 2;
-	static const char UDP = 4;
-	static const char DTCP = 8;
+//	static const char TCP = 2;
+//	static const char UDP = 4;
+//	static const char DTCP = 8;
 	static const char HTTP = 16;
 	/**
 	 * Because HTTPSocket can't be used as a client the

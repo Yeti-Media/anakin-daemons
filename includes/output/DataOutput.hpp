@@ -18,7 +18,6 @@ public:
 	 * s : a Socket object used to output data
 	 */
 	//DataOutput(Socket* s);
-
 	/**
 	 * Constructor (to use HTTP socket to output data)
 	 * httpSocket : the http socket to output data

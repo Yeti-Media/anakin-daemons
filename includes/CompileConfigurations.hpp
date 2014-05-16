@@ -107,6 +107,7 @@ namespace Anakin {
 void initModuleFlags(Flags* flags);
 
 #if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
+void showHelpPatternMatching();
 int patternMatching(int argc, const char * argv[]);
 #endif
 

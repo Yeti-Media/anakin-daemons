@@ -6,9 +6,9 @@
 using namespace Anakin;
 
 RequestServer::RequestServer(CacheConfig * cacheConfig,
-		unsigned const short port, int cap, int threads,
-		bool verbose, char mode, std::string ld, std::string md) :
-		Server(cacheConfig, port, verbose, mode, ld, md) {
+		unsigned const short port, int cap, int threads, bool verbose,
+		char mode) :
+		Server(cacheConfig, port, verbose, mode) {
 	this->threads = threads;
 	this->workerThreads = new std::vector<pthread_t>(threads);
 	this->qcap = cap;
@@ -25,25 +25,6 @@ void RequestServer::execute(std::vector<std::string>* input) {
 
 void RequestServer::executeStop() {
 	stopWorkers();
-}
-
-bool RequestServer::stopMessageReceived(std::string rawMsg) {
-	std::string msg = rawMsg;
-//	if (this->mode & DTCP) {
-//		std::string ld = ((DTCPServerSocket*) this->server)->getLineDelimiter();
-//		std::string md =
-//				((DTCPServerSocket*) this->server)->getMessageDelimiter();
-//		boost::regex ldRx(ld);
-//		boost::regex mdRx(md);
-//		std::string ldfmt("");
-//		std::string mdfmt("");
-//		msg = boost::regex_replace(msg, ldRx, ldfmt,
-//				boost::match_default | boost::format_all);
-//		msg = boost::regex_replace(msg, mdRx, mdfmt,
-//				boost::match_default | boost::format_all);
-//	}
-	//FIXME possible bug with "stop" and "-stop"
-	return msg == "stop";
 }
 
 void RequestServer::startServer() {
