@@ -309,7 +309,7 @@ JSONValue* ResultWriter::resultAsJSONValue(char mode, string data,
 		root[L"type"] = new JSONValue(L"landscape");
 	}
 
-	if (mode & RW_HISTOGRAMS || mode & RW_LANDSCAPE) {
+	if ((mode & RW_HISTOGRAMS) || (mode & RW_LANDSCAPE)) {
 		JSONObject jcolors;
 		bool color = colors & RW_COLOR;
 		bool gray = colors & RW_GRAY;

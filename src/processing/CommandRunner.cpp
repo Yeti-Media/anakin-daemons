@@ -95,6 +95,7 @@ CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache) {
 	this->rw = new ResultWriter();
 	this->cache = cache;
 	this->out = out;
+	this->sceneID = -1;
 }
 
 void CommandRunner::validateRequest(std::vector<std::string> *input) {

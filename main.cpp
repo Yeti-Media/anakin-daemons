@@ -57,19 +57,23 @@ void Anakin::initModuleFlags(Flags* flags) {
 #define HTTP    16
 
 void Anakin::showHelpPatternMatching() {
-	cout << "Anakin help\n\n" << "usage : ./anakin2 -help\n"
-			<< "usage : ./anakin2 [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife] (-iConsole|(-iTCP|iUDP <port>)) (-oConsole|-oLogFile|(-oTCP|oUDP <ip> <port>))\n"
-			<< "-iConsole/oConsole         : use console to input or output respectively\n"
-			<< "-oLogFile                  : path to the output logging file\n"
-			//FIXME actualizar!!!
-			//<< "-iTCP/oTCP <ip> <port>     : use a TCP connection with ip and port for input or output respectively\n"
-			//<< "-iUDP/oUDP <ip> <port>     : use a UDP connection with ip and port for input or output respectively\n"
-			<< "-cacheLoadingTimeWeight    : (default 9) how many importance the loading time of a trainer will influence on his life\n"
-			<< "-cacheNoDiscardLessValuable: (default not defined = true) if a trainer is loaded from the db whose life is less than the object to be dropped then the new object will not be stored in the cache\n"
-			<< "-cacheSize                 : (default 10) trainers cache size (how many trainers can be stored in the cache)\n"
-			<< "-cacheLife                 : (default 1) trainers starting life\n"
-			<< "-cacheScenesSize           : (default 15) scenes cache size (how many scenes can be stored in the cache)\n"
-			<< "-cacheScenesLife           : (default 10) scenes starting life";
+	cout << "Anakin help" << endl << endl << "usage : ./anakin2 -help" << endl
+			<< "usage : ./anakin2 [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife|(-oLogFile <path>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)"
+			<< endl << endl
+			<< "-iConsole/oConsole			: use console to input or output respectively"
+			<< endl << "-oLogFile					: path to the output logging file" << endl
+			<< "-iHTTP <port>/oHTTP			: use a HTTP connection with a port for input"
+			<< endl
+			<< "-cacheLoadingTimeWeight		: (default 9) how many importance the loading time of a trainer will influence on his life"
+			<< endl
+			<< "-cacheNoDiscardLessValuable	: (default not defined = true) if a trainer is loaded from the db whose life is less than the object to be dropped then the new object will not be stored in the cache"
+			<< endl
+			<< "-cacheSize					: (default 10) trainers cache size (how many trainers can be stored in the cache)"
+			<< endl << "-cacheLife					: (default 1) trainers starting life"
+			<< endl
+			<< "-cacheScenesSize			: (default 15) scenes cache size (how many scenes can be stored in the cache)"
+			<< endl << "-cacheScenesLife			: (default 10) scenes starting life"
+			<< endl;
 }
 
 int Anakin::patternMatching(int argc, const char * argv[]) {
@@ -136,7 +140,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 				cacheConfig.cacheLoadingTimeWeight = stoi(values->at(0));
 			} else {
 				cout << "param cacheLoadingTimeWeight needs only one value"
-						<< std::endl;
+						<< endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -150,7 +154,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				cacheConfig.cacheSize = stoi(values->at(0));
 			} else {
-				cout << "param cacheSize needs only one value" << std::endl;
+				cout << "param cacheSize needs only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -160,7 +164,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				cacheConfig.cacheLife = stoi(values->at(0));
 			} else {
-				cout << "param cacheLife needs only one value" << std::endl;
+				cout << "param cacheLife needs only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -170,8 +174,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				cacheConfig.cacheScenesSize = stoi(values->at(0));
 			} else {
-				cout << "param cacheScenesSize needs only one value"
-						<< std::endl;
+				cout << "param cacheScenesSize needs only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -181,8 +184,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				cacheConfig.cacheScenesLife = stoi(values->at(0));
 			} else {
-				cout << "param cacheScenesLife needs only one value"
-						<< std::endl;
+				cout << "param cacheScenesLife needs only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -198,7 +200,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				portIn = stoi(values->at(0));
 			} else {
-				cout << "param iHTTP needs only one value" << std::endl;
+				cout << "param iHTTP needs only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -212,7 +214,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				logFile = values->at(0);
 			} else {
-				cout << "param oLogPath needs one value" << std::endl;
+				cout << "param oLogPath needs one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -221,7 +223,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 			oMode = HTTP;
 		}
 	} else {
-		cout << "Input error!" << std::endl;
+		cout << "Input error!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -243,7 +245,7 @@ int Anakin::patternMatching(int argc, const char * argv[]) {
 		httpSocket = server->getHttpSocket();
 		output = new DataOutput(httpSocket);
 	} else {
-		cerr << "unknown output mode \"" << oMode << "\"" << std::endl;
+		cerr << "unknown output mode \"" << oMode << "\"" << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -275,10 +277,10 @@ void Anakin::showHelpMatcherCache() {
 int Anakin::matcherCache(int argc, const char * argv[]) {
 	DBDriver* dbdriver = new DBDriver();
 	if (!dbdriver->connect()) {
-		std::cerr << dbdriver->getMessage() << std::endl;
+		std::cerr << dbdriver->getMessage() << endl;
 		exit(EXIT_FAILURE);
 	}
-	std::cout << dbdriver->getMessage() << std::endl;
+	cout << dbdriver->getMessage() << endl;
 	CacheConfig cacheConfig;
 	CacheConfig * pCacheConfig = &cacheConfig;
 	cacheConfig.cacheLoadingTimeWeight = 9;
@@ -293,11 +295,10 @@ int Anakin::matcherCache(int argc, const char * argv[]) {
 		int id = rand() % 2;
 		bool matcherError = false;
 		sfbm = cache->loadMatcher(patternsID.at(id), &matcherError);
-		std::cout << "loaded matcher(" << patternsID.at(id) << "), matcher is "
-				<< (sfbm->empty() ? "empty" : "not empty") << std::endl;
-		std::cout << "current hit ratio: " << cache->getHitRatio()
-				<< " | current miss ratio: " << cache->getMissRatio()
-				<< std::endl;
+		cout << "loaded matcher(" << patternsID.at(id) << "), matcher is "
+				<< (sfbm->empty() ? "empty" : "not empty") << endl;
+		cout << "current hit ratio: " << cache->getHitRatio()
+				<< " | current miss ratio: " << cache->getMissRatio() << endl;
 	}
 	cache->printLoadCount();
 	exit(EXIT_SUCCESS);
@@ -320,7 +321,7 @@ int Anakin::matcherCache(int argc, const char * argv[]) {
 
 void Anakin::showHelpDbConnector() {
 	Help* h = new Help();
-	std::cout << h->getFullHelp() << std::endl;
+	cout << h->getFullHelp() << endl;
 }
 
 int Anakin::dbConnector(int argc, const char * argv[]) {
@@ -401,7 +402,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				logFile = values->at(0);
 			} else {
-				cout << "param oLogPath needs one value" << std::endl;
+				cout << "param oLogPath needs one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -411,7 +412,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				userID = std::stoi(values->at(0));
 			} else {
-				std::cerr << "param user need only one value" << std::endl;
+				std::cerr << "param user need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -421,7 +422,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				path = values->at(0);
 			} else {
-				std::cerr << "param path need only one value" << std::endl;
+				std::cerr << "param path need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -451,7 +452,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				sceneID = std::stoi(values->at(0));
 			} else {
-				std::cerr << "param sceneID need only one value" << std::endl;
+				std::cerr << "param sceneID need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -470,18 +471,18 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			} else {
 				std::cerr
 						<< "param index need two values when saving and one value when loading"
-						<< std::endl;
+						<< endl;
 				exit(EXIT_FAILURE);
 			}
 		}
 
 		if (loadingScenes && sceneID == -1)   //THIS MUST BE AT THE END
 				{
-			std::cerr << "Missing sceneID flag!" << std::endl;
+			std::cerr << "Missing sceneID flag!" << endl;
 			exit(EXIT_FAILURE);
 		}
 	} else {
-		std::cerr << "Input error!" << std::endl;
+		std::cerr << "Input error!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -496,7 +497,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 
 	DBDriver* driver = new DBDriver();
 	driver->connect();
-	std::cout << driver->getMessage() << std::endl;
+	cout << driver->getMessage() << endl;
 	LOG_F("Info")<< driver->getMessage();
 
 	DBUser* user;
@@ -512,7 +513,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			std::vector<int> pattern_ids = driver->getUserPatterns(
 					user->getID(), &error);
 			if (error) {
-				std::cerr << driver->getMessage() << std::endl;
+				std::cerr << driver->getMessage() << endl;
 				LOG_F("ERROR")<< driver->getMessage();
 				exit(EXIT_FAILURE);
 			}
@@ -521,14 +522,14 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 				DBPattern* pattern;
 				if (!driver->retrievePattern(pattern_ids.at(i), &patternError,
 						true, &pattern)) {
-					std::cerr << driver->getMessage() << std::endl;
+					std::cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					exit(EXIT_FAILURE);
 				}
-				//std::cout << "loaded pattern with label : " << pattern->getLabel() << " and id : " << pattern->getID() << std::endl;
+				//cout << "loaded pattern with label : " << pattern->getLabel() << " and id : " << pattern->getID() << endl;
 			}
-			std::cout << "user " << user->getID() << " have "
-					<< pattern_ids.size() << " patterns" << std::endl;
+			cout << "user " << user->getID() << " have " << pattern_ids.size()
+					<< " patterns" << endl;
 			LOG_F("Info")<< "user " << user->getID() << " have "
 			<< pattern_ids.size() << " patterns";
 			break;
@@ -537,7 +538,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			std::vector<int> histogram_ids = driver->getUserHistograms(
 					user->getID(), &error);
 			if (error) {
-				std::cerr << driver->getMessage() << std::endl;
+				std::cerr << driver->getMessage() << endl;
 				LOG_F("ERROR")<< driver->getMessage();
 				exit(EXIT_FAILURE);
 			}
@@ -546,12 +547,11 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 				DBHistogram* histogram;
 				if (!driver->retrieveHistogram(histogram_ids.at(i),
 						&histogramError, true, &histogram)) {
-					std::cerr << driver->getMessage() << std::endl;
+					std::cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					exit(EXIT_FAILURE);
 				}
-				std::cout << "loaded histogram : " << histogram->getID()
-						<< std::endl;
+				cout << "loaded histogram : " << histogram->getID() << endl;
 				LOG_F("Info")<< "loaded histogram : " << histogram->getID();
 			}
 			break;
@@ -560,7 +560,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			std::vector<int> landscape_ids = driver->getUserLandscapes(
 					user->getID(), &error);
 			if (error) {
-				std::cerr << driver->getMessage() << std::endl;
+				std::cerr << driver->getMessage() << endl;
 				LOG_F("ERROR")<< driver->getMessage();
 				exit(EXIT_FAILURE);
 			}
@@ -569,12 +569,11 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 				DBHistogram* landscape;
 				if (!driver->retrieveHistogram(landscape_ids.at(i),
 						&histogramError, true, &landscape)) {
-					std::cerr << driver->getMessage() << std::endl;
+					std::cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					exit(EXIT_FAILURE);
 				}
-				std::cout << "loaded landscape : " << landscape->getID()
-						<< std::endl;
+				cout << "loaded landscape : " << landscape->getID() << endl;
 				LOG_F("Info")<<"loaded landscape : " << landscape->getID();
 			}
 			break;
@@ -583,10 +582,10 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			int trainerID = std::stoi(smatcher_id);
 			bool SFBMError = false;
 			if (driver->retrieveSFBM(trainerID, &SFBMError)) {
-				std::cout << driver->getMessage() << std::endl;
+				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
-				std::cerr << driver->getMessage() << std::endl;
+				std::cerr << driver->getMessage() << endl;
 				LOG_F("ERROR") << driver->getMessage();
 				exit(EXIT_FAILURE);
 			}
@@ -596,10 +595,10 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			ImageInfo* scene;
 			bool sceneError = false;
 			if (driver->retrieveScene(&scene, sceneID, &sceneError)) {
-				std::cout << driver->getMessage() << std::endl;
+				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
-				std::cerr << driver->getMessage() << std::endl;
+				std::cerr << driver->getMessage() << endl;
 				LOG_F("ERROR") << driver->getMessage();
 				exit(EXIT_FAILURE);
 			}
@@ -623,12 +622,12 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 					user->addPattern(patterns->at(p));
 				}
 				driver->saveUserPatterns(user, true);
-				std::cout << driver->getMessage() << std::endl;
+				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
 				for (uint p = 0; p < patterns->size(); p++) {
 					driver->savePattern(patterns->at(p));
-					std::cout << driver->getMessage() << std::endl;
+					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
 			}
@@ -641,12 +640,12 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 					user->addHistogram(histograms->at(p));
 				}
 				driver->saveUserHistograms(user, true);
-				std::cout << driver->getMessage() << std::endl;
+				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
 				for (uint p = 0; p < histograms->size(); p++) {
 					driver->saveHORL(histograms->at(p), true);
-					std::cout << driver->getMessage() << std::endl;
+					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
 			}
@@ -659,12 +658,12 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 					user->addLandscape(landscapes->at(p));
 				}
 				driver->saveUserLandscapes(user, true);
-				std::cout << driver->getMessage() << std::endl;
+				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
 				for (uint p = 0; p < landscapes->size(); p++) {
 					driver->saveHORL(landscapes->at(p), true);
-					std::cout << driver->getMessage() << std::endl;
+					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
 			}
@@ -674,10 +673,10 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			int trainer_id;
 			if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true,
 					false)) {
-				std::cout << driver->getMessage() << std::endl;
+				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
-				std::cerr << driver->getMessage() << std::endl;
+				std::cerr << driver->getMessage() << endl;
 				LOG_F("ERROR") << driver->getMessage();
 				exit(EXIT_FAILURE);
 			}
@@ -686,17 +685,17 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 				std::vector<int> patterns = driver->getUserPatterns(userID,
 						&error);
 				if (error) {
-					std::cerr << driver->getMessage() << std::endl;
+					std::cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					exit(EXIT_FAILURE);
 				}
 				for (uint p = 0; p < patterns.size(); p++) {
 					if (driver->storeNthPattern(trainer_id, p,
 							patterns.at(p))) {
-						std::cout << driver->getMessage() << std::endl;
+						cout << driver->getMessage() << endl;
 						LOG_F("Info")<< driver->getMessage();
 					} else {
-						std::cerr << driver->getMessage() << std::endl;
+						std::cerr << driver->getMessage() << endl;
 						LOG_F("ERROR") << driver->getMessage();
 					}
 				}
@@ -708,10 +707,10 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 			for (uint s = 0; s < patterns->size(); s++) {
 				DBPattern* sceneAsDBPattern = patterns->at(s);
 				if (driver->storeScene(sceneAsDBPattern)) {
-					std::cout << driver->getMessage() << std::endl;
+					cout << driver->getMessage() << endl;
 					LOG_F("Info")<< driver->getMessage();
 				} else {
-					std::cerr << driver->getMessage() << std::endl;
+					std::cerr << driver->getMessage() << endl;
 					LOG_F("ERROR") << driver->getMessage();
 					exit(EXIT_FAILURE);
 				}
@@ -721,7 +720,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 		}
 	} else {
 		driver->saveUser(user);
-		std::cout << driver->getMessage() << std::endl;
+		cout << driver->getMessage() << endl;
 		LOG_F("Info")<< driver->getMessage();
 	}
 
@@ -735,7 +734,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 
 #include <opencv2/opencv.hpp>
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
-#include <iostream>               // for std::cout
+#include <iostream>               // for cout
 #include "opencv2/core/core.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -762,42 +761,34 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 namespace fs = boost::filesystem;
 
 void Anakin::showHelpExtractor() {
-	cout << "Extractor help\n" << std::endl;
-	cout << "usage: ./extractor -help";
-	cout
-			<< "usage: ./extractor [oLogFile] (I/O arguments) (paths arguments) ((landscape arguments)|(histograms arguments))\n"
-			<< std::endl;
-	cout << "where I/O arguments are:" << std::endl;
-	cout << "-oLogFile  : path to the output logging file" << std::endl
-			<< "-landscape : will construct histograms to use with landscape detection"
-			<< std::endl;
-	cout << "-histograms : will construct one histogram per pattern"
-			<< std::endl;
-	cout << "-patterns : will extract descriptors and keypoints" << std::endl;
-	cout << "" << std::endl;
-	cout << "where paths arguments are:" << std::endl;
-	cout
-			<< "-iFile|iFolder <path> : sets the input as a file or folder path respectively"
-			<< std::endl;
-	cout
-			<< "-oPath <path> : sets the path for where to store the serialized data"
-			<< std::endl;
-	cout << "-toJson : this will make output serialized data to the console"
-			<< std::endl;
-	cout << "" << std::endl;
-	cout << "where landscape exclusive arguments are:" << std::endl;
-	cout
-			<< "-label <label> : the label to use when serializing landscape histogram"
-			<< std::endl;
-	cout << "where landscape and histogram's common arguments are:"
-			<< std::endl;
-	cout << "-color : will use RGB to generate histograms and landscape"
-			<< std::endl;
-	cout << "-gray : will use grayscale to generate histograms and landscape"
-			<< std::endl;
-	cout
-			<< "-hsv : will use hue and saturation to generate histograms and landscape"
-			<< std::endl;
+	cout << "Extractor help" << endl << endl << "usage: ./extractor -help"
+			<< "usage: ./extractor [oLogFile] (I/O arguments) (paths arguments) ((landscape arguments)|(histograms arguments))"
+			<< endl << endl << "where I/O arguments are:" << endl
+			<< "-oLogFile	: path to the output logging file" << endl
+			<< "-landscape	: will construct histograms to use with landscape detection"
+			<< endl << "-histograms	: will construct one histogram per pattern"
+			<< endl << "-patterns	: will extract descriptors and keypoints"
+			<< endl << endl << "where paths arguments are:" << endl
+
+			<< "-iFile|iFolder <path>	: sets the input as a file or folder path respectively"
+			<< endl
+
+			<< "-oPath <path>	: sets the path for where to store the serialized data"
+			<< endl
+			<< "-toJson	: this will make output serialized data to the console"
+			<< endl << "" << endl << "where landscape exclusive arguments are:"
+			<< endl
+
+			<< "-label <label>	: the label to use when serializing landscape histogram"
+			<< endl << "where landscape and histogram's common arguments are:"
+			<< endl
+			<< "-color	: will use RGB to generate histograms and landscape"
+			<< endl
+			<< "-gray	: will use grayscale to generate histograms and landscape"
+			<< endl
+
+			<< "-hsv	: will use hue and saturation to generate histograms and landscape"
+			<< endl;
 }
 
 int Anakin::extractor(int argc, const char * argv[]) {
@@ -891,7 +882,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				logFile = values->at(0);
 			} else {
-				cout << "param oLogPath needs one value" << std::endl;
+				cout << "param oLogPath needs one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -910,7 +901,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				inputDir = values->at(0);
 			} else {
-				cerr << "param iFile need only one value" << std::endl;
+				cerr << "param iFile need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -920,7 +911,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				inputDir = values->at(0);
 			} else {
-				cerr << "param iFolder need only one value" << std::endl;
+				cerr << "param iFolder need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -929,7 +920,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				outputDir = values->at(0);
 			} else {
-				cerr << "param oPath need only one value" << std::endl;
+				cerr << "param oPath need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -938,7 +929,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				label = values->at(0);
 			} else {
-				cerr << "param label need only one value" << std::endl;
+				cerr << "param label need only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -964,7 +955,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 			loadOnDemand = true;
 		}
 	} else {
-		cerr << "input error!" << std::endl;
+		cerr << "input error!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -1022,7 +1013,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 
 #include <opencv2/opencv.hpp>
 #include <string>
-#include <iostream>               // for std::cout
+#include <iostream>               // for cout
 #include "opencv2/core/core.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/nonfree/nonfree.hpp"
@@ -1037,19 +1028,13 @@ int Anakin::extractor(int argc, const char * argv[]) {
 using namespace cv;
 
 void Anakin::showHelpTrainer() {
-	std::cout << "trainer help" << std::endl;
-	std::cout << std::endl;
-	std::cout << "usage: " << std::endl;
-	std::cout << "./trainer -help" << std::endl;
-	std::cout
+	cout << "Trainer help" << endl << endl << "usage: " << endl
+			<< "./trainer -help" << endl
 			<< "./trainer [oLogFile] -user <userID> -saveToFile [<folder>] <filename>"
-			<< std::endl;
-	std::cout
+			<< endl
 			<< "./trainer [oLogFile] -patternsId <id id ...> -saveToFile [<folder>] <filename>"
-			<< std::endl;
-	std::cout << "flag -oLogFile  : path to the output logging file"
-			<< std::endl;
-	std::cout << std::endl;
+			<< endl << "flag -oLogFile  : path to the output logging file"
+			<< endl;
 }
 
 int Anakin::trainer(int argc, const char * argv[]) {
@@ -1089,7 +1074,7 @@ int Anakin::trainer(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				logFile = values->at(0);
 			} else {
-				cout << "param oLogPath needs one value" << std::endl;
+				cout << "param oLogPath needs one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -1099,7 +1084,7 @@ int Anakin::trainer(int argc, const char * argv[]) {
 			if (values->size() == 1) {
 				userID = values->at(0);
 			} else {
-				std::cerr << "flag user needs only one value" << std::endl;
+				std::cerr << "flag user needs only one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -1111,8 +1096,7 @@ int Anakin::trainer(int argc, const char * argv[]) {
 					(*patternsId).push_back(std::stoi(values->at(i)));
 				}
 			} else {
-				std::cerr << "flag patternsId needs at least one value"
-						<< std::endl;
+				std::cerr << "flag patternsId needs at least one value" << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -1126,12 +1110,12 @@ int Anakin::trainer(int argc, const char * argv[]) {
 				fileName = values->at(1);
 			} else {
 				std::cerr << "flag saveToFile needs between one and two values"
-						<< std::endl;
+						<< endl;
 				exit(EXIT_FAILURE);
 			}
 		}
 	} else {
-		std::cerr << "Input error!" << std::endl;
+		std::cerr << "Input error!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -1220,14 +1204,14 @@ int main(int argc, const char * argv[]) {
 			return trainer(argc, argv);
 		} else {
 			cout << "Input error! Expected flag "
-					<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
-					<< std::endl;
+			<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
+			<< endl;
 			exit(EXIT_FAILURE);
 		}
 	} else {
 		cout << "Input error! Expected flag "
-				<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
-				<< std::endl;
+		<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
+		<< endl;
 		exit(EXIT_FAILURE);
 	}
 

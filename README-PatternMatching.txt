@@ -14,22 +14,14 @@ usage: ./anakin2 (input flags) (output flags) [-verbose]
 
 input flags (use one of the following) :
 
--iConsole	:	uses console as input
--iUDP <p>	:	uses a UDP socket listening to port p
--iTCP <p>	:	uses a TCP socket listening to port p
--iDTCP <p>	:	uses a TCP socket listening to port p that allows multiple requests,
-			uses <line> to separate each, line and <end> to mark the end of the message
--iHTTP <p>	:	uses a HTTP socket listening to port p
+-iConsole       :       uses console as input
+-iHTTP <p>      :       uses a HTTP socket listening to port p
 
 output flags (use one of the following) :
 
--oConsole	: 	uses console as output
--oLogFile   :   logging file
--oUDP <i> <p>	:	send output to IP i and port p using a UDP socket
--oTCP <i> <p>	:	send output to IP i and port p using a TCP socket
--oDTCP <i> <p>	:	send output to IP i and port p using a TCP socket
-			message lines are separated with <end> and end of message is marked with <end>
--oHTTP		:	if iHTTP is used then this must be used as well
+-oConsole       :       uses console as output
+-oLogFile       :       logging file path
+-oHTTP          :       if iHTTP is used then this must be used as well
 
 Requests :
 

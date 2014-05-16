@@ -12,6 +12,8 @@ using namespace std;
 
 Server::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
 		char mode) {
+	this->aflags = NULL;
+	this->output = NULL;
 	this->port = port;
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
@@ -109,6 +111,7 @@ std::string Server::read() {
 		return msj;
 	}
 	cout << "Server::read(): mode not recognized = " << this->mode << endl;
+	return "-stop";
 //	else {
 //		std::string msj = this->socket->read();
 //		LOG_F("Request")<< msj;

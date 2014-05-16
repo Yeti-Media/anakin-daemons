@@ -9,6 +9,7 @@ PatternLoader::PatternLoader(Anakin::DataInput* input,
 		cv::Ptr<cv::FeatureDetector>& detector,
 		cv::Ptr<cv::DescriptorExtractor>& extractor) {
 	this->input = input;
+	this->sinput = NULL;
 	this->patterns = &patterns;
 	this->detector = detector;
 	this->extractor = extractor;
@@ -18,6 +19,7 @@ PatternLoader::PatternLoader(Anakin::DataInput* input,
 PatternLoader::PatternLoader(SerializedPatternDataInput* input,
 		std::vector<RichImg*>& patterns) {
 	this->sinput = input;
+	this->input = NULL;
 	this->patterns = &patterns;
 	this->usingSerializedDataInput = true;
 }

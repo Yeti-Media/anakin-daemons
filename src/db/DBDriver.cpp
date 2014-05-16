@@ -12,6 +12,7 @@
 using namespace Anakin;
 
 DBDriver::DBDriver() {
+	this->conn = NULL;
 	this->dbdriverLog.clear();
 }
 
