@@ -1,15 +1,16 @@
-#include "processing/Worker.hpp"
+#include <processing/Worker.hpp>
+#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace Anakin;
 
-Worker::Worker(int id, Flags* flags, DataOutput* output, SFBMCache* cache,
-		tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue) {
+Worker::Worker(int id,
+		tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue,
+		CommandRunner* command) {
 	this->id = id;
-	this->flags = flags;
-	this->output = output;
-	this->cache = cache;
 	this->workingQueue = workingQueue;
-	this->runner = new CommandRunner(flags, output, cache);
+	this->runner = command;
 }
 
 void Worker::start() {
@@ -20,7 +21,6 @@ void Worker::start() {
 		std::cout << "worker(" << this->id << ") is processing a request"
 				<< std::endl;
 		if (input != NULL) {
-			//CommandRunner* runner = new CommandRunner(flags, output, this->cache, input);
 			runner->validateRequest(input);
 			runner->run();
 		} else {

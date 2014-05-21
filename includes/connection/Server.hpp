@@ -1,10 +1,24 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
+
+//#include <boost/algorithm/string.hpp>
+//#include <boost/regex.hpp>
+#include <connection/HTTPSocket.hpp>
+#include <db/DBDriver.hpp>
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
+#include <output/DataOutput.hpp>
+#include <output/JSONValue.h>
+#include <processing/SFBMCache.hpp>
+#include <sys/types.h>
+#include "connection/Server.hpp"
 #include "processing/AnakinFlags.hpp"
-#include "output/DataOutput.hpp"
-#include "processing/SFBMCache.hpp"
-#include "db/DBDriver.hpp"
-#include "connection/HTTPSocket.hpp"
+//#include "processing/CommandRunner.hpp"
+#include <cstdlib>
+#include <iostream>
+//#include <sstream>
+#include <string>
+#include <vector>
 
 namespace Anakin {
 
@@ -40,7 +54,8 @@ namespace Anakin {
  *    [in some modes a stop function will be called for the socket used]
  *
  */
-class Server {
+template <class SpecificCommandRunner>
+class Server{
 public:
 	/**
 	 * Constructor
@@ -57,9 +72,9 @@ public:
 	 */
 	void start(AnakinFlags* aflags, DataOutput* output);
 	static const char CONSOLE = 1;
-//	static const char TCP = 2;
-//	static const char UDP = 4;
-//	static const char DTCP = 8;
+	static const char TCP = 2;
+	static const char UDP = 4;
+	static const char DTCP = 8;
 	static const char HTTP = 16;
 	/**
 	 * Because HTTPSocket can't be used as a client the
@@ -67,6 +82,8 @@ public:
 	 * respond.
 	 */
 	HTTPSocket* getHttpSocket();
+
+	virtual ~Server();
 protected:
 	/**
 	 * will read a message from the right input (socket, console, httpsocket)
@@ -128,7 +145,170 @@ protected:
 private:
 };
 
+template <class SpecificCommandRunner>
+Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
+		char mode) {
+	this->aflags = NULL;
+	this->output = NULL;
+	this->port = port;
+	this->mode = mode;
+	this->dbdriver = new DBDriver();
+	if (this->dbdriver->connect()) {
+		this->initialization = true;
+		std::cout << this->dbdriver->getMessage() << std::endl;
+		LOG_F("INFO")<< this->dbdriver->getMessage();
+	} else {
+		this->initialization = false;
+		this->initializationError = this->dbdriver->getMessage();
+		LOG_F("ERROR") << this->dbdriver->getMessage();
+		std::cout << this->dbdriver->getMessage() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	if (this->initialization) {
+		this->cache = new SFBMCache(this->dbdriver, cacheConfig);
+		this->cacheInitializationError = false;
+		JSONValue* cacheError = this->cache->getLastOperationResult(
+				&this->cacheInitializationError);
+		if (this->cacheInitializationError) {
+			this->cacheInitializationErrorMsj = cacheError->Stringify().c_str();
+			LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
+		}
+	}
+	if (mode & HTTP) {
+		std::string sport = std::to_string(port);
+		this->httpSocket = new HTTPSocket(sport, 15);
+		this->httpSocket->setShowComs(verbose);
+	}
+	this->verbose = verbose;
 }
-;
+
+template <class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::start(AnakinFlags* aflags, DataOutput* output) {
+	this->aflags = aflags;
+	this->output = output;
+	startServer();
+	std::string msg;
+	bool run = true;
+	bool stopReceivedInsideInput = false;
+	do {
+		msg = read();
+		if (!stopMessageReceived(msg)) {
+			std::cout << "MESSAGE RECEIVED:\n" << msg << std::endl;
+			std::vector<std::vector<std::string>*>* inputs = getInputs(msg,
+					&stopReceivedInsideInput);
+			if (stopReceivedInsideInput) {
+				stopReceived();
+				run = false;
+			} else {
+				for (uint i = 0; i < inputs->size(); i++) {
+					execute(inputs->at(i));
+				}
+			}
+		} else {
+			stopReceived();
+			run = false;
+		}
+	} while (run);
+	endServer();
+	output->close();
+	if (this->mode & HTTP)
+		this->httpSocket->stop();
+}
+
+template <class SpecificCommandRunner>
+HTTPSocket* Server<SpecificCommandRunner>::getHttpSocket() {
+	return this->httpSocket;
+}
+
+//PROTECTED
+
+template <class SpecificCommandRunner>
+std::string Server<SpecificCommandRunner>::read() {
+	if (this->mode & CONSOLE) {
+		std::string msg = "";
+		getline(cin, msg);
+		return msg;
+	} else if (this->mode & HTTP) {
+		std::string msj = this->httpSocket->read();
+		LOG_F("Request")<< msj;
+		return msj;
+	}
+	cout << "Server::read(): mode not recognized = " << this->mode << endl;
+	return "-stop";
+}
+
+template <class SpecificCommandRunner>
+std::vector<std::vector<std::string>*>* Server<SpecificCommandRunner>::getInputs(std::string rawInput,
+		bool * stopReceivedInsideInput) {
+	std::vector<std::vector<std::string>*>* inputs = new std::vector<
+			std::vector<std::string>*>(0);
+	std::string msg = rawInput;
+
+	if (Server::stopMessageReceived(rawInput)) {
+		*stopReceivedInsideInput = true;
+	}
+	inputs->push_back(rawToInput(rawInput));
+
+	return inputs;
+}
+template <class SpecificCommandRunner>
+std::vector<std::string>* Server<SpecificCommandRunner>::rawToInput(std::string rawInput) {
+	std::vector<std::string> *input = new std::vector<std::string>(0);
+	stringstream ss_input(rawInput);
+	while (ss_input.good()) {
+		std::string value;
+		ss_input >> value;
+		input->push_back(value);
+	}
+	return input;
+}
+
+template <class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::execute(std::vector<std::string>* input) {
+//	CommandRunner* runner = new CommandRunner(this->aflags->getFlags(),
+//			this->output, this->cache, input);
+//	runner->run();
+}
+
+
+template <class SpecificCommandRunner>
+bool Server<SpecificCommandRunner>::stopMessageReceived(std::string rawMsg) {
+	return (rawMsg.find("-stop") != std::string::npos)
+			|| (rawMsg.find("\"action\":\"stop\"") != std::string::npos);
+}
+
+/**
+ * placeholder for inheritance
+ */
+template <class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::executeStop() {
+}
+
+/**
+ * placeholder for inheritance
+ */
+template <class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::endServer() {
+}
+
+/**
+ * placeholder for inheritance
+ */
+template <class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::startServer() {
+}
+
+template <class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::stopReceived() {
+	std::cout << "STOP MESSAGE RECEIVED" << std::endl;
+	executeStop();
+}
+
+template <class SpecificCommandRunner>
+Server<SpecificCommandRunner>::~Server() {
+}
+
+}
+; // namespace Anakin
 
 #endif // SERVER_HPP

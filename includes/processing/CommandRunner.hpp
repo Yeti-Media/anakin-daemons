@@ -42,26 +42,25 @@ public:
 	 * Constructor (does steps 1, 2, 3)
 	 * flags : used to validate the request
 	 * out   : used to send responses
-	 * input : the request to process
 	 */
-	CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache,
-			std::vector<std::string> *input);
-
 	CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
 
-	void validateRequest(std::vector<std::string> *input);
+	virtual void validateRequest(std::vector<std::string> *input);
 
 	/**
 	 * run the command runner (does steps 4 and 5)
 	 */
-	int run();
-	static const char MATCH = 1;
-	static const char ADDIDXS = 2;
-	static const char DELIDXS = 3;
-	static const char UPDIDXS = 4;
-	static const char IDXSTATUS = 5;
+	virtual void run();
+
+	/**
+	 * Provide full help, used when command -help is executed. Provide help
+	 * to start a daemon and how to use it. Must have a custom implementation
+	 * (CommandRunner::getHelp() can be used for common daemon startup help)
+	 */
+	static string getHelp();
+
+	virtual ~CommandRunner();
 protected:
-private:
 	bool checkDuplicatedIndexes(std::vector<std::string> indexes,
 			std::string * duplicated);
 	char action = 0;
@@ -70,7 +69,7 @@ private:
 	int sceneID;
 	std::vector<std::string> indexes;
 	std::string reqID;
-	std::string error;
+	std::string lastError;
 	bool inputError = false;
 	DataOutput* out;
 	ResultWriter* rw;
