@@ -25,7 +25,7 @@ using namespace std;
 
 namespace Anakin {
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 class Daemon {
 public:
 	Daemon();
@@ -41,18 +41,15 @@ public:
 	void start(int argc, const char * argv[], bool useCache = false);
 
 	virtual ~Daemon();
-private:
-	void initModuleFlags(Flags* flags);
-
 };
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 Daemon<SpecificCommandRunner>::Daemon() {
 	// TODO Auto-generated constructor stub
 
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void Daemon<SpecificCommandRunner>::initTestingFlags(Flags* flags) {
 #if COMPILE_MODULE == ALLMODULES
 	flags->setNoValuesFlag("modepatternmatching");
@@ -77,15 +74,16 @@ void Daemon<SpecificCommandRunner>::initTestingFlags(Flags* flags) {
 #endif
 }
 
-template <class SpecificCommandRunner>
-void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[], bool useCache) {
+template<class SpecificCommandRunner>
+void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
+		bool useCache) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
 	cerr.tie(nullptr);
 	char iMode = Server<SpecificCommandRunner>::CONSOLE;
 	char oMode = Server<SpecificCommandRunner>::CONSOLE;
 	unsigned short portIn = 18003;
-	string logFile = "anakin.log";
+	string logFile = "";
 	bool verbose = false;
 
 	CacheConfig cacheConfig;
@@ -238,7 +236,9 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[], bool us
 	}
 
 	//logger initialization
-	Logging::OutputPolicyFile::SetFileStream(logFile);
+	if (!logFile.empty()) {
+		Logging::OutputPolicyFile::SetFileStream(logFile);
+	}
 
 	std::string startComand;
 	for (int i = 1; i < argc; i++) {
@@ -254,8 +254,8 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[], bool us
 		pCacheConfig = NULL;
 	}
 
-	Server<SpecificCommandRunner>* server = new RequestServer<SpecificCommandRunner>(pCacheConfig, portIn, 10, 4, verbose,
-			iMode);
+	Server<SpecificCommandRunner>* server = new RequestServer<
+			SpecificCommandRunner>(pCacheConfig, portIn, 10, 4, verbose, iMode);
 
 	DataOutput* output;
 	if (oMode & Server<SpecificCommandRunner>::CONSOLE) {
@@ -269,12 +269,15 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[], bool us
 	}
 
 	server->start(aflags, output);
+
+	delete httpSocket;
+	delete aflags;
+	delete server;
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 Daemon<SpecificCommandRunner>::~Daemon() {
 }
-
 
 }
 ;

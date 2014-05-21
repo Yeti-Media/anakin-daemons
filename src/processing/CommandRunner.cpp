@@ -32,7 +32,7 @@ CommandRunner::~CommandRunner(){
 
 string CommandRunner::getHelp() {
 	return string(
-			"arguments: [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife|(-oLogFile <path>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)\n\n"
+			"Daemon arguments: [cacheLoadingTimeWeight|cacheDiscardLessValuable|cacheSize|cacheLife|cacheScenesSize|cacheScenesLife|(-oLogFile <path>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)\n\n"
 					"-iConsole/oConsole			: use console to input or output respectively\n"
 					"-oLogFile					: path to the output logging file\n"
 					"-iHTTP <port>/oHTTP			: use a HTTP connection with a port for input\n"

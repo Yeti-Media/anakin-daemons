@@ -930,6 +930,7 @@ int main(int argc, const char * argv[]) {
 	Daemon<PatternMatchingCommandRunner>* daemon = new Daemon<
 			PatternMatchingCommandRunner>();
 	daemon->start(argc, argv, true);
+	delete daemon;
 #endif
 #if COMPILE_MODULE == MATCHERCACHE
 	return matcherCache(argc,argv);
