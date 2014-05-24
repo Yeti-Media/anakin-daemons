@@ -1,22 +1,12 @@
-#ifndef HELP_HPP
-#define HELP_HPP
-
 #include <string>
 
-namespace Anakin {
+#include "utils/help/HelpDBConnector.hpp"
 
-class Help {
-public:
-	Help();
-	std::string getFullHelp();
-	std::string getIntro();
-	std::string getUsage();
-	std::string getFlags();
-	std::string getExamples();
-protected:
-private:
-	std::string intro =
-			"DBConnector\n This application is used to store and retrieve information"
+using namespace Anakin;
+
+HelpDBConnector::HelpDBConnector() {
+	intro =
+			"DBConnector is used to store and retrieve information"
 					"to and from a postgresql database.\n"
 					"Only the table name is hardcoded (this will be fixed in the future),"
 					"all other attributes must be defined using system variables.\n"
@@ -28,14 +18,12 @@ private:
 					"(2) save patterns, landscapes or histograms.\n"
 					"(3) save and load scenes.\n"
 					"(4) save and load serialized matchers\n";
-	std::string usage =
-			"usage:\n\n"
+	usage =
 					"./dbtest -user <ID> [((-path <folder|file>) | -load) (-patterns|-landscapes|-histograms)] 	(1)\n"
 					"./dbtest -path <folder|file> (-patterns|-landscapes|-histograms) 				(2)\n"
 					"./dbtest -scenes ((-path <folder|file>)|(-sceneID <ID> -load))					(3)\n"
 					"./dbtest -index <ID UID> [(-load)|-savePatterns)]	                			(4)\n";
-	std::string flags =
-			"flags:\n\n"
+	flags =
 					"-oLogFile          : path to the output logging file\n"
 					"-user <ID> 		: 	sets the user ID, when used with -patterns, -landscapes or -histograms flags then the saving or loading of patterns,\n"
 					"                       landscapes or histograms will be related to that particular user. A user can be saved without specifying any other flag\n"
@@ -51,8 +39,7 @@ private:
 					"                       if loading, then two files will be created ID+.xml and ID+.if\n"
 					"                       UID value refers to the userID, this values is only needed when saving.\n"
 					"-savePatterns		:	this will save all the patterns defined by the flag -path and make a relation (indexID, label, index) for each of them\n";
-	std::string examples =
-			"examples:\n\n"
+	examples =
 					"./dbtest -user J				*this will save user J to the db\n"
 					"./dbtest -user J -load -patterns		*this will load user J's patterns\n"
 					"./dbtest -user J -path forest.xml -landscapes	*this will save landscape forest.xml to the db, save user J and save the relation (J, forest.xml)\n"
@@ -67,8 +54,8 @@ private:
 					"                                                                                       *The order in which the patterns are loaded and stored must be\n"
 					"	                                                                                    *the same in which they were loaded when training the matcher\n";
 
-};
 }
-;
 
-#endif // HELP_HPP
+HelpDBConnector::~HelpDBConnector() {
+
+}

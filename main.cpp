@@ -79,11 +79,11 @@ int Anakin::matcherCache(int argc, const char * argv[]) {
 #include "utils/Constants.hpp"
 #include "data/ImageInfo.hpp"
 #include <iostream>
-#include "utils/Help.hpp"
+#include "utils/help/Help.hpp"
 
 void Anakin::showHelpDbConnector() {
-	Help* h = new Help();
-	cout << h->getFullHelp() << endl;
+//	HelpDBConnector* h = new HelpDBConnector();
+//	cout << h->getFullHelp() << endl;
 }
 
 int Anakin::dbConnector(int argc, const char * argv[]) {
@@ -917,7 +917,7 @@ int Anakin::trainer(int argc, const char * argv[]) {
 
 
 #if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
-#include "processing/PatternMatchingCommandRunner.hpp"
+#include "processing/commandrunner/PatternMatchingCommandRunner.hpp"
 #endif
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION

@@ -25,7 +25,7 @@ namespace fs = boost::filesystem;
 namespace Anakin {
 
 /**
- * This class will process a request
+ * This abtract class will process a request
  *
  * the process can be defined by the following steps
  *
@@ -35,6 +35,10 @@ namespace Anakin {
  * 4 - execute an action based on the extracted flags and values
  * 5 - send a response for the request using a DataOutput object
  *
+ * The concrete class must have a static property called help (inherited
+ * from class help). An object from that static property will be used by
+ * the daemon to access the help documentation. See PatternMatchingCommandRunner
+ * for an example.
  */
 class CommandRunner {
 public:
@@ -45,21 +49,15 @@ public:
 	 */
 	CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
 
-	virtual void validateRequest(std::vector<std::string> *input);
+	virtual void validateRequest(std::vector<std::string> *input) = 0;
 
 	/**
 	 * run the command runner (does steps 4 and 5)
 	 */
-	virtual void run();
-
-	/**
-	 * Provide full help, used when command -help is executed. Provide help
-	 * to start a daemon and how to use it. Must have a custom implementation
-	 * (CommandRunner::getHelp() can be used for common daemon startup help)
-	 */
-	static string getHelp();
+	virtual void run() = 0;
 
 	virtual ~CommandRunner();
+
 protected:
 	bool checkDuplicatedIndexes(std::vector<std::string> indexes,
 			std::string * duplicated);
@@ -78,7 +76,8 @@ protected:
 	BasicFlannDetector* detector = NULL;
 	Flags* flags;
 };
-}
+
+} /* namespace Anakin */
 ;
 
 #endif // COMMANDRUNNER_HPP

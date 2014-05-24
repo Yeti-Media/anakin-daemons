@@ -2,18 +2,25 @@
  * PatternMatchingCommandRunner.cpp
  *
  *  Created on: 20/05/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
-#include <processing/CommandRunner.hpp>
-#include <processing/PatternMatchingCommandRunner.hpp>
+#include <processing/commandrunner/CommandRunner.hpp>
+#include <processing/commandrunner/PatternMatchingCommandRunner.hpp>
 #include "output/JSONValue.h"
 #include <algorithm> // for copy
 #include <iterator> // for ostream_iterator
 #include "utils/Constants.hpp"
 #include <logging/Log.hpp>
+#include <utils/help/HelpPatternMatching.hpp>
 
 using namespace Anakin;
+
+
+/**
+ * static help initialization
+ */
+Help* PatternMatchingCommandRunner::help = new HelpPatternMatching() ;
 
 PatternMatchingCommandRunner::PatternMatchingCommandRunner(Flags* flags,
 		DataOutput* out, SFBMCache* cache) :
@@ -21,10 +28,7 @@ PatternMatchingCommandRunner::PatternMatchingCommandRunner(Flags* flags,
 }
 
 PatternMatchingCommandRunner::~PatternMatchingCommandRunner(){
-}
 
-string PatternMatchingCommandRunner::getHelp() {
-	return CommandRunner::getHelp();
 }
 
 void PatternMatchingCommandRunner::validateRequest(

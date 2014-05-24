@@ -2,34 +2,32 @@
  * TrainerCommandRunner.cpp
  *
  *  Created on: 21/05/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
-#include <processing/TrainerCommandRunner.hpp>
+#include <processing/commandrunner/TrainerCommandRunner.hpp>
+#include <utils/help/HelpDBConnector.hpp>
+#include <string>
+#include <vector>
 
 namespace Anakin {
+
+/**
+ * static help initialization
+ */
+Help* TrainerCommandRunner::help = new HelpDBConnector() ;
 
 TrainerCommandRunner::TrainerCommandRunner(Flags* flags, DataOutput* out,
 		SFBMCache* cache) :
 		CommandRunner(flags, out, cache) {
-	// TODO Auto-generated constructor stub
-
 }
 
 TrainerCommandRunner::~TrainerCommandRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-string TrainerCommandRunner::getHelp() {
-	return string(
-			CommandRunner::getHelp() + "\n\nTrainer help\n"
-					"usage:\n"
-					+ "\t-user <userID> -saveToFile [<folder>] <filename>\n"
-					+ "\t-patternsId <id id ...> -saveToFile [<folder>] <filename>\n");
-}
-
-void TrainerCommandRunner::validateRequest(
-		std::vector<std::string> *input) {
+	void TrainerCommandRunner::validateRequest(
+			std::vector<std::string> *input) {
 //	inputError = false;
 //	action = 0;
 //	mma = 8;
@@ -112,9 +110,9 @@ void TrainerCommandRunner::validateRequest(
 //		lastError = "input error!";
 //		inputError = true;
 //	}
-}
+	}
 
-void TrainerCommandRunner::run() {
+	void TrainerCommandRunner::run() {
 
 //	if (inputError) {
 //		this->out->error(
@@ -262,6 +260,6 @@ void TrainerCommandRunner::run() {
 //		break;
 //	}
 //	}
-}
+	}
 
-} /* namespace Anakin */
+	} /* namespace Anakin */

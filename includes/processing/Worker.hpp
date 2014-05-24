@@ -4,7 +4,7 @@
 #include "processing/Flags.hpp"
 #include "output/DataOutput.hpp"
 #include "processing/SFBMCache.hpp"
-#include "processing/CommandRunner.hpp"
+#include "processing/commandrunner/CommandRunner.hpp"
 
 #include <tbb/concurrent_queue.h>
 

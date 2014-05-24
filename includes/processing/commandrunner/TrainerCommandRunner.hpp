@@ -2,13 +2,16 @@
  * TrainerCommandRunner.hpp
  *
  *  Created on: 21/05/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
 #ifndef TRAINERCOMMANDRUNNER_HPP_
 #define TRAINERCOMMANDRUNNER_HPP_
 
-#include <processing/CommandRunner.hpp>
+#include <processing/commandrunner/CommandRunner.hpp>
+#include <utils/help/Help.hpp>
+#include <string>
+#include <vector>
 
 namespace Anakin {
 
@@ -17,14 +20,23 @@ public:
 	TrainerCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache) ;
 	virtual ~TrainerCommandRunner();
 
-	static string getHelp();
-
 	void validateRequest(std::vector<std::string> *input);
 
 	/**
 	 * run the command runner (does steps 4 and 5)
 	 */
 	void run();
+
+	/**
+	 * static help access implementation
+	 */
+	static Help* help;
+
+	static const char MATCH = 1;
+	static const char ADDIDXS = 2;
+	static const char DELIDXS = 3;
+	static const char UPDIDXS = 4;
+	static const char IDXSTATUS = 5;
 };
 
 } /* namespace Anakin */
