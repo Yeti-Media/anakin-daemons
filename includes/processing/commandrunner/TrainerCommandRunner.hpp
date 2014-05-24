@@ -22,9 +22,6 @@ public:
 
 	void validateRequest(std::vector<std::string> *input);
 
-	/**
-	 * run the command runner (does steps 4 and 5)
-	 */
 	void run();
 
 	/**

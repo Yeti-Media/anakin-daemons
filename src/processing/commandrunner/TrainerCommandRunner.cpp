@@ -6,16 +6,14 @@
  */
 
 #include <processing/commandrunner/TrainerCommandRunner.hpp>
-#include <utils/help/HelpDBConnector.hpp>
-#include <string>
-#include <vector>
+#include <utils/help/HelpTrainer.hpp>
 
 namespace Anakin {
 
 /**
  * static help initialization
  */
-Help* TrainerCommandRunner::help = new HelpDBConnector() ;
+Help* TrainerCommandRunner::help = new HelpTrainer();
 
 TrainerCommandRunner::TrainerCommandRunner(Flags* flags, DataOutput* out,
 		SFBMCache* cache) :
@@ -26,8 +24,7 @@ TrainerCommandRunner::~TrainerCommandRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-	void TrainerCommandRunner::validateRequest(
-			std::vector<std::string> *input) {
+void TrainerCommandRunner::validateRequest(std::vector<std::string> *input) {
 //	inputError = false;
 //	action = 0;
 //	mma = 8;
@@ -110,9 +107,9 @@ TrainerCommandRunner::~TrainerCommandRunner() {
 //		lastError = "input error!";
 //		inputError = true;
 //	}
-	}
+}
 
-	void TrainerCommandRunner::run() {
+void TrainerCommandRunner::run() {
 
 //	if (inputError) {
 //		this->out->error(
@@ -260,6 +257,6 @@ TrainerCommandRunner::~TrainerCommandRunner() {
 //		break;
 //	}
 //	}
-	}
+}
 
-	} /* namespace Anakin */
+} /* namespace Anakin */
