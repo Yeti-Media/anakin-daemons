@@ -13,8 +13,8 @@ public:
 			std::string fileName);
 
 	virtual void train_and_save() = 0;
+	virtual ~Trainer();
 protected:
-	Trainer();
 	cv::Ptr<cv::DescriptorMatcher> detector;
 	std::vector<Anakin::RichImg*>* patterns;
 	std::string outputFolder;

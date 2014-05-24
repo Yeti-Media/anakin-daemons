@@ -12,11 +12,19 @@
 
 namespace Anakin {
 
+/**
+ * Every concrete commandrunner must have an specific extension of this class.
+ * The constructor should initialize intro (summary), usage (correct flags usage),
+ * flags (every flag help), and examples, with the specific documentation.
+ * A concrete commandrunner must have a static public member
+ * named help (class Help) that contain a static object using a concrete class from
+ * this class (Help).
+ */
 class Help {
 public:
 	/**
-	 * for simplicity, the constructor must init the properties of the class with
-	 * the proper text.
+	 * For simplicity, the constructor must init the properties of the class with
+	 * the proper documentation.
 	 */
 	Help();
 	virtual ~Help();
@@ -24,27 +32,27 @@ public:
 	/**
 	 * return a full help text
 	 */
-	virtual std::string getFullHelp();
+	std::string getFullHelp();
 
 	/**
 	 * return a summary of the program
 	 */
-	virtual std::string getIntro();
+	std::string getIntro();
 
 	/**
 	 * return the usage of the program
 	 */
-	virtual std::string getUsage();
+	std::string getUsage();
 
 	/**
 	 * return the documentation for every flag
 	 */
-	virtual std::string getFlags();
+	std::string getFlags();
 
 	/**
 	 * return usage examples
 	 */
-	virtual std::string getExamples();
+	std::string getExamples();
 protected:
 	std::string intro = "TODO\n";
 	std::string usage = "TODO\n";

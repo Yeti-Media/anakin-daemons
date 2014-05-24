@@ -13,7 +13,7 @@
 namespace Anakin {
 
 /**
- * Implement the usage documentation for Trainer
+ * Trainer Help documentation
  */
 class HelpTrainer: public Help {
 public:

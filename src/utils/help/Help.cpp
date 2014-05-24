@@ -18,7 +18,7 @@ Help::~Help() {
 
 std::string Help::getFullHelp() {
 	return getIntro() + "\n" + getUsage() + "\n" + getFlags() + "\n"
-			+ getExamples();
+			+ getExamples() + "\n";
 }
 
 std::string Help::getIntro() {

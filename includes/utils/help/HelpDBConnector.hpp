@@ -13,7 +13,7 @@
 namespace Anakin {
 
 /**
- * Implement the usage documentation for DBConnector
+ * DbConnector Help documentation
  */
 class HelpDBConnector: public Help {
 public:

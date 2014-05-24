@@ -34,7 +34,7 @@ PatternMatchingCommandRunner::~PatternMatchingCommandRunner(){
 void PatternMatchingCommandRunner::validateRequest(
 		std::vector<std::string> *input) {
 	inputError = false;
-	action = 0;
+	action = NONE;
 	mma = 8;
 	mr = 1.f / 1.5f;
 	sceneID = -1;
@@ -44,19 +44,19 @@ void PatternMatchingCommandRunner::validateRequest(
 	if (flags->validateInput(input)) {
 		std::vector<std::string>* values;
 		if (flags->flagFound(Constants::ACTION_MATCH)) {
-			action = PatternMatchingCommandRunner::MATCH;
+			action = E_PatternMatchingAction::MATCH;
 		}
 		if (flags->flagFound(Constants::ACTION_ADDIDX)) {
-			action = PatternMatchingCommandRunner::ADDIDXS;
+			action = E_PatternMatchingAction::ADDIDXS;
 		}
 		if (flags->flagFound(Constants::ACTION_DELIDX)) {
-			action = PatternMatchingCommandRunner::DELIDXS;
+			action = E_PatternMatchingAction::DELIDXS;
 		}
 		if (flags->flagFound(Constants::ACTION_UPDIDX)) {
-			action = PatternMatchingCommandRunner::UPDIDXS;
+			action = E_PatternMatchingAction::UPDIDXS;
 		}
 		if (flags->flagFound(Constants::ACTION_STATUSIDX)) {
-			action = PatternMatchingCommandRunner::IDXSTATUS;
+			action = E_PatternMatchingAction::IDXSTATUS;
 		}
 		if (flags->flagFound(Constants::PARAM_SCENEID)) {
 			values = flags->getFlagValues(Constants::PARAM_SCENEID);
@@ -129,7 +129,7 @@ void PatternMatchingCommandRunner::run() {
 	int ireqID = std::stoi(reqID);
 
 	switch (action) {
-	case PatternMatchingCommandRunner::ADDIDXS: {
+	case E_PatternMatchingAction::ADDIDXS: {
 		std::vector<JSONValue*> inserts;
 		std::string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
@@ -155,7 +155,7 @@ void PatternMatchingCommandRunner::run() {
 						inserts), ireqID);
 		break;
 	}
-	case PatternMatchingCommandRunner::DELIDXS: {
+	case E_PatternMatchingAction::DELIDXS: {
 		std::vector<JSONValue*> deletes;
 		std::string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
@@ -176,7 +176,7 @@ void PatternMatchingCommandRunner::run() {
 						deletes), ireqID);
 		break;
 	}
-	case PatternMatchingCommandRunner::IDXSTATUS: {
+	case E_PatternMatchingAction::IDXSTATUS: {
 		std::vector<JSONValue*> status;
 		status.push_back(this->cache->indexCacheStatus());
 		this->out->output(
@@ -184,7 +184,7 @@ void PatternMatchingCommandRunner::run() {
 						ResultWriter::RW_CACHE_IDX_STATUS, status), ireqID);
 		break;
 	}
-	case PatternMatchingCommandRunner::UPDIDXS: {
+	case E_PatternMatchingAction::UPDIDXS: {
 		std::vector<JSONValue*> updates;
 		std::string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
@@ -211,7 +211,7 @@ void PatternMatchingCommandRunner::run() {
 						updates), ireqID);
 		break;
 	}
-	case PatternMatchingCommandRunner::MATCH: {
+	case E_PatternMatchingAction::MATCH: {
 		std::vector<JSONValue*>* matches = new std::vector<JSONValue*>();
 		std::string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {

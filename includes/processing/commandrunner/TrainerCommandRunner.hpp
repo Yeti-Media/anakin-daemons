@@ -28,12 +28,6 @@ public:
 	 * static help access implementation
 	 */
 	static Help* help;
-
-	static const char MATCH = 1;
-	static const char ADDIDXS = 2;
-	static const char DELIDXS = 3;
-	static const char UPDIDXS = 4;
-	static const char IDXSTATUS = 5;
 };
 
 } /* namespace Anakin */

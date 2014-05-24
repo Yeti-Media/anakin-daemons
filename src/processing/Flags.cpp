@@ -7,6 +7,7 @@ using namespace Anakin;
 using namespace std;
 
 Flags::Flags() {
+	this->minCount = 0;
 }
 
 void Flags::setVerbose(bool b) {

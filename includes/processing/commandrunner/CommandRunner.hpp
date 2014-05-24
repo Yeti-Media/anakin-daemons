@@ -61,7 +61,6 @@ public:
 protected:
 	bool checkDuplicatedIndexes(std::vector<std::string> indexes,
 			std::string * duplicated);
-	char action = 0;
 	int mma = 8;
 	float mr = 1.f / 1.5f;
 	int sceneID;

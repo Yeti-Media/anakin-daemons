@@ -14,5 +14,7 @@ Trainer::Trainer(cv::Ptr<cv::DescriptorMatcher> detector,
 	this->fileName = fileName;
 }
 
-Trainer::Trainer() {
+Trainer::~Trainer() {
+
 }
+

@@ -12,6 +12,9 @@
 
 namespace Anakin {
 
+/**
+ * Extractor Help documentation
+ */
 class HelpExtractor: public Help {
 public:
 	HelpExtractor();

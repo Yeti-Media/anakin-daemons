@@ -15,6 +15,15 @@
 
 namespace Anakin {
 
+enum E_PatternMatchingAction{
+	NONE = 0,
+	MATCH = 1,
+	ADDIDXS = 2,
+	DELIDXS = 3,
+	UPDIDXS = 4,
+	IDXSTATUS = 5
+};
+
 class PatternMatchingCommandRunner: public CommandRunner {
 public:
 	PatternMatchingCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
@@ -29,11 +38,8 @@ public:
 	 */
 	static Help* help;
 
-	static const char MATCH = 1;
-	static const char ADDIDXS = 2;
-	static const char DELIDXS = 3;
-	static const char UPDIDXS = 4;
-	static const char IDXSTATUS = 5;
+private:
+	E_PatternMatchingAction action = NONE;
 };
 
 } /* namespace Anakin */

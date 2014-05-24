@@ -13,7 +13,7 @@
 namespace Anakin {
 
 /**
- * Implement the usage documentation for PatternMatching
+ * PatternMatching Help documentation
  */
 class HelpPatternMatching: public Help {
 public:
