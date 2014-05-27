@@ -17,8 +17,12 @@ DBDriver::DBDriver() {
 }
 
 bool DBDriver::connect() {
+	return DBDriver::connect("","","","","");
+}
 
-	conn = PQconnectdb("");
+bool DBDriver::connect(string pghost, string pgport,
+		string dbName, string login, string pwd) {
+	conn = PQsetdbLogin(pghost.c_str(), pgport.c_str(), NULL, NULL, dbName.c_str(), login.c_str(), pwd.c_str());
 
 	if (PQstatus(conn) != CONNECTION_OK) {
 		std::string cerror = "Connection to database failed";

@@ -10,8 +10,12 @@ namespace Anakin {
 
 class SerializedPatternDataInput {
 public:
-	SerializedPatternDataInput(std::string userID);
-	SerializedPatternDataInput(std::vector<int>* patternsToFind);
+	SerializedPatternDataInput(std::string userID, const char *pghost,
+			const char *pgport, const char *dbName, const char *login,
+			const char *pwd);
+	SerializedPatternDataInput(std::vector<int>* patternsToFind,
+			const char *pghost, const char *pgport, const char *dbName,
+			const char *login, const char *pwd);
 	bool nextInput(ImageInfo** output);
 	void reload();
 protected:
@@ -20,7 +24,8 @@ private:
 	bool loaded;
 	int current;
 	void loadData(std::vector<ImageInfo*>* data, std::string rawData);
-	bool initAndConnectDriver();
+	bool initAndConnectDriver(const char *pghost, const char *pgport,
+			const char *dbName, const char *login, const char *pwd);
 	void reportDBDriverError();
 	bool loadDataFromDB(std::vector<ImageInfo*>* data);
 	static void read(const cv::FileNode& node, ImageInfo& x,

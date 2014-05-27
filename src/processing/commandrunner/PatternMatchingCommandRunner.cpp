@@ -12,22 +12,22 @@
 #include <iterator> // for ostream_iterator
 #include "utils/Constants.hpp"
 #include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 #include <utils/help/HelpPatternMatching.hpp>
 
 using namespace Anakin;
 
-
 /**
  * static help initialization
  */
-Help* PatternMatchingCommandRunner::help = new HelpPatternMatching() ;
+Help* PatternMatchingCommandRunner::help = new HelpPatternMatching();
 
 PatternMatchingCommandRunner::PatternMatchingCommandRunner(Flags* flags,
 		DataOutput* out, SFBMCache* cache) :
-				CommandRunner(flags, out, cache) {
+		CommandRunner(flags, out, cache) {
 }
 
-PatternMatchingCommandRunner::~PatternMatchingCommandRunner(){
+PatternMatchingCommandRunner::~PatternMatchingCommandRunner() {
 
 }
 
@@ -129,6 +129,10 @@ void PatternMatchingCommandRunner::run() {
 	int ireqID = std::stoi(reqID);
 
 	switch (action) {
+	case E_PatternMatchingAction::NONE: {
+		LOG_F("ERROR") << "You can't process NONE action in PatternMatchingCommandRunner::run()";
+		break;
+	}
 	case E_PatternMatchingAction::ADDIDXS: {
 		std::vector<JSONValue*> inserts;
 		std::string duplicated;

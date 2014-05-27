@@ -82,7 +82,15 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 	cerr.tie(nullptr);
 	char iMode = Server<SpecificCommandRunner>::CONSOLE;
 	char oMode = Server<SpecificCommandRunner>::CONSOLE;
-	unsigned short portIn = 18003;
+
+	unsigned int httpPort = 18003;
+
+	string pghost = "";
+	string pgport = "";
+	string dbName = "";
+	string login = "";
+	string pwd = "";
+
 	string logFile = "";
 	unsigned int threads = 4;
 	unsigned int queueCapacity = 10;
@@ -106,6 +114,38 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 	anakinInput->setOverridingFlag("help");
 	anakinInput->setNoValuesFlag("verbose");
+
+	//SERVER CONFIGS
+	anakinInput->setOptionalFlag("pghost");
+	anakinInput->setOptionalFlag("pgport");
+	anakinInput->setOptionalFlag("dbName");
+	anakinInput->setOptionalFlag("login");
+	anakinInput->setOptionalFlag("pwd");
+
+	anakinInput->setDependence("pghost", "pgport");
+	anakinInput->setDependence("pghost", "dbName");
+	anakinInput->setDependence("pghost", "login");
+	anakinInput->setDependence("pghost", "pwd");
+
+	anakinInput->setDependence("pgport", "pghost");
+	anakinInput->setDependence("pgport", "dbName");
+	anakinInput->setDependence("pgport", "login");
+	anakinInput->setDependence("pgport", "pwd");
+
+	anakinInput->setDependence("dbName", "pgport");
+	anakinInput->setDependence("dbName", "pghost");
+	anakinInput->setDependence("dbName", "login");
+	anakinInput->setDependence("dbName", "pwd");
+
+	anakinInput->setDependence("login", "pgport");
+	anakinInput->setDependence("login", "pghost");
+	anakinInput->setDependence("login", "dbName");
+	anakinInput->setDependence("login", "pwd");
+
+	anakinInput->setDependence("pwd", "pgport");
+	anakinInput->setDependence("pwd", "pghost");
+	anakinInput->setDependence("pwd", "dbName");
+	anakinInput->setDependence("pwd", "login");
 
 	//GENERAL CACHE CONFIG
 	if (useCache) {
@@ -146,12 +186,23 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			//NOTE that every concrete commandrunner must have a static member called "help".
 			// See PatternMatchingCommandRunner as an example
 			cout << "Daemon arguments:" << endl
-					<< "[cacheLoadingTimeWeight <int>|cacheDiscardLessValuable <bool>|cacheSize <int>|cacheLife <int>|cacheScenesSize <int>|cacheScenesLife <int>|-oLogFile <path>|-threads <int>|-queueCapacity <int>] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)"
+					<< "[cacheLoadingTimeWeight <int>|cacheDiscardLessValuable <bool>|cacheSize <int>|cacheLife <int>|cacheScenesSize <int>|cacheScenesLife <int>|-oLogFile <path>|-threads <int>|-queueCapacity <int>|(pghost <name> pgport <port> dbName <name> login <user> pwd <password>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)"
 					<< endl << endl
 					<< "-iConsole/oConsole			: use console to input or output respectively"
-					<< endl << "-oLogFile <path>			: path to the output logging file. If it's ignored, logging will be skipped."
+					<< endl
+					<< "-oLogFile <path>			: path to the output logging file. If it's ignored, logging will be skipped."
 					<< endl
 					<< "-iHTTP <port>/oHTTP			: use a HTTP connection with a port for input"
+					<< endl
+					<< "-pghost <name> 				: name of host to connect to. If this begins with a slash, it specifies Unix-domain communication rather than TCP/IP communication; the value is the name of the directory in which the socket file is stored. The default behavior when host is not specified is to connect to a Unix-domain socket in /tmp (or whatever socket directory was specified when PostgreSQL was built). On machines without Unix-domain sockets, the default is to connect to localhost. Empty string will use system environment defaults."
+					<< endl
+					<< "-pgport <port>				: port number to connect to at the server host, or socket file name extension for Unix-domain connections. Empty string will use system environment defaults."
+					<< endl
+					<< "-dbName <name>				: the database name. Defaults to be the same as the user name. Empty string will use system environment defaults."
+					<< endl
+					<< "-login <user>				: postgreSQL user name to connect as. Defaults to be the same as the operating system name of the user running the application. Empty string will use system environment defaults."
+					<< endl
+					<< "-pwd <password>				: password to be used if the server demands password authentication. Empty string will use system environment defaults."
 					<< endl
 					<< "-cacheLoadingTimeWeight <int>		: (default 9) how many importance the loading time of a trainer will influence on his life"
 					<< endl
@@ -177,6 +228,58 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			verbose = true;
 		}
 		vector<string>* values;
+
+		//POSTGRES config
+
+		if (anakinInput->flagFound("pghost")) {
+			values = anakinInput->getFlagValues("pghost");
+			if (values->size() == 1) {
+				pghost = values->at(0);
+			} else {
+				cout << "param pghost needs only one value" << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		if (anakinInput->flagFound("pgport")) {
+			values = anakinInput->getFlagValues("pgport");
+			if (values->size() == 1) {
+				pgport = values->at(0);
+			} else {
+				cout << "param pgport needs only one value" << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		if (anakinInput->flagFound("dbName")) {
+			values = anakinInput->getFlagValues("dbName");
+			if (values->size() == 1) {
+				dbName = values->at(0);
+			} else {
+				cout << "param dbName needs only one value" << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		if (anakinInput->flagFound("login")) {
+			values = anakinInput->getFlagValues("login");
+			if (values->size() == 1) {
+				login = values->at(0);
+			} else {
+				cout << "param login needs only one value" << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		if (anakinInput->flagFound("pwd")) {
+			values = anakinInput->getFlagValues("pwd");
+			if (values->size() == 1) {
+				pwd = values->at(0);
+			} else {
+				cout << "param pwd needs only one value" << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
 
 		//CACHE CONFIG
 		if (useCache) {
@@ -269,7 +372,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			iMode = Server<SpecificCommandRunner>::HTTP;
 			values = anakinInput->getFlagValues("iHTTP");
 			if (values->size() == 1) {
-				portIn = stoi(values->at(0));
+				httpPort = stoi(values->at(0));
 			} else {
 				cout << "param iHTTP needs only one value" << endl;
 				exit(EXIT_FAILURE);
@@ -325,8 +428,8 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 	}
 
 	Server<SpecificCommandRunner>* server = new RequestServer<
-			SpecificCommandRunner>(pCacheConfig, portIn, queueCapacity, threads,
-			verbose, iMode);
+			SpecificCommandRunner>(pCacheConfig, iMode, pghost, pgport, dbName,
+			login, pwd, httpPort, queueCapacity, threads, verbose);
 
 	DataOutput* output;
 	if (oMode & Server<SpecificCommandRunner>::CONSOLE) {

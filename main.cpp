@@ -38,7 +38,7 @@ void Anakin::showHelpMatcherCache() {
  */
 int Anakin::matcherCache(int argc, const char * argv[]) {
 	DBDriver* dbdriver = new DBDriver();
-	if (!dbdriver->connect()) {
+	if (!dbdriver->connect("","","","","")) {
 		std::cerr << dbdriver->getMessage() << endl;
 		exit(EXIT_FAILURE);
 	}
@@ -258,7 +258,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 	logProgramArguments(argc, argv);
 
 	DBDriver* driver = new DBDriver();
-	driver->connect();
+	driver->connect("","","","","");
 	cout << driver->getMessage() << endl;
 	LOG_F("Info")<< driver->getMessage();
 
@@ -895,9 +895,9 @@ int Anakin::trainer(int argc, const char * argv[]) {
 	std::vector<RichImg*> patterns;
 	SerializedPatternDataInput* sinput;
 	if (user) {
-		sinput = new SerializedPatternDataInput(userID);
+		sinput = new SerializedPatternDataInput(userID,"","","","","");
 	} else {
-		sinput = new SerializedPatternDataInput(patternsId);
+		sinput = new SerializedPatternDataInput(patternsId,"","","","","");
 	}
 	PatternLoader* loader = new PatternLoader(sinput, patterns);
 	loader->load();

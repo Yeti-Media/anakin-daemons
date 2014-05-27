@@ -18,7 +18,7 @@ namespace Anakin {
  * it uses a blocking queue to pass each request to the workers (objects that process
  * a request). It sends a NULL value to each worker when receiving a stop message.
  */
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 class RequestServer: public Server<SpecificCommandRunner> {
 public:
 	/**
@@ -27,8 +27,9 @@ public:
 	 * a blocking queue with a capacity of <cap>
 	 * a vector of threads of size <threads>
 	 */
-	RequestServer(CacheConfig * cacheConfig, unsigned const short port, int cap,
-			int threads, bool verbose, char mode);
+	RequestServer(CacheConfig * cacheConfig, char mode, string pghost,
+			string pgport, string dbName, string login, string pwd, unsigned int httpPort,int cap,
+			int threads, bool verbose);
 
 	virtual ~RequestServer();
 protected:
@@ -85,11 +86,12 @@ private:
 	std::vector<pthread_t>* workerThreads;
 };
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 RequestServer<SpecificCommandRunner>::RequestServer(CacheConfig * cacheConfig,
-		unsigned const short port, int cap, int threads, bool verbose,
-		char mode) :
-		Server<SpecificCommandRunner>(cacheConfig, port, verbose, mode) {
+		char mode, string pghost, string pgport, string dbName, string login,
+		string pwd, unsigned int httpPort,int cap, int threads, bool verbose) :
+		Server<SpecificCommandRunner>(cacheConfig, mode, pghost, pgport, dbName,
+				login, pwd, httpPort, verbose) {
 	this->threads = threads;
 	this->workerThreads = new std::vector<pthread_t>(threads);
 	this->qcap = cap;
@@ -100,22 +102,23 @@ RequestServer<SpecificCommandRunner>::RequestServer(CacheConfig * cacheConfig,
 
 //PROTECTED
 
-template <class SpecificCommandRunner>
-void RequestServer<SpecificCommandRunner>::execute(std::vector<std::string>* input) {
+template<class SpecificCommandRunner>
+void RequestServer<SpecificCommandRunner>::execute(
+		std::vector<std::string>* input) {
 	this->workingQueue->push(input);
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::executeStop() {
 	stopWorkers();
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::startServer() {
 	startWorkers(this->aflags, this->output);
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::endServer() {
 	for (int t = 0; t < this->threads; t++) {
 		pthread_join(this->workerThreads->at(t), NULL);
@@ -123,8 +126,9 @@ void RequestServer<SpecificCommandRunner>::endServer() {
 }
 
 //PRIVATE
-template <class SpecificCommandRunner>
-void RequestServer<SpecificCommandRunner>::startWorkers(AnakinFlags* aflags, DataOutput* output) {
+template<class SpecificCommandRunner>
+void RequestServer<SpecificCommandRunner>::startWorkers(AnakinFlags* aflags,
+		DataOutput* output) {
 	for (int w = 0; w < this->threads; w++) {
 		WorkerArgs* wargs = new WorkerArgs(w + 1, aflags->getFlags(), output,
 				this->cache, this->workingQueue);
@@ -133,7 +137,7 @@ void RequestServer<SpecificCommandRunner>::startWorkers(AnakinFlags* aflags, Dat
 	}
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	WorkerArgs* wargs = (WorkerArgs*) ptr;
 	Worker* worker = new Worker(wargs->id, wargs->workingQueue,
@@ -142,7 +146,7 @@ void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	worker->start();
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::stopWorkers() {
 	for (int w = 0; w < this->threads; w++) {
 		this->workingQueue->push(NULL);

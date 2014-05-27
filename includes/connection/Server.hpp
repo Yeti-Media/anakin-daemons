@@ -63,8 +63,9 @@ public:
 	 * verbose : if the server will output information to console or not
 	 * mode : how to listen to requests (CONSOLE, TCP, UDP, DTCP, HTTP)
 	 */
-	Server(CacheConfig * cacheConfig, unsigned const short port, bool verbose,
-			char mode = HTTP);
+	Server(CacheConfig * cacheConfig,
+			char mode, string pghost, string pgport,
+			string dbName, string login, string pwd, unsigned int httpPort, bool verbose);
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * aflags : this will check the message and validate that have the required flags and values
@@ -146,14 +147,15 @@ private:
 };
 
 template <class SpecificCommandRunner>
-Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, unsigned short port, bool verbose,
-		char mode) {
+Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig,
+		char mode, string pghost, string pgport,
+		string dbName, string login, string pwd,  unsigned int httpPort, bool verbose) {
 	this->aflags = NULL;
 	this->output = NULL;
-	this->port = port;
+	this->port = httpPort;
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
-	if (this->dbdriver->connect()) {
+	if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
 		this->initialization = true;
 		std::cout << this->dbdriver->getMessage() << std::endl;
 		LOG_F("INFO")<< this->dbdriver->getMessage();

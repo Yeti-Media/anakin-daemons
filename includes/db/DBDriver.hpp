@@ -9,6 +9,8 @@
 #include "data/ImageInfo.hpp"
 #include <string>
 
+using namespace std;
+
 namespace Anakin {
 /**
  * This class allows to store and retrieve information to and from the db
@@ -35,6 +37,8 @@ public:
 	 * connects to the db
 	 */
 	bool connect();
+	bool connect(string pghost, string pgport,
+			string dbName, string login, string pwd);
 	/**
 	 * disconnects from the db
 	 */
