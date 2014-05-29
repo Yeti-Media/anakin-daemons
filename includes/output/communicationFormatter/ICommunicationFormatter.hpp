@@ -24,9 +24,7 @@ public:
 		RW_ERROR_TYPE_FATAL = 2
 	};
 
-	I_CommunicationFormatter() {
-	}
-	;
+	//I_CommunicationFormatter();
 
 	virtual wstring outputResponse(string requestID, string category,
 			vector<string *> values) = 0;

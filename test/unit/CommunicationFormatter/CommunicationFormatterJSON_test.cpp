@@ -5,7 +5,7 @@
  *      Author: renx
  */
 
-#include <output/CommunicationFormatterJSON.hpp>
+#include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 
 namespace Anakin {
 

@@ -8,7 +8,7 @@
 #ifndef COMMUNICATIONFORMATTERJSON_HPP_
 #define COMMUNICATIONFORMATTERJSON_HPP_
 
-#include "output/ICommunicationFormatter.hpp"
+#include "output/communicationFormatter/ICommunicationFormatter.hpp"
 #include "output/JSON.h"
 #include "output/JSONValue.h"
 #include <opencv2/opencv.hpp>
