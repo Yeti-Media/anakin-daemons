@@ -17,6 +17,7 @@ namespace Anakin {
 
 class CommunicationFormatterJSON: public I_CommunicationFormatter {
 public:
+
 	CommunicationFormatterJSON();
 	~CommunicationFormatterJSON();
 };

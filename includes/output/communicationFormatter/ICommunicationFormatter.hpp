@@ -24,13 +24,15 @@ public:
 		RW_ERROR_TYPE_FATAL = 2
 	};
 
-	//I_CommunicationFormatter();
-
 	virtual wstring outputResponse(string requestID, string category,
 			vector<string *> values) = 0;
+
 	virtual wstring outputError(e_error errorType, std::string message,
 			std::string origin) = 0;
+
 	virtual wstring format(const char * data) = 0;
+
+	virtual wstring format(char mode, string data, char colors) = 0;
 
 	virtual ~I_CommunicationFormatter() {
 	}
