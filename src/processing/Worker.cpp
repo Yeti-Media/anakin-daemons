@@ -4,9 +4,10 @@
 #include <vector>
 
 using namespace Anakin;
+using namespace std;
 
 Worker::Worker(int id,
-		tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue,
+		tbb::concurrent_bounded_queue<vector<string>*>* workingQueue,
 		CommandRunner* command) {
 	this->id = id;
 	this->workingQueue = workingQueue;
@@ -16,10 +17,8 @@ Worker::Worker(int id,
 void Worker::start() {
 	bool run = true;
 	while (run) {
-		std::vector<std::string>* input;
+		vector<string>* input;
 		this->workingQueue->pop(input);
-		std::cout << "worker(" << this->id << ") is processing a request"
-				<< std::endl;
 		if (input != NULL) {
 			runner->validateRequest(input);
 			runner->run();

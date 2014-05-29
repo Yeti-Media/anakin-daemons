@@ -1,93 +1,61 @@
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
 #include <output/DataOutput.hpp>
-#include <cstdlib>
+#include <mutex>
 #include <string>
 
 using namespace Anakin;
 using namespace std;
 
-//DataOutput::DataOutput(Socket* s) {
-//	initSem();
-//	this->s = s;
-//	this->consoleOutput = false;
-//	this->httpOutput = false;
-//}
-
 DataOutput::DataOutput(HTTPSocket* httpSocket) {
-	initSem();
-	this->httpSocket = httpSocket;
-	this->consoleOutput = false;
-	this->httpOutput = true;
-	//this->s = NULL;
+	workingQueue = new BlockingQueue<Msj*>();
+	WorkerArgs* wargs = new WorkerArgs(E_DataOutputType::http, httpSocket,
+			workingQueue);
+	pthread_create(&this->workerThread, NULL, startWorker, (void *) wargs);
 }
 
 DataOutput::DataOutput() {
-	initSem();
-	this->consoleOutput = true;
-	this->httpOutput = false;
-	//this->s = NULL;
+	workingQueue = new BlockingQueue<Msj*>();
+	WorkerArgs* wargs = new WorkerArgs(E_DataOutputType::console, NULL,
+			workingQueue);
+	pthread_create(&this->workerThread, NULL, startWorker, (void *) wargs);
 }
 
+void* DataOutput::startWorker(void *ptr) {
+	WorkerArgs* wargs = (WorkerArgs*) ptr;
+	DataOutputWorker* worker = new DataOutputWorker(wargs->outputType,
+			wargs->httpSocket, wargs->workingQueue);
+	worker->start();
+}
+
+DataOutput::~DataOutput() {
+	delete workingQueue;
+}
 void DataOutput::output(string data, int reqID) {
-	sem_wait(&this->ssem);
-	if (this->consoleOutput) {
-		flush(cout);
-		cout << data << endl;
-	} else if (this->httpOutput) {
-		this->httpSocket->respond(data, true, reqID);
-	}
-//	else {
-//		this->s->send(data);
-//	}
-	sem_post(&this->ssem);
+	lock_guard<mutex> lck(mutex1);
+	Msj* msj = new Msj(data, E_DataOutputMsjType::common, reqID);
+	workingQueue->push(msj);
 }
 
 void DataOutput::output(wstring data, int reqID) {
-	sem_wait(&this->wssem);
+	lock_guard<mutex> lck(mutex2);
 	string s(data.begin(), data.end());
 	output(s, reqID);
-	sem_post(&this->wssem);
 }
 
-void DataOutput::error(std::string data) {
-	sem_wait(&this->ssem);
-	if (this->consoleOutput) {
-		flush(cerr);
-		cerr << data << endl;
-	} else if (this->httpOutput) {
-		this->httpSocket->respond(data, false, -1);
-		LOG_F("ERROR")<< data;
-	}
-//	else {
-//		this->s->send(data);
-//		LOG_F("ERROR") << data;
-//	}
-	sem_post(&this->ssem);
+void DataOutput::error(string data) {
+	lock_guard<mutex> lck(mutex1);
+	Msj* msj = new Msj(data, E_DataOutputMsjType::error, -1);
+	workingQueue->push(msj);
 }
 
-void DataOutput::error(std::wstring data) {
-	sem_wait(&this->wssem);
+void DataOutput::error(wstring data) {
+	lock_guard<mutex> lck(mutex2);
 	string s(data.begin(), data.end());
 	error(s);
-	sem_post(&this->wssem);
 }
 
 void DataOutput::close() {
-//	if (this->s) {
-//		this->s->sendStop();
-//	}
-}
-
-//PRIVATE
-
-void DataOutput::initSem() {
-	if (sem_init(&this->ssem, 0, 1) != 0) {
-		cout << "DataOutput#initSem: error initializing semaphore\n";
-		exit(-1);
-	}
-	if (sem_init(&this->wssem, 0, 1) != 0) {
-		cout << "DataOutput#initSem: error initializing semaphore\n";
-		exit(-1);
-	}
+	workingQueue->push(NULL);
+	pthread_join(this->workerThread, NULL);
 }

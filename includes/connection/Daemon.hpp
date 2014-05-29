@@ -444,7 +444,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 	server->start(aflags, output);
 
-	delete httpSocket;
+	delete output;
 	delete aflags;
 	delete server;
 }

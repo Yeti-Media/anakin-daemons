@@ -2,8 +2,15 @@
 #define DATAOUTPUT_HPP
 
 #include <iostream>
-#include <semaphore.h>
 #include "connection/HTTPSocket.hpp"
+#include <output/DataOutputWorker.hpp>
+#include <output/DataEnumerates.hpp>
+#include <utils/BlockingQueue.hpp>
+#include <output/DataOutputWorker.hpp>
+#include <output/Msj.hpp>
+#include <pthread.h>
+
+using namespace std;
 
 namespace Anakin {
 
@@ -29,6 +36,8 @@ public:
 	 * Constructor (to use console to output data)
 	 */
 	DataOutput();
+	~DataOutput();
+
 	/**
 	 * output data and can optionally set an id for the message
 	 *
@@ -37,7 +46,7 @@ public:
 	 * --------------------------------
 	 * note : if using HTTPSocket then reqID must be set
 	 */
-	void output(std::string data, int reqID = 0);
+	void output(string data, int reqID = 0);
 	/**
 	 * output data and can optionally set an id for the message
 	 *
@@ -46,11 +55,11 @@ public:
 	 * --------------------------------
 	 * note : if using HTTPSocket then reqID must be set
 	 */
-	void output(std::wstring data, int reqID = 0);
+	void output(wstring data, int reqID = 0);
 
-	void error(std::string data);
+	void error(string data);
 
-	void error(std::wstring data);
+	void error(wstring data);
 
 	/**
 	 * On some cases the internal mechanism used to output data
@@ -58,18 +67,37 @@ public:
 	 * this function should always be called when closing anakin
 	 */
 	void close();
-protected:
 private:
+
+	mutex mutex1;
+	mutex mutex2;
+
 	/**
-	 * initialize the internal semaphores
+	 * used for msj storage and future delivering (so working thread can be realesed
+	 * to continue)
 	 */
-	void initSem();
-	//Socket* s;
-	HTTPSocket* httpSocket;
-	bool consoleOutput = true;
-	bool httpOutput = false;
-	sem_t ssem;
-	sem_t wssem;
+	BlockingQueue<Msj*>* workingQueue;
+
+	/**
+	 * start worker thread that dispatch msj
+	 */
+	static void * startWorker(void *ptr);
+	/**
+	 * structure to pass arguments to a Worker
+	 */
+	struct WorkerArgs {
+		E_DataOutputType outputType;
+		HTTPSocket* httpSocket;
+		BlockingQueue<Msj*>* workingQueue;
+		WorkerArgs(E_DataOutputType outputType, HTTPSocket* httpSocket,
+				BlockingQueue<Msj*>* workingQueue) :
+				outputType(outputType), httpSocket(httpSocket), workingQueue(
+						workingQueue) {
+		}
+	};
+
+	pthread_t workerThread;
+
 };
 }
 ;

@@ -19,6 +19,11 @@ HTTPSocket::HTTPSocket(std::string port, int threads) {
 	startToListen(this->port, this->readingQueue, this->writtingQueue, threads);
 }
 
+HTTPSocket::~HTTPSocket() {
+	delete this->readingQueue;
+	delete this->writtingQueue;
+}
+
 void HTTPSocket::respond(std::string body, bool statusOK, int reqID) {
 	int status = statusOK ? 200 : 422;
 	HTTPSocket::MessageData* rd = new HTTPSocket::MessageData("", body,
