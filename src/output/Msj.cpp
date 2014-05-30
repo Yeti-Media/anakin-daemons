@@ -14,6 +14,11 @@ Msj::Msj(string data, E_DataOutputMsjType msjType, int reqID) :
 
 }
 
+Msj::Msj(string data, E_DataOutputMsjType msjType) :
+		data(data), type(msjType) {
+	this->reqID = -1;
+}
+
 Msj::~Msj() {
 }
 

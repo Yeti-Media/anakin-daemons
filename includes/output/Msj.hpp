@@ -18,6 +18,7 @@ namespace Anakin {
 class Msj {
 public:
 	Msj(string data, E_DataOutputMsjType msjType, int reqID);
+	Msj(string data, E_DataOutputMsjType msjType);
 	virtual ~Msj();
 
 	string data;

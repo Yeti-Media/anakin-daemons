@@ -45,7 +45,7 @@ void DataOutput::output(wstring data, int reqID) {
 
 void DataOutput::error(string data) {
 	lock_guard<mutex> lck(mutex1);
-	Msj* msj = new Msj(data, E_DataOutputMsjType::error, -1);
+	Msj* msj = new Msj(data, E_DataOutputMsjType::error);
 	workingQueue->push(msj);
 }
 

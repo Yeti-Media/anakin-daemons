@@ -16,8 +16,17 @@
 using namespace std;
 namespace Anakin {
 
+/**
+ * This class is executed in another thread, and will dispatch the data stored
+ * in the concurrent queue.
+ */
 class DataOutputWorker {
 public:
+	/**
+	 * outputType: specific implementation to choose for an output
+	 * httpSocket: http socket to use, or NULL.
+	 * workingQueue: blocking queue to use with other threads to deliver data
+	 */
 	DataOutputWorker(E_DataOutputType outputType, HTTPSocket* httpSocket,
 			BlockingQueue<Msj*>* workingQueue);
 	virtual ~DataOutputWorker();

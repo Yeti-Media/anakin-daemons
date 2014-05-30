@@ -16,15 +16,15 @@ namespace Anakin {
 
 /**
  * This class is used to output anakin results/messages
- * The client of this class doesn't know how the messages are outputted
+ * The client of this class doesn't know how the messages are outputted.
+ *
+ * This Data Output system create a thread that store the data to be
+ * delivered, one by one. This is usefull when the output system choosed is
+ * slower than the threads that deliver concurrent data to some destination,
+ * using the same channel/socket.
  */
 class DataOutput {
 public:
-	/**
-	 * Constructor (to use Socket to output data)
-	 * s : a Socket object used to output data
-	 */
-	//DataOutput(Socket* s);
 	/**
 	 * Constructor (to use HTTP socket to output data)
 	 * httpSocket : the http socket to output data
@@ -36,6 +36,7 @@ public:
 	 * Constructor (to use console to output data)
 	 */
 	DataOutput();
+
 	~DataOutput();
 
 	/**
@@ -47,6 +48,7 @@ public:
 	 * note : if using HTTPSocket then reqID must be set
 	 */
 	void output(string data, int reqID = 0);
+
 	/**
 	 * output data and can optionally set an id for the message
 	 *
@@ -69,12 +71,15 @@ public:
 	void close();
 private:
 
+	/**
+	 * used for block the concurrent access to DataOutput methods
+	 */
 	mutex mutex1;
 	mutex mutex2;
 
 	/**
-	 * used for msj storage and future delivering (so working thread can be realesed
-	 * to continue)
+	 * used for msj storage and future delivering (so a working thread can be
+	 * released to continue)
 	 */
 	BlockingQueue<Msj*>* workingQueue;
 
@@ -82,6 +87,7 @@ private:
 	 * start worker thread that dispatch msj
 	 */
 	static void * startWorker(void *ptr);
+
 	/**
 	 * structure to pass arguments to a Worker
 	 */
@@ -96,6 +102,10 @@ private:
 		}
 	};
 
+	/**
+	 * thread that read the workingQueue and deliver the data using some
+	 * specific implementation
+	 */
 	pthread_t workerThread;
 
 };
