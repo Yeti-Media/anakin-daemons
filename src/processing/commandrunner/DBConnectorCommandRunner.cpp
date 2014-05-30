@@ -15,8 +15,8 @@ namespace Anakin {
  */
 Help* DBConnectorCommandRunner::help = new HelpDBConnector();
 
-DBConnectorCommandRunner::DBConnectorCommandRunner(Flags* flags, DataOutput* out,
-		SFBMCache* cache) :
+DBConnectorCommandRunner::DBConnectorCommandRunner(Flags* flags,
+		DataOutput* out, SFBMCache* cache) :
 		CommandRunner(flags, out, cache) {
 }
 
@@ -24,7 +24,8 @@ DBConnectorCommandRunner::~DBConnectorCommandRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-void DBConnectorCommandRunner::validateRequest(std::vector<std::string> *input) {
+void DBConnectorCommandRunner::validateRequest(
+		std::vector<std::string> *input) {
 }
 
 void DBConnectorCommandRunner::run() {

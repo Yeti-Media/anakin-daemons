@@ -7,6 +7,9 @@
 #ifndef DATAENUMERATES_HPP
 #define DATAENUMERATES_HPP
 
+/**
+ * Common enumerate used for all anakin.
+ */
 namespace Anakin {
 
 enum E_DataOutputType {

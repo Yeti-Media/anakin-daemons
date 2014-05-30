@@ -25,21 +25,24 @@ public:
 	 *                 Hence, responsibility for deleting the \c char* lies
 	 *                 with the caller.
 	 */
-	explicit EInvalidFlags(const char* message):
-	msg_(message)
-	{};
+	explicit EInvalidFlags(const char* message) :
+			msg_(message) {
+	}
+	;
 
 	/**
 	 *  @param message The error message.
 	 */
-	explicit EInvalidFlags(const std::string& message):
-	msg_(message)
-	{};
+	explicit EInvalidFlags(const std::string& message) :
+			msg_(message) {
+	}
+	;
 
 	/** Destructor.
 	 * Virtual to allow for subclassing.
 	 */
-	virtual ~EInvalidFlags() throw () {}
+	virtual ~EInvalidFlags() throw () {
+	}
 
 	/** Returns a pointer to the (constant) error description.
 	 *  @return A pointer to a \c const \c char*. The underlying memory
@@ -56,6 +59,7 @@ protected:
 	std::string msg_;
 };
 
-};
+}
+;
 
 #endif /* ANAKINEXCEPTIONS_HPP_ */

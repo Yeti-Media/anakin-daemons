@@ -3,11 +3,12 @@
 
 #define DEBUG 1
 
+using namespace std;
 using namespace Anakin;
 
 Trainer::Trainer(cv::Ptr<cv::DescriptorMatcher> detector,
-		std::vector<RichImg*>& patterns, std::string outputFolder,
-		std::string fileName) {
+		vector<RichImg*>& patterns, string outputFolder,
+		string fileName) {
 	this->detector = detector;
 	this->patterns = &patterns;
 	this->outputFolder = outputFolder;

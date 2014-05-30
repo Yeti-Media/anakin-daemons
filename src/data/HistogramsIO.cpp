@@ -29,7 +29,7 @@ void HistogramsIO::load(const char mode) {
 	}
 }
 
-void HistogramsIO::save(std::vector<Histogram*>* input, const char mode,
+void HistogramsIO::save(vector<Histogram*>* input, const char mode,
 		bool saveToFile) {
 	string subfolder = mode & LANDSCAPE ? "landscape/" : "pattern/";
 	string subSubFolder =
@@ -97,7 +97,7 @@ void HistogramsIO::read(const cv::FileNode& node, Histogram& x,
 		x.read(node);
 }
 
-void HistogramsIO::write(FileStorage& fs, const std::string&,
+void HistogramsIO::write(FileStorage& fs, const string&,
 		const Histogram& x) {
 	x.write(fs);
 }
@@ -121,8 +121,8 @@ void HistogramsIO::loadData(vector<Histogram*>* data, string folder) {
 		}
 
 	} else {
-		std::cerr << "HistogramsIO#loadData : directory : " << folder
-				<< " doesn't exist" << std::endl;
+		cerr << "HistogramsIO#loadData : directory : " << folder
+				<< " doesn't exist" << endl;
 		LOG_F("ERROR")<< "HistogramsIO#loadData : directory : " << folder
 		<< " doesn't exist";
 		exit(EXIT_FAILURE);

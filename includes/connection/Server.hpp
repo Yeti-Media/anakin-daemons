@@ -1,8 +1,6 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-//#include <boost/algorithm/string.hpp>
-//#include <boost/regex.hpp>
 #include <connection/HTTPSocket.hpp>
 #include <db/DBDriver.hpp>
 #include <logging/Log.hpp>
@@ -13,49 +11,16 @@
 #include <sys/types.h>
 #include "connection/Server.hpp"
 #include "processing/AnakinFlags.hpp"
-//#include "processing/CommandRunner.hpp"
 #include <cstdlib>
 #include <iostream>
-//#include <sstream>
 #include <string>
 #include <vector>
 
+using namespace std;
 namespace Anakin {
 
-/**
- * Base class for listening to requests
- *
- * this class implement a skeleton algorithm to process messages
- * a redactec version is shown below
- *
- *
- *    startServer();
- *    std::string msg;
- *    bool run = true;
- *    bool stopReceivedInsideInput = false;
- *    do {
- *        msg = read();
- *        if (!stopMessageReceived(msg)) {
- *            std::vector<std::vector<std::string>*>* inputs = getInputs(msg, &stopReceivedInsideInput);
- *            for (uint i = 0; i < inputs->size(); i++) {
- *                execute(inputs->at(i));
- *            }
- *            if (stopReceivedInsideInput) {
- *                stopReceived();
- *                run = false;
- *            }
- *        } else {
- *            stopReceived();
- *            run = false;
- *        }
- *    } while (run);
- *    endServer();
- *    output->close();
- *    [in some modes a stop function will be called for the socket used]
- *
- */
-template <class SpecificCommandRunner>
-class Server{
+template<class SpecificCommandRunner>
+class Server {
 public:
 	/**
 	 * Constructor
@@ -63,9 +28,9 @@ public:
 	 * verbose : if the server will output information to console or not
 	 * mode : how to listen to requests (CONSOLE, TCP, UDP, DTCP, HTTP)
 	 */
-	Server(CacheConfig * cacheConfig,
-			char mode, string pghost, string pgport,
-			string dbName, string login, string pwd, unsigned int httpPort, bool verbose);
+	Server(CacheConfig * cacheConfig, char mode, string pghost, string pgport,
+			string dbName, string login, string pwd, unsigned int httpPort,
+			bool verbose);
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * aflags : this will check the message and validate that have the required flags and values
@@ -89,23 +54,23 @@ protected:
 	/**
 	 * will read a message from the right input (socket, console, httpsocket)
 	 */
-	std::string read();
+	string read();
 	/**
 	 * this is used to support several requests on the same message
 	 * the only mode that supports this is DTCP, all others will send
 	 * one request per message
 	 */
-	std::vector<std::vector<std::string>*>* getInputs(std::string rawInput,
+	vector<vector<string>*>* getInputs(string rawInput,
 			bool * stopReceivedInsideInput);
 	/**
 	 * because the input is validated as a vector of strings, the original message
 	 * must be transformed from one string to a vector
 	 */
-	std::vector<std::string>* rawToInput(std::string rawInput);
+	vector<string>* rawToInput(string rawInput);
 	/**
 	 * this will process an input
 	 */
-	virtual void execute(std::vector<std::string>* input);
+	virtual void execute(vector<string>* input);
 	/**
 	 * this will execute when receiving a stop message
 	 * this is the last function to be called by stopReceived
@@ -114,7 +79,7 @@ protected:
 	/**
 	 * will return true if rawMsg is a stop message
 	 */
-	virtual bool stopMessageReceived(std::string rawMsg);
+	virtual bool stopMessageReceived(string rawMsg);
 
 	/**
 	 * this is used to execute anything needed before starting to receiving messages
@@ -129,9 +94,7 @@ protected:
 	 */
 	void stopReceived();
 	unsigned short port;
-	//ServerSocket* server;
 	bool verbose;
-	//Socket* socket;
 	HTTPSocket* httpSocket;
 	char mode;
 	AnakinFlags* aflags;
@@ -140,16 +103,16 @@ protected:
 	DBDriver* dbdriver;
 
 	bool initialization = false;
-	std::string initializationError;
+	string initializationError;
 	bool cacheInitializationError;
-	std::wstring cacheInitializationErrorMsj;
+	wstring cacheInitializationErrorMsj;
 private:
 };
 
-template <class SpecificCommandRunner>
-Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig,
-		char mode, string pghost, string pgport,
-		string dbName, string login, string pwd,  unsigned int httpPort, bool verbose) {
+template<class SpecificCommandRunner>
+Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
+		string pghost, string pgport, string dbName, string login, string pwd,
+		unsigned int httpPort, bool verbose) {
 	this->aflags = NULL;
 	this->output = NULL;
 	this->port = httpPort;
@@ -157,13 +120,13 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig,
 	this->dbdriver = new DBDriver();
 	if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
 		this->initialization = true;
-		std::cout << this->dbdriver->getMessage() << std::endl;
+		cout << this->dbdriver->getMessage() << endl;
 		LOG_F("INFO")<< this->dbdriver->getMessage();
 	} else {
 		this->initialization = false;
 		this->initializationError = this->dbdriver->getMessage();
 		LOG_F("ERROR") << this->dbdriver->getMessage();
-		std::cout << this->dbdriver->getMessage() << std::endl;
+		cout << this->dbdriver->getMessage() << endl;
 		exit(EXIT_FAILURE);
 	}
 	if (this->initialization) {
@@ -177,26 +140,27 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig,
 		}
 	}
 	if (mode & HTTP) {
-		std::string sport = std::to_string(port);
+		string sport = to_string(port);
 		this->httpSocket = new HTTPSocket(sport, 15);
 		this->httpSocket->setShowComs(verbose);
 	}
 	this->verbose = verbose;
 }
 
-template <class SpecificCommandRunner>
-void Server<SpecificCommandRunner>::start(AnakinFlags* aflags, DataOutput* output) {
+template<class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::start(AnakinFlags* aflags,
+		DataOutput* output) {
 	this->aflags = aflags;
 	this->output = output;
 	startServer();
-	std::string msg;
+	string msg;
 	bool run = true;
 	bool stopReceivedInsideInput = false;
 	do {
 		msg = read();
 		if (!stopMessageReceived(msg)) {
-			std::cout << "MESSAGE RECEIVED:\n" << msg << std::endl;
-			std::vector<std::vector<std::string>*>* inputs = getInputs(msg,
+			cout << "MESSAGE RECEIVED:" << endl << msg << endl;
+			vector<vector<string>*>* inputs = getInputs(msg,
 					&stopReceivedInsideInput);
 			if (stopReceivedInsideInput) {
 				stopReceived();
@@ -217,21 +181,21 @@ void Server<SpecificCommandRunner>::start(AnakinFlags* aflags, DataOutput* outpu
 		this->httpSocket->stop();
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 HTTPSocket* Server<SpecificCommandRunner>::getHttpSocket() {
 	return this->httpSocket;
 }
 
 //PROTECTED
 
-template <class SpecificCommandRunner>
-std::string Server<SpecificCommandRunner>::read() {
+template<class SpecificCommandRunner>
+string Server<SpecificCommandRunner>::read() {
 	if (this->mode & CONSOLE) {
-		std::string msg = "";
+		string msg = "";
 		getline(cin, msg);
 		return msg;
 	} else if (this->mode & HTTP) {
-		std::string msj = this->httpSocket->read();
+		string msj = this->httpSocket->read();
 		LOG_F("Request")<< msj;
 		return msj;
 	}
@@ -239,12 +203,11 @@ std::string Server<SpecificCommandRunner>::read() {
 	return "-stop";
 }
 
-template <class SpecificCommandRunner>
-std::vector<std::vector<std::string>*>* Server<SpecificCommandRunner>::getInputs(std::string rawInput,
-		bool * stopReceivedInsideInput) {
-	std::vector<std::vector<std::string>*>* inputs = new std::vector<
-			std::vector<std::string>*>(0);
-	std::string msg = rawInput;
+template<class SpecificCommandRunner>
+vector<vector<string>*>* Server<SpecificCommandRunner>::getInputs(
+		string rawInput, bool * stopReceivedInsideInput) {
+	vector<vector<string>*>* inputs = new vector<vector<string>*>(0);
+	string msg = rawInput;
 
 	if (Server::stopMessageReceived(rawInput)) {
 		*stopReceivedInsideInput = true;
@@ -253,64 +216,64 @@ std::vector<std::vector<std::string>*>* Server<SpecificCommandRunner>::getInputs
 
 	return inputs;
 }
-template <class SpecificCommandRunner>
-std::vector<std::string>* Server<SpecificCommandRunner>::rawToInput(std::string rawInput) {
-	std::vector<std::string> *input = new std::vector<std::string>(0);
+template<class SpecificCommandRunner>
+vector<string>* Server<SpecificCommandRunner>::rawToInput(string rawInput) {
+	vector<string> *input = new vector<string>(0);
 	stringstream ss_input(rawInput);
 	while (ss_input.good()) {
-		std::string value;
+		string value;
 		ss_input >> value;
 		input->push_back(value);
 	}
 	return input;
 }
 
-template <class SpecificCommandRunner>
-void Server<SpecificCommandRunner>::execute(std::vector<std::string>* input) {
+template<class SpecificCommandRunner>
+void Server<SpecificCommandRunner>::execute(vector<string>* input) {
 //	CommandRunner* runner = new CommandRunner(this->aflags->getFlags(),
 //			this->output, this->cache, input);
 //	runner->run();
 }
 
-
-template <class SpecificCommandRunner>
-bool Server<SpecificCommandRunner>::stopMessageReceived(std::string rawMsg) {
-	return (rawMsg.find("-stop") != std::string::npos)
-			|| (rawMsg.find("\"action\":\"stop\"") != std::string::npos);
+template<class SpecificCommandRunner>
+bool Server<SpecificCommandRunner>::stopMessageReceived(string rawMsg) {
+	return (rawMsg.find("-stop") != string::npos)
+			|| (rawMsg.find("\"action\":\"stop\"") != string::npos);
 }
 
 /**
  * placeholder for inheritance
  */
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void Server<SpecificCommandRunner>::executeStop() {
 }
 
 /**
  * placeholder for inheritance
  */
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void Server<SpecificCommandRunner>::endServer() {
 }
 
 /**
  * placeholder for inheritance
  */
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void Server<SpecificCommandRunner>::startServer() {
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 void Server<SpecificCommandRunner>::stopReceived() {
-	std::cout << "STOP MESSAGE RECEIVED" << std::endl;
+	cout << "STOP MESSAGE RECEIVED" << endl;
 	executeStop();
 }
 
-template <class SpecificCommandRunner>
+template<class SpecificCommandRunner>
 Server<SpecificCommandRunner>::~Server() {
 }
 
 }
-; // namespace Anakin
+;
+// namespace Anakin
 
 #endif // SERVER_HPP

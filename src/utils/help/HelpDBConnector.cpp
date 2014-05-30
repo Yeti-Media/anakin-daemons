@@ -19,12 +19,12 @@ HelpDBConnector::HelpDBConnector() {
 					"(3) save and load scenes.\n"
 					"(4) save and load serialized matchers\n";
 	usage =
-					"-user <ID> [((-path <folder|file>) | -load) (-patterns|-landscapes|-histograms)] 	(1)\n"
+			"-user <ID> [((-path <folder|file>) | -load) (-patterns|-landscapes|-histograms)] 	(1)\n"
 					"-path <folder|file> (-patterns|-landscapes|-histograms) 				(2)\n"
 					"-scenes ((-path <folder|file>)|(-sceneID <ID> -load))					(3)\n"
 					"-index <ID UID> [(-load)|-savePatterns)]	                			(4)\n";
 	flags =
-					"-user <ID> 		: 	sets the user ID, when used with -patterns, -landscapes or -histograms flags then the saving or loading of patterns,\n"
+			"-user <ID> 		: 	sets the user ID, when used with -patterns, -landscapes or -histograms flags then the saving or loading of patterns,\n"
 					"                       landscapes or histograms will be related to that particular user. A user can be saved without specifying any other flag\n"
 					"                       but a user can't be loaded, only it's patterns, landscapes or histograms.\n"
 					"-path <folder|file> 	:	sets the object or objects to be loaded (patterns, landscapes or histograms)\n"
@@ -39,7 +39,7 @@ HelpDBConnector::HelpDBConnector() {
 					"                       UID value refers to the userID, this values is only needed when saving.\n"
 					"-savePatterns		:	this will save all the patterns defined by the flag -path and make a relation (indexID, label, index) for each of them\n";
 	examples =
-					"-user J				*this will save user J to the db\n"
+			"-user J				*this will save user J to the db\n"
 					"-user J -load -patterns		*this will load user J's patterns\n"
 					"-user J -path forest.xml -landscapes	*this will save landscape forest.xml to the db, save user J and save the relation (J, forest.xml)\n"
 					"-user K -path /home/K/Downloads/histograms/ -histograms	*this will save all xml files in /home/K/Downloads/histograms/, save user K\n"

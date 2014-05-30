@@ -37,8 +37,8 @@ public:
 	 * connects to the db
 	 */
 	bool connect();
-	bool connect(string pghost, string pgport,
-			string dbName, string login, string pwd);
+	bool connect(string pghost, string pgport, string dbName, string login,
+			string pwd);
 	/**
 	 * disconnects from the db
 	 */

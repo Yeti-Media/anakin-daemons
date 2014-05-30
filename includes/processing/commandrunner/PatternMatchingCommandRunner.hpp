@@ -15,18 +15,14 @@
 
 namespace Anakin {
 
-enum E_PatternMatchingAction{
-	NONE = 0,
-	MATCH = 1,
-	ADDIDXS = 2,
-	DELIDXS = 3,
-	UPDIDXS = 4,
-	IDXSTATUS = 5
+enum E_PatternMatchingAction {
+	NONE = 0, MATCH = 1, ADDIDXS = 2, DELIDXS = 3, UPDIDXS = 4, IDXSTATUS = 5
 };
 
 class PatternMatchingCommandRunner: public CommandRunner {
 public:
-	PatternMatchingCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
+	PatternMatchingCommandRunner(Flags* flags, DataOutput* out,
+			SFBMCache* cache);
 	virtual ~PatternMatchingCommandRunner();
 
 	void validateRequest(std::vector<std::string> *input);

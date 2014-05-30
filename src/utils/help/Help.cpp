@@ -22,19 +22,19 @@ std::string Help::getFullHelp() {
 }
 
 std::string Help::getIntro() {
-	return "Summary:\n\n"+this->intro;
+	return "Summary:\n\n" + this->intro;
 }
 
 std::string Help::getUsage() {
-	return "Usage:\n\n"+this->usage;
+	return "Usage:\n\n" + this->usage;
 }
 
 std::string Help::getFlags() {
-	return "Flags:\n\n"+this->flags;
+	return "Flags:\n\n" + this->flags;
 }
 
 std::string Help::getExamples() {
-	return "Examples:\n\n"+this->examples;
+	return "Examples:\n\n" + this->examples;
 }
 
 } /* namespace Anakin */

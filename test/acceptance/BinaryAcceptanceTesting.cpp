@@ -28,7 +28,7 @@ namespace fs = boost::filesystem;
 
 void exitWithError() {
 	cerr << "\n===============================================\n"
-			<< "Acceptance test result: FAIL" << endl;
+	<< "Acceptance test result: FAIL" << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -163,8 +163,8 @@ void testingDirCheck(int argc, const char * argv[]) {
 	std::size_t found = scriptContent.find("DROP DATABASE IF EXISTS");
 	if (found != std::string::npos) {
 		cerr
-				<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
-				<< sqlScriptPath << endl;
+		<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
+		<< sqlScriptPath << endl;
 		exitWithError();
 	}
 
@@ -199,9 +199,9 @@ void setTestingEnvironmentVariables(string host, string database, string user,
 void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
 	command(
 			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
-					+ " 2> "
-					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
+			+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
+			+ " 2> "
+			+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
 			true, false, pID);
 }
 
@@ -235,9 +235,9 @@ void simpleTest(int argc, const char * argv[]) {
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
 	fs::path patternMatchingLastStderr = logsDir
-			/ "patternMatchingLastStderr.txt";
+	/ "patternMatchingLastStderr.txt";
 	fs::path patternMatchingLastStdout = logsDir
-			/ "patternMatchingLastStdout.txt";
+	/ "patternMatchingLastStdout.txt";
 	fs::path trainerOutput = outputs / "trainerOutput";
 
 	fs::path logsAnakin = logsDir / "anakin.log";
@@ -254,7 +254,7 @@ void simpleTest(int argc, const char * argv[]) {
 	//run SQL script into database.
 	command(
 			"psql -U " + userDB + " -d " + database + " -q -f "
-					+ pathToAnakinPath(sqlScriptPath));
+			+ pathToAnakinPath(sqlScriptPath));
 
 	//dir cleanups
 	dirCleanup(outputLogos);
@@ -273,35 +273,35 @@ void simpleTest(int argc, const char * argv[]) {
 
 	command(
 			pathToAnakinPath(anakinPath) + " -modeextractor -oLogFile "
-					+ pathToAnakinPath(logsExtractor) + " -matching -iFolder "
-					+ pathToAnakinPath(inputLogos) + " -oPath "
-					+ pathToAnakinPath(outputLogos) + " -lod -xml > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true);
+			+ pathToAnakinPath(logsExtractor) + " -matching -iFolder "
+			+ pathToAnakinPath(inputLogos) + " -oPath "
+			+ pathToAnakinPath(outputLogos) + " -lod -xml > "
+			+ pathToAnakinPath(lastStdout) + " 2> "
+			+ pathToAnakinPath(lastStderr), true);
 	command(
 			pathToAnakinPath(anakinPath) + " -modeextractor -oLogFile "
-					+ pathToAnakinPath(logsExtractor) + " -matching -iFile "
-					+ pathToAnakinPath(severalJPG) + " -oPath "
-					+ pathToAnakinPath(outputs) + " -lod -xml > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true);
+			+ pathToAnakinPath(logsExtractor) + " -matching -iFile "
+			+ pathToAnakinPath(severalJPG) + " -oPath "
+			+ pathToAnakinPath(outputs) + " -lod -xml > "
+			+ pathToAnakinPath(lastStdout) + " 2> "
+			+ pathToAnakinPath(lastStderr), true);
 	//--------------------------------------------------------------
 	//  Step 2 - DBconnector Basic Test
 	//--------------------------------------------------------------
 
 	command(
 			pathToAnakinPath(anakinPath) + " -modedbconnector -oLogFile "
-					+ pathToAnakinPath(logsDbConnector) + " -scenes -path "
-					+ pathToAnakinPath(severalXML) + " > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true);
+			+ pathToAnakinPath(logsDbConnector) + " -scenes -path "
+			+ pathToAnakinPath(severalXML) + " > "
+			+ pathToAnakinPath(lastStdout) + " 2> "
+			+ pathToAnakinPath(lastStderr), true);
 
 	command(
 			pathToAnakinPath(anakinPath) + " -modedbconnector -oLogFile "
-					+ pathToAnakinPath(logsDbConnector) + " -user 1 -path "
-					+ pathToAnakinPath(outputLogos) + " -patterns > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true);
+			+ pathToAnakinPath(logsDbConnector) + " -user 1 -path "
+			+ pathToAnakinPath(outputLogos) + " -patterns > "
+			+ pathToAnakinPath(lastStdout) + " 2> "
+			+ pathToAnakinPath(lastStderr), true);
 
 	//--------------------------------------------------------------
 	//  Step 3 - Trainer Basic Test
@@ -309,10 +309,10 @@ void simpleTest(int argc, const char * argv[]) {
 
 	command(
 			pathToAnakinPath(anakinPath) + " -modetrainer -oLogFile "
-					+ pathToAnakinPath(logsTrainer) + " -user 1 -saveToFile "
-					+ pathToAnakinPath(trainerOutput) + " > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true);
+			+ pathToAnakinPath(logsTrainer) + " -user 1 -saveToFile "
+			+ pathToAnakinPath(trainerOutput) + " > "
+			+ pathToAnakinPath(lastStdout) + " 2> "
+			+ pathToAnakinPath(lastStderr), true);
 
 	//--------------------------------------------------------------
 	//  Step 4 - DBconnector Basic Test (continue)
@@ -320,10 +320,10 @@ void simpleTest(int argc, const char * argv[]) {
 
 	command(
 			pathToAnakinPath(anakinPath) + " -modedbconnector -oLogFile "
-					+ pathToAnakinPath(logsDbConnector) + " -index "
-					+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true);
+			+ pathToAnakinPath(logsDbConnector) + " -index "
+			+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns > "
+			+ pathToAnakinPath(lastStdout) + " 2> "
+			+ pathToAnakinPath(lastStderr), true);
 
 	//--------------------------------------------------------------
 	//  Step 5 - PatternMatching Basic Test
@@ -335,11 +335,11 @@ void simpleTest(int argc, const char * argv[]) {
 
 		command(
 				pathToAnakinPath(anakinPath)
-						+ " -modepatternmatching -oLogFile "
-						+ pathToAnakinPath(logsAnakin)
-						+ " -iHTTP 8080 -oHTTP -verbose > "
-						+ pathToAnakinPath(patternMatchingLastStdout) + " 2> "
-						+ pathToAnakinPath(patternMatchingLastStderr), true,
+				+ " -modepatternmatching -oLogFile "
+				+ pathToAnakinPath(logsAnakin)
+				+ " -iHTTP 8080 -oHTTP -verbose > "
+				+ pathToAnakinPath(patternMatchingLastStdout) + " 2> "
+				+ pathToAnakinPath(patternMatchingLastStderr), true,
 				true);
 		_exit(EXIT_SUCCESS);
 	} else if (pID < 0) { // failed to fork
@@ -352,30 +352,30 @@ void simpleTest(int argc, const char * argv[]) {
 		for (int i = 0; i < 3; i++) {
 			command(
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-							+ pathToAnakinPath(lastStdout) + " 2> "
-							+ pathToAnakinPath(lastStderr), true, false, pID);
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true, false, pID);
 
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
 			std::string capture = get_file_contents(lastStdout.c_str());
 			if (capture.find(pattern) == std::string::npos) {
 				cerr
-						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< "\n\n" << capture << "\n\n"
-						<< "and should replied something that start with:"
-						<< "\n\n" << pattern << endl;
+				<< "PatternMatching subprogram wrong output. Anakin replied:"
+				<< "\n\n" << capture << "\n\n"
+				<< "and should replied something that start with:"
+				<< "\n\n" << pattern << endl;
 				stopAnakinHTTP(pID, logsDir);
 				exitWithError();
 			}
 
 			pattern =
-					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
+			"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
 			if (capture.find(pattern) == std::string::npos) {
 				cerr
-						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< "\n\n" << capture << "\n\n"
-						<< "and should replied something that end with:"
-						<< "\n\n" << pattern << endl;
+				<< "PatternMatching subprogram wrong output. Anakin replied:"
+				<< "\n\n" << capture << "\n\n"
+				<< "and should replied something that end with:"
+				<< "\n\n" << pattern << endl;
 				stopAnakinHTTP(pID, logsDir);
 				exitWithError();
 			}

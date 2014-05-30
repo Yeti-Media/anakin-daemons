@@ -15,8 +15,7 @@ namespace Anakin {
 
 DataOutputWorker::DataOutputWorker(E_DataOutputType outputType,
 		HTTPSocket* httpSocket, BlockingQueue<Msj*>* workingQueue) :
-		outputType(outputType), httpSocket(httpSocket), msjQueue(
-				workingQueue) {
+		outputType(outputType), httpSocket(httpSocket), msjQueue(workingQueue) {
 }
 
 DataOutputWorker::~DataOutputWorker() {
@@ -32,7 +31,7 @@ void DataOutputWorker::start() {
 			case none: {
 				break;
 			}
-			//console output code
+				//console output code
 			case console: {
 				switch (msj->type) {
 				//error data
@@ -41,7 +40,7 @@ void DataOutputWorker::start() {
 					cerr << msj->data << endl;
 					break;
 				}
-				//common data
+					//common data
 				case common: {
 					flush(cout);
 					cout << msj->data << endl;
@@ -50,16 +49,16 @@ void DataOutputWorker::start() {
 				} //case
 				break;
 			}
-			//http socket output code
+				//http socket output code
 			case http: {
 				switch (msj->type) {
 				//error data
 				case error: {
 					this->httpSocket->respond(msj->data, false, -1);
-					LOG_F("ERROR") << msj->data;
+					LOG_F("ERROR")<< msj->data;
 					break;
 				}
-				//common data
+					//common data
 				case common: {
 					this->httpSocket->respond(msj->data, true, msj->reqID);
 					break;

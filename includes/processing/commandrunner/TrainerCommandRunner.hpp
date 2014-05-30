@@ -17,7 +17,7 @@ namespace Anakin {
 
 class TrainerCommandRunner: public CommandRunner {
 public:
-	TrainerCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache) ;
+	TrainerCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
 	virtual ~TrainerCommandRunner();
 
 	void validateRequest(std::vector<std::string> *input);

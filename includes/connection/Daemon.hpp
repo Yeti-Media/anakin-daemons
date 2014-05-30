@@ -415,7 +415,10 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 	std::string startComand;
 	for (int i = 1; i < argc; i++) {
-		startComand = startComand + " " + argv[i];
+		if (i != 1) {
+			startComand.append(" ");
+		}
+		startComand.append(argv[i]);
 	}
 	LOG_F("Args")<< startComand;
 

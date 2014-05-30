@@ -22,7 +22,7 @@ bool SingleImageDataInput::nextInput(Img** output) {
 	if (!loaded) {
 		Mat nextMat = imread(this->pathToImage);
 		if (!nextMat.data) {
-			std::cerr << "error reading image: " << this->pathToImage << "\n";
+			std::cerr << "error reading image: " << this->pathToImage << endl;
 			LOG_F("ERROR")<< "error reading image: " << this->pathToImage;
 			exit(EXIT_FAILURE);
 		}

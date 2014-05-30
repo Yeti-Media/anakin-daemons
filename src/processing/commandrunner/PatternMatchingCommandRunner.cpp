@@ -130,7 +130,7 @@ void PatternMatchingCommandRunner::run() {
 
 	switch (action) {
 	case E_PatternMatchingAction::NONE: {
-		LOG_F("ERROR") << "You can't process NONE action in PatternMatchingCommandRunner::run()";
+		LOG_F("ERROR")<< "You can't process NONE action in PatternMatchingCommandRunner::run()";
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
@@ -268,6 +268,6 @@ void PatternMatchingCommandRunner::run() {
 		delete matches;
 		break;
 	}
-	}
+}
 }
 

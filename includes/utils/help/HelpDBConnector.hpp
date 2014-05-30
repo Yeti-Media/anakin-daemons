@@ -23,5 +23,4 @@ public:
 
 } /* namespace Anakin */
 
-
 #endif // HELPDBCONNECTOR_HPP

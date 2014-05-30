@@ -17,8 +17,7 @@ namespace Anakin {
 
 class ExtractorCommandRunner: public CommandRunner {
 public:
-	ExtractorCommandRunner(Flags* flags, DataOutput* out,
-			SFBMCache* cache);
+	ExtractorCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
 	virtual ~ExtractorCommandRunner();
 
 	void validateRequest(std::vector<std::string> *input);

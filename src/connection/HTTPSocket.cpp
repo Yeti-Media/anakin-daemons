@@ -6,15 +6,16 @@
 #include <string>
 
 using namespace Anakin;
+using namespace std;
 
-HTTPSocket::HTTPSocket(std::string port, int threads) {
+HTTPSocket::HTTPSocket(string port, int threads) {
 	this->port = port;
 	this->readingQueue = new tbb::concurrent_bounded_queue<MessageData*>();
 	this->writtingQueue = new BlockingMap<int, MessageData*>(NULL);
 	this->writtingQueue->setOverridingKey(-1);
 	if (sem_init(&this->sem, 0, 1) != 0) {
-		std::cout << "HTTPSocket#HTTPSocket: error initializing semaphore\n";
-		exit(-1);
+		cout << "HTTPSocket#HTTPSocket: error initializing semaphore" << endl;
+		exit(EXIT_SUCCESS);
 	}
 	startToListen(this->port, this->readingQueue, this->writtingQueue, threads);
 }
@@ -24,14 +25,14 @@ HTTPSocket::~HTTPSocket() {
 	delete this->writtingQueue;
 }
 
-void HTTPSocket::respond(std::string body, bool statusOK, int reqID) {
+void HTTPSocket::respond(string body, bool statusOK, int reqID) {
 	int status = statusOK ? 200 : 422;
 	HTTPSocket::MessageData* rd = new HTTPSocket::MessageData("", body,
 			HTTPSocket::RESPONSE, status);
 	this->writtingQueue->put(reqID, rd);
 }
 
-std::string HTTPSocket::read() {
+string HTTPSocket::read() {
 	HTTPSocket::MessageData* md;
 	this->readingQueue->pop(md);
 	return md->body;
@@ -46,7 +47,7 @@ void HTTPSocket::stop() {
 
 //PRIVATE
 
-void HTTPSocket::startToListen(std::string port,
+void HTTPSocket::startToListen(string port,
 		tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
 		BlockingMap<int, MessageData*>* writtingQueue, int threads) {
 	ListenerArgs* largs = new ListenerArgs(port, readingQueue, writtingQueue,

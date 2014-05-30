@@ -21,13 +21,13 @@ void CommandRunner::validateRequest(std::vector<std::string> *input) {
 /**
  * placeholder for inheritance
  */
-void CommandRunner::run(){
+void CommandRunner::run() {
 }
 
 /**
  * placeholder for inheritance
  */
-CommandRunner::~CommandRunner(){
+CommandRunner::~CommandRunner() {
 }
 
 //PRIVATE

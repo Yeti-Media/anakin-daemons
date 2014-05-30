@@ -8,39 +8,40 @@ namespace fs = boost::filesystem;
 #include <algorithm>
 
 using namespace Anakin;
+using namespace std;
 
-XMLoader::XMLoader(std::string path) {
+XMLoader::XMLoader(string path) {
 	this->path = path;
 	unsigned lastSeparator = path.find_last_of("/\\");
-	this->inputAsFolder = lastSeparator != std::string::npos
+	this->inputAsFolder = lastSeparator != string::npos
 			&& lastSeparator == (path.size() - 1);
 }
 
-std::vector<DBPattern*>* XMLoader::loadAsPattern() {
-	std::vector<std::string>* files = getFilePaths();
-	std::vector<DBPattern*>* patterns = new std::vector<DBPattern*>(0);
+vector<DBPattern*>* XMLoader::loadAsPattern() {
+	vector<string>* files = getFilePaths();
+	vector<DBPattern*>* patterns = new vector<DBPattern*>(0);
 	for (uint f = 0; f < files->size(); f++) {
-		std::string filepath = files->at(f);
-		std::string data = loadFile(filepath);
+		string filepath = files->at(f);
+		string data = loadFile(filepath);
 		DBPattern* pattern = new DBPattern(data);
 		patterns->push_back(pattern);
 	}
 	return patterns;
 }
 
-std::vector<DBHistogram*>* XMLoader::loadAsHistogram() {
+vector<DBHistogram*>* XMLoader::loadAsHistogram() {
 	return loadAsHORL(false);
 }
 
-std::vector<DBHistogram*>* XMLoader::loadAsLandscape() {
+vector<DBHistogram*>* XMLoader::loadAsLandscape() {
 	return loadAsHORL(true);
 }
 
 ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
-	std::string xmlData = "";
+	string xmlData = "";
 	xmlData.append(dbp->getData());
 	ImageInfo *ii = new ImageInfo();
-	std::string label = std::to_string(dbp->getID());
+	string label = to_string(dbp->getID());
 	cv::FileStorage fstorage(xmlData.c_str(),
 			cv::FileStorage::READ | cv::FileStorage::MEMORY);
 	cv::FileNode n = fstorage.root();
@@ -50,10 +51,10 @@ ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
 	return ii;
 }
 
-std::string XMLoader::loadFile(const std::string filename) {
-	std::string data;
-	std::ifstream t(filename);
-	std::stringstream buffer;
+string XMLoader::loadFile(const string filename) {
+	string data;
+	ifstream t(filename);
+	stringstream buffer;
 	buffer << t.rdbuf();
 	data = buffer.str();
 	return data;
@@ -61,25 +62,25 @@ std::string XMLoader::loadFile(const std::string filename) {
 
 //PRIVATE
 
-std::vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
+vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
 	if (!this->inputAsFolder) {
-		std::cerr
+		cerr
 				<< "path must lead to a folder to load landscapes or histograms"
-				<< std::endl;
-		exit(-1);
+				<< endl;
+		exit(EXIT_FAILURE);
 	}
 	char mode = isLandscape ? Constants::LANDSCAPE : Constants::HISTOGRAM;
-	std::vector<std::string>* cfiles = getFilePaths(mode | Constants::COLOR);
-	std::vector<std::string>* gfiles = getFilePaths(mode | Constants::GRAY);
-	std::vector<std::string>* hfiles = getFilePaths(mode | Constants::HSV);
-	std::vector<DBHistogram*>* horls = new std::vector<DBHistogram*>(0);
+	vector<string>* cfiles = getFilePaths(mode | Constants::COLOR);
+	vector<string>* gfiles = getFilePaths(mode | Constants::GRAY);
+	vector<string>* hfiles = getFilePaths(mode | Constants::HSV);
+	vector<DBHistogram*>* horls = new vector<DBHistogram*>(0);
 	for (uint f = 0; f < cfiles->size(); f++) {
-		std::string cfilepath = cfiles->at(f);
-		std::string gfilepath = gfiles->at(f);
-		std::string hfilepath = hfiles->at(f);
-		std::string cdata = loadFile(cfilepath);
-		std::string gdata = loadFile(gfilepath);
-		std::string hdata = loadFile(hfilepath);
+		string cfilepath = cfiles->at(f);
+		string gfilepath = gfiles->at(f);
+		string hfilepath = hfiles->at(f);
+		string cdata = loadFile(cfilepath);
+		string gdata = loadFile(gfilepath);
+		string hdata = loadFile(hfilepath);
 		DBHistogram* horl = new DBHistogram(isLandscape);
 		horl->setColorData(cdata);
 		horl->setGrayData(gdata);
@@ -89,14 +90,14 @@ std::vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
 	return horls;
 }
 
-std::vector<std::string>* XMLoader::getFilePaths(char mode, bool reload) {
-	static std::vector<std::string>* ppaths = new std::vector<std::string>(0);
-	static std::vector<std::string>* cpaths = new std::vector<std::string>(0);
-	static std::vector<std::string>* gpaths = new std::vector<std::string>(0);
-	static std::vector<std::string>* hpaths = new std::vector<std::string>(0);
+vector<string>* XMLoader::getFilePaths(char mode, bool reload) {
+	static vector<string>* ppaths = new vector<string>(0);
+	static vector<string>* cpaths = new vector<string>(0);
+	static vector<string>* gpaths = new vector<string>(0);
+	static vector<string>* hpaths = new vector<string>(0);
 	static char loaded = 0;
-	//std::cout << "loaded : " << (loaded + 0) << std::endl;
-	//std::cout << "mode : " << (mode + 0) << std::endl;
+	//cout << "loaded : " << (loaded + 0) << endl;
+	//cout << "mode : " << (mode + 0) << endl;
 	if (loaded == 0 || (loaded & mode) < loaded || reload) {
 		if (mode & Constants::COLOR) {
 			cpaths->clear();
@@ -107,7 +108,7 @@ std::vector<std::string>* XMLoader::getFilePaths(char mode, bool reload) {
 		} else {
 			ppaths->clear();
 		}
-		std::string filepath = this->path;
+		string filepath = this->path;
 		if (this->inputAsFolder) {
 			if (mode & Constants::LANDSCAPE) {
 				filepath = filepath.append("landscape/");
@@ -122,14 +123,14 @@ std::vector<std::string>* XMLoader::getFilePaths(char mode, bool reload) {
 				filepath = filepath.append("hsv/");
 			}
 			if (fs::exists(filepath)) {
-				std::vector<fs::path> filePaths;
-				std::copy(fs::directory_iterator(filepath),
+				vector<fs::path> filePaths;
+				copy(fs::directory_iterator(filepath),
 						fs::directory_iterator(),
-						std::back_inserter(filePaths));
-				std::sort(filePaths.begin(), filePaths.end());
-				std::vector<fs::path>::const_iterator fileItr(
+						back_inserter(filePaths));
+				sort(filePaths.begin(), filePaths.end());
+				vector<fs::path>::const_iterator fileItr(
 						filePaths.begin());
-				std::vector<fs::path>::const_iterator endItr(filePaths.end());
+				vector<fs::path>::const_iterator endItr(filePaths.end());
 
 				while (fileItr != endItr) {
 					if (!fs::is_directory(*fileItr)
@@ -147,7 +148,7 @@ std::vector<std::string>* XMLoader::getFilePaths(char mode, bool reload) {
 					fileItr++;
 				}
 			} else {
-				std::cout << "directory : " << filepath << " doesn't exist\n";
+				cout << "directory : " << filepath << " doesn't exist\n";
 				exit(-1);
 			}
 		} else {
@@ -156,21 +157,21 @@ std::vector<std::string>* XMLoader::getFilePaths(char mode, bool reload) {
 		loaded = loaded | mode;
 	}
 	if (mode & Constants::COLOR) {
-		//std::cout << "cpaths->size() : " << cpaths->size() << std::endl;
+		//cout << "cpaths->size() : " << cpaths->size() << endl;
 		return cpaths;
 	} else if (mode & Constants::GRAY) {
-		//std::cout << "gpaths->size() : " << gpaths->size() << std::endl;
+		//cout << "gpaths->size() : " << gpaths->size() << endl;
 		return gpaths;
 	} else if (mode & Constants::HSV) {
-		//std::cout << "hpaths->size() : " << hpaths->size() << std::endl;
+		//cout << "hpaths->size() : " << hpaths->size() << endl;
 		return hpaths;
 	} else {
 		return ppaths;
 	}
 }
 
-bool XMLoader::hasEnding(std::string const &fullString,
-		std::string const &ending) {
+bool XMLoader::hasEnding(string const &fullString,
+		string const &ending) {
 	if (fullString.length() >= ending.length()) {
 		return (0
 				== fullString.compare(fullString.length() - ending.length(),
