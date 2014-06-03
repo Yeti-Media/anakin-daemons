@@ -1,8 +1,9 @@
-#include <logging/Log.hpp>
-#include <logging/OutputPolicyFile.hpp>
+#include <connection/HTTPSocket.hpp>
 #include <output/DataOutput.hpp>
-#include <mutex>
-#include <string>
+#include <output/workers/DataOutputWorkerConsole.hpp>
+#include <output/workers/DataOutputWorkerHTTPSocket.hpp>
+#include <cstdlib>
+#include <iostream>
 
 using namespace Anakin;
 using namespace std;
@@ -23,8 +24,28 @@ DataOutput::DataOutput() {
 
 void* DataOutput::startWorker(void *ptr) {
 	WorkerArgs* wargs = (WorkerArgs*) ptr;
-	DataOutputWorker* worker = new DataOutputWorker(wargs->outputType,
-			wargs->httpSocket, wargs->workingQueue);
+	DataOutputWorker* worker = NULL;
+	switch (wargs->outputType) {
+	case console: {
+		worker = new DataOutputWorkerConsole(wargs->workingQueue);
+		break;
+	}
+	case http: {
+		worker = new DataOutputWorkerHTTPSocket(wargs->workingQueue,
+				wargs->httpSocket);
+		break;
+	}
+	default: {
+		cerr << "unknown DataOutputWotker";
+		exit(EXIT_FAILURE);
+		break;
+	}
+	}
+
+	if (worker==NULL) {
+		cerr << "unknown DataOutputWotker implementation";
+		exit(EXIT_FAILURE);
+	}
 	worker->start();
 }
 

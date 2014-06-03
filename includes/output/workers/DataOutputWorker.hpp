@@ -8,8 +8,6 @@
 #ifndef DATAOUTPUTWORKER_HPP_
 #define DATAOUTPUTWORKER_HPP_
 
-#include <connection/HTTPSocket.hpp>
-#include <output/DataEnumerates.hpp>
 #include <output/Msj.hpp>
 #include <utils/BlockingQueue.hpp>
 
@@ -19,25 +17,26 @@ namespace Anakin {
 /**
  * This class is executed in another thread, and will dispatch the data stored
  * in the concurrent queue.
+ * processOutput must be implemented in a concrete class.
  */
 class DataOutputWorker {
 public:
 	/**
-	 * outputType: specific implementation to choose for an output
-	 * httpSocket: http socket to use, or NULL.
 	 * workingQueue: blocking queue to use with other threads to deliver data
 	 */
-	DataOutputWorker(E_DataOutputType outputType, HTTPSocket* httpSocket,
-			BlockingQueue<Msj*>* workingQueue);
+	DataOutputWorker(BlockingQueue<Msj*>* workingQueue);
 	virtual ~DataOutputWorker();
+
+	/**
+	 * process the msj and "write" the output
+	 */
+	virtual void processOutput(Msj* msj)=0;
 
 	/**
 	 * starts the worker listening cicle
 	 */
 	void start();
 private:
-	E_DataOutputType outputType;
-	HTTPSocket* httpSocket;
 	BlockingQueue<Msj*>* msjQueue;
 };
 

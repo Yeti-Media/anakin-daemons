@@ -1,14 +1,16 @@
 #ifndef DATAOUTPUT_HPP
 #define DATAOUTPUT_HPP
 
-#include <iostream>
-#include "connection/HTTPSocket.hpp"
-#include <output/DataOutputWorker.hpp>
 #include <output/DataEnumerates.hpp>
-#include <utils/BlockingQueue.hpp>
-#include <output/DataOutputWorker.hpp>
 #include <output/Msj.hpp>
 #include <pthread.h>
+#include <utils/BlockingQueue.hpp>
+#include <mutex>
+#include <string>
+
+namespace Anakin {
+class HTTPSocket;
+} /* namespace Anakin */
 
 using namespace std;
 
@@ -33,7 +35,7 @@ public:
 	 */
 	DataOutput(HTTPSocket* httpSocket);
 	/**
-	 * Constructor (to use console to output data)
+	 * Constructor (use console only to output data)
 	 */
 	DataOutput();
 

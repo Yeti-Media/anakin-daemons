@@ -1,7 +1,11 @@
 #ifndef ANAKINTRAINER_HPP
 #define ANAKINTRAINER_HPP
 
-#include "data/RichImg.hpp"
+#include <data/RichImg.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <string>
+#include <vector>
 
 using namespace std;
 
