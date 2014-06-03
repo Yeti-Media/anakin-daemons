@@ -97,8 +97,7 @@ void HistogramsIO::read(const cv::FileNode& node, Histogram& x,
 		x.read(node);
 }
 
-void HistogramsIO::write(FileStorage& fs, const string&,
-		const Histogram& x) {
+void HistogramsIO::write(FileStorage& fs, const string&, const Histogram& x) {
 	x.write(fs);
 }
 

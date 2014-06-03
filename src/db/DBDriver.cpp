@@ -417,11 +417,10 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 		}
 		PGresult *res;
 		const int numParam = 3;
-		string user_id =  to_string(userID);
+		string user_id = to_string(userID);
 		string smatcher_id_value = to_string(matcher_id_value);
 		string sindex_id_value = to_string(index_id_value);
-		const char *paramValues[numParam] = {
-				smatcher_id_value.c_str(),
+		const char *paramValues[numParam] = { smatcher_id_value.c_str(),
 				sindex_id_value.c_str(), user_id.c_str() };
 		string table;
 		table.append("public.\"").append(Constants::TRAINER_TABLE).append("\"");

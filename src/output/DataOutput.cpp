@@ -42,7 +42,7 @@ void* DataOutput::startWorker(void *ptr) {
 	}
 	}
 
-	if (worker==NULL) {
+	if (worker == NULL) {
 		cerr << "unknown DataOutputWotker implementation";
 		exit(EXIT_FAILURE);
 	}

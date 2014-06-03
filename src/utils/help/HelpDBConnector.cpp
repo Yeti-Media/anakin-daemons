@@ -6,7 +6,8 @@ using namespace Anakin;
 
 HelpDBConnector::HelpDBConnector() {
 	intro =
-			"DBConnector is used to store and retrieve information"
+			"DBConnector\n"
+					"Used to store and retrieve information"
 					"to and from a postgresql database.\n"
 					"Only the table name is hardcoded (this will be fixed in the future),"
 					"all other attributes must be defined using system variables.\n"

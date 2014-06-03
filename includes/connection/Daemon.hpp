@@ -185,9 +185,9 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		if (anakinInput->flagFound("help")) {
 			//NOTE that every concrete commandrunner must have a static member called "help".
 			// See PatternMatchingCommandRunner as an example
-			cout << "Daemon arguments:" << endl
+			cout << "Daemon arguments:" << endl << endl
 					<< "[cacheLoadingTimeWeight <int>|cacheDiscardLessValuable <bool>|cacheSize <int>|cacheLife <int>|cacheScenesSize <int>|cacheScenesLife <int>|-oLogFile <path>|-threads <int>|-queueCapacity <int>|(pghost <name> pgport <port> dbName <name> login <user> pwd <password>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)"
-					<< endl << endl
+					<< endl << endl << "Flags:" << endl << endl
 					<< "-iConsole/oConsole			: use console to input or output respectively"
 					<< endl
 					<< "-oLogFile <path>			: path to the output logging file. If it's ignored, logging will be skipped."

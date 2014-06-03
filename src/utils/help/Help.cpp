@@ -17,24 +17,23 @@ Help::~Help() {
 }
 
 std::string Help::getFullHelp() {
-	return getIntro() + "\n" + getUsage() + "\n" + getFlags() + "\n"
-			+ getExamples() + "\n";
+	return getIntro() + getUsage() + getFlags() + getExamples();
 }
 
 std::string Help::getIntro() {
-	return "Summary:\n\n" + this->intro;
+	return "Summary:\n\n" + this->intro + "\n";
 }
 
 std::string Help::getUsage() {
-	return "Usage:\n\n" + this->usage;
+	return "Usage:\n\n" + this->usage + "\n";
 }
 
 std::string Help::getFlags() {
-	return "Flags:\n\n" + this->flags;
+	return "Flags:\n\n" + this->flags + "\n";
 }
 
 std::string Help::getExamples() {
-	return "Examples:\n\n" + this->examples;
+	return "Examples:\n\n" + this->examples + "\n";
 }
 
 } /* namespace Anakin */

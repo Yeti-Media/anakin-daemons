@@ -16,7 +16,8 @@ namespace Anakin {
 
 class DataOutputWorkerHTTPSocket: public DataOutputWorker {
 public:
-	DataOutputWorkerHTTPSocket(BlockingQueue<Msj*>* workingQueue, HTTPSocket* httpSocket);
+	DataOutputWorkerHTTPSocket(BlockingQueue<Msj*>* workingQueue,
+			HTTPSocket* httpSocket);
 	virtual ~DataOutputWorkerHTTPSocket();
 
 	void processOutput(Msj* msj);

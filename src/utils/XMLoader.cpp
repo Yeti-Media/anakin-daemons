@@ -64,8 +64,7 @@ string XMLoader::loadFile(const string filename) {
 
 vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
 	if (!this->inputAsFolder) {
-		cerr
-				<< "path must lead to a folder to load landscapes or histograms"
+		cerr << "path must lead to a folder to load landscapes or histograms"
 				<< endl;
 		exit(EXIT_FAILURE);
 	}
@@ -124,12 +123,10 @@ vector<string>* XMLoader::getFilePaths(char mode, bool reload) {
 			}
 			if (fs::exists(filepath)) {
 				vector<fs::path> filePaths;
-				copy(fs::directory_iterator(filepath),
-						fs::directory_iterator(),
+				copy(fs::directory_iterator(filepath), fs::directory_iterator(),
 						back_inserter(filePaths));
 				sort(filePaths.begin(), filePaths.end());
-				vector<fs::path>::const_iterator fileItr(
-						filePaths.begin());
+				vector<fs::path>::const_iterator fileItr(filePaths.begin());
 				vector<fs::path>::const_iterator endItr(filePaths.end());
 
 				while (fileItr != endItr) {
@@ -170,8 +167,7 @@ vector<string>* XMLoader::getFilePaths(char mode, bool reload) {
 	}
 }
 
-bool XMLoader::hasEnding(string const &fullString,
-		string const &ending) {
+bool XMLoader::hasEnding(string const &fullString, string const &ending) {
 	if (fullString.length() >= ending.length()) {
 		return (0
 				== fullString.compare(fullString.length() - ending.length(),

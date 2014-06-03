@@ -30,7 +30,7 @@ void DataOutputWorkerHTTPSocket::processOutput(Msj* msj) {
 	//error data
 	case error: {
 		this->httpSocket->respond(msj->data, false, -1);
-		LOG_F("ERROR") << msj->data;
+		LOG_F("ERROR")<< msj->data;
 		break;
 	}
 		//common data
