@@ -450,6 +450,8 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 	delete output;
 	delete aflags;
 	delete server;
+	delete anakinInput;
+	delete input;
 }
 
 template<class SpecificCommandRunner>

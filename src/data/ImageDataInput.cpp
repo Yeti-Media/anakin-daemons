@@ -20,6 +20,18 @@ ImageDataInput::ImageDataInput(string imagesFolder, bool loadOnDemand) {
 	}
 }
 
+ImageDataInput::~ImageDataInput() {
+	if (this->images != NULL) {
+		delete this->images;
+	}
+	if (this->labels != NULL) {
+		delete this->labels;
+	}
+	if (this->fileItr != NULL) {
+		delete fileItr;
+	}
+}
+
 bool ImageDataInput::nextInput(Anakin::Img** output) {
 	static int loadedFiles = 0;
 	cv::Mat nextMat;

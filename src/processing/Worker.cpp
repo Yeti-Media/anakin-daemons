@@ -25,5 +25,6 @@ void Worker::start() {
 		} else {
 			run = false;
 		}
+		delete input;
 	}
 }

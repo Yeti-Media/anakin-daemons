@@ -15,16 +15,17 @@ namespace Anakin {
  */
 class SerializableFlannBasedMatcher: public cv::FlannBasedMatcher {
 public:
+
+	virtual ~SerializableFlannBasedMatcher();
+
 	/**
 	 * Constructor
 	 * the constructor from FlannBasedMatcher
 	 * used when creating a matcher for the first time (e.g.: training)
 	 */
 	SerializableFlannBasedMatcher(
-			const cv::Ptr<cv::flann::IndexParams>& indexParams =
-					new cv::flann::KDTreeIndexParams(),
-			const cv::Ptr<cv::flann::SearchParams>& searchParams =
-					new cv::flann::SearchParams());
+			const cv::Ptr<cv::flann::IndexParams>& indexParams,
+			const cv::Ptr<cv::flann::SearchParams>& searchParams);
 
 	/**
 	 * Constructor

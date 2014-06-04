@@ -24,8 +24,12 @@ public:
 					<< "BlockingMap#BlockingMap: error initializing semaphore\n";
 			exit(EXIT_FAILURE);
 		}
-		this->internalMap = *new std::map<K, V>();
+	//	this->internalMap = *new std::map<K, V>();
 		this->defaultValue = defaultValue;
+	}
+
+	virtual ~BlockingMap() {
+
 	}
 
 	void setOverridingKey(K key) {

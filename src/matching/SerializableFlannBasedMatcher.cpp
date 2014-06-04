@@ -10,6 +10,10 @@
 using namespace Anakin;
 using namespace cv;
 
+SerializableFlannBasedMatcher::~SerializableFlannBasedMatcher() {
+
+}
+
 SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 		const Ptr<flann::IndexParams>& indexParams,
 		const Ptr<flann::SearchParams>& searchParams) :

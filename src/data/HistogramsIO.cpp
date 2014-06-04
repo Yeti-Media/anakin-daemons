@@ -16,6 +16,19 @@ HistogramsIO::HistogramsIO(string baseFolder) {
 	this->hsvHistograms = new vector<Histogram*>(0);
 }
 
+HistogramsIO::~HistogramsIO() {
+	cleanupHistogramVector(this->colorHistograms);
+	cleanupHistogramVector(this->grayHistograms);
+	cleanupHistogramVector(this->hsvHistograms);
+}
+
+void HistogramComparator::cleanupHistogramVector(vector<Histogram*>* hVector) {
+	for (uint p = 0; p < hVector->size(); p++) {
+		delete hVector->at(p);
+	}
+	delete hVector;
+}
+
 void HistogramsIO::load(const char mode) {
 	string subfolder = mode & LANDSCAPE ? "landscape/" : "pattern/";
 	if (mode & COLOR) {

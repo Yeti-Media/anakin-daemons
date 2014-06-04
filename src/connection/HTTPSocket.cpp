@@ -35,7 +35,9 @@ void HTTPSocket::respond(string body, bool statusOK, int reqID) {
 string HTTPSocket::read() {
 	HTTPSocket::MessageData* md;
 	this->readingQueue->pop(md);
-	return md->body;
+	string body = md->body;
+	delete md;
+	return body;
 }
 
 void HTTPSocket::stop() {

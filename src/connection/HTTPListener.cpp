@@ -97,6 +97,7 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 		//we get the response corresponding with request reqID
 		//and with this a HTTP response is constructed and sent
 		rd = HTTPListener::writtingQueue->get(reqID);
+		//FIXME memory leak at rd and md??
 		mg_send_status(conn, rd->status);
 		std::string cc_header = "Connection";
 		std::string cc_value = "close";

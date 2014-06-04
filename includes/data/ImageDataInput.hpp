@@ -11,6 +11,7 @@ namespace Anakin {
 class ImageDataInput: public DataInput {
 public:
 	ImageDataInput(std::string imagesFolder, bool loadOnDemand = false);
+	~ImageDataInput();
 	bool nextInput(Anakin::Img** output);
 	void reload();
 	int imagesToLoad();

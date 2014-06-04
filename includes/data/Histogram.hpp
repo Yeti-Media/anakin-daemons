@@ -10,6 +10,7 @@ public:
 	Histogram(cv::Mat hist, std::vector<int>* bins, int channels,
 			std::string label = "", bool minMax = false, bool avg = false);
 	Histogram();
+	~Histogram();
 	cv::Mat getHist();
 	std::vector<int>* getBins();
 	int getChannels();

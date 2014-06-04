@@ -56,6 +56,7 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 //std::cout << "images to process : " << filesToLoad << std::endl;
 	if (filesToLoad > 0) {
 		this->patterns->resize(filesToLoad);
+		//FIXME memory leak? verify all this->patterns ussage!
 	}
 	int idx = 0;
 	while (this->input->nextInput(&image)) {

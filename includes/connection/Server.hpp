@@ -115,6 +115,7 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
 		unsigned int httpPort, bool verbose) {
 	this->aflags = NULL;
 	this->output = NULL;
+	this->cache = NULL;
 	this->port = httpPort;
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
@@ -170,6 +171,7 @@ void Server<SpecificCommandRunner>::start(AnakinFlags* aflags,
 					execute(inputs->at(i));
 				}
 			}
+			delete inputs;
 		} else {
 			stopReceived();
 			run = false;
@@ -216,6 +218,7 @@ vector<vector<string>*>* Server<SpecificCommandRunner>::getInputs(
 
 	return inputs;
 }
+
 template<class SpecificCommandRunner>
 vector<string>* Server<SpecificCommandRunner>::rawToInput(string rawInput) {
 	vector<string> *input = new vector<string>(0);
@@ -230,6 +233,7 @@ vector<string>* Server<SpecificCommandRunner>::rawToInput(string rawInput) {
 
 template<class SpecificCommandRunner>
 void Server<SpecificCommandRunner>::execute(vector<string>* input) {
+//  use for non request servers
 //	CommandRunner* runner = new CommandRunner(this->aflags->getFlags(),
 //			this->output, this->cache, input);
 //	runner->run();
@@ -270,6 +274,13 @@ void Server<SpecificCommandRunner>::stopReceived() {
 
 template<class SpecificCommandRunner>
 Server<SpecificCommandRunner>::~Server() {
+	delete dbdriver;
+	if (this->cache != NULL) {
+		delete this->cache;
+	}
+	if (this->cache != NULL) {
+		delete this->httpSocket;
+	}
 }
 
 }

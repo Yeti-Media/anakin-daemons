@@ -1,15 +1,17 @@
 #ifndef REQUESTSERVER_HPP
 #define REQUESTSERVER_HPP
 
+//#include <boost/regex.hpp>
 #include <connection/Server.hpp>
+#include <output/DataOutput.hpp>
+#include <processing/AnakinFlags.hpp>
+#include <processing/Flags.hpp>
+#include <processing/Worker.hpp>
 #include <pthread.h>
 #include <tbb/concurrent_queue.h>
+#include <connection/RequestServer.hpp>
 #include <string>
 #include <vector>
-#include "connection/RequestServer.hpp"
-#include "processing/Worker.hpp"
-#include <pthread.h>
-#include <boost/regex.hpp>
 
 namespace Anakin {
 
@@ -155,6 +157,16 @@ void RequestServer<SpecificCommandRunner>::stopWorkers() {
 
 template<class SpecificCommandRunner>
 RequestServer<SpecificCommandRunner>::~RequestServer() {
+
+	while (!this->workingQueue->empty()) {
+		vector<string>* input;
+		this->workingQueue->pop(input);
+		if (input != NULL) {
+			delete input;
+		}
+	}
+	delete this->workingQueue;
+	delete this->workerThreads;
 }
 
 }

@@ -630,13 +630,13 @@ std::wstring JSONValue::Stringify() const {
 		ret_string = L"[";
 		JSONArray::const_iterator iter = array_value.begin();
 		while (iter != array_value.end()) {
-			ret_string += (*iter)->Stringify();
+			ret_string.append((*iter)->Stringify());
 
 			// Not at the end - add a separator
 			if (++iter != array_value.end())
-				ret_string += L",";
+				ret_string.append(L",");
 		}
-		ret_string += L"]";
+		ret_string.append(L"]");
 		break;
 	}
 
@@ -644,15 +644,14 @@ std::wstring JSONValue::Stringify() const {
 		ret_string = L"{";
 		JSONObject::const_iterator iter = object_value.begin();
 		while (iter != object_value.end()) {
-			ret_string += StringifyString((*iter).first);
-			ret_string += L":";
-			ret_string += (*iter).second->Stringify();
+			ret_string.append(StringifyString((*iter).first)).append(L":").append(
+					(*iter).second->Stringify());
 
 			// Not at the end - add a separator
 			if (++iter != object_value.end())
-				ret_string += L",";
+				ret_string.append(L",");
 		}
-		ret_string += L"}";
+		ret_string.append(L"}");
 		break;
 	}
 	}
@@ -679,35 +678,35 @@ std::wstring JSONValue::StringifyString(const std::wstring &str) {
 		wchar_t chr = *iter;
 
 		if (chr == L'"' || chr == L'\\' || chr == L'/') {
-			str_out += L'\\';
-			str_out += chr;
+			str_out.push_back(L'\\');
+			str_out.push_back(chr);
 		} else if (chr == L'\b') {
-			str_out += L"\\b";
+			str_out.append(L"\\b");
 		} else if (chr == L'\f') {
-			str_out += L"\\f";
+			str_out.append(L"\\f");
 		} else if (chr == L'\n') {
-			str_out += L"\\n";
+			str_out.append(L"\\n");
 		} else if (chr == L'\r') {
-			str_out += L"\\r";
+			str_out.append(L"\\r");
 		} else if (chr == L'\t') {
-			str_out += L"\\t";
+			str_out.append(L"\\t");
 		} else if (chr < L' ') {
-			str_out += L"\\u";
+			str_out.append(L"\\u");
 			for (int i = 0; i < 4; i++) {
 				int value = (chr >> 12) & 0xf;
 				if (value >= 0 && value <= 9)
-					str_out += (wchar_t) ('0' + value);
+					str_out.push_back((wchar_t) ('0' + value));
 				else if (value >= 10 && value <= 15)
-					str_out += (wchar_t) ('A' + (value - 10));
+					str_out.push_back((wchar_t) ('A' + (value - 10)));
 				chr <<= 4;
 			}
 		} else {
-			str_out += chr;
+			str_out.push_back(chr);
 		}
 
 		iter++;
 	}
 
-	str_out += L"\"";
+	str_out.append(L"\"");
 	return str_out;
 }
