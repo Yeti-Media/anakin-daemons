@@ -4,7 +4,6 @@
 //#include <boost/regex.hpp>
 #include <connection/Server.hpp>
 #include <output/DataOutput.hpp>
-#include <processing/AnakinFlags.hpp>
 #include <processing/Flags.hpp>
 #include <processing/Worker.hpp>
 #include <pthread.h>
@@ -61,7 +60,7 @@ private:
 	/**
 	 * starts <threads> threads and calls startWorker for each one
 	 */
-	void startWorkers(AnakinFlags* aflags, DataOutput* output);
+	void startWorkers(DataOutput* output);
 	/**
 	 * creates and start a Worker
 	 * ptr is a pointer to the worker's params
@@ -75,13 +74,12 @@ private:
 	 */
 	struct WorkerArgs {
 		int id;
-		Flags* flags;
 		DataOutput* output;
 		SFBMCache* cache;
 		tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
-		WorkerArgs(int id, Flags* flags, DataOutput* output, SFBMCache* cache,
+		WorkerArgs(int id, DataOutput* output, SFBMCache* cache,
 				tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue) :
-				id(id), flags(flags), output(output), cache(cache), workingQueue(
+				id(id), output(output), cache(cache), workingQueue(
 						workingQueue) {
 		}
 	};
@@ -117,7 +115,7 @@ void RequestServer<SpecificCommandRunner>::executeStop() {
 
 template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::startServer() {
-	startWorkers(this->aflags, this->output);
+	startWorkers(this->output);
 }
 
 template<class SpecificCommandRunner>
@@ -129,11 +127,10 @@ void RequestServer<SpecificCommandRunner>::endServer() {
 
 //PRIVATE
 template<class SpecificCommandRunner>
-void RequestServer<SpecificCommandRunner>::startWorkers(AnakinFlags* aflags,
-		DataOutput* output) {
+void RequestServer<SpecificCommandRunner>::startWorkers(DataOutput* output) {
 	for (int w = 0; w < this->threads; w++) {
-		WorkerArgs* wargs = new WorkerArgs(w + 1, aflags->getFlags(), output,
-				this->cache, this->workingQueue);
+		WorkerArgs* wargs = new WorkerArgs(w + 1, output, this->cache,
+				this->workingQueue);
 		pthread_create(&this->workerThreads->at(w), NULL, startWorker,
 				(void*) wargs);
 	}
@@ -143,8 +140,7 @@ template<class SpecificCommandRunner>
 void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	WorkerArgs* wargs = (WorkerArgs*) ptr;
 	Worker* worker = new Worker(wargs->id, wargs->workingQueue,
-			new SpecificCommandRunner(wargs->flags, wargs->output,
-					wargs->cache));
+			new SpecificCommandRunner(wargs->output, wargs->cache));
 	worker->start();
 }
 

@@ -15,7 +15,7 @@ namespace Anakin {
 
 class DBConnectorCommandRunner: public CommandRunner {
 public:
-	DBConnectorCommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
+	DBConnectorCommandRunner(DataOutput* out, SFBMCache* cache);
 	virtual ~DBConnectorCommandRunner();
 
 	void validateRequest(std::vector<std::string> *input);

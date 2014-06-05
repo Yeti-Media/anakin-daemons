@@ -15,9 +15,9 @@ namespace Anakin {
  */
 Help* ExtractorCommandRunner::help = new HelpExtractor();
 
-ExtractorCommandRunner::ExtractorCommandRunner(Flags* flags, DataOutput* out,
+ExtractorCommandRunner::ExtractorCommandRunner(DataOutput* out,
 		SFBMCache* cache) :
-		CommandRunner(flags, out, cache) {
+		CommandRunner(out, cache) {
 }
 
 ExtractorCommandRunner::~ExtractorCommandRunner() {

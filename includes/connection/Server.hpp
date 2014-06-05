@@ -10,7 +10,6 @@
 #include <processing/SFBMCache.hpp>
 #include <sys/types.h>
 #include "connection/Server.hpp"
-#include "processing/AnakinFlags.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -33,10 +32,9 @@ public:
 			bool verbose);
 	/**
 	 * this will start the skeleton algorithm shown above
-	 * aflags : this will check the message and validate that have the required flags and values
 	 * output : this is used to output the processing results
 	 */
-	void start(AnakinFlags* aflags, DataOutput* output);
+	void start( DataOutput* output);
 	static const char CONSOLE = 1;
 	static const char TCP = 2;
 	static const char UDP = 4;
@@ -97,7 +95,6 @@ protected:
 	bool verbose;
 	HTTPSocket* httpSocket;
 	char mode;
-	AnakinFlags* aflags;
 	DataOutput* output;
 	SFBMCache* cache;
 	DBDriver* dbdriver;
@@ -113,7 +110,6 @@ template<class SpecificCommandRunner>
 Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
 		string pghost, string pgport, string dbName, string login, string pwd,
 		unsigned int httpPort, bool verbose) {
-	this->aflags = NULL;
 	this->output = NULL;
 	this->cache = NULL;
 	this->port = httpPort;
@@ -149,9 +145,7 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
 }
 
 template<class SpecificCommandRunner>
-void Server<SpecificCommandRunner>::start(AnakinFlags* aflags,
-		DataOutput* output) {
-	this->aflags = aflags;
+void Server<SpecificCommandRunner>::start(DataOutput* output) {
 	this->output = output;
 	startServer();
 	string msg;

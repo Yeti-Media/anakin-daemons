@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <utils/help/Help.hpp>
+#include <processing/Flags.hpp>
 
 namespace Anakin {
 
@@ -21,8 +22,7 @@ enum E_PatternMatchingAction {
 
 class PatternMatchingCommandRunner: public CommandRunner {
 public:
-	PatternMatchingCommandRunner(Flags* flags, DataOutput* out,
-			SFBMCache* cache);
+	PatternMatchingCommandRunner(DataOutput* out, SFBMCache* cache);
 	virtual ~PatternMatchingCommandRunner();
 
 	void validateRequest(std::vector<std::string> *input);

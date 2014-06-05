@@ -15,9 +15,9 @@ namespace Anakin {
  */
 Help* DBConnectorCommandRunner::help = new HelpDBConnector();
 
-DBConnectorCommandRunner::DBConnectorCommandRunner(Flags* flags,
-		DataOutput* out, SFBMCache* cache) :
-		CommandRunner(flags, out, cache) {
+DBConnectorCommandRunner::DBConnectorCommandRunner(DataOutput* out,
+		SFBMCache* cache) :
+		CommandRunner(out, cache) {
 }
 
 DBConnectorCommandRunner::~DBConnectorCommandRunner() {

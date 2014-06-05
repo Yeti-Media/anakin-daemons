@@ -12,13 +12,13 @@
 #include "opencv2/nonfree/nonfree.hpp"
 
 #include "matching/BasicFlannDetector.hpp"
-#include "processing/Flags.hpp"
 #include "output/ResultWriter.hpp"
 #include "output/DataOutput.hpp"
 #include "matching/SerializableFlannBasedMatcher.hpp"
 #include "processing/SFBMCache.hpp"
 #include "data/ImageInfo.hpp"
 #include "matching/FlannMatchingProcessor.hpp"
+#include <processing/Flags.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -47,7 +47,7 @@ public:
 	 * flags : used to validate the request
 	 * out   : used to send responses
 	 */
-	CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache);
+	CommandRunner(DataOutput* out, SFBMCache* cache);
 
 	virtual void validateRequest(std::vector<std::string> *input) = 0;
 

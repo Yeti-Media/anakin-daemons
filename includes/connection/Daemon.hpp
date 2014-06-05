@@ -13,7 +13,6 @@
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
 #include <output/DataOutput.hpp>
-#include <processing/AnakinFlags.hpp>
 #include <processing/Flags.hpp>
 #include <processing/SFBMCache.hpp>
 #include <cstdlib>
@@ -424,8 +423,6 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 	HTTPSocket* httpSocket;
 
-	AnakinFlags* aflags = new AnakinFlags();
-
 	if (!useCache) {
 		pCacheConfig = NULL;
 	}
@@ -445,10 +442,9 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		exit(EXIT_FAILURE);
 	}
 
-	server->start(aflags, output);
+	server->start(output);
 
 	delete output;
-	delete aflags;
 	delete server;
 	delete anakinInput;
 	delete input;

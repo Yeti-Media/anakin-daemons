@@ -6,8 +6,8 @@
 using namespace Anakin;
 using namespace cv;
 
-CommandRunner::CommandRunner(Flags* flags, DataOutput* out, SFBMCache* cache) {
-	this->flags = flags;
+CommandRunner::CommandRunner(DataOutput* out, SFBMCache* cache) {
+	this->flags = new Flags();
 	this->rw = new ResultWriter();
 	this->cache = cache;
 	this->out = out;

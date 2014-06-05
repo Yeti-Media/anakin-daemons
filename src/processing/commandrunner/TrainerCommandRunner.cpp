@@ -15,9 +15,10 @@ namespace Anakin {
  */
 Help* TrainerCommandRunner::help = new HelpTrainer();
 
-TrainerCommandRunner::TrainerCommandRunner(Flags* flags, DataOutput* out,
+TrainerCommandRunner::TrainerCommandRunner(DataOutput* out,
 		SFBMCache* cache) :
-		CommandRunner(flags, out, cache) {
+		CommandRunner(out, cache) {
+
 }
 
 TrainerCommandRunner::~TrainerCommandRunner() {
