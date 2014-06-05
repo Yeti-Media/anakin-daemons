@@ -114,6 +114,7 @@ JSONValue* SFBMCache::indexCacheStatus() {
 	vector<int>* values = new vector<int>(0);
 	getKeys(this->cache, values);
 	int freeCacheSpace = this->cacheMaxSize - this->cacheSize;
+	//FIXME memory leaks at values
 	return this->rw->cacheStatusAsJSON(*values, freeCacheSpace);
 }
 
@@ -211,6 +212,7 @@ void SFBMCache::printLoadCount() {
 	int loadCount = this->loadingCount->find(value)->second;
 	cout << value << " loaded " << loadCount << " times" << endl;
 }
+	delete values;
 	sem_post(&this->sem);
 }
 
@@ -270,6 +272,7 @@ void SFBMCache::tic(int ignore, bool matchersCache) {
 		currentMinLife = currentLife;
 	}
 }
+	delete values;
 }
 
 void SFBMCache::freeCacheSlot(bool matchersCache) {
@@ -419,4 +422,5 @@ void SFBMCache::printLife() {
 	int currentLife = this->matchersLife->find(value)->second;
 	cout << value << " have " << currentLife << " life" << endl;
 }
+	delete values;
 }

@@ -50,9 +50,6 @@ void ImageInfo::read(const FileNode& node) {
 	Mat descriptors;
 	node["descriptors"] >> descriptors;
 	this->label = label;
-	if (this->keypoints!=NULL) {
-		delete this->keypoints;
-	}
 	this->keypoints = *keypoints;
 	this->descriptors = descriptors.clone();
 }

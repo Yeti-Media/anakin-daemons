@@ -7,6 +7,7 @@ AnakinFlags::AnakinFlags() {
 }
 
 Flags* AnakinFlags::getFlags(bool verbose) {
+	//FIXME DELETE THIS CLASS??
 	Flags* flags = new Flags();
 	flags->setMinCount(1);
 	flags->setNoValuesFlag(Constants::ACTION_ADDIDX);

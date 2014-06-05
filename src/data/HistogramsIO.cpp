@@ -22,7 +22,7 @@ HistogramsIO::~HistogramsIO() {
 	cleanupHistogramVector(this->hsvHistograms);
 }
 
-void HistogramComparator::cleanupHistogramVector(vector<Histogram*>* hVector) {
+void HistogramsIO::cleanupHistogramVector(vector<Histogram*>* hVector) {
 	for (uint p = 0; p < hVector->size(); p++) {
 		delete hVector->at(p);
 	}

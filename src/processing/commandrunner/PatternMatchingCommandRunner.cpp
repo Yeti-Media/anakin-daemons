@@ -257,6 +257,7 @@ void PatternMatchingCommandRunner::run() {
 				return;
 			}
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
+			delete cmatches; //TODO review if this is WRONG
 		}
 		std::vector<JSONValue*> sceneMatches;
 		sceneMatches.push_back(

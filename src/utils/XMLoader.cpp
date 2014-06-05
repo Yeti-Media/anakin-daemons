@@ -26,6 +26,7 @@ vector<DBPattern*>* XMLoader::loadAsPattern() {
 		DBPattern* pattern = new DBPattern(data);
 		patterns->push_back(pattern);
 	}
+	delete files;
 	return patterns;
 }
 

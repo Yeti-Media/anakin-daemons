@@ -55,6 +55,10 @@ bool Flags::setRequiredFlag(string flag) {
 	if (flagExist(flag)) {
 		return false;
 	}
+	//TODO verify this
+	if (requiredFlags[flag]!=NULL) {
+		delete requiredFlags[flag];
+	}
 	requiredFlags[flag] = new vector<string>(0);
 	return true;
 }
@@ -62,6 +66,10 @@ bool Flags::setRequiredFlag(string flag) {
 bool Flags::setOptionalFlag(string flag) {
 	if (flagExist(flag)) {
 		return false;
+	}
+	//TODO verify this
+	if (optionalFlags[flag]!=NULL) {
+		delete optionalFlags[flag];
 	}
 	optionalFlags[flag] = new vector<string>(0);
 	return true;
@@ -87,9 +95,14 @@ bool Flags::setDependence(string dependent, string dependence) {
 	if (flagExist(dependent) && flagExist(dependence)) {
 		vector<string>* dependences;
 		if (findKey(this->flagsDependencies, dependent)) {
+			//FIXME this line do nothing?
 			dependences = this->flagsDependencies.find(dependent)->second;
 		} else {
 			dependences = new vector<string>(0);
+			//TODO verify this
+			if (flagsDependencies[dependent]!=NULL) {
+				delete flagsDependencies[dependent];
+			}
 			this->flagsDependencies[dependent] = dependences;
 		}
 		if (findInVector(*dependences, dependence)) {
@@ -117,6 +130,10 @@ bool Flags::setLooseDependencies(string dependent,
 				dependencies_->push_back(current);
 			}
 		}
+		//TODO verify this
+		if (flagsLooseDependencies[dependent]!=NULL) {
+			delete flagsLooseDependencies[dependent];
+		}
 		this->flagsLooseDependencies[dependent] = dependencies_;
 		return true;
 	}
@@ -130,11 +147,16 @@ bool Flags::setIncompatibility(string flag1, string flag2) {
 			incompatibilities = this->incompatibleFlags.find(flag1)->second;
 		} else {
 			incompatibilities = new vector<string>(0);
+			//TODO verify this
+			if (incompatibleFlags[flag1]!=NULL) {
+				delete incompatibleFlags[flag1];
+			}
 			this->incompatibleFlags[flag1] = incompatibilities;
 		}
 		if (findInVector(*incompatibilities, flag2)) {
 			return false;
 		}
+		//FIXME review this lines...
 		incompatibilities->push_back(flag2);
 		return true;
 	}
@@ -244,6 +266,7 @@ vector<string>* Flags::getFlagValues(string flag) {
 	if (isOptional(flag)) {
 		return this->optionalFlags.find(flag)->second;
 	}
+	//FIXME can cause memory leaks
 	return new vector<string>(0);
 }
 
