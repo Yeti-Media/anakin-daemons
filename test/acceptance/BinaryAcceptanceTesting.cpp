@@ -63,7 +63,7 @@ string pathToAnakinPath(fs::path path) {
 	string out = path.string();
 	if (fs::is_directory(path)) {
 		if (out.back() != '/') {
-			out = out + "/";
+			out.append("/");
 		}
 	}
 	return "\"" + out + "\"";
@@ -107,7 +107,7 @@ void validateDir(fs::path path, string msj) {
  * Delete all dir content, except for the directory itself.
  */
 void dirCleanup(fs::path path) {
-	string pattern = path.string() + "/*";
+	string pattern = "\""+ path.string() + "/\"*";
 	command("rm -r -f " + pattern);
 }
 
@@ -245,6 +245,12 @@ void simpleTest(int argc, const char * argv[]) {
 	fs::path logsTrainer = logsDir / "trainer.log";
 	fs::path logsExtractor = logsDir / "extractor.log";
 
+	//dir cleanups
+	dirCleanup(outputLogos);
+	dirCleanup(logsDir);
+	dirCleanup(outputs);
+	command("rm -f " + pathToAnakinPath(severalXML));
+
 	//testing database cleanup
 	command("dropdb --if-exists " + database);
 
@@ -255,12 +261,6 @@ void simpleTest(int argc, const char * argv[]) {
 	command(
 			"psql -U " + userDB + " -d " + database + " -q -f "
 			+ pathToAnakinPath(sqlScriptPath));
-
-	//dir cleanups
-	dirCleanup(outputLogos);
-	dirCleanup(logsDir);
-	dirCleanup(outputs);
-	command("rm -f " + pathToAnakinPath(severalXML));
 
 	//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);
