@@ -13,11 +13,21 @@
 
 namespace Anakin {
 
-class CommunicationFormatterMatchingJSON: public I_CommunicationFormatterMatching,
+class CommunicationFormatterMatchingJSON: virtual public I_CommunicationFormatterMatching,
 		public CommunicationFormatterJSON {
 public:
 
+	using CommunicationFormatterJSON::outputResponse;
+	using CommunicationFormatterJSON::outputError;
+	using CommunicationFormatterJSON::format;
+	using CommunicationFormatterJSON::formatRequest;
+
 	CommunicationFormatterMatchingJSON();
+
+	virtual wstring outputMatch(Point2f center, string label,
+			vector<KeyPoint> matchedKeypoints);
+
+	virtual wstring outputMatches(string label, vector<wstring *> values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
 };

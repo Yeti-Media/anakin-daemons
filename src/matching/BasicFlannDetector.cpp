@@ -103,8 +103,10 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 
 			ImageInfo* pii = this->cache->loadPattern(trainerID, currentKey,
 					error);
-			if (*error)
+			if (*error){
+				cout<<"*error "<<*error<<endl;
 				break;
+			}
 			//RichImg* pattern = this->patterns->at(currentKey);
 			RichImg* pattern = new RichImg(pii);
 

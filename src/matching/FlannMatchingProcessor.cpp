@@ -1,26 +1,27 @@
 #include "matching/FlannMatchingProcessor.hpp"
-
+#include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
 #include "matching/Match.hpp"
 
 using namespace Anakin;
 
-FlannMatchingProcessor::FlannMatchingProcessor(BasicFlannDetector* detector,
-		ResultWriter* rw) {
+FlannMatchingProcessor::FlannMatchingProcessor(BasicFlannDetector* detector) {
 	this->detector = detector;
-	this->rw = rw;
+	this->cfm = new CommunicationFormatterMatchingJSON();
 }
 
-std::vector<JSONValue*>* FlannMatchingProcessor::process(RichImg* scene,
+std::vector<wstring*>* FlannMatchingProcessor::process(RichImg* scene,
 		bool * error) {
 	//internal function, do not init *error=false
-	std::vector<JSONValue*>* sceneResult = new std::vector<JSONValue*>(0);
+	wstring* auxiliarForConversion;// = new wstring();
+	std::vector<wstring*>* sceneResult = new std::vector<wstring*>(0);
 	std::vector<Match>* matches = this->detector->findPatterns(scene, error);
 	for (uint m = 0; m < matches->size() && !*error; m++) {
 		Match match = (*matches)[m];
-		sceneResult->push_back(
-				this->rw->matchAsJSON(match.getCenter(),
-						match.getPattern()->getImage()->getLabel(),
-						match.getMatchedKeypoints()));
+		auxiliarForConversion = new wstring();
+		*auxiliarForConversion = this->cfm->outputMatch(match.getCenter(),
+				match.getPattern()->getImage()->getLabel(),
+				match.getMatchedKeypoints());
+		sceneResult->push_back(auxiliarForConversion);
 	}
 	return sceneResult;
 }

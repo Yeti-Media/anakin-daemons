@@ -6,6 +6,7 @@
  */
 
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
+#include <utils/Constants.hpp>
 
 using namespace std;
 using namespace cv;
@@ -14,8 +15,8 @@ using namespace Anakin;
 CommunicationFormatterJSON::CommunicationFormatterJSON() {
 }
 
-wstring I_CommunicationFormatter::outputResponse(string requestID,
-		string category, vector<string *> values) {
+wstring CommunicationFormatterJSON::outputResponse(string requestID,
+		e_category category, vector<wstring *> values) {
 
 	/*  Result as JSONObject
 
@@ -30,11 +31,33 @@ wstring I_CommunicationFormatter::outputResponse(string requestID,
 	ws << requestID.c_str();
 	root[L"requestID"] = new JSONValue(ws.str());
 	wstringstream ys;
-	ys << category.c_str();
+	switch (category){
+		case CF_PATTERN_MATCHING: {
+			ys << "PATTERN";
+			break;
+		}
+		case CF_CACHE_IDX_ADD: {
+			ys << "INDEX ADD";
+			break;
+		}
+		case CF_CACHE_IDX_DEL: {
+			ys << "INDEX DELETE";
+			break;
+		}
+		case CF_CACHE_IDX_UPD: {
+			ys << "INDEX UPDATE";
+			break;
+		}
+		case CF_CACHE_IDX_STATUS: {
+			ys << "INDEX STATUS";
+			break;
+		}
+	}
 	root[L"category"] = new JSONValue(ys.str());
 	JSONArray valuesJSON;
 	for (uint v = 0; v < values.size(); v++) {
-		JSONValue *auxValue = new JSONValue(values.at(v));
+		wstring* auxiliar = values.at(v);
+		JSONValue *auxValue = new JSONValue(*auxiliar);
 		valuesJSON.push_back(auxValue);
 	}
 
@@ -45,7 +68,7 @@ wstring I_CommunicationFormatter::outputResponse(string requestID,
 
 }
 
-wstring I_CommunicationFormatter::outputError(e_error errorType,
+wstring CommunicationFormatterJSON::outputError(e_error errorType,
 		std::string message, std::string origin) {
 
 	/*  Result as JSONObject
@@ -63,15 +86,15 @@ wstring I_CommunicationFormatter::outputError(e_error errorType,
 	worigin << origin.c_str();
 	std::wstring werror_type;
 	switch (errorType) {
-	case RW_ERROR_TYPE_WARNING: {
+	case CF_ERROR_TYPE_WARNING: {
 		werror_type = L"WARNING";
 		break;
 	}
-	case RW_ERROR_TYPE_ERROR: {
+	case CF_ERROR_TYPE_ERROR: {
 		werror_type = L"ERROR";
 		break;
 	}
-	case RW_ERROR_TYPE_FATAL: {
+	case CF_ERROR_TYPE_FATAL: {
 		werror_type = L"FATAL";
 		break;
 	}
@@ -83,11 +106,11 @@ wstring I_CommunicationFormatter::outputError(e_error errorType,
 	return value->Stringify().c_str();
 }
 
-wstring I_CommunicationFormatter::format(const char * data) {
+wstring CommunicationFormatterJSON::format(const char * data) {
 	return (JSON::Parse(data))->Stringify().c_str();
 }
 
-wstring I_CommunicationFormatter::format(char mode, string data, char colors){
+wstring CommunicationFormatterJSON::format(char mode, string data, char colors){
 	/*  Result as JSONObject
 
 	 root    -> type ("pattern" | "histogram" | "landscape")
@@ -97,30 +120,22 @@ wstring I_CommunicationFormatter::format(char mode, string data, char colors){
 	 -> dataType ("YML" | "XML")
 	 -> data (string)
 	 */
-	static const char RW_PATTERNS = 1;
-	static const char RW_HISTOGRAMS = 2;
-	static const char RW_LANDSCAPE = 4;
-
-	static const char RW_COLOR = 8;
-	static const char RW_GRAY = 16;
-	static const char RW_HSV = 32;
-
 
 	JSONObject root;
 
-	if (mode & RW_PATTERNS) {
+	if (mode & I_CommunicationFormatter::CF_PATTERNS) {
 		root[L"type"] = new JSONValue(L"pattern");
-	} else if (mode & RW_HISTOGRAMS) {
+	} else if (mode & I_CommunicationFormatter::CF_HISTOGRAMS) {
 		root[L"type"] = new JSONValue(L"histogram");
-	} else if (mode & RW_LANDSCAPE) {
+	} else if (mode & I_CommunicationFormatter::CF_LANDSCAPE) {
 		root[L"type"] = new JSONValue(L"landscape");
 	}
 
-	if ((mode & RW_HISTOGRAMS) || (mode & RW_LANDSCAPE)) {
+	if ((mode & I_CommunicationFormatter::CF_HISTOGRAMS) || (mode & I_CommunicationFormatter::CF_LANDSCAPE)) {
 		JSONObject jcolors;
-		bool color = colors & RW_COLOR;
-		bool gray = colors & RW_GRAY;
-		bool hsv = colors & RW_HSV;
+		bool color = colors & I_CommunicationFormatter::CF_COLOR;
+		bool gray = colors & I_CommunicationFormatter::CF_GRAY;
+		bool hsv = colors & I_CommunicationFormatter::CF_HSV;
 		jcolors[L"color"] = new JSONValue(color);
 		jcolors[L"gray"] = new JSONValue(gray);
 		jcolors[L"hsv"] = new JSONValue(hsv);
@@ -134,6 +149,56 @@ wstring I_CommunicationFormatter::format(char mode, string data, char colors){
 
 	JSONValue *value = new JSONValue(root);
 	return value->Stringify().c_str();
+}
+
+string CommunicationFormatterJSON::formatRequest(const char * data){
+	JSONValue* req = JSON::Parse(data);
+	std::string request = "";
+		if (req->HasChild(L"action")) {
+			std::wstring waction = req->Child(L"action")->AsString();
+			std::string saction(waction.begin(), waction.end());
+			request += "-" + saction + " ";
+		}
+		if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
+			request += "-" + Constants::PARAM_IDXS + " ";
+			JSONArray indexes =
+					req->Child(Constants::WPARAM_IDXS.c_str())->AsArray();
+			for (int i = 0; i < indexes.size(); i++) {
+				JSONValue* v = indexes.at(i);
+				std::string sv = std::to_string((int) v->AsNumber());
+				request += sv + " ";
+			}
+		}
+		if (req->HasChild(Constants::WPARAM_SCENEID.c_str())) {
+			request += "-" + Constants::PARAM_SCENEID + " ";
+			std::string scenario =
+					std::to_string(
+							(int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
+			request += scenario + " ";
+		}
+		if (req->HasChild(Constants::WOPTIONAL_FLAGS.c_str())) {
+			JSONObject optionalFlags = req->Child(
+					Constants::WOPTIONAL_FLAGS.c_str())->AsObject();
+			if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())
+					!= optionalFlags.end()) {
+				request += "-" + Constants::PARAM_MIN_RATIO + " ";
+				std::string mr =
+						std::to_string(
+								(float) optionalFlags.find(
+										Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
+				request += mr + " ";
+			}
+			if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())
+					!= optionalFlags.end()) {
+				request += "-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ";
+				std::string mma =
+						std::to_string(
+								(int) optionalFlags.find(
+										Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
+				request += mma + " ";
+			}
+		}
+		return request;
 }
 
 CommunicationFormatterJSON::~CommunicationFormatterJSON() {

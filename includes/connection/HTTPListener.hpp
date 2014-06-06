@@ -5,8 +5,8 @@
 #include <tbb/concurrent_queue.h>
 #include <vector>
 #include "connection/HTTPSocket.hpp"
-#include "output/ResultWriter.hpp"
 #include "utils/BlockingMap.hpp"
+//#include <output/communicationFormatter/ICommunicationFormatter.hpp>
 
 namespace Anakin {
 
@@ -58,7 +58,7 @@ protected:
 	static struct mg_server *server;
 	static tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue;
 	static BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue;
-	static ResultWriter rw;
+	//static I_CommunicationFormatter cf;
 private:
 	static int generateRandomID();
 

@@ -15,10 +15,23 @@
 
 namespace Anakin {
 
-class CommunicationFormatterJSON: public I_CommunicationFormatter {
+class CommunicationFormatterJSON: virtual public I_CommunicationFormatter {
 public:
 
 	CommunicationFormatterJSON();
+
+	virtual wstring outputResponse(string requestID, e_category category,
+			vector<wstring *> values);
+
+	virtual wstring outputError(e_error errorType, string message,
+			string origin);
+
+	virtual wstring format(const char * data);
+
+	virtual wstring format(char mode, string data, char colors);
+
+	virtual string formatRequest(const char * data);
+
 	~CommunicationFormatterJSON();
 };
 

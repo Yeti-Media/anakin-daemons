@@ -9,9 +9,11 @@
 
 namespace Anakin {
 
-CommunicationFormatterCacheJSON::CommunicationFormatterCacheJSON() {}
+CommunicationFormatterCacheJSON::CommunicationFormatterCacheJSON() {
+}
 
-wstring I_CommunicationFormatterCache::trainerAddAsJSON(int smatcher_id_added, int cacheFreeSpace,	int smatcher_id_removed){
+wstring CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
+		int cacheFreeSpace, int smatcher_id_removed) {
 	/*  Result as JSONObject
 
 	 root    -> index_added (int)
@@ -31,11 +33,13 @@ wstring I_CommunicationFormatterCache::trainerAddAsJSON(int smatcher_id_added, i
 	return value->Stringify().c_str();
 }
 
-wstring I_CommunicationFormatterCache::trainerDelAsJSON(int smatcher_id_deleted, int cacheFreeSpace){
-	return trainerAddAsJSON(-1, cacheFreeSpace, smatcher_id_deleted);
+wstring CommunicationFormatterCacheJSON::trainerDel(
+		int smatcher_id_deleted, int cacheFreeSpace) {
+	return trainerAdd(-1, cacheFreeSpace, smatcher_id_deleted);
 }
 
-wstring I_CommunicationFormatterCache::trainerUPDAsJSON(int smatcher_id_updated){
+wstring CommunicationFormatterCacheJSON::trainerUPD(
+		int smatcher_id_updated) {
 	/*  Result as JSONObject
 
 	 root    -> index_updated (int)
@@ -46,7 +50,8 @@ wstring I_CommunicationFormatterCache::trainerUPDAsJSON(int smatcher_id_updated)
 	return value->Stringify().c_str();
 }
 
-wstring I_CommunicationFormatterCache::cacheStatusAsJSON(vector<int> smatchers_in_cache, int cacheFreeSpace){
+wstring CommunicationFormatterCacheJSON::cacheStatus(
+		vector<int> smatchers_in_cache, int cacheFreeSpace) {
 	/*  Result as JSONObject
 
 	 root       -> cache_free_space (int)
@@ -68,7 +73,7 @@ wstring I_CommunicationFormatterCache::cacheStatusAsJSON(vector<int> smatchers_i
 	return value->Stringify().c_str();
 }
 
-CommunicationFormatterCacheJSON::~CommunicationFormatterCacheJSON() {}
-
+CommunicationFormatterCacheJSON::~CommunicationFormatterCacheJSON() {
+}
 
 } /* namespace Anakin */

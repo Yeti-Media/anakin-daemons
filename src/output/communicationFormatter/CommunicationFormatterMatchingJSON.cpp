@@ -13,7 +13,7 @@ namespace Anakin {
 CommunicationFormatterMatchingJSON::CommunicationFormatterMatchingJSON() {
 }
 
-wstring I_CommunicationFormatterMatching::outputMatch(Point2f center,
+wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 		string label, vector<KeyPoint> matchedKeypoints) {
 	/*  Result as JSONObject
 
@@ -64,14 +64,21 @@ wstring I_CommunicationFormatterMatching::outputMatch(Point2f center,
 	return value->Stringify().c_str();
 }
 
-wstring I_CommunicationFormatterMatching::outputMatches(string label,
-		vector<string *> values) {
+wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
+		vector<wstring *> values) {
 	/*  Result as JSONObject
 
 	 root    -> scene label (string)
 
 	 -> values (JSONArray)    -> <see function above>
 	 */
+
+//	wstring estrin;
+//	for (uint ig = 0; ig < values.size(); ig++) {
+//		cout << "values->at(ig)" << values.at(ig) << endl;
+//		estrin = *(values.at(ig));
+//		wcout << "values->at(ig) " << estrin<< endl;
+//	}
 	JSONObject root;
 	wstringstream ws;
 	ws << label.c_str();
@@ -79,13 +86,17 @@ wstring I_CommunicationFormatterMatching::outputMatches(string label,
 	JSONArray valuesJSON;
 
 	for (uint v = 0; v < values.size(); v++) {
-		JSONValue *auxValue = new JSONValue(values.at(v));
+		wstring* auxiliar = values.at(v);
+//		wcout << "auxiliar" << *auxiliar << endl;
+		JSONValue *auxValue = new JSONValue(*auxiliar);//(values.at(v));
 		valuesJSON.push_back(auxValue);
 	}
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *value = new JSONValue(root);
+//	wstring estrin = value->Stringify().c_str();
+//	wcout << "value->Stringify().c_str()" << estrin << endl;
 	return value->Stringify().c_str();
 }
 

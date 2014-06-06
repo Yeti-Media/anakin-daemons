@@ -6,7 +6,6 @@
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
 #include <output/DataOutput.hpp>
-#include <output/JSONValue.h>
 #include <processing/SFBMCache.hpp>
 #include <sys/types.h>
 #include "connection/Server.hpp"
@@ -129,10 +128,10 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
 	if (this->initialization) {
 		this->cache = new SFBMCache(this->dbdriver, cacheConfig);
 		this->cacheInitializationError = false;
-		JSONValue* cacheError = this->cache->getLastOperationResult(
+		wstring cacheError = this->cache->getLastOperationResult(
 				&this->cacheInitializationError);
 		if (this->cacheInitializationError) {
-			this->cacheInitializationErrorMsj = cacheError->Stringify().c_str();
+			this->cacheInitializationErrorMsj = cacheError;
 			LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
 		}
 	}

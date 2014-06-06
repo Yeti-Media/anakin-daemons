@@ -10,6 +10,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <output/communicationFormatter/ICommunicationFormatterCache.hpp>
 
 namespace Anakin {
 
@@ -98,7 +99,7 @@ public:
 	/**
 	 * returns a JSONValue with the trainers and the free space in the cache
 	 */
-	JSONValue* indexCacheStatus();
+	wstring indexCacheStatus();
 	/**
 	 * load a scene
 	 *
@@ -141,13 +142,13 @@ public:
 	 * @see ResultWriter.hpp
 	 * @see SFBMCache.cpp
 	 */
-	JSONValue* getLastOperationResult(bool * error = NULL);
+	wstring getLastOperationResult(bool * error = NULL);
 protected:
 private:
 
 	//FIELDS
 	DBDriver* dbdriver;
-	ResultWriter* rw;
+	I_CommunicationFormatterCache* cfc;
 	int lastInsertedIndex = -1;
 	int lastRemovedIndex = -1;
 	static const char INSERTOP = 1;
@@ -156,7 +157,7 @@ private:
 	static const char ERROR = 4;
 	char operation = 0;
 	std::string errorMessage;
-	char errorType;
+	I_CommunicationFormatterCache::e_error errorType;
 	std::string origin;
 
 	//MATCHERS

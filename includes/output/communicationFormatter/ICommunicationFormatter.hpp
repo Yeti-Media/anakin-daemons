@@ -19,20 +19,88 @@ class I_CommunicationFormatter {
 public:
 
 	enum e_error {
-		RW_ERROR_TYPE_WARNING = 0,
-		RW_ERROR_TYPE_ERROR = 1,
-		RW_ERROR_TYPE_FATAL = 2
+		CF_ERROR_TYPE_WARNING = 0,
+		CF_ERROR_TYPE_ERROR = 1,
+		CF_ERROR_TYPE_FATAL = 2
 	};
 
-	virtual wstring outputResponse(string requestID, string category,
-			vector<string *> values) = 0;
+	enum e_category{
+		CF_PATTERN_MATCHING,
+		CF_CACHE_IDX_ADD,
+		CF_CACHE_IDX_DEL,
+		CF_CACHE_IDX_UPD,
+		CF_CACHE_IDX_STATUS
+	};
+
+//	enum e_mode{
+//		CF_PATTERNS = 1,
+//		CF_HISTOGRAMS = 2,
+//		CF_LANDSCAPE = 4
+//	};
+//
+//	enum e_color{
+//		CF_COLOR = 8,
+//		CF_GRAY = 16,
+//		CF_HSV = 32
+//	};
+
+	static const char CF_PATTERNS = 1;
+	static const char CF_HISTOGRAMS = 2;
+	static const char CF_LANDSCAPE = 4;
+
+	static const char CF_COLOR = 8;
+	static const char CF_GRAY = 16;
+	static const char CF_HSV = 32;
+
+	virtual wstring outputResponse(string requestID, e_category category,
+			vector<wstring *> values) {
+		return L"Place holder implementation due a bug on gcc. "
+				"It seems doesn't work well with pure virtual "
+				"classes when you implement an interface. Please "
+				"don't use this implementation, you must provide your"
+				"own implementation inside a child class";
+	};// = 0;
 
 	virtual wstring outputError(e_error errorType, std::string message,
-			std::string origin) = 0;
+			std::string origin) {
+		return L"Place holder implementation due a bug on gcc. "
+				"It seems doesn't work well with pure virtual "
+				"classes when you implement an interface. Please "
+				"don't use this implementation, you must provide your"
+				"own implementation inside a child class";
+	};// = 0;
 
-	virtual wstring format(const char * data) = 0;
+	virtual wstring format(const char * data) {
+		return L"Place holder implementation due a bug on gcc. "
+				"It seems doesn't work well with pure virtual "
+				"classes when you implement an interface. Please "
+				"don't use this implementation, you must provide your"
+				"own implementation inside a child class";
+	};// = 0;
 
-	virtual wstring format(char mode, string data, char colors) = 0;
+//	virtual wstring format(e_mode mode, string data, e_color colors) {
+//		return L"Place holder implementation due a bug on gcc. "
+//				"It seems doesn't work well with pure virtual "
+//				"classes when you implement an interface. Please "
+//				"don't use this implementation, you must provide your"
+//				"own implementation inside a child class";
+//	};// = 0;
+
+	virtual wstring format(char mode, string data, char colors) {
+		return L"Place holder implementation due a bug on gcc. "
+				"It seems doesn't work well with pure virtual "
+				"classes when you implement an interface. Please "
+				"don't use this implementation, you must provide your"
+				"own implementation inside a child class";
+	};// = 0;
+
+	virtual string formatRequest(const char * data) {
+		return "Place holder implementation due a bug on gcc. "
+				"It seems doesn't work well with pure virtual "
+				"classes when you implement an interface. Please "
+				"don't use this implementation, you must provide your"
+				"own implementation inside a child class";
+	};// = 0;
 
 	virtual ~I_CommunicationFormatter() {
 	}
