@@ -30,14 +30,9 @@ public:
 	Daemon();
 
 	/**
-	 * init the flags with testing additions (see testing README for mor info)
-	 */
-	static void initTestingFlags(Flags* flags);
-
-	/**
 	 * start the daemon
 	 */
-	void start(int argc, const char * argv[], bool useCache = false);
+	void start(vector<string> *input, bool useCache = false);
 
 	virtual ~Daemon();
 };
@@ -48,33 +43,9 @@ Daemon<SpecificCommandRunner>::Daemon() {
 
 }
 
-template<class SpecificCommandRunner>
-void Daemon<SpecificCommandRunner>::initTestingFlags(Flags* flags) {
-#if COMPILE_MODULE == ALLMODULES
-	flags->setNoValuesFlag("modepatternmatching");
-	flags->setNoValuesFlag("modematchercache");
-	flags->setNoValuesFlag("modedbconnector");
-	flags->setNoValuesFlag("modeextractor");
-	flags->setNoValuesFlag("modetrainer");
-
-	flags->setIncompatibility("modepatternmatching", "modematchercache");
-	flags->setIncompatibility("modepatternmatching", "modedbconnector");
-	flags->setIncompatibility("modepatternmatching", "modeextractor");
-	flags->setIncompatibility("modepatternmatching", "modetrainer");
-
-	flags->setIncompatibility("modematchercache", "modedbconnector");
-	flags->setIncompatibility("modematchercache", "modeextractor");
-	flags->setIncompatibility("modematchercache", "modetrainer");
-
-	flags->setIncompatibility("modedbconnector", "modeextractor");
-	flags->setIncompatibility("modedbconnector", "modetrainer");
-
-	flags->setIncompatibility("modeextractor", "modetrainer");
-#endif
-}
 
 template<class SpecificCommandRunner>
-void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
+void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 		bool useCache) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
@@ -102,14 +73,9 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 	//                                 FLAGS                                //
 	//______________________________________________________________________//
 
-	vector<string> *input = new vector<string>(0);
-	for (int i = 1; i < argc; i++) {
-		input->push_back(argv[i]);
-	}
-
 	Flags* anakinInput = new Flags();
 
-	Daemon<SpecificCommandRunner>::initTestingFlags(anakinInput);
+	Flags::initTestingFlags(anakinInput);
 
 	anakinInput->setOverridingFlag("help");
 	anakinInput->setNoValuesFlag("verbose");
@@ -182,8 +148,6 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 	if (anakinInput->validateInput(input)) {
 		if (anakinInput->flagFound("help")) {
-			//NOTE that every concrete commandrunner must have a static member called "help".
-			// See PatternMatchingCommandRunner as an example
 			cout << "Daemon arguments:" << endl << endl
 					<< "[cacheLoadingTimeWeight <int>|cacheDiscardLessValuable <bool>|cacheSize <int>|cacheLife <int>|cacheScenesSize <int>|cacheScenesLife <int>|-oLogFile <path>|-threads <int>|-queueCapacity <int>|(pghost <name> pgport <port> dbName <name> login <user> pwd <password>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)"
 					<< endl << endl << "Flags:" << endl << endl
@@ -226,11 +190,12 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		if (anakinInput->flagFound("verbose")) {
 			verbose = true;
 		}
-		vector<string>* values;
+		vector<string>* values = new vector<string>();
 
 		//POSTGRES config
 
 		if (anakinInput->flagFound("pghost")) {
+			values->clear();
 			values = anakinInput->getFlagValues("pghost");
 			if (values->size() == 1) {
 				pghost = values->at(0);
@@ -241,6 +206,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		}
 
 		if (anakinInput->flagFound("pgport")) {
+			values->clear();
 			values = anakinInput->getFlagValues("pgport");
 			if (values->size() == 1) {
 				pgport = values->at(0);
@@ -251,6 +217,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		}
 
 		if (anakinInput->flagFound("dbName")) {
+			values->clear();
 			values = anakinInput->getFlagValues("dbName");
 			if (values->size() == 1) {
 				dbName = values->at(0);
@@ -261,6 +228,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		}
 
 		if (anakinInput->flagFound("login")) {
+			values->clear();
 			values = anakinInput->getFlagValues("login");
 			if (values->size() == 1) {
 				login = values->at(0);
@@ -271,6 +239,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		}
 
 		if (anakinInput->flagFound("pwd")) {
+			values->clear();
 			values = anakinInput->getFlagValues("pwd");
 			if (values->size() == 1) {
 				pwd = values->at(0);
@@ -283,6 +252,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		//CACHE CONFIG
 		if (useCache) {
 			if (anakinInput->flagFound("cacheLoadingTimeWeight")) {
+				values->clear();
 				values = anakinInput->getFlagValues("cacheLoadingTimeWeight");
 				if (values->size() == 1) {
 					cacheConfig.cacheLoadingTimeWeight = stoi(values->at(0));
@@ -298,6 +268,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			}
 
 			if (anakinInput->flagFound("cacheSize")) {
+				values->clear();
 				values = anakinInput->getFlagValues("cacheSize");
 				if (values->size() == 1) {
 					cacheConfig.cacheSize = stoi(values->at(0));
@@ -308,6 +279,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			}
 
 			if (anakinInput->flagFound("cacheLife")) {
+				values->clear();
 				values = anakinInput->getFlagValues("cacheLife");
 				if (values->size() == 1) {
 					cacheConfig.cacheLife = stoi(values->at(0));
@@ -318,6 +290,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			}
 
 			if (anakinInput->flagFound("cacheScenesSize")) {
+				values->clear();
 				values = anakinInput->getFlagValues("cacheScenesSize");
 				if (values->size() == 1) {
 					cacheConfig.cacheScenesSize = stoi(values->at(0));
@@ -329,6 +302,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			}
 
 			if (anakinInput->flagFound("cacheScenesLife")) {
+				values->clear();
 				values = anakinInput->getFlagValues("cacheScenesLife");
 				if (values->size() == 1) {
 					cacheConfig.cacheScenesLife = stoi(values->at(0));
@@ -342,6 +316,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 		//THREADS
 		if (anakinInput->flagFound("threads")) {
+			values->clear();
 			values = anakinInput->getFlagValues("threads");
 			if (values->size() == 1) {
 				threads = stoi(values->at(0));
@@ -353,6 +328,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 
 		//BLOCKING CAPACITY QUEUE
 		if (anakinInput->flagFound("queueCapacity")) {
+			values->clear();
 			values = anakinInput->getFlagValues("queueCapacity");
 			if (values->size() == 1) {
 				queueCapacity = stoi(values->at(0));
@@ -383,6 +359,7 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 			oMode = Server<SpecificCommandRunner>::CONSOLE;
 		}
 		if (anakinInput->flagFound("oLogFile")) {
+			values->clear();
 			values = anakinInput->getFlagValues("oLogFile");
 			if (values->size() == 1) {
 				logFile = values->at(0);
@@ -395,17 +372,17 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 		if (anakinInput->flagFound("oHTTP")) {
 			oMode = Server<SpecificCommandRunner>::HTTP;
 		}
+
+		delete values;
 	} else {
 		cout << "Input error!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
+
 	//______________________________________________________________________//
 	//                         DAEMON INITIALIZATION                        //
 	//______________________________________________________________________//
-
-	//help cleanup
-	delete SpecificCommandRunner::help;
 
 	//logger initialization
 	if (!logFile.empty()) {
@@ -413,11 +390,15 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 	}
 
 	std::string startComand;
-	for (int i = 1; i < argc; i++) {
-		if (i != 1) {
+	for (uint i = 0; i < input->size(); i++) {
+		if (i != 0) {
 			startComand.append(" ");
 		}
-		startComand.append(argv[i]);
+		if (input->at(i).find(" ")!=string::npos) {
+			startComand.append("\"").append(input->at(i)).append("\"");
+		} else {
+			startComand.append(input->at(i));
+		}
 	}
 	LOG_F("Args")<< startComand;
 
@@ -447,7 +428,6 @@ void Daemon<SpecificCommandRunner>::start(int argc, const char * argv[],
 	delete output;
 	delete server;
 	delete anakinInput;
-	delete input;
 }
 
 template<class SpecificCommandRunner>

@@ -30,10 +30,9 @@ public:
 	void run();
 
 	/**
-	 * static help access implementation
+	 * find a better way to imlement this
 	 */
 	static Help* help;
-
 private:
 	E_PatternMatchingAction action = NONE;
 };

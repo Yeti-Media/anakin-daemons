@@ -16,10 +16,8 @@
 #include <utils/help/HelpPatternMatching.hpp>
 
 using namespace Anakin;
+using namespace std;
 
-/**
- * static help initialization
- */
 Help* PatternMatchingCommandRunner::help = new HelpPatternMatching();
 
 PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
@@ -50,16 +48,16 @@ PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
 	flags->setIncompatibility(Constants::ACTION_STATUSIDX,
 			Constants::PARAM_IDXS);
 
-	std::vector<std::string>* indexesLooseDependences = new std::vector<
-			std::string>();
+	vector<string>* indexesLooseDependences = new vector<
+			string>();
 	indexesLooseDependences->push_back(Constants::ACTION_ADDIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_DELIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_UPDIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_MATCH);
 	flags->setLooseDependencies(Constants::PARAM_IDXS, indexesLooseDependences);
 
-	std::vector<std::string>* pmatchLooseDependences = new std::vector<
-			std::string>();
+	vector<string>* pmatchLooseDependences = new vector<
+			string>();
 	pmatchLooseDependences->push_back(Constants::PARAM_SCENEID);
 	flags->setLooseDependencies(Constants::ACTION_MATCH,
 			pmatchLooseDependences);
@@ -74,8 +72,8 @@ PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
 	flags->setIncompatibility(Constants::ACTION_STATUSIDX,
 			Constants::ACTION_MATCH);
 
-	std::vector<std::string>* reqIDLooseDependences = new std::vector<
-			std::string>();
+	vector<string>* reqIDLooseDependences = new vector<
+			string>();
 	reqIDLooseDependences->push_back(Constants::ACTION_MATCH);
 	reqIDLooseDependences->push_back(Constants::ACTION_ADDIDX);
 	reqIDLooseDependences->push_back(Constants::ACTION_DELIDX);
@@ -97,7 +95,7 @@ PatternMatchingCommandRunner::~PatternMatchingCommandRunner() {
 }
 
 void PatternMatchingCommandRunner::validateRequest(
-		std::vector<std::string> *input) {
+		vector<string> *input) {
 	inputError = false;
 	action = NONE;
 	mma = 8;
@@ -107,7 +105,7 @@ void PatternMatchingCommandRunner::validateRequest(
 	reqID = "";
 	lastError = "";
 	if (flags->validateInput(input)) {
-		std::vector<std::string>* values;
+		vector<string>* values = new vector<string>();
 		if (flags->flagFound(Constants::ACTION_MATCH)) {
 			action = E_PatternMatchingAction::MATCH;
 		}
@@ -124,6 +122,7 @@ void PatternMatchingCommandRunner::validateRequest(
 			action = E_PatternMatchingAction::IDXSTATUS;
 		}
 		if (flags->flagFound(Constants::PARAM_SCENEID)) {
+			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_SCENEID);
 			if (values->size() != 1) {
 				lastError = "flag " + Constants::PARAM_SCENEID
@@ -131,9 +130,10 @@ void PatternMatchingCommandRunner::validateRequest(
 				inputError = true;
 				return;
 			}
-			sceneID = std::stoi(values->at(0));
+			sceneID = stoi(values->at(0));
 		}
 		if (flags->flagFound(Constants::PARAM_REQID)) {
+			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_REQID);
 			if (values->size() != 1) {
 				lastError = "flag " + Constants::PARAM_REQID
@@ -144,9 +144,10 @@ void PatternMatchingCommandRunner::validateRequest(
 			reqID = values->at(0);
 		}
 		if (flags->flagFound(Constants::PARAM_MIN_RATIO)) {
+			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_MIN_RATIO);
 			if (values->size() == 1) {
-				this->mr = std::stof(values->at(0));
+				this->mr = stof(values->at(0));
 			} else {
 				lastError = "flag " + Constants::PARAM_MIN_RATIO
 						+ " expects only one value";
@@ -155,9 +156,10 @@ void PatternMatchingCommandRunner::validateRequest(
 			}
 		}
 		if (flags->flagFound(Constants::PARAM_MIN_MATCHES_ALLOWED)) {
+			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_MIN_MATCHES_ALLOWED);
 			if (values->size() == 1) {
-				this->mma = std::stoi(values->at(0));
+				this->mma = stoi(values->at(0));
 			} else {
 				lastError = "flag " + Constants::PARAM_MIN_MATCHES_ALLOWED
 						+ " expects only one value";
@@ -167,6 +169,7 @@ void PatternMatchingCommandRunner::validateRequest(
 		}
 		if (flags->flagFound(Constants::PARAM_IDXS))   //MUST BE AT THE END
 				{
+			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_IDXS);
 			if (values->empty()) {
 				lastError = "flag " + Constants::PARAM_IDXS
@@ -176,6 +179,7 @@ void PatternMatchingCommandRunner::validateRequest(
 			}
 			indexes.insert(indexes.begin(), values->begin(), values->end());
 		}
+		delete values;
 	} else {
 		lastError = "input error!";
 		inputError = true;
@@ -191,7 +195,7 @@ void PatternMatchingCommandRunner::run() {
 		return;
 	}
 
-	int ireqID = std::stoi(reqID);
+	int ireqID = stoi(reqID);
 
 	switch (action) {
 	case E_PatternMatchingAction::NONE: {
@@ -199,8 +203,8 @@ void PatternMatchingCommandRunner::run() {
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
-		std::vector<JSONValue*> inserts;
-		std::string duplicated;
+		vector<JSONValue*> inserts;
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
@@ -209,7 +213,7 @@ void PatternMatchingCommandRunner::run() {
 			return;
 		}
 		for (uint i = 0; i < this->indexes.size(); i++) {
-			int idxID = std::stoi(this->indexes.at(i));
+			int idxID = stoi(this->indexes.at(i));
 			bool error = false;
 			this->cache->loadMatcher(idxID, &error);
 			if (error) {
@@ -225,8 +229,8 @@ void PatternMatchingCommandRunner::run() {
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
-		std::vector<JSONValue*> deletes;
-		std::string duplicated;
+		vector<JSONValue*> deletes;
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
@@ -235,8 +239,8 @@ void PatternMatchingCommandRunner::run() {
 			return;
 		}
 		for (uint i = 0; i < this->indexes.size(); i++) {
-			std::string smatcherID = this->indexes.at(i);
-			int idxID = std::stoi(smatcherID);
+			string smatcherID = this->indexes.at(i);
+			int idxID = stoi(smatcherID);
 			this->cache->unloadMatcher(idxID);
 			deletes.push_back(this->cache->getLastOperationResult());
 		}
@@ -246,7 +250,7 @@ void PatternMatchingCommandRunner::run() {
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
-		std::vector<JSONValue*> status;
+		vector<JSONValue*> status;
 		status.push_back(this->cache->indexCacheStatus());
 		this->out->output(
 				this->rw->outputResponse(reqID,
@@ -254,8 +258,8 @@ void PatternMatchingCommandRunner::run() {
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
-		std::vector<JSONValue*> updates;
-		std::string duplicated;
+		vector<JSONValue*> updates;
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
@@ -264,8 +268,8 @@ void PatternMatchingCommandRunner::run() {
 			return;
 		}
 		for (uint i = 0; i < this->indexes.size(); i++) {
-			std::string smatcherID = this->indexes.at(i);
-			int idxID = std::stoi(smatcherID);
+			string smatcherID = this->indexes.at(i);
+			int idxID = stoi(smatcherID);
 			bool error = false;
 			this->cache->updateMatcher(idxID, &error);
 			if (error) {
@@ -281,8 +285,8 @@ void PatternMatchingCommandRunner::run() {
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
-		std::vector<JSONValue*>* matches = new std::vector<JSONValue*>();
-		std::string duplicated;
+		vector<JSONValue*>* matches = new vector<JSONValue*>();
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
@@ -299,8 +303,8 @@ void PatternMatchingCommandRunner::run() {
 		}
 		RichImg* rscene = new RichImg(scene);
 		for (uint i = 0; i < this->indexes.size(); i++) {
-			std::string smatcherID = this->indexes.at(i);
-			int idxID = std::stoi(smatcherID);
+			string smatcherID = this->indexes.at(i);
+			int idxID = stoi(smatcherID);
 			bool matcherError = false;
 			SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(
 					idxID, &matcherError);
@@ -314,7 +318,7 @@ void PatternMatchingCommandRunner::run() {
 			this->processor = new FlannMatchingProcessor(this->detector,
 					this->rw);
 			bool processingError = false;
-			std::vector<JSONValue*>* cmatches = this->processor->process(rscene,
+			vector<JSONValue*>* cmatches = this->processor->process(rscene,
 					&processingError);
 			if (processingError) {
 				this->out->error(
@@ -324,7 +328,7 @@ void PatternMatchingCommandRunner::run() {
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
 			delete cmatches; //TODO review if this is WRONG
 		}
-		std::vector<JSONValue*> sceneMatches;
+		vector<JSONValue*> sceneMatches;
 		sceneMatches.push_back(
 				this->rw->matchesAsJSON(scene->getLabel(), *matches));
 		this->out->output(

@@ -96,6 +96,4 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 }
 
 PatternLoader::~PatternLoader() {
-	delete this->patterns;
-	delete this->input;
 }

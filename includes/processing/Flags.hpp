@@ -95,6 +95,11 @@ public:
 	 */
 	bool validateInput(vector<string> *input);
 	bool isOverridingFlagFound();
+
+	/**
+	 * init the flags with testing additions (see testing README for mor info)
+	 */
+	static void initTestingFlags(Flags* flags);
 protected:
 private:
 	//METHODS

@@ -118,7 +118,7 @@ int Anakin::dbConnector(int argc, const char * argv[]) {
 	flags->setOptionalFlag("index");
 	flags->setNoValuesFlag("savePatterns");
 
-	Daemon<CommandRunner>::initTestingFlags(flags);
+	Flags::initTestingFlags(flags);
 
 	vector<string>* pathLooseDeps = new vector<string>(0);
 	pathLooseDeps->push_back("patterns");
@@ -575,7 +575,7 @@ int Anakin::extractor(int argc, const char * argv[]) {
 	flags->setOverridingFlag("help");
 	flags->setOptionalFlag("oLogFile");
 
-	Daemon<CommandRunner>::initTestingFlags(flags);
+	Flags::initTestingFlags(flags);
 	//I/O MODE
 	flags->setNoValuesFlag("landscape");
 	flags->setNoValuesFlag("histograms");
@@ -770,153 +770,17 @@ int Anakin::extractor(int argc, const char * argv[]) {
 
 //=======================================================================================
 #endif
-#if COMPILE_MODULE == TRAINER || COMPILE_MODULE == ALLMODULES
-//=======================================================================================
-
-#include <opencv2/opencv.hpp>
-#include <string>
-#include <iostream>               // for cout
-#include "opencv2/core/core.hpp"
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/nonfree/nonfree.hpp"
-
-#include "processing/Trainer.hpp"
-#include "data/PatternLoader.hpp"
-#include "processing/BasicFlannTrainer.hpp"
-#include "processing/SerializedPatternDataInput.hpp"
-#include "data/PatternLoader.hpp"
-#include "matching/SerializableFlannBasedMatcher.hpp"
-
-using namespace cv;
-
-void Anakin::showHelpTrainer() {
-	cout << "Trainer help" << endl << endl << "usage: " << endl
-			<< "./trainer -help" << endl
-			<< "./trainer [oLogFile] -user <userID> -saveToFile [<folder>] <filename>"
-			<< endl
-			<< "./trainer [oLogFile] -patternsId <id id ...> -saveToFile [<folder>] <filename>"
-			<< endl << "flag -oLogFile  : path to the output logging file"
-			<< endl;
-}
-
-int Anakin::trainer(int argc, const char * argv[]) {
-	std::string logFile = "anakin-trainer.log";
-	std::string userID;
-	//char mode = 0;
-	std::string folder;
-	std::string fileName;
-	std::vector<int>* patternsId;
-	bool user = false;
-
-	//FLAGS DECLARATION
-	Flags* flags = new Flags();
-	flags->setMinCount(2);
-	flags->setOverridingFlag("help");
-	flags->setOptionalFlag("oLogFile");
-	Daemon<CommandRunner>::initTestingFlags(flags);
-	flags->setOptionalFlag("user");
-	//flags->setNoValuesFlag("patterns");
-	flags->setOptionalFlag("patternsId");
-	flags->setOptionalFlag("saveToFile");
-
-	//INPUT VALIDATION
-	std::vector<std::string> *input = new std::vector<std::string>(0);
-	for (int i = 1; i < argc; i++) {
-		input->push_back(argv[i]);
-	}
-
-	if (flags->validateInput(input)) {
-		if (flags->flagFound("help")) {
-			showHelpTrainer();
-			exit(EXIT_SUCCESS);
-		}
-		std::vector<std::string>* values;
-		if (flags->flagFound("oLogFile")) {
-			values = flags->getFlagValues("oLogFile");
-			if (values->size() == 1) {
-				logFile = values->at(0);
-			} else {
-				cout << "param oLogPath needs one value" << endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (flags->flagFound("user")) {
-			values = flags->getFlagValues("user");
-			user = true;
-			if (values->size() == 1) {
-				userID = values->at(0);
-			} else {
-				std::cerr << "flag user needs only one value" << endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (flags->flagFound("patternsId")) {
-			values = flags->getFlagValues("patternsId");
-			if (!values->empty()) {
-				patternsId = new vector<int>(0);
-				for (unsigned int i = 0; i < values->size(); i++) {
-					(*patternsId).push_back(std::stoi(values->at(i)));
-				}
-			} else {
-				std::cerr << "flag patternsId needs at least one value" << endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		if (flags->flagFound("saveToFile")) {
-			values = flags->getFlagValues("saveToFile");
-			if (values->size() == 1) {
-				folder = "";
-				fileName = values->at(0);
-			} else if (values->size() == 2) {
-				folder = values->at(0);
-				fileName = values->at(1);
-			} else {
-				std::cerr << "flag saveToFile needs between one and two values"
-						<< endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-	} else {
-		std::cerr << "Input error!" << endl;
-		exit(EXIT_FAILURE);
-	}
-
-	//logger initialization
-	Logging::OutputPolicyFile::SetFileStream(logFile);
-	logProgramArguments(argc, argv);
-
-	//TRAINING
-	const Ptr<flann::IndexParams>& indexParams = new flann::KDTreeIndexParams(
-			4);
-	const Ptr<flann::SearchParams>& searchParams = new flann::SearchParams();
-	cv::Ptr<cv::DescriptorMatcher> matcher = cv::Ptr<FlannBasedMatcher>(
-			new SerializableFlannBasedMatcher(indexParams, searchParams));
-	matcher->clear();
-	std::vector<RichImg*> patterns;
-	SerializedPatternDataInput* sinput;
-	if (user) {
-		sinput = new SerializedPatternDataInput(userID, "", "", "", "", "");
-	} else {
-		sinput = new SerializedPatternDataInput(patternsId, "", "", "", "", "");
-	}
-	PatternLoader* loader = new PatternLoader(sinput, patterns);
-	loader->load();
-
-	Trainer* trainer = new BasicFlannTrainer(matcher, patterns, folder,
-			fileName);
-	trainer->train_and_save();
-
-	exit(EXIT_SUCCESS);
-}
-
-#endif
 
 //=======================================================================================
 // Include setup
 //=======================================================================================
 
 #if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
-#include "processing/commandrunner/PatternMatchingCommandRunner.hpp"
+#include <processing/commandrunner/PatternMatchingCommandRunner.hpp>
+#endif
+
+#if COMPILE_MODULE == TRAINER || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/SimpleProgramTrainer.hpp>
 #endif
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
@@ -941,7 +805,9 @@ int main(int argc, const char * argv[]) {
 	return extractor(argc,argv);
 #endif
 #if COMPILE_MODULE == TRAINER
-	return trainer(argc, argv);
+	SimpleProgram* trainer = new SimpleProgramTrainer();
+	trainer->run(argc, argv);
+	delete trainer;
 #endif
 	exit(EXIT_SUCCESS);
 }
@@ -963,14 +829,14 @@ int main(int argc, const char * argv[]) {
 	Flags* anakinInput = new Flags();
 	anakinInput->setVerbose(true);
 	anakinInput->setIgnoreUnknownFlags(true);
-	Daemon<CommandRunner>::initTestingFlags(anakinInput);
+	Flags::initTestingFlags(anakinInput);
 
 	if (anakinInput->validateInput(input)) {
 		if (anakinInput->flagFound("modepatternmatching")) {
 			Daemon<PatternMatchingCommandRunner>* daemon = new Daemon<
 					PatternMatchingCommandRunner>();
-			daemon->start(argc, argv, true);
-			exit(EXIT_SUCCESS);
+			daemon->start(input, true);
+			delete daemon;
 		} else if (anakinInput->flagFound("modematchercache")) {
 			return matcherCache(argc, argv);
 		} else if (anakinInput->flagFound("modedbconnector")) {
@@ -978,18 +844,29 @@ int main(int argc, const char * argv[]) {
 		} else if (anakinInput->flagFound("modeextractor")) {
 			return extractor(argc, argv);
 		} else if (anakinInput->flagFound("modetrainer")) {
-			return trainer(argc, argv);
+			SimpleProgram* trainer = new SimpleProgramTrainer();
+			trainer->run(input);
+			delete trainer;
 		} else {
 			cout << "Input error! Expected flag "
 					<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
 					<< endl;
+			delete input;
+			delete anakinInput;
+			exit(EXIT_FAILURE);
 		}
+
 	} else {
 		cout << "Input error! Expected flag "
 				<< "-modepatternmatching|-modematchercache|-modedbconnector|-modeextractor|-modetrainer"
 				<< endl;
+		delete input;
+		delete anakinInput;
+		exit(EXIT_FAILURE);
 	}
-	exit(EXIT_FAILURE);
+	delete input;
+	delete anakinInput;
+	exit(EXIT_SUCCESS);
 }
 
 #endif

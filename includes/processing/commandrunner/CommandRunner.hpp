@@ -19,6 +19,7 @@
 #include "data/ImageInfo.hpp"
 #include "matching/FlannMatchingProcessor.hpp"
 #include <processing/Flags.hpp>
+#include <utils/help/Help.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -44,8 +45,8 @@ class CommandRunner {
 public:
 	/**
 	 * Constructor (does steps 1, 2, 3)
-	 * flags : used to validate the request
 	 * out   : used to send responses
+	 * cache : chache to use
 	 */
 	CommandRunner(DataOutput* out, SFBMCache* cache);
 
