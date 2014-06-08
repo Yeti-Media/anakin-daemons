@@ -61,7 +61,6 @@ void HistogramComparator::cleanupHistogramVector(vector<Histogram*>* hVector) {
 	delete hVector;
 }
 
-
 void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists,
 		vector<int>* bins, vector<int> maxValues, int channels,
 		bool firstPass) {

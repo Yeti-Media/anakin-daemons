@@ -79,8 +79,7 @@ private:
 		tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
 		WorkerArgs(int id, DataOutput* output, SFBMCache* cache,
 				tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue) :
-				id(id), output(output), cache(cache), workingQueue(
-						workingQueue) {
+				id(id), output(output), cache(cache), workingQueue(workingQueue) {
 		}
 	};
 	std::vector<pthread_t>* workerThreads;

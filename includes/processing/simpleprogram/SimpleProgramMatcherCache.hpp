@@ -1,12 +1,12 @@
 /*
- * SimpleProgramTrainer.hpp
+ * SimpleProgramMatcherCache.hpp
  *
- *  Created on: 06/06/2014
+ *  Created on: 09/06/2014
  *      Author: Franco Pellegrini
  */
 
-#ifndef SIMPLEPROGRAMTRAINER_HPP_
-#define SIMPLEPROGRAMTRAINER_HPP_
+#ifndef SIMPLEPROGRAMMATCHERCACHE_HPP_
+#define SIMPLEPROGRAMMATCHERCACHE_HPP_
 
 #include <processing/simpleprogram/SimpleProgram.hpp>
 #include <string>
@@ -14,10 +14,10 @@
 
 namespace Anakin {
 
-class SimpleProgramTrainer: public SimpleProgram {
+class SimpleProgramMatcherCache: public SimpleProgram {
 public:
-	SimpleProgramTrainer();
-	virtual ~SimpleProgramTrainer();
+	SimpleProgramMatcherCache();
+	virtual ~SimpleProgramMatcherCache();
 	Help* getHelp();
 	string getProgramName();
 
@@ -28,4 +28,4 @@ protected:
 
 } /* namespace Anakin */
 
-#endif /* SIMPLEPROGRAMTRAINER_HPP_ */
+#endif /* SIMPLEPROGRAMMATCHERCACHE_HPP_ */

@@ -5,23 +5,18 @@
  *      Author: Franco Pellegrini
  */
 
-#include <CompileConfigurations.hpp>
 #include <data/PatternLoader.hpp>
 #include <data/RichImg.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
 #include <opencv2/core/core.hpp>
-//#include <opencv2/opencv.hpp>
+#include <opencv2/flann/miniflann.hpp>
 #include <processing/BasicFlannTrainer.hpp>
 #include <processing/Flags.hpp>
 #include <processing/simpleprogram/SimpleProgramTrainer.hpp>
 #include <processing/SerializedPatternDataInput.hpp>
 #include <utils/help/HelpTrainer.hpp>
-//#include "opencv2/features2d/features2d.hpp"
-//#include "opencv2/nonfree/nonfree.hpp"
-//#include "processing/Trainer.hpp"
 #include <cstdlib>
 #include <iostream>               // for cout
-//#include <string>
 
 using namespace std;
 using namespace cv;
@@ -39,6 +34,10 @@ Help* SimpleProgramTrainer::getHelp() {
 	return new HelpTrainer();
 }
 
+string SimpleProgramTrainer::getProgramName() {
+	return "Trainer";
+}
+
 void SimpleProgramTrainer::setupProgramFlags() {
 	this->programFlags->setOptionalFlag("user");
 	//this->programFlags->setNoValuesFlag("patterns");
@@ -46,7 +45,7 @@ void SimpleProgramTrainer::setupProgramFlags() {
 	this->programFlags->setOptionalFlag("saveToFile");
 }
 
-void SimpleProgramTrainer::excecute(vector<string> *input) {
+int SimpleProgramTrainer::excecute(vector<string> *input) {
 	string userID;
 	//char mode = 0;
 	string folder;
@@ -64,7 +63,7 @@ void SimpleProgramTrainer::excecute(vector<string> *input) {
 			userID = values->at(0);
 		} else {
 			cerr << "flag user needs only one value" << endl;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 	if (this->programFlags->flagFound("patternsId")) {
@@ -77,7 +76,7 @@ void SimpleProgramTrainer::excecute(vector<string> *input) {
 			}
 		} else {
 			cerr << "flag patternsId needs at least one value" << endl;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 	if (this->programFlags->flagFound("saveToFile")) {
@@ -91,7 +90,7 @@ void SimpleProgramTrainer::excecute(vector<string> *input) {
 			fileName = values->at(1);
 		} else {
 			cerr << "flag saveToFile needs between one and two values" << endl;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 	delete values;
@@ -131,7 +130,7 @@ void SimpleProgramTrainer::excecute(vector<string> *input) {
 	if (sinput != NULL) {
 		delete sinput;
 	}
-
+	return EXIT_SUCCESS;
 }
 
 } /* namespace Anakin */

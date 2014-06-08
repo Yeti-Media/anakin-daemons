@@ -6,15 +6,16 @@
  */
 #ifndef COMPILECONFIGURATIONS_HPP_
 #define COMPILECONFIGURATIONS_HPP_
+
 #include "processing/Flags.hpp"
 #include <boost/filesystem/path.hpp>
+
 /**
  * Constants for compiling options (do not modify)
  */
 #define COMPILE_FOR_PRODUCTION 0
-#define COMPILE_FOR_TESTING 1
-#define COMPILE_FOR_UNIT_TESTING 2
-#define COMPILE_FOR_BIN_ACCEPTANCE_TESTING 3
+#define COMPILE_FOR_UNIT_TESTING 1
+#define COMPILE_FOR_BIN_ACCEPTANCE_TESTING 2
 
 #define PATTERNMATCHING 0
 #define MATCHERCACHE 1
@@ -38,24 +39,14 @@
  *	       ready for production. You have to choose one subprogram later on this
  *	       file.
  *
- *	    2) COMPILE_MODE_TESTING: it will configure and merge all the
- *	       subprograms in one bin (useful for unit testing). You need to
- *	       specify the subprogram to start through flags:
- *
- *	       anakin -modepatternmatching ...
- *	       anakin -modematchercache ...
- *	       anakin -modedbconnector ...
- *	       anakin -modeextractor ...
- *	       anakin -modetrainer ...
- *
- *	    3) COMPILE_FOR_UNIT_TESTING: generate a Unit Testing bin that can
+ *	    2) COMPILE_FOR_UNIT_TESTING: generate a Unit Testing bin that can
  *	       run testing on a COMPILE_MODE_TESTING bin.
  *	       The first param must be a valid path to a testing directory.
  *	       For example:
  *
  *	       anakin "/home/franco/Trabajos/Yeti-Media/TestDir/"
  *
- *	    4) COMPILE_FOR_BIN_ACCEPTANCE_TESTING: generate an Acceptance Testing bin
+ *	    3) COMPILE_FOR_BIN_ACCEPTANCE_TESTING: generate an Acceptance Testing bin
  *	       that can run binary/program testing on a COMPILE_MODE_TESTING bin.
  *	       The first param must be a valid path to a testing directory.
  *	       For example:
@@ -65,7 +56,6 @@
  *  ======================================================================
  */
 //#define COMPILE_MODE COMPILE_FOR_PRODUCTION
-//#define COMPILE_MODE COMPILE_FOR_TESTING
 //#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
 #define COMPILE_MODE COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
@@ -90,47 +80,5 @@
 #else
 #define COMPILE_MODULE ALLMODULES
 #endif //COMPILE_MODE == COMPILE_FOR_PRODUCTION
-
-/** ======================================================================
- *  ======================================================================
- *  ++++++++  STOP CUSTOMIZING YOUR COMPILE OPTIONS FROM HERE  +++++++++++
- *  ======================================================================
- *  ======================================================================
- */
-
-/** ----------------------------------------------------------------------
- * header for main functions
- *  ----------------------------------------------------------------------*/
-
-namespace Anakin {
-
-void initModuleFlags(Flags* flags);
-
-#if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
-void showHelpPatternMatching();
-int patternMatching(int argc, const char * argv[]);
-#endif
-
-#if COMPILE_MODULE == MATCHERCACHE || COMPILE_MODULE == ALLMODULES
-void showHelpMatcherCache();
-int matcherCache(int argc, const char * argv[]);
-#endif
-
-#if COMPILE_MODULE == DBCONNECTOR || COMPILE_MODULE == ALLMODULES
-void showHelpDbConnector();
-int dbConnector(int argc, const char * argv[]);
-#endif
-
-#if COMPILE_MODULE == EXTRACTOR || COMPILE_MODULE == ALLMODULES
-void showHelpExtractor();
-int extractor(int argc, const char * argv[]);
-#endif
-
-#if COMPILE_MODULE == TRAINER || COMPILE_MODULE == ALLMODULES
-void showHelpTrainer();
-int trainer(int argc, const char * argv[]);
-#endif
-
-}
 
 #endif /* COMPILECONFIGURATIONS_HPP_ */

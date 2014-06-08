@@ -20,6 +20,8 @@ public:
 			true);
 	void makeAndSaveHistograms(char mode, bool saveToFile = true);
 	virtual ~HistogramComparator();
+
+	//FIXME refactor this constants to enum
 	const static char COLOR = 1;
 	const static char GRAY = 2;
 	const static char HSV = 4;

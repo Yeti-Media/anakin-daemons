@@ -32,7 +32,7 @@ public:
 	/**
 	 * start the daemon
 	 */
-	void start(vector<string> *input, bool useCache = false);
+	int start(vector<string> *input, bool useCache = false);
 
 	virtual ~Daemon();
 };
@@ -43,9 +43,8 @@ Daemon<SpecificCommandRunner>::Daemon() {
 
 }
 
-
 template<class SpecificCommandRunner>
-void Daemon<SpecificCommandRunner>::start(vector<string> *input,
+int Daemon<SpecificCommandRunner>::start(vector<string> *input,
 		bool useCache) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
@@ -185,7 +184,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 					<< endl << endl
 					<< SpecificCommandRunner::help->getFullHelp();
 			delete SpecificCommandRunner::help;
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		}
 		if (anakinInput->flagFound("verbose")) {
 			verbose = true;
@@ -201,7 +200,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				pghost = values->at(0);
 			} else {
 				cout << "param pghost needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -212,7 +211,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				pgport = values->at(0);
 			} else {
 				cout << "param pgport needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -223,7 +222,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				dbName = values->at(0);
 			} else {
 				cout << "param dbName needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -234,7 +233,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				login = values->at(0);
 			} else {
 				cout << "param login needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -245,7 +244,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				pwd = values->at(0);
 			} else {
 				cout << "param pwd needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -259,7 +258,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				} else {
 					cout << "param cacheLoadingTimeWeight needs only one value"
 							<< endl;
-					exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 			}
 
@@ -274,7 +273,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 					cacheConfig.cacheSize = stoi(values->at(0));
 				} else {
 					cout << "param cacheSize needs only one value" << endl;
-					exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 			}
 
@@ -285,7 +284,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 					cacheConfig.cacheLife = stoi(values->at(0));
 				} else {
 					cout << "param cacheLife needs only one value" << endl;
-					exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 			}
 
@@ -297,7 +296,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				} else {
 					cout << "param cacheScenesSize needs only one value"
 							<< endl;
-					exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 			}
 
@@ -309,7 +308,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				} else {
 					cout << "param cacheScenesLife needs only one value"
 							<< endl;
-					exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 			}
 		}
@@ -322,7 +321,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				threads = stoi(values->at(0));
 			} else {
 				cout << "param threads needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -334,7 +333,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				queueCapacity = stoi(values->at(0));
 			} else {
 				cout << "param queueCapacity needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -350,7 +349,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				httpPort = stoi(values->at(0));
 			} else {
 				cout << "param iHTTP needs only one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -365,7 +364,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 				logFile = values->at(0);
 			} else {
 				cout << "param oLogPath needs one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 
@@ -376,9 +375,8 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 		delete values;
 	} else {
 		cout << "Input error!" << endl;
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
-
 
 	//______________________________________________________________________//
 	//                         DAEMON INITIALIZATION                        //
@@ -394,7 +392,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 		if (i != 0) {
 			startComand.append(" ");
 		}
-		if (input->at(i).find(" ")!=string::npos) {
+		if (input->at(i).find(" ") != string::npos) {
 			startComand.append("\"").append(input->at(i)).append("\"");
 		} else {
 			startComand.append(input->at(i));
@@ -420,7 +418,7 @@ void Daemon<SpecificCommandRunner>::start(vector<string> *input,
 		output = new DataOutput(httpSocket);
 	} else {
 		cerr << "unknown output mode \"" << oMode << "\"" << endl;
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	server->start(output);

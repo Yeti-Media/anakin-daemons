@@ -25,18 +25,23 @@ public:
 	/**
 	 * Excecute the program with argv artuments.
 	 */
-	void run(vector<string> *input);
+	int run(vector<string> *input);
 
 	/**
 	 * Return a full help instance. Must be deleted after use.
 	 */
 	virtual Help* getHelp() = 0;
 
+	/**
+	 * Return the name of the program.
+	 */
+	virtual string getProgramName() = 0;
+
 protected:
 	/**
 	 * Excecute the concrete program.
 	 */
-	virtual void excecute(vector<string> *input) = 0;
+	virtual int excecute(vector<string> *input) = 0;
 
 	/**
 	 * Initialize the concrete program used flags.

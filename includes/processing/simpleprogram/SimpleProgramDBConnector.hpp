@@ -1,12 +1,12 @@
 /*
- * SimpleProgramTrainer.hpp
+ * SimpleProgramDBConnector.hpp
  *
- *  Created on: 06/06/2014
+ *  Created on: 09/06/2014
  *      Author: Franco Pellegrini
  */
 
-#ifndef SIMPLEPROGRAMTRAINER_HPP_
-#define SIMPLEPROGRAMTRAINER_HPP_
+#ifndef SIMPLEPROGRAMDBCONNECTOR_HPP_
+#define SIMPLEPROGRAMDBCONNECTOR_HPP_
 
 #include <processing/simpleprogram/SimpleProgram.hpp>
 #include <string>
@@ -14,10 +14,10 @@
 
 namespace Anakin {
 
-class SimpleProgramTrainer: public SimpleProgram {
+class SimpleProgramDBConnector: public SimpleProgram {
 public:
-	SimpleProgramTrainer();
-	virtual ~SimpleProgramTrainer();
+	SimpleProgramDBConnector();
+	virtual ~SimpleProgramDBConnector();
 	Help* getHelp();
 	string getProgramName();
 
@@ -28,4 +28,4 @@ protected:
 
 } /* namespace Anakin */
 
-#endif /* SIMPLEPROGRAMTRAINER_HPP_ */
+#endif /* SIMPLEPROGRAMDBCONNECTOR_HPP_ */

@@ -26,7 +26,8 @@ vector<DBPattern*>* XMLoader::loadAsPattern() {
 		DBPattern* pattern = new DBPattern(data);
 		patterns->push_back(pattern);
 	}
-	delete files;
+	//FIXME do not delete this static var. REFACTOR!
+	//delete files;
 	return patterns;
 }
 

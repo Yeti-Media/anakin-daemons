@@ -167,7 +167,6 @@ vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 					Constants::PATTERN_TABLE_ID).append(" ASC");
 			res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues,
 			NULL, NULL, 0);
-			cout << "comando sql del trainer = " << command.c_str() << endl;
 			LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);

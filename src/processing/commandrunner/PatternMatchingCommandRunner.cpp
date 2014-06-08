@@ -20,6 +20,10 @@ using namespace std;
 
 Help* PatternMatchingCommandRunner::help = new HelpPatternMatching();
 
+string PatternMatchingCommandRunner::getProgramName() {
+	return "PatternMatching";
+}
+
 PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
 		SFBMCache* cache) :
 		CommandRunner(out, cache) {
@@ -48,16 +52,14 @@ PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
 	flags->setIncompatibility(Constants::ACTION_STATUSIDX,
 			Constants::PARAM_IDXS);
 
-	vector<string>* indexesLooseDependences = new vector<
-			string>();
+	vector<string>* indexesLooseDependences = new vector<string>();
 	indexesLooseDependences->push_back(Constants::ACTION_ADDIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_DELIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_UPDIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_MATCH);
 	flags->setLooseDependencies(Constants::PARAM_IDXS, indexesLooseDependences);
 
-	vector<string>* pmatchLooseDependences = new vector<
-			string>();
+	vector<string>* pmatchLooseDependences = new vector<string>();
 	pmatchLooseDependences->push_back(Constants::PARAM_SCENEID);
 	flags->setLooseDependencies(Constants::ACTION_MATCH,
 			pmatchLooseDependences);
@@ -72,8 +74,7 @@ PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
 	flags->setIncompatibility(Constants::ACTION_STATUSIDX,
 			Constants::ACTION_MATCH);
 
-	vector<string>* reqIDLooseDependences = new vector<
-			string>();
+	vector<string>* reqIDLooseDependences = new vector<string>();
 	reqIDLooseDependences->push_back(Constants::ACTION_MATCH);
 	reqIDLooseDependences->push_back(Constants::ACTION_ADDIDX);
 	reqIDLooseDependences->push_back(Constants::ACTION_DELIDX);
@@ -94,8 +95,7 @@ PatternMatchingCommandRunner::~PatternMatchingCommandRunner() {
 
 }
 
-void PatternMatchingCommandRunner::validateRequest(
-		vector<string> *input) {
+void PatternMatchingCommandRunner::validateRequest(vector<string> *input) {
 	inputError = false;
 	action = NONE;
 	mma = 8;

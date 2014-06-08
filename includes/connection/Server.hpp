@@ -34,7 +34,7 @@ public:
 	 * this will start the skeleton algorithm shown above
 	 * output : this is used to output the processing results
 	 */
-	void start( DataOutput* output);
+	void start(DataOutput* output);
 	static const char CONSOLE = 1;
 	static const char TCP = 2;
 	static const char UDP = 4;

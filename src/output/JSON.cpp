@@ -231,7 +231,7 @@ bool JSON::ExtractString(const wchar_t **data, std::wstring &str) {
 		}
 
 		// Add the next char
-		str.push_back( next_char);
+		str.push_back(next_char);
 
 		// Move on
 		(*data)++;

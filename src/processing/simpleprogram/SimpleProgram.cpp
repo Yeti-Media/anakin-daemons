@@ -33,7 +33,8 @@ SimpleProgram::SimpleProgram() {
 /**
  * Placeholder for inheritance.
  */
-void SimpleProgram::excecute(vector<string> *input) {
+int SimpleProgram::excecute(vector<string> *input) {
+	return 0;
 }
 
 /**
@@ -43,7 +44,7 @@ void SimpleProgram::setupProgramFlags() {
 
 }
 
-void SimpleProgram::run(vector<string> *input) {
+int SimpleProgram::run(vector<string> *input) {
 
 	//______________________________________________________________________//
 	//                                 FLAGS                                //
@@ -69,7 +70,7 @@ void SimpleProgram::run(vector<string> *input) {
 			Help* help = getHelp();
 			cout << help->getFullHelp();
 			delete help;
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		}
 		if (programFlags->flagFound("verbose")) {
 			verbose = true;
@@ -82,13 +83,13 @@ void SimpleProgram::run(vector<string> *input) {
 				logFile = values->at(0);
 			} else {
 				cout << "param oLogPath needs one value" << endl;
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 		delete values;
 	} else {
 		cout << "Input error!" << endl;
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	//______________________________________________________________________//
@@ -105,7 +106,7 @@ void SimpleProgram::run(vector<string> *input) {
 		if (i != 0) {
 			startComand.append(" ");
 		}
-		if (input->at(i).find(" ")!=string::npos) {
+		if (input->at(i).find(" ") != string::npos) {
 			startComand.append("\"").append(input->at(i)).append("\"");
 		} else {
 			startComand.append(input->at(i));
@@ -114,6 +115,7 @@ void SimpleProgram::run(vector<string> *input) {
 	LOG_F("Args")<< startComand;
 
 	excecute(input);
+	return EXIT_SUCCESS;
 }
 
 SimpleProgram::~SimpleProgram() {

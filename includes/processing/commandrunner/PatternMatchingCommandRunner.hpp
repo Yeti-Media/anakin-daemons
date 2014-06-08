@@ -30,9 +30,14 @@ public:
 	void run();
 
 	/**
-	 * find a better way to imlement this
+	 * find a better way to imlement this in the interface
 	 */
 	static Help* help;
+
+	/**
+	 * find a better way to imlement this in the interface
+	 */
+	static string getProgramName();
 private:
 	E_PatternMatchingAction action = NONE;
 };
