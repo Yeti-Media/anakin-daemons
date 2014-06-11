@@ -279,16 +279,16 @@ void runSimpleProgram(string currentCommand) {
  */
 template<class SpecificDaemon>
 void runDaemonProgram(string currentCommand) {
-	Daemon<SpecificDaemon>* program = new Daemon<SpecificDaemon>();
+	SpecificDaemon commandRunner;
+	Daemon<SpecificDaemon> program;
 	cout
 			<< "______________________________________________________________________"
-			<< endl << "* Simple program: " << SpecificDaemon::getProgramName()
+			<< endl << "* Simple program: " << commandRunner.getProgramName()
 			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
 			<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
-	int signal = program->start(&input, true);
-	delete program;
+	int signal = program.start(&input, true);
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
