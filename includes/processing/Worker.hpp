@@ -4,7 +4,7 @@
 #include "processing/Flags.hpp"
 #include "output/DataOutput.hpp"
 #include "processing/SFBMCache.hpp"
-#include "processing/CommandRunner.hpp"
+#include "processing/commandrunner/CommandRunner.hpp"
 
 #include <tbb/concurrent_queue.h>
 
@@ -19,13 +19,11 @@ public:
 	/**
 	 * Constructor
 	 * id            : worker's id
-	 * flag          : arguments checker
-	 * output        : an object used to output responses/messages
-	 * cache         : cache used by CommandRunner
 	 * workingQueue  : requests queue
 	 */
-	Worker(int id, Flags* flags, DataOutput* output, SFBMCache* cache,
-			tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue);
+	Worker(int id,
+			tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue,
+			CommandRunner* command);
 	/**
 	 * starts the worker listening cicle
 	 */
@@ -33,9 +31,6 @@ public:
 protected:
 private:
 	int id;
-	Flags* flags;
-	DataOutput* output;
-	SFBMCache* cache;
 	tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
 	CommandRunner* runner;
 };

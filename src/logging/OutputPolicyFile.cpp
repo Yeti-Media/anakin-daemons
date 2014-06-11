@@ -19,6 +19,9 @@ ofstream OutputPolicyFile::oFileStream;
 
 bool Logging::OutputPolicyFile::SetFileStream(std::string oFile) {
 	boost::mutex::scoped_lock l(Logging::OutputPolicyFile::GetMutex());
+	if (oFileStream.is_open()) {
+		oFileStream.close();
+	}
 	oFileStream.open(oFile, ios::out | ios::app);
 	if (!oFileStream.is_open()) {
 		std::cerr << "Logging file can't be readed\n";

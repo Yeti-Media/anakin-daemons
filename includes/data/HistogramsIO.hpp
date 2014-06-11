@@ -1,14 +1,19 @@
 #ifndef HISTOGRAMSIO_HPP
 #define HISTOGRAMSIO_HPP
 
-#include <opencv2/opencv.hpp>
-#include "data/Histogram.hpp"
+#include <data/Histogram.hpp>
+#include <opencv2/core/core.hpp>
+#include <string>
+#include <vector>
+
+using namespace std;
 
 namespace Anakin {
 
 class HistogramsIO {
 public:
 	HistogramsIO(std::string baseFolder);
+	~HistogramsIO();
 	void load(const char mode);
 	void save(std::vector<Histogram*>* input, const char mode, bool saveToFile =
 			true);
@@ -23,6 +28,7 @@ public:
 	std::vector<Histogram*>* getHSVHistograms();
 protected:
 private:
+	void cleanupHistogramVector(vector<Histogram*>* hVector);
 	void load(std::string baseFolder, std::vector<Histogram*>* output);
 	void save(std::string filename, Histogram* histogram, bool saveToFile);
 	static void write(cv::FileStorage& fs, const std::string&,

@@ -5,6 +5,8 @@
 #include "DBHistogram.hpp"
 #include <vector>
 
+using namespace std;
+
 namespace Anakin {
 
 /**
@@ -23,6 +25,7 @@ public:
 	 * id : the user's id
 	 */
 	DBUser(int id);
+	~DBUser();
 	int getID() const;
 
 	std::vector<DBPattern*>* getPatterns() const;

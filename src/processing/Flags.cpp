@@ -6,7 +6,35 @@
 using namespace Anakin;
 using namespace std;
 
+/**
+ * init the flags with testing additions (see testing README for mor info)
+ */
+void Flags::initTestingFlags(Flags* flags) {
+#if COMPILE_MODULE == ALLMODULES
+	flags->setNoValuesFlag("modepatternmatching");
+	flags->setNoValuesFlag("modematchercache");
+	flags->setNoValuesFlag("modedbconnector");
+	flags->setNoValuesFlag("modeextractor");
+	flags->setNoValuesFlag("modetrainer");
+
+	flags->setIncompatibility("modepatternmatching", "modematchercache");
+	flags->setIncompatibility("modepatternmatching", "modedbconnector");
+	flags->setIncompatibility("modepatternmatching", "modeextractor");
+	flags->setIncompatibility("modepatternmatching", "modetrainer");
+
+	flags->setIncompatibility("modematchercache", "modedbconnector");
+	flags->setIncompatibility("modematchercache", "modeextractor");
+	flags->setIncompatibility("modematchercache", "modetrainer");
+
+	flags->setIncompatibility("modedbconnector", "modeextractor");
+	flags->setIncompatibility("modedbconnector", "modetrainer");
+
+	flags->setIncompatibility("modeextractor", "modetrainer");
+#endif
+}
+
 Flags::Flags() {
+	this->minCount = 0;
 }
 
 void Flags::setVerbose(bool b) {
@@ -54,6 +82,10 @@ bool Flags::setRequiredFlag(string flag) {
 	if (flagExist(flag)) {
 		return false;
 	}
+	//TODO verify this
+	if (requiredFlags[flag] != NULL) {
+		delete requiredFlags[flag];
+	}
 	requiredFlags[flag] = new vector<string>(0);
 	return true;
 }
@@ -61,6 +93,10 @@ bool Flags::setRequiredFlag(string flag) {
 bool Flags::setOptionalFlag(string flag) {
 	if (flagExist(flag)) {
 		return false;
+	}
+	//TODO verify this
+	if (optionalFlags[flag] != NULL) {
+		delete optionalFlags[flag];
 	}
 	optionalFlags[flag] = new vector<string>(0);
 	return true;
@@ -86,9 +122,14 @@ bool Flags::setDependence(string dependent, string dependence) {
 	if (flagExist(dependent) && flagExist(dependence)) {
 		vector<string>* dependences;
 		if (findKey(this->flagsDependencies, dependent)) {
+			//FIXME this line do nothing?
 			dependences = this->flagsDependencies.find(dependent)->second;
 		} else {
 			dependences = new vector<string>(0);
+			//TODO verify this
+			if (flagsDependencies[dependent] != NULL) {
+				delete flagsDependencies[dependent];
+			}
 			this->flagsDependencies[dependent] = dependences;
 		}
 		if (findInVector(*dependences, dependence)) {
@@ -116,6 +157,10 @@ bool Flags::setLooseDependencies(string dependent,
 				dependencies_->push_back(current);
 			}
 		}
+		//TODO verify this
+		if (flagsLooseDependencies[dependent] != NULL) {
+			delete flagsLooseDependencies[dependent];
+		}
 		this->flagsLooseDependencies[dependent] = dependencies_;
 		return true;
 	}
@@ -129,11 +174,16 @@ bool Flags::setIncompatibility(string flag1, string flag2) {
 			incompatibilities = this->incompatibleFlags.find(flag1)->second;
 		} else {
 			incompatibilities = new vector<string>(0);
+			//TODO verify this
+			if (incompatibleFlags[flag1] != NULL) {
+				delete incompatibleFlags[flag1];
+			}
 			this->incompatibleFlags[flag1] = incompatibilities;
 		}
 		if (findInVector(*incompatibilities, flag2)) {
 			return false;
 		}
+		//FIXME review this lines...
 		incompatibilities->push_back(flag2);
 		return true;
 	}
@@ -149,7 +199,8 @@ bool Flags::checkDependencies(vector<string> flags) {
 				if (!findInVector(flags, dependencies->at(d))) {
 					if (verbose)
 						cout << "Dependency not met, have (" << flags[f]
-								<< ") need (" << dependencies->at(d) << ")\n";
+								<< ") need (" << dependencies->at(d) << ")"
+								<< endl;
 					return false;
 				}
 			}
@@ -180,7 +231,7 @@ bool Flags::checkLooseDependencies(vector<string> flags) {
 							cout << ", ";
 						}
 					}
-					cout << ")\n";
+					cout << ")" << endl;
 				}
 				return false;
 			}
@@ -199,7 +250,7 @@ bool Flags::checkIncompatibilities(vector<string> flags) {
 					if (verbose)
 						cout << "Incompatibility found, flag (" << flags[f]
 								<< ") is not compatible with ("
-								<< incompatibilities->at(d) << ")\n";
+								<< incompatibilities->at(d) << ")" << endl;
 					return false;
 				}
 			}
@@ -242,6 +293,7 @@ vector<string>* Flags::getFlagValues(string flag) {
 	if (isOptional(flag)) {
 		return this->optionalFlags.find(flag)->second;
 	}
+	//FIXME can cause memory leaks
 	return new vector<string>(0);
 }
 
@@ -279,9 +331,8 @@ bool Flags::validateInput(vector<string> *input) {
 	for (uint i = 0; i < input->size(); i++) {
 		current = input->at(i);
 		if (this->isOverridingFlagFound()) {
-			if (this->verbose)
-				cout << "Got overriding flag " << flag
-						<< " and received more than one flag or value\n";
+			cout << "Got overriding flag " << flag
+					<< " and received more than one flag or value" << endl;
 			return false;
 		}
 		if (current[0] == '-') {
@@ -290,9 +341,8 @@ bool Flags::validateInput(vector<string> *input) {
 			flag = current.substr(1, string::npos);
 			if (flagExist(flag)) {
 				if (!expectingFlag) {
-					if (this->verbose)
-						cout << "expecting value, got (" << current
-								<< ") instead\n";
+					cout << "expecting value, got (" << current << ") instead"
+							<< endl;
 					return false;
 				}
 				if (isNoValueFlag(flag)) {
@@ -304,8 +354,7 @@ bool Flags::validateInput(vector<string> *input) {
 					this->overridingFlagFound = true;
 				}
 				if (flagFound(flag)) {
-					if (this->verbose)
-						cout << "Duplicate flag " << flag << "\n";
+					cout << "Duplicate flag " << flag << endl;
 					return false;
 				}
 				if (isRequired(flag))
@@ -315,16 +364,15 @@ bool Flags::validateInput(vector<string> *input) {
 				valuesFound = false;
 			} else {
 				if (!this->ignoreUnknownFlags) {
-					if (this->verbose)
-						cout << flag << " is not a valid flag\n";
+					cout << flag << " is not a valid flag" << endl;
 					return false;
 				}
 			}
 		} else {
 			//a value
 			if (!flagWasFound) {
-				if (this->verbose)
-					cout << "expecting flag, got (" << current << ") instead\n";
+				cout << "expecting flag, got (" << current << ") instead"
+						<< endl;
 				return false;
 			}
 			if (isRequired(flag)) {
@@ -336,15 +384,13 @@ bool Flags::validateInput(vector<string> *input) {
 				values->push_back(current);
 			}
 			if (isOverridingFlag(flag)) {
-				if (this->verbose)
-					cout << "found value (" << current
-							<< ") for overriding flag " << flag << "\n";
+				cout << "found value (" << current << ") for overriding flag "
+						<< flag << endl;
 				return false;
 			}
 			if (isNoValueFlag(flag)) {
-				if (this->verbose)
-					cout << "found value (" << current << ") for no value flag "
-							<< flag << "\n";
+				cout << "found value (" << current << ") for no value flag "
+						<< flag << endl;
 				return false;
 			}
 			valuesFound = true;
@@ -352,30 +398,26 @@ bool Flags::validateInput(vector<string> *input) {
 	}
 	if (!this->isOverridingFlagFound()
 			&& this->foundFlags.size() < this->minCount) {
-		if (this->verbose) {
-			cout << "found " << this->foundFlags.size()
-					<< " flags, expected at least " << this->minCount << " \n";
-		}
+		cout << "found " << this->foundFlags.size()
+				<< " flags, expected at least " << this->minCount << endl;
 		return false;
 	}
 	if (!this->isOverridingFlagFound()
 			&& requiredFlagsFound < this->getRequiredFlags()->size()) {
-		if (this->verbose) {
-			cout << "missing required flags\nrequired flags are ";
-			vector<string> *requiredFlags = this->getRequiredFlags();
-			for (uint f = 0; f < requiredFlags->size(); f++) {
-				cout << requiredFlags->at(f);
-				if (f + 1 < requiredFlags->size())
-					cout << ", ";
-			}
-			cout << "\n";
+		cout << "missing required flags" << endl << "required flags are ";
+		vector<string> *requiredFlags = this->getRequiredFlags();
+		for (uint f = 0; f < requiredFlags->size(); f++) {
+			cout << requiredFlags->at(f);
+			if (f + 1 < requiredFlags->size())
+				cout << ", ";
 		}
+		cout << endl;
+		delete requiredFlags;
 		return false;
 	}
 	if (flagWasFound && !valuesFound
 			&& (isRequired(flag) || isOptional(flag))) {
-		if (this->verbose)
-			cout << "flag " << flag << " needs at least one value\n";
+		cout << "flag " << flag << " needs at least one value" << endl;
 		return false;
 	}
 	return checkDependencies(this->foundFlags)

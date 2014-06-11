@@ -27,6 +27,7 @@ public:
 	 * threads : how many threads will mongoose use in HTPPListener
 	 */
 	HTTPSocket(std::string port, int threads);
+	~HTTPSocket();
 
 	/**
 	 * this will generate a MessageData corresponding to a response
@@ -107,7 +108,7 @@ public:
 protected:
 private:
 	bool showComs = false;
-	struct mg_server *server;
+	//struct mg_server *server;
 	std::string port;
 
 	sem_t sem;

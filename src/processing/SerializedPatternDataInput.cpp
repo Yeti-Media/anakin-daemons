@@ -7,8 +7,10 @@ namespace fs = boost::filesystem;
 using namespace Anakin;
 using namespace std;
 
-SerializedPatternDataInput::SerializedPatternDataInput(std::string userID) {
-	if (!initAndConnectDriver()) {
+SerializedPatternDataInput::SerializedPatternDataInput(std::string userID,
+		const char *pghost, const char *pgport, const char *dbName,
+		const char *login, const char *pwd) {
+	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd)) {
 		reportDBDriverError();
 		exit(EXIT_FAILURE);
 	}
@@ -20,8 +22,9 @@ SerializedPatternDataInput::SerializedPatternDataInput(std::string userID) {
 }
 
 SerializedPatternDataInput::SerializedPatternDataInput(
-		vector<int>* patternsToFind) {
-	if (!initAndConnectDriver()) {
+		vector<int>* patternsToFind, const char *pghost, const char *pgport,
+		const char *dbName, const char *login, const char *pwd) {
+	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd)) {
 		reportDBDriverError();
 		exit(EXIT_FAILURE);
 	}
@@ -79,9 +82,11 @@ void SerializedPatternDataInput::read(const cv::FileNode& node, ImageInfo& x,
 		x.read(node);
 }
 
-bool SerializedPatternDataInput::initAndConnectDriver() {
+bool SerializedPatternDataInput::initAndConnectDriver(const char *pghost,
+		const char *pgport, const char *dbName, const char *login,
+		const char *pwd) {
 	this->driver = new DBDriver();
-	return this->driver->connect();
+	return this->driver->connect(pghost, pgport, dbName, login, pwd);
 }
 
 void SerializedPatternDataInput::reportDBDriverError() {

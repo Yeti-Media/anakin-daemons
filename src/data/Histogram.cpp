@@ -23,6 +23,11 @@ Histogram::Histogram() {
 	this->avg = false;
 }
 
+Histogram::~Histogram() {
+	//TODO check if this cause problems
+	delete this->bins;
+}
+
 Mat Histogram::getHist() {
 	return this->hist;
 }

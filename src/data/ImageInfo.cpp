@@ -18,7 +18,7 @@ ImageInfo::ImageInfo() {
 }
 
 ImageInfo::~ImageInfo() {
-	//dtor
+
 }
 
 void ImageInfo::setLabel(std::string l) {

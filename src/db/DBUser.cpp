@@ -1,12 +1,31 @@
 #include "db/DBUser.hpp"
 
 using namespace Anakin;
+using namespace std;
 
 DBUser::DBUser(int id) {
 	this->id = id;
 	this->patterns = new std::vector<DBPattern*>(0);
 	this->histograms = new std::vector<DBHistogram*>(0);
 	this->landscapes = new std::vector<DBHistogram*>(0);
+}
+
+DBUser::~DBUser() {
+	//TODO revie possible design failure about access in getPatterns() and others
+	for (uint p = 0; p < this->patterns->size(); p++) {
+		delete this->patterns->at(p);
+	}
+	delete this->patterns;
+
+	for (uint p = 0; p < this->histograms->size(); p++) {
+		delete this->histograms->at(p);
+	}
+	delete this->histograms;
+
+	for (uint p = 0; p < this->landscapes->size(); p++) {
+		delete this->landscapes->at(p);
+	}
+	delete this->landscapes;
 }
 
 int DBUser::getID() const {

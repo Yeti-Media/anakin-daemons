@@ -8,7 +8,7 @@ using namespace Anakin;
 
 SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	if (sem_init(&this->sem, 0, 1) != 0) {
-		//std::cout << "SFBMCache#SFBMCache: error initializing semaphore\n";
+		//cout << "SFBMCache#SFBMCache: error initializing semaphore\n";
 		this->errorType = ResultWriter::RW_ERROR_TYPE_FATAL;
 		this->errorMessage = "error initializing semaphore";
 		this->origin = "SFBMCache#SFBMCache";
@@ -26,9 +26,9 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	this->misses = 0;
 	this->requests = 0;
 	this->discardLessValuable = !cacheConfig->cacheNoDiscardLessValuable;
-	this->cache = new std::map<int, SerializableFlannBasedMatcher*>();
-	this->matchersLife = new std::map<int, int>();
-	this->loadingCount = new std::map<int, int>();
+	this->cache = new map<int, SerializableFlannBasedMatcher*>();
+	this->matchersLife = new map<int, int>();
+	this->loadingCount = new map<int, int>();
 
 	//SCENES CACHE
 	this->slife = cacheConfig->cacheScenesLife;
@@ -37,11 +37,11 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	this->sceneHits = 0;
 	this->sceneMisses = 0;
 	this->sceneRequests = 0;
-	this->scache = new std::map<int, ImageInfo*>();
-	this->scenesLife = new std::map<int, int>();
+	this->scache = new map<int, ImageInfo*>();
+	this->scenesLife = new map<int, int>();
 
 	//PATTERNS CACHE
-	this->pcache = new std::map<int, std::map<int, ImageInfo*>*>();
+	this->pcache = new map<int, map<int, ImageInfo*>*>();
 }
 
 SerializableFlannBasedMatcher* SFBMCache::loadMatcher(int smatcher_id,
@@ -111,9 +111,10 @@ void SFBMCache::updateMatcher(int smatcher_id, bool * error) {
 }
 
 JSONValue* SFBMCache::indexCacheStatus() {
-	std::vector<int>* values = new std::vector<int>(0);
+	vector<int>* values = new vector<int>(0);
 	getKeys(this->cache, values);
 	int freeCacheSpace = this->cacheMaxSize - this->cacheSize;
+	//FIXME memory leaks at values
 	return this->rw->cacheStatusAsJSON(*values, freeCacheSpace);
 }
 
@@ -145,9 +146,9 @@ ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 	sem_wait(&this->sem);
 	//internal function, do not init *error=false
 	ImageInfo* pattern;
-	std::map<int, ImageInfo*>* smatcherPatterns;
+	map<int, ImageInfo*>* smatcherPatterns;
 	if (this->pcache->find(smatcherID) == this->pcache->end()) {
-		smatcherPatterns = new std::map<int, ImageInfo*>();
+		smatcherPatterns = new map<int, ImageInfo*>();
 		(*this->pcache)[smatcherID] = smatcherPatterns;
 	} else {
 		smatcherPatterns = this->pcache->find(smatcherID)->second;
@@ -205,12 +206,13 @@ float SFBMCache::getSceneCacheMissRatio() {
 void SFBMCache::printLoadCount() {
 	sem_wait(&this->sem);
 	int value;
-	std::vector<int>* values = new std::vector<int>(0);
+	vector<int>* values = new vector<int>(0);
 	getKeys(this->loadingCount, values);
 	BOOST_FOREACH(value, *values){
 	int loadCount = this->loadingCount->find(value)->second;
-	std::cout << value << " loaded " << loadCount << " times" << std::endl;
+	cout << value << " loaded " << loadCount << " times" << endl;
 }
+	delete values;
 	sem_post(&this->sem);
 }
 
@@ -246,9 +248,9 @@ JSONValue* SFBMCache::getLastOperationResult(bool * error) {
 //PRIVATE
 
 void SFBMCache::tic(int ignore, bool matchersCache) {
-	int currentMinLife = std::numeric_limits<int>::max();
+	int currentMinLife = numeric_limits<int>::max();
 	int value;
-	std::vector<int>* values = new std::vector<int>(0);
+	vector<int>* values = new vector<int>(0);
 	if (matchersCache) {
 		getKeys(this->cache, values);
 	} else {
@@ -270,6 +272,7 @@ void SFBMCache::tic(int ignore, bool matchersCache) {
 		currentMinLife = currentLife;
 	}
 }
+	delete values;
 }
 
 void SFBMCache::freeCacheSlot(bool matchersCache) {
@@ -307,7 +310,7 @@ void SFBMCache::storeScene(int sceneID, ImageInfo* scene) {
 	this->scenesCacheSize++;
 }
 
-bool SFBMCache::keyExist(std::map<int, int>* m, int key) {
+bool SFBMCache::keyExist(map<int, int>* m, int key) {
 	if (m->find(key) == m->end()) {
 		return false;
 	} else {
@@ -315,16 +318,16 @@ bool SFBMCache::keyExist(std::map<int, int>* m, int key) {
 	}
 }
 
-void SFBMCache::getKeys(std::map<int, SerializableFlannBasedMatcher*>* m,
-		std::vector<int>* keys) {
-	std::pair<int, SerializableFlannBasedMatcher*> me;
+void SFBMCache::getKeys(map<int, SerializableFlannBasedMatcher*>* m,
+		vector<int>* keys) {
+	pair<int, SerializableFlannBasedMatcher*> me;
 	BOOST_FOREACH(me, *m){
 	keys->push_back(me.first);
 }
 }
 
-void SFBMCache::getKeys(std::map<int, int>* m, std::vector<int>* keys) {
-	std::pair<int, int> me;
+void SFBMCache::getKeys(map<int, int>* m, vector<int>* keys) {
+	pair<int, int> me;
 	BOOST_FOREACH(me, *m){
 	keys->push_back(me.first);
 }
@@ -353,7 +356,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id,
 		*error |= !trainerFound;
 		return NULL;
 	}
-	std::string sid = std::to_string(smatcher_id);
+	string sid = to_string(smatcher_id);
 	SerializableFlannBasedMatcher* matcher = new SerializableFlannBasedMatcher(
 			sid, true);
 	clock_t t_2 = clock();
@@ -413,10 +416,11 @@ int SFBMCache::updateLife(int smatcher_id, int life, bool bounded,
 
 void SFBMCache::printLife() {
 	int value;
-	std::vector<int>* values = new std::vector<int>(0);
+	vector<int>* values = new vector<int>(0);
 	getKeys(this->cache, values);
 	BOOST_FOREACH(value, *values){
 	int currentLife = this->matchersLife->find(value)->second;
-	std::cout << value << " have " << currentLife << " life" << std::endl;
+	cout << value << " have " << currentLife << " life" << endl;
 }
+	delete values;
 }

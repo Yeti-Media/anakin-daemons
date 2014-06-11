@@ -1,9 +1,12 @@
 #ifndef BASICFLANNTRAINER_HPP
 #define BASICFLANNTRAINER_HPP
 
-#include "processing/Trainer.hpp"
-#include "matching/SerializableFlannBasedMatcher.hpp"
-#include <map>
+#include <data/RichImg.hpp>
+#include <matching/SerializableFlannBasedMatcher.hpp>
+#include <opencv2/core/core.hpp>
+#include <processing/Trainer.hpp>
+#include <string>
+#include <vector>
 
 namespace Anakin {
 
@@ -13,6 +16,7 @@ public:
 			std::vector<Anakin::RichImg*>& patterns, std::string outputFolder,
 			std::string fileName);
 	void train_and_save();
+	virtual ~BasicFlannTrainer();
 };
 
 }

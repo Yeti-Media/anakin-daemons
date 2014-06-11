@@ -1,10 +1,15 @@
 #ifndef HISTOGRAMCOMPARATOR_HPP
 #define HISTOGRAMCOMPARATOR_HPP
-#include "data/Img.hpp"
-#include "data/RichImg.hpp"
-#include "data/Histogram.hpp"
-#include "data/HistogramsIO.hpp"
 
+#include <data/Histogram.hpp>
+#include <data/RichImg.hpp>
+#include <opencv2/core/core.hpp>
+#include "data/HistogramsIO.hpp"
+#include "data/Img.hpp"
+#include <string>
+#include <vector>
+
+using namespace std;
 namespace Anakin {
 
 class HistogramComparator {
@@ -15,6 +20,8 @@ public:
 			true);
 	void makeAndSaveHistograms(char mode, bool saveToFile = true);
 	virtual ~HistogramComparator();
+
+	//FIXME refactor this constants to enum
 	const static char COLOR = 1;
 	const static char GRAY = 2;
 	const static char HSV = 4;
@@ -24,6 +31,7 @@ public:
 	const static char XML = 64;
 protected:
 private:
+	void cleanupHistogramVector(vector<Histogram*>* hVector);
 	void pmakeAndSaveLandscape(char mode, std::string label, bool saveToFile =
 			true);
 	void update_minMax(cv::Mat minMaxHist, std::vector<cv::Mat>* hists,

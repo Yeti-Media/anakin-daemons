@@ -103,7 +103,7 @@ public:
 	}
 
 	//! Destroy queue
-	~concurrent_queue();
+	virtual ~concurrent_queue();
 
 	//! Enqueue an item at tail of queue.
 	void push(const T& source) {

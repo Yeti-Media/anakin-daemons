@@ -48,7 +48,7 @@ const std::string Constants::CATEGORIES_MATCHING = "matching";
 const std::string Constants::CATEGORIES_COMPARISON = "comparison";
 const std::string Constants::CATEGORIES_LANDSCAPES = "landscapes";
 
-//REQUESTS
+//REQUESTS PATTERNMATCHING
 const std::string Constants::ACTION_MATCH = "matching";
 const std::string Constants::ACTION_ADDIDX = "add_indexes";
 const std::string Constants::ACTION_DELIDX = "remove_indexes";
@@ -74,3 +74,5 @@ const std::wstring Constants::WPARAM_REQID = L"reqID";
 const std::wstring Constants::WPARAM_MIN_RATIO = L"mr";
 const std::wstring Constants::WPARAM_MIN_MATCHES_ALLOWED = L"mma";
 const std::wstring Constants::WOPTIONAL_FLAGS = L"flags";
+
+//REQUESTS PATTERNMATCHING

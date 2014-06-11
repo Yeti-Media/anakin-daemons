@@ -47,9 +47,19 @@ void HistogramComparator::makeAndSaveHistograms(char mode, bool saveToFile) {
 	this->io->save(colorHistograms, COLOR, saveToFile);
 	this->io->save(grayHistograms, GRAY, saveToFile);
 	this->io->save(hsvHistograms, HSV, saveToFile);
+
+	cleanupHistogramVector(colorHistograms);
+	cleanupHistogramVector(grayHistograms);
+	cleanupHistogramVector(hsvHistograms);
 }
 
 //PRIVATE
+void HistogramComparator::cleanupHistogramVector(vector<Histogram*>* hVector) {
+	for (uint p = 0; p < hVector->size(); p++) {
+		delete hVector->at(p);
+	}
+	delete hVector;
+}
 
 void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists,
 		vector<int>* bins, vector<int> maxValues, int channels,
@@ -237,6 +247,7 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 	vector<Histogram*>* output = new vector<Histogram*>(0);
 	output->push_back(result);
 	this->io->save(output, saveMode, saveToFile);
+	cleanupHistogramVector(output);
 }
 
 HistogramComparator::~HistogramComparator() {
