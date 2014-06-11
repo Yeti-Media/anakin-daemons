@@ -24,6 +24,13 @@ Help* SimpleProgram::getHelp() {
 	return NULL;
 }
 
+/**
+ * Placeholder for inheritance.
+ */
+string SimpleProgram::getProgramName() {
+	return "";
+}
+
 SimpleProgram::SimpleProgram() {
 	verbose = false;
 	logFile = "";
@@ -68,7 +75,7 @@ int SimpleProgram::run(vector<string> *input) {
 
 		if (programFlags->flagFound("help")) {
 			Help* help = getHelp();
-			cout << help->getFullHelp();
+			cout << getProgramName() << endl << endl << help->getFullHelp();
 			delete help;
 			return EXIT_SUCCESS;
 		}

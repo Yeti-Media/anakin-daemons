@@ -22,24 +22,22 @@ enum E_PatternMatchingAction {
 
 class PatternMatchingCommandRunner: public CommandRunner {
 public:
-	PatternMatchingCommandRunner(DataOutput* out, SFBMCache* cache);
+	PatternMatchingCommandRunner();
 	virtual ~PatternMatchingCommandRunner();
 
 	void validateRequest(std::vector<std::string> *input);
 
+	void initializeCommandRunner(DataOutput* out, SFBMCache* cache);
+
 	void run();
 
-	/**
-	 * find a better way to imlement this in the interface
-	 */
-	static Help* help;
+	Help* getHelp();
+	string getProgramName();
 
-	/**
-	 * find a better way to imlement this in the interface
-	 */
-	static string getProgramName();
-private:
+protected:
 	E_PatternMatchingAction action = NONE;
+	ResultWriter* rw;
+	SFBMCache* cache;
 };
 
 } /* namespace Anakin */

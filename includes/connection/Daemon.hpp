@@ -24,6 +24,11 @@ using namespace std;
 
 namespace Anakin {
 
+/**
+ * A daemon is a program that receive commands and process them. It use a server
+ * to listen the incoming messages. A daemon use implementations of a CommandRunner
+ * to process a message.
+ */
 template<class SpecificCommandRunner>
 class Daemon {
 public:
@@ -44,8 +49,7 @@ Daemon<SpecificCommandRunner>::Daemon() {
 }
 
 template<class SpecificCommandRunner>
-int Daemon<SpecificCommandRunner>::start(vector<string> *input,
-		bool useCache) {
+int Daemon<SpecificCommandRunner>::start(vector<string> *input, bool useCache) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
 	cerr.tie(nullptr);
@@ -147,7 +151,10 @@ int Daemon<SpecificCommandRunner>::start(vector<string> *input,
 
 	if (anakinInput->validateInput(input)) {
 		if (anakinInput->flagFound("help")) {
-			cout << "Daemon arguments:" << endl << endl
+			SpecificCommandRunner commandRunner;
+			Help* help = commandRunner.getHelp();
+			cout << commandRunner.getProgramName() << endl << endl
+					<< "Daemon arguments:" << endl
 					<< "[cacheLoadingTimeWeight <int>|cacheDiscardLessValuable <bool>|cacheSize <int>|cacheLife <int>|cacheScenesSize <int>|cacheScenesLife <int>|-oLogFile <path>|-threads <int>|-queueCapacity <int>|(pghost <name> pgport <port> dbName <name> login <user> pwd <password>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)"
 					<< endl << endl << "Flags:" << endl << endl
 					<< "-iConsole/oConsole			: use console to input or output respectively"
@@ -181,9 +188,8 @@ int Daemon<SpecificCommandRunner>::start(vector<string> *input,
 					<< "-threads <int>				: (default 4) threads to use at processing requests"
 					<< endl
 					<< "-queueCapacity <int>			: (default 10) processing queue max capacity"
-					<< endl << endl
-					<< SpecificCommandRunner::help->getFullHelp();
-			delete SpecificCommandRunner::help;
+					<< endl << endl << help->getFullHelp();
+			delete help;
 			return EXIT_SUCCESS;
 		}
 		if (anakinInput->flagFound("verbose")) {
@@ -426,6 +432,7 @@ int Daemon<SpecificCommandRunner>::start(vector<string> *input,
 	delete output;
 	delete server;
 	delete anakinInput;
+	return EXIT_SUCCESS;
 }
 
 template<class SpecificCommandRunner>

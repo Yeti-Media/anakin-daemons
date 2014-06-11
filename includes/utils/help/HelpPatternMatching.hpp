@@ -2,7 +2,7 @@
  * HelpPatternMatching.hpp
  *
  *  Created on: 23/05/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
 #ifndef HELPPATTERNMATCHING_HPP_

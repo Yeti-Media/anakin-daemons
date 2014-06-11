@@ -36,26 +36,41 @@ namespace Anakin {
  * 4 - execute an action based on the extracted flags and values
  * 5 - send a response for the request using a DataOutput object
  *
- * The concrete class must have a static property called help (inherited
- * from class help). An object from that static property will be used by
- * the daemon to access the help documentation. See PatternMatchingCommandRunner
- * for an example.
+ * See PatternMatchingCommandRunner for an example.
  */
 class CommandRunner {
 public:
 	/**
 	 * Constructor (does steps 1, 2, 3)
-	 * out   : used to send responses
-	 * cache : chache to use
-	 */
-	CommandRunner(DataOutput* out, SFBMCache* cache);
 
+	 */
+	CommandRunner();
+
+	/**
+	 * Setup the flags, the output and the cache (if used).
+	 * out   : used to send responses
+	 */
+	virtual void initializeCommandRunner(DataOutput* out);
+
+	/**
+	 * This do the step 1
+	 */
 	virtual void validateRequest(std::vector<std::string> *input) = 0;
 
 	/**
 	 * run the command runner (does steps 4 and 5)
 	 */
 	virtual void run() = 0;
+
+	/**
+	 * Return a full help instance. Must be deleted after use.
+	 */
+	virtual Help* getHelp() = 0;
+
+	/**
+	 * Return the name of the program.
+	 */
+	virtual string getProgramName() = 0;
 
 	virtual ~CommandRunner();
 
@@ -70,8 +85,6 @@ protected:
 	std::string lastError;
 	bool inputError = false;
 	DataOutput* out;
-	ResultWriter* rw;
-	SFBMCache* cache;
 	FlannMatchingProcessor* processor = NULL;
 	BasicFlannDetector* detector = NULL;
 	Flags* flags;

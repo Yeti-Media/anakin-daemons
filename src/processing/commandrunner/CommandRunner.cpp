@@ -6,14 +6,37 @@
 using namespace Anakin;
 using namespace cv;
 
-CommandRunner::CommandRunner(DataOutput* out, SFBMCache* cache) {
-	this->flags = new Flags();
-	this->rw = new ResultWriter();
-	this->cache = cache;
-	this->out = out;
+CommandRunner::CommandRunner() {
+	this->flags = NULL;
+	this->out = NULL;
 	this->sceneID = -1;
 }
 
+/**
+ * Should initializate all used variables
+ */
+void CommandRunner::initializeCommandRunner(DataOutput* out) {
+	this->flags = new Flags();
+	this->out = out;
+}
+
+/**
+ * Placeholder for inheritance.
+ */
+Help* CommandRunner::getHelp() {
+	return NULL;
+}
+
+/**
+ * Placeholder for inheritance.
+ */
+string CommandRunner::getProgramName() {
+	return "";
+}
+
+/**
+ * Placeholder for inheritance.
+ */
 void CommandRunner::validateRequest(std::vector<std::string> *input) {
 
 }

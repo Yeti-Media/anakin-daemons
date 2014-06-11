@@ -18,15 +18,20 @@
 using namespace Anakin;
 using namespace std;
 
-Help* PatternMatchingCommandRunner::help = new HelpPatternMatching();
+Help* PatternMatchingCommandRunner::getHelp() {
+	return new HelpPatternMatching();
+}
 
 string PatternMatchingCommandRunner::getProgramName() {
 	return "PatternMatching";
 }
 
-PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
-		SFBMCache* cache) :
-		CommandRunner(out, cache) {
+void PatternMatchingCommandRunner::initializeCommandRunner(DataOutput* out,
+		SFBMCache* cache) {
+	CommandRunner::initializeCommandRunner(out);
+	this->rw = new ResultWriter();
+	this->cache = cache;
+
 	flags->setMinCount(1);
 	flags->setNoValuesFlag(Constants::ACTION_ADDIDX);
 	flags->setNoValuesFlag(Constants::ACTION_DELIDX);
@@ -89,6 +94,12 @@ PatternMatchingCommandRunner::PatternMatchingCommandRunner(DataOutput* out,
 			Constants::ACTION_MATCH);
 
 	flags->setVerbose(true);
+}
+
+PatternMatchingCommandRunner::PatternMatchingCommandRunner() :
+		CommandRunner() {
+	this->rw = NULL;
+	this->cache = NULL;
 }
 
 PatternMatchingCommandRunner::~PatternMatchingCommandRunner() {

@@ -21,19 +21,35 @@ std::string Help::getFullHelp() {
 }
 
 std::string Help::getIntro() {
-	return "Summary:\n\n" + this->intro + "\n";
+	if (!this->intro.empty()) {
+		return "Summary:\n\n" + this->intro + "\n";
+	} else {
+		return "";
+	}
 }
 
 std::string Help::getUsage() {
-	return "Usage:\n\n" + this->usage + "\n";
+	if (!this->usage.empty()) {
+		return "Usage:\n\n" + this->usage + "\n";
+	} else {
+		return "";
+	}
 }
 
 std::string Help::getFlags() {
-	return "Flags:\n\n" + this->flags + "\n";
+	if (!this->flags.empty()) {
+		return "Flags:\n\n" + this->flags + "\n";
+	} else {
+		return "";
+	}
 }
 
 std::string Help::getExamples() {
-	return "Examples:\n\n" + this->examples + "\n";
+	if (!this->examples.empty()) {
+		return "Examples:\n\n" + this->examples + "\n";
+	} else {
+		return "";
+	}
 }
 
 } /* namespace Anakin */

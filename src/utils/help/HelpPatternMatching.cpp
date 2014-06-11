@@ -2,7 +2,7 @@
  * HelpPatternMatching.cpp
  *
  *  Created on: 23/05/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
 #include <utils/help/HelpPatternMatching.hpp>
@@ -10,8 +10,7 @@
 namespace Anakin {
 
 HelpPatternMatching::HelpPatternMatching() {
-	intro = "PatternMatching\n"
-			"Starts N threads and process requests to add, delete or update "
+	intro = "Starts N threads and process requests to add, delete or update "
 			"trainers to the cache, and to process pattern matching requests. "
 			"This application only uses data from the db.\n";
 

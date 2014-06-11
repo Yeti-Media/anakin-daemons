@@ -138,8 +138,9 @@ void RequestServer<SpecificCommandRunner>::startWorkers(DataOutput* output) {
 template<class SpecificCommandRunner>
 void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	WorkerArgs* wargs = (WorkerArgs*) ptr;
-	Worker* worker = new Worker(wargs->id, wargs->workingQueue,
-			new SpecificCommandRunner(wargs->output, wargs->cache));
+	SpecificCommandRunner* commandRunner = new SpecificCommandRunner();
+	commandRunner->initializeCommandRunner(wargs->output, wargs->cache);
+	Worker* worker = new Worker(wargs->id, wargs->workingQueue, commandRunner);
 	worker->start();
 }
 

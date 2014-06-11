@@ -14,7 +14,7 @@
 namespace Anakin {
 
 /**
- * This abstract class is used with programs without a server.
+ * This abstract class is used to implement and run programs without a server.
  */
 class SimpleProgram {
 public:
@@ -39,7 +39,7 @@ public:
 
 protected:
 	/**
-	 * Excecute the concrete program.
+	 * Execute the concrete program.
 	 */
 	virtual int excecute(vector<string> *input) = 0;
 

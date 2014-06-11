@@ -54,10 +54,10 @@ public:
 	 */
 	std::string getExamples();
 protected:
-	std::string intro = "TODO\n";
-	std::string usage = "TODO\n";
-	std::string flags = "TODO\n";
-	std::string examples = "TODO\n";
+	std::string intro;
+	std::string usage;
+	std::string flags;
+	std::string examples;
 };
 
 } /* namespace Anakin */
