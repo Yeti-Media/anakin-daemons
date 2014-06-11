@@ -98,7 +98,7 @@ template<class Program>
 void exportHelp(fs::path* path) {
 	Program program;
 
-	string readmeName = "README-"+program.getProgramName()+".txt";
+	string readmeName = "README-" + program.getProgramName() + ".txt";
 	fs::path oFile = *path / readmeName;
 
 	ofstream oFileStream;

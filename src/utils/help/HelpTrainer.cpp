@@ -17,8 +17,8 @@ HelpTrainer::HelpTrainer() {
 
 	usage =
 			"-user <userID>                     : the user's id, patterns from this user will be used to train the matcher\n"
-			"-saveToFile [<folder>] <filename>  : two files will be created, folder+filename+.xml and folder+filename+.if\n"
-			"-patternsId <id id ...>            : a spaced separated list of patterns id, which will be used to train the matcher\n";
+					"-saveToFile [<folder>] <filename>  : two files will be created, folder+filename+.xml and folder+filename+.if\n"
+					"-patternsId <id id ...>            : a spaced separated list of patterns id, which will be used to train the matcher\n";
 }
 
 HelpTrainer::~HelpTrainer() {

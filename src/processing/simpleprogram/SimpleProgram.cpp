@@ -24,7 +24,6 @@ string SimpleProgram::getFullTextHelp() {
 	return output;
 }
 
-
 /**
  * Placeholder for inheritance.
  */
