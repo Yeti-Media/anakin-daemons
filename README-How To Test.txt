@@ -19,15 +19,13 @@ TestDir/
         |-->examples/-->simpleTest/-->...
         |           |--> ... /
         |-->logs/
-        |-->Anakin
         |-->Script.sql
 
-Examples folder must contain your test inputs and outputs (see simpleTest dir as an example). Logs folder will be your output logs/pipes for debug. Anakin is a binary compiled in “COMPILE_FOR_TESTING” mode (see CompileConfigurations.hpp). Script.sql is the script used for database creation, but without the “drop table/database” statements at the beginning.
+Examples folder must contain your test inputs and outputs (see simpleTest dir as an example). Logs folder will be your output logs/pipes for debug. Script.sql is the script used for database creation, but without the “drop table/database” statements at the beginning.
 Once you configure this files anywhere except in anakin project directories (use TestDir.zip content as an example), you can compile and run anakin in “COMPILE_FOR_BIN_ACCEPTANCE_TESTING” mode (see CompileConfigurations.hpp) to run the simulated acceptance tests.
 
 The steps for running a acceptance test are:
 
         a) setup the testing directory
-        b) compile Anakin in “COMPILE_FOR_TESTING” mode, and move the binary to the testing directory
-        c) compile the project in “COMPILE_FOR_BIN_ACCEPTANCE_TESTING” mode
-        d) run the compiled program with the the testing directory path as an argument
+        b) compile the project in “COMPILE_FOR_BIN_ACCEPTANCE_TESTING” mode
+        c) run the compiled program with the the testing directory path as an argument
