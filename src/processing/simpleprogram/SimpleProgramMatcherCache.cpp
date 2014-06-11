@@ -31,7 +31,7 @@ Help* SimpleProgramMatcherCache::getHelp() {
 }
 
 string SimpleProgramMatcherCache::getProgramName() {
-	return "MatcherCache";
+	return "MatcherCacheTest";
 }
 
 void SimpleProgramMatcherCache::setupProgramFlags() {

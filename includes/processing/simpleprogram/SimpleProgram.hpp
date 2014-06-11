@@ -28,16 +28,22 @@ public:
 	int run(vector<string> *input);
 
 	/**
-	 * Return a full help instance. Must be deleted after use.
-	 */
-	virtual Help* getHelp() = 0;
-
-	/**
 	 * Return the name of the program.
 	 */
 	virtual string getProgramName() = 0;
 
+	/**
+	 * Get a full text manual for the concrete program
+	 */
+	string getFullTextHelp();
+
 protected:
+
+	/**
+	 * Return a full help instance. Must be deleted after use.
+	 */
+	virtual Help* getHelp() = 0;
+
 	/**
 	 * Execute the concrete program.
 	 */

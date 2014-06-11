@@ -81,3 +81,63 @@ int main(int argc, const char * argv[]) {
 }
 
 #endif
+
+#if COMPILE_MODE == COMPILE_FOR_README_UPDATE
+//=======================================================================================
+// MAIN for COMPILE_FOR_README_UPDATE
+//=======================================================================================
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <iostream>
+#include <fstream>
+
+namespace fs = boost::filesystem;
+using namespace std;
+
+template<class Program>
+void exportHelp(fs::path* path) {
+	Program program;
+
+	string readmeName = "README-"+program.getProgramName()+".txt";
+	fs::path oFile = *path / readmeName;
+
+	ofstream oFileStream;
+	if (oFileStream.is_open()) {
+		oFileStream.close();
+	}
+	oFileStream.open(oFile.string(), ios::out | ios::app);
+	if (!oFileStream.is_open()) {
+		cerr << oFile << " file can't be opened" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	oFileStream << program.getFullTextHelp();
+	oFileStream.close();
+}
+
+int main(int argc, const char * argv[]) {
+
+	if (argc != 2) {
+		cout << "usage: " << argv[0] << " <output-dir>" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	fs::path path = argv[1];
+
+	if (!fs::is_directory(path)) {
+		cout << " directory " << path << " not found" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	exportHelp<Daemon<PatternMatchingCommandRunner>>(&path);
+	exportHelp<SimpleProgramMatcherCache>(&path);
+	exportHelp<SimpleProgramDBConnector>(&path);
+	exportHelp<SimpleProgramExtractor>(&path);
+	exportHelp<SimpleProgramTrainer>(&path);
+
+	cout << "Success" << endl;
+
+	exit(EXIT_SUCCESS);
+}
+
+#endif

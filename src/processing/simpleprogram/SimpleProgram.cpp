@@ -17,6 +17,14 @@ using namespace std;
 
 namespace Anakin {
 
+string SimpleProgram::getFullTextHelp() {
+	Help* help = getHelp();
+	string output = getProgramName() + "\n\n" + help->getFullHelp();
+	delete help;
+	return output;
+}
+
+
 /**
  * Placeholder for inheritance.
  */
@@ -74,9 +82,7 @@ int SimpleProgram::run(vector<string> *input) {
 		vector<string>* values = new vector<string>();
 
 		if (programFlags->flagFound("help")) {
-			Help* help = getHelp();
-			cout << getProgramName() << endl << endl << help->getFullHelp();
-			delete help;
+			cout << getFullTextHelp();
 			return EXIT_SUCCESS;
 		}
 		if (programFlags->flagFound("verbose")) {

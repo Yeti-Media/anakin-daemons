@@ -1,4 +1,4 @@
-DBConnector
+PatternDBConnector
 
 Summary:
 

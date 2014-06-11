@@ -23,7 +23,7 @@ Help* PatternMatchingCommandRunner::getHelp() {
 }
 
 string PatternMatchingCommandRunner::getProgramName() {
-	return "PatternMatching";
+	return "PatternMatcher";
 }
 
 void PatternMatchingCommandRunner::initializeCommandRunner(DataOutput* out,

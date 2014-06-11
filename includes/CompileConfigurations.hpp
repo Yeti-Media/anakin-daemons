@@ -16,6 +16,7 @@
 #define COMPILE_FOR_PRODUCTION 0
 #define COMPILE_FOR_UNIT_TESTING 1
 #define COMPILE_FOR_BIN_ACCEPTANCE_TESTING 2
+#define COMPILE_FOR_README_UPDATE 3
 
 #define PATTERNMATCHING 0
 #define MATCHERCACHE 1
@@ -53,11 +54,14 @@
  *
  *	       anakin "/home/franco/Trabajos/Yeti-Media/TestDir/"
  *
+ *	    4) COMPILE_FOR_README_UPDATE: export all help files into a specific dir.
+ *
  *  ======================================================================
  */
 //#define COMPILE_MODE COMPILE_FOR_PRODUCTION
-#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
+//#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
 //#define COMPILE_MODE COMPILE_FOR_BIN_ACCEPTANCE_TESTING
+#define COMPILE_MODE COMPILE_FOR_README_UPDATE
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
 /** ======================================================================
@@ -71,11 +75,11 @@
  *  TRAINER
  *  ======================================================================
  */
-//#define COMPILE_MODULE PATTERNMATCHING
+#define COMPILE_MODULE PATTERNMATCHING
 //#define COMPILE_MODULE MATCHERCACHE
 //#define COMPILE_MODULE DBCONNECTOR
 //#define COMPILE_MODULE EXTRACTOR
-#define COMPILE_MODULE TRAINER
+//#define COMPILE_MODULE TRAINER
 
 #else
 #define COMPILE_MODULE ALLMODULES

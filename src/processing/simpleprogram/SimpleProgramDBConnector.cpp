@@ -36,7 +36,7 @@ Help* SimpleProgramDBConnector::getHelp() {
 }
 
 string SimpleProgramDBConnector::getProgramName() {
-	return "DBConnector";
+	return "PatternDBConnector";
 }
 
 void SimpleProgramDBConnector::setupProgramFlags() {

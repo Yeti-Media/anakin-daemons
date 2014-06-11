@@ -1,4 +1,4 @@
-Trainer
+PatternTrainer
 
 Summary:
 

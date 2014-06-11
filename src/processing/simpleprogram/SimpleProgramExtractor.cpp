@@ -34,7 +34,7 @@ Help* SimpleProgramExtractor::getHelp() {
 }
 
 string SimpleProgramExtractor::getProgramName() {
-	return "Extractor";
+	return "PatternExtractor";
 }
 
 void SimpleProgramExtractor::setupProgramFlags() {

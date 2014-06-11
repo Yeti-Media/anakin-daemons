@@ -35,7 +35,7 @@ Help* SimpleProgramTrainer::getHelp() {
 }
 
 string SimpleProgramTrainer::getProgramName() {
-	return "Trainer";
+	return "PatternTrainer";
 }
 
 void SimpleProgramTrainer::setupProgramFlags() {
