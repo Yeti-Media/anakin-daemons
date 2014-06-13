@@ -18,4 +18,8 @@ HelpFaceDBConnector::~HelpFaceDBConnector() {
 	// TODO Auto-generated destructor stub
 }
 
+bool HelpFaceDBConnector::showDaemonHelp() {
+	return false;
+}
+
 } /* namespace Anakin */

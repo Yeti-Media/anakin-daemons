@@ -18,4 +18,8 @@ HelpMatcherCacheTest::~HelpMatcherCacheTest() {
 	// TODO Auto-generated destructor stub
 }
 
+bool HelpMatcherCacheTest::showDaemonHelp() {
+	return false;
+}
+
 } /* namespace Anakin */

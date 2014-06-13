@@ -1,2 +1,3 @@
-FaceDBConnector
+
+FaceDBConnector Manual
 

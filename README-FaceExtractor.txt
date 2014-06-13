@@ -1,2 +1,3 @@
-FaceExtractor
+
+FaceExtractor Manual
 

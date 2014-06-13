@@ -1,2 +1,3 @@
-FaceTrainer
+
+FaceTrainer Manual
 

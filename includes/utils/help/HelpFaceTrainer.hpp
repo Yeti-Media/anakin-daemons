@@ -16,6 +16,8 @@ class HelpFaceTrainer: public Help {
 public:
 	HelpFaceTrainer();
 	virtual ~HelpFaceTrainer();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

@@ -36,7 +36,7 @@ int Program::start(vector<string> *input) {
 		vector<string>* values = new vector<string>();
 
 		if (programFlags.flagFound("help")) {
-			cout << getFullTextHelp();
+			cout << this->getFullTextHelp();
 			return EXIT_SUCCESS;
 		}
 		if (programFlags.flagFound("verbose")) {
@@ -79,7 +79,7 @@ int Program::start(vector<string> *input) {
 			startComand.append(input->at(i));
 		}
 	}
-	LOG_F("Args") << startComand;
+	LOG_F("Args")<< startComand;
 
 	return run(input);
 }
@@ -100,7 +100,7 @@ Help* Program::getHelp() {
 
 string Program::getFullTextHelp() {
 	Help* help = getHelp();
-	string output = getProgramName() + "\n\n" + help->getFullHelp();
+	string output = "\n" + getProgramName() + " Manual\n\n" + help->getFullHelp();
 	delete help;
 	return output;
 }

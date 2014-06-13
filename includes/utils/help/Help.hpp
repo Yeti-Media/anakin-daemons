@@ -10,8 +10,9 @@
 
 #include <string>
 
-namespace Anakin {
+using namespace std;
 
+namespace Anakin {
 /**
  * Every concrete program must provide an specific extension of this class.
  * The constructor should initialize intro (summary), usage (correct flags usage),
@@ -27,34 +28,40 @@ public:
 	virtual ~Help();
 
 	/**
+	 * return true if you need to show daemon documentation
+	 */
+	virtual bool showDaemonHelp() = 0;
+
+	/**
 	 * return a full help text
 	 */
-	std::string getFullHelp();
+	string getFullHelp();
 
 	/**
 	 * return a summary of the program
 	 */
-	std::string getIntro();
+	string getIntro();
 
 	/**
 	 * return the usage of the program
 	 */
-	std::string getUsage();
+	string getUsage();
 
 	/**
 	 * return the documentation for every flag
 	 */
-	std::string getFlags();
+	string getFlags();
 
 	/**
 	 * return usage examples
 	 */
-	std::string getExamples();
+	string getExamples();
 protected:
-	std::string intro;
-	std::string usage;
-	std::string flags;
-	std::string examples;
+	string daemonIntro;
+	string intro;
+	string usage;
+	string flags;
+	string examples;
 };
 
 } /* namespace Anakin */

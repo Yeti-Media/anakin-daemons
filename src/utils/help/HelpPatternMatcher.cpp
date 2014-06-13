@@ -9,6 +9,10 @@
 
 namespace Anakin {
 
+bool HelpPatternMatcher::showDaemonHelp() {
+	return true;
+}
+
 HelpPatternMatcher::HelpPatternMatcher() {
 	intro = "Starts N threads and process requests to add, delete or update "
 			"trainers to the cache, and to process pattern matching requests. "

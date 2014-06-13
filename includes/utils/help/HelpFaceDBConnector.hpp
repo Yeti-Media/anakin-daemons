@@ -16,6 +16,8 @@ class HelpFaceDBConnector: public Help {
 public:
 	HelpFaceDBConnector();
 	virtual ~HelpFaceDBConnector();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

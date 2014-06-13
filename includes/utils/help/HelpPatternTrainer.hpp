@@ -19,6 +19,8 @@ class HelpPatternTrainer: public Help {
 public:
 	HelpPatternTrainer();
 	virtual ~HelpPatternTrainer();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

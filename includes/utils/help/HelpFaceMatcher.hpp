@@ -16,6 +16,8 @@ class HelpFaceMatcher: public Help {
 public:
 	HelpFaceMatcher();
 	virtual ~HelpFaceMatcher();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

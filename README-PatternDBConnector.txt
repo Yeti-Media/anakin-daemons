@@ -1,4 +1,5 @@
-PatternDBConnector
+
+PatternDBConnector Manual
 
 Summary:
 

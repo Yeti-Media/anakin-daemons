@@ -10,6 +10,10 @@
 
 namespace Anakin {
 
+bool HelpPatternExtractor::showDaemonHelp() {
+	return false;
+}
+
 HelpPatternExtractor::HelpPatternExtractor() {
 	intro =
 			"Extracts information from images, constructs histograms for histogram and landscape matching. Extracts keypoints and descriptors for images."

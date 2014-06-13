@@ -1,4 +1,5 @@
-PatternTrainer
+
+PatternTrainer Manual
 
 Summary:
 

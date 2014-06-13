@@ -18,4 +18,8 @@ HelpFaceTrainer::~HelpFaceTrainer() {
 	// TODO Auto-generated destructor stub
 }
 
+bool HelpFaceTrainer::showDaemonHelp() {
+	return false;
+}
+
 } /* namespace Anakin */

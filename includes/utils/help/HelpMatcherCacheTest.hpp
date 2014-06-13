@@ -16,6 +16,8 @@ class HelpMatcherCacheTest: public Help {
 public:
 	HelpMatcherCacheTest();
 	virtual ~HelpMatcherCacheTest();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

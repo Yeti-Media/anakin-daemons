@@ -19,6 +19,8 @@ class HelpPatternMatcher: public Help {
 public:
 	HelpPatternMatcher();
 	virtual ~HelpPatternMatcher();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

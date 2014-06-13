@@ -9,6 +9,10 @@
 
 namespace Anakin {
 
+bool HelpPatternTrainer::showDaemonHelp() {
+	return false;
+}
+
 HelpPatternTrainer::HelpPatternTrainer() {
 	intro =
 			"Loads patterns associated with a specific user and then it trains a SerializableFlannBasedMatcher. This program will generate two files for a matcher. An XML file will contain basic information and an IF file that will contain the trained index. Both files will be compressed.\n"

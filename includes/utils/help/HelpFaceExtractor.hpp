@@ -16,6 +16,8 @@ class HelpFaceExtractor: public Help {
 public:
 	HelpFaceExtractor();
 	virtual ~HelpFaceExtractor();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

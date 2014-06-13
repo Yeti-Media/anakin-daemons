@@ -19,6 +19,8 @@ class HelpPatternDBConnector: public Help {
 public:
 	HelpPatternDBConnector();
 	~HelpPatternDBConnector();
+
+	bool showDaemonHelp();
 };
 
 } /* namespace Anakin */

@@ -1,4 +1,5 @@
-PatternExtractor
+
+PatternExtractor Manual
 
 Summary:
 

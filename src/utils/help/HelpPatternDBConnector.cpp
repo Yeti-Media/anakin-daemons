@@ -10,6 +10,10 @@
 
 using namespace Anakin;
 
+bool HelpPatternDBConnector::showDaemonHelp() {
+	return false;
+}
+
 HelpPatternDBConnector::HelpPatternDBConnector() {
 	intro = "Used to store and retrieve information to and from a postgresql "
 			"database.\n"
