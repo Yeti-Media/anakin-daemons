@@ -17,6 +17,30 @@ using namespace std;
 
 namespace Anakin {
 
+/**
+ * Common abstract class for a program. A Program must provide a full help text and
+ * a name. A program will configure 3 flags:
+ *
+ *   -help				: Provide a full help to cout.
+ *   -verbose			: Set true to verbose var. Used to show more info at cout.
+ *   -oLogFile	<file>	: Will configure the output log file, in the specified <file>.
+ *   					  If there's no -oLogFile flag, no logging will be activated.
+ *
+ * A concrete class must implement:
+ *
+ *   void initProgramFlags()		: Add to programFlags all supported flags and
+ *   							  		configurations for your program.
+ *
+ *   int run(vector<string> *input)	: Run the program with the flags parsed in input
+ *   									vector.
+ *
+ *   string getProgramName()		: Get the name of the program.
+ *
+ *   Help* getHelp()				: Get an instance of a concrete Help class to use.
+ *
+ *   string getFullTextHelp()		: Template classes should override this method
+ * 										(see Daemon.hpp as an example).
+ */
 class Program {
 public:
 	Program();

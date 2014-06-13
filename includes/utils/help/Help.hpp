@@ -13,12 +13,9 @@
 namespace Anakin {
 
 /**
- * Every concrete commandrunner must have an specific extension of this class.
+ * Every concrete program must provide an specific extension of this class.
  * The constructor should initialize intro (summary), usage (correct flags usage),
  * flags (every flag help), and examples, with the specific documentation.
- * A concrete commandrunner must have a static public member
- * named help (class Help) that contain a static object using a concrete class from
- * this class (Help).
  */
 class Help {
 public:

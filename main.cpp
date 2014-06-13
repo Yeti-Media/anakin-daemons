@@ -74,9 +74,13 @@ int main(int argc, const char * argv[]) {
 
 	int signal = EXIT_SUCCESS;
 
+	// *** TESTS ***
+
 #if COMPILE_MODULE == MATCHERCACHETEST
 	Program* program = new MatcherCacheTest();
 #endif
+
+	// *** PATTERN ****
 
 #if COMPILE_MODULE == PATTERNMATCHER
 	Program* program = new Daemon<PatternMatcher>();
@@ -91,6 +95,8 @@ int main(int argc, const char * argv[]) {
 	Program* program = new PatternTrainer();
 #endif
 
+	// *** FACE RECOGNITION ****
+
 #if COMPILE_MODULE == FACEMATCHER
 	Program* program = new Daemon<FaceMatcher>();
 #endif
@@ -103,6 +109,8 @@ int main(int argc, const char * argv[]) {
 #if COMPILE_MODULE == FACETRAINER
 	Program* program = new FaceTrainer();
 #endif
+
+	// common startup
 
 	signal = program->start(&input);
 	delete program;

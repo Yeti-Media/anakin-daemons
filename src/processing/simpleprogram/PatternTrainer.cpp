@@ -40,7 +40,6 @@ string PatternTrainer::getProgramName() {
 
 void PatternTrainer::initProgramFlags() {
 	this->programFlags.setOptionalFlag("user");
-	//this->programFlags.setNoValuesFlag("patterns");
 	this->programFlags.setOptionalFlag("patternsId");
 	this->programFlags.setOptionalFlag("saveToFile");
 }
