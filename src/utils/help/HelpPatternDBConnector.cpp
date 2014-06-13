@@ -1,10 +1,16 @@
+/*
+ * HelpPatternDBConnector.cpp
+ *
+ *  Created on: 09/06/2014
+ *      Author: Franco Pellegrini
+ */
 #include <string>
 
-#include "utils/help/HelpDBConnector.hpp"
+#include "utils/help/HelpPatternDBConnector.hpp"
 
 using namespace Anakin;
 
-HelpDBConnector::HelpDBConnector() {
+HelpPatternDBConnector::HelpPatternDBConnector() {
 	intro = "Used to store and retrieve information to and from a postgresql "
 			"database.\n"
 			"Table declarations can be found in the sql folder.\n\n"
@@ -51,6 +57,6 @@ HelpDBConnector::HelpDBConnector() {
 
 }
 
-HelpDBConnector::~HelpDBConnector() {
+HelpPatternDBConnector::~HelpPatternDBConnector() {
 
 }

@@ -5,8 +5,8 @@
  *      Author: Franco Pellegrini
  */
 
-#ifndef HELPPATTERNMATCHING_HPP_
-#define HELPPATTERNMATCHING_HPP_
+#ifndef HELPPATTERNMATCHER_HPP_
+#define HELPPATTERNMATCHER_HPP_
 
 #include <utils/help/Help.hpp>
 
@@ -15,10 +15,10 @@ namespace Anakin {
 /**
  * PatternMatching Help documentation
  */
-class HelpPatternMatching: public Help {
+class HelpPatternMatcher: public Help {
 public:
-	HelpPatternMatching();
-	virtual ~HelpPatternMatching();
+	HelpPatternMatcher();
+	virtual ~HelpPatternMatcher();
 };
 
 } /* namespace Anakin */

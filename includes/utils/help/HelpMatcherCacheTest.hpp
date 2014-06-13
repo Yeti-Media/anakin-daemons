@@ -5,17 +5,17 @@
  *      Author: Franco Pellegrini
  */
 
-#ifndef HELPMATCHERCACHE_HPP_
-#define HELPMATCHERCACHE_HPP_
+#ifndef HELPMATCHERCACHETEST_HPP_
+#define HELPMATCHERCACHETEST_HPP_
 
 #include <utils/help/Help.hpp>
 
 namespace Anakin {
 
-class HelpMatcherCache: public Help {
+class HelpMatcherCacheTest: public Help {
 public:
-	HelpMatcherCache();
-	virtual ~HelpMatcherCache();
+	HelpMatcherCacheTest();
+	virtual ~HelpMatcherCacheTest();
 };
 
 } /* namespace Anakin */

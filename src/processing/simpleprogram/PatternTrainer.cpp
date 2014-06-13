@@ -1,5 +1,5 @@
 /*
- * SimpleProgramTrainer.cpp
+ * PatternTrainer.cpp
  *
  *  Created on: 06/06/2014
  *      Author: Franco Pellegrini
@@ -12,9 +12,9 @@
 #include <opencv2/flann/miniflann.hpp>
 #include <processing/BasicFlannTrainer.hpp>
 #include <processing/Flags.hpp>
-#include <processing/simpleprogram/SimpleProgramTrainer.hpp>
+#include <processing/simpleprogram/PatternTrainer.hpp>
 #include <processing/SerializedPatternDataInput.hpp>
-#include <utils/help/HelpTrainer.hpp>
+#include <utils/help/HelpPatternTrainer.hpp>
 #include <cstdlib>
 #include <iostream>               // for cout
 
@@ -23,29 +23,29 @@ using namespace cv;
 
 namespace Anakin {
 
-SimpleProgramTrainer::SimpleProgramTrainer() :
-		SimpleProgram() {
+PatternTrainer::PatternTrainer() :
+		Program() {
 }
 
-SimpleProgramTrainer::~SimpleProgramTrainer() {
+PatternTrainer::~PatternTrainer() {
 }
 
-Help* SimpleProgramTrainer::getHelp() {
-	return new HelpTrainer();
+Help* PatternTrainer::getHelp() {
+	return new HelpPatternTrainer();
 }
 
-string SimpleProgramTrainer::getProgramName() {
+string PatternTrainer::getProgramName() {
 	return "PatternTrainer";
 }
 
-void SimpleProgramTrainer::setupProgramFlags() {
-	this->programFlags->setOptionalFlag("user");
-	//this->programFlags->setNoValuesFlag("patterns");
-	this->programFlags->setOptionalFlag("patternsId");
-	this->programFlags->setOptionalFlag("saveToFile");
+void PatternTrainer::initProgramFlags() {
+	this->programFlags.setOptionalFlag("user");
+	//this->programFlags.setNoValuesFlag("patterns");
+	this->programFlags.setOptionalFlag("patternsId");
+	this->programFlags.setOptionalFlag("saveToFile");
 }
 
-int SimpleProgramTrainer::excecute(vector<string> *input) {
+int PatternTrainer::run(vector<string> *input) {
 	string userID;
 	//char mode = 0;
 	string folder;
@@ -55,9 +55,9 @@ int SimpleProgramTrainer::excecute(vector<string> *input) {
 
 	vector<string>* values = new vector<string>();
 
-	if (this->programFlags->flagFound("user")) {
+	if (this->programFlags.flagFound("user")) {
 		values->clear();
-		values = this->programFlags->getFlagValues("user");
+		values = this->programFlags.getFlagValues("user");
 		user = true;
 		if (values->size() == 1) {
 			userID = values->at(0);
@@ -66,9 +66,9 @@ int SimpleProgramTrainer::excecute(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags->flagFound("patternsId")) {
+	if (this->programFlags.flagFound("patternsId")) {
 		values->clear();
-		values = this->programFlags->getFlagValues("patternsId");
+		values = this->programFlags.getFlagValues("patternsId");
 		if (!values->empty()) {
 			patternsId = new vector<int>(0);
 			for (unsigned int i = 0; i < values->size(); i++) {
@@ -79,9 +79,9 @@ int SimpleProgramTrainer::excecute(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags->flagFound("saveToFile")) {
+	if (this->programFlags.flagFound("saveToFile")) {
 		values->clear();
-		values = this->programFlags->getFlagValues("saveToFile");
+		values = this->programFlags.getFlagValues("saveToFile");
 		if (values->size() == 1) {
 			folder = "";
 			fileName = values->at(0);

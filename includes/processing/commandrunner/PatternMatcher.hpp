@@ -1,12 +1,12 @@
 /*
- * PatternMatchingCommandRunner.hpp
+ * PatternMatcher.hpp
  *
  *  Created on: 20/05/2014
  *      Author: Franco Pellegrini
  */
 
-#ifndef PATTERNMATCHINGCOMMANDRUNNER_HPP_
-#define PATTERNMATCHINGCOMMANDRUNNER_HPP_
+#ifndef PATTERNMATCHER_HPP_
+#define PATTERNMATCHER_HPP_
 
 #include <processing/commandrunner/CommandRunner.hpp>
 #include <string>
@@ -20,10 +20,10 @@ enum E_PatternMatchingAction {
 	NONE = 0, MATCH = 1, ADDIDXS = 2, DELIDXS = 3, UPDIDXS = 4, IDXSTATUS = 5
 };
 
-class PatternMatchingCommandRunner: public CommandRunner {
+class PatternMatcher: public CommandRunner {
 public:
-	PatternMatchingCommandRunner();
-	virtual ~PatternMatchingCommandRunner();
+	PatternMatcher();
+	virtual ~PatternMatcher();
 
 	void validateRequest(std::vector<std::string> *input);
 
@@ -37,9 +37,8 @@ public:
 protected:
 	E_PatternMatchingAction action = NONE;
 	ResultWriter* rw;
-	SFBMCache* cache;
 };
 
 } /* namespace Anakin */
 
-#endif /* PATTERNMATCHINGCOMMANDRUNNER_HPP_ */
+#endif /* PATTERNMATCHER_HPP_ */

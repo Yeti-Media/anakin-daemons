@@ -5,8 +5,8 @@
  *      Author: franco
  */
 
-#ifndef HELPEXTRACTOR_HPP_
-#define HELPEXTRACTOR_HPP_
+#ifndef HELPPATTERNEXTRACTOR_HPP_
+#define HELPPATTERNEXTRACTOR_HPP_
 
 #include <utils/help/Help.hpp>
 
@@ -15,10 +15,10 @@ namespace Anakin {
 /**
  * Extractor Help documentation
  */
-class HelpExtractor: public Help {
+class HelpPatternExtractor: public Help {
 public:
-	HelpExtractor();
-	virtual ~HelpExtractor();
+	HelpPatternExtractor();
+	virtual ~HelpPatternExtractor();
 };
 
 } /* namespace Anakin */

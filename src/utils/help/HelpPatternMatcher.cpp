@@ -1,15 +1,15 @@
 /*
- * HelpPatternMatching.cpp
+ * HelpPatternMatcher.cpp
  *
  *  Created on: 23/05/2014
  *      Author: Franco Pellegrini
  */
 
-#include <utils/help/HelpPatternMatching.hpp>
+#include <utils/help/HelpPatternMatcher.hpp>
 
 namespace Anakin {
 
-HelpPatternMatching::HelpPatternMatching() {
+HelpPatternMatcher::HelpPatternMatcher() {
 	intro = "Starts N threads and process requests to add, delete or update "
 			"trainers to the cache, and to process pattern matching requests. "
 			"This application only uses data from the db.\n";
@@ -63,7 +63,7 @@ HelpPatternMatching::HelpPatternMatching() {
 
 }
 
-HelpPatternMatching::~HelpPatternMatching() {
+HelpPatternMatcher::~HelpPatternMatcher() {
 	// TODO Auto-generated destructor stub
 }
 

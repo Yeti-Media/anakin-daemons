@@ -50,7 +50,7 @@ public:
 	 * Setup the flags, the output and the cache (if used).
 	 * out   : used to send responses
 	 */
-	virtual void initializeCommandRunner(DataOutput* out);
+	virtual void initializeCommandRunner(DataOutput* out, SFBMCache* cache);
 
 	/**
 	 * This do the step 1
@@ -88,6 +88,7 @@ protected:
 	FlannMatchingProcessor* processor = NULL;
 	BasicFlannDetector* detector = NULL;
 	Flags* flags;
+	SFBMCache* cache;
 };
 
 } /* namespace Anakin */

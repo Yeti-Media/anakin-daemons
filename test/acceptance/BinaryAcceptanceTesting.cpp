@@ -12,6 +12,9 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 #define TESTING_DEBUGMODE
 
+#include <unistd.h>
+#include <cstddef>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <stdlib.h>
@@ -21,12 +24,11 @@
 #include <signal.h>
 #include <utils/Files.hpp>
 #include <regex>
-#include <processing/simpleprogram/SimpleProgramDBConnector.hpp>
-#include <processing/simpleprogram/SimpleProgramExtractor.hpp>
-#include <processing/simpleprogram/SimpleProgramTrainer.hpp>
-#include <processing/simpleprogram/SimpleProgramMatcherCache.hpp>
+#include <processing/simpleprogram/PatternDBConnector.hpp>
+#include <processing/simpleprogram/PatternExtractor.hpp>
+#include <processing/simpleprogram/PatternTrainer.hpp>
 #include <connection/Daemon.hpp>
-#include <processing/commandrunner/PatternMatchingCommandRunner.hpp>
+#include <processing/commandrunner/PatternMatcher.hpp>
 
 using namespace std;
 using namespace Anakin;
@@ -71,7 +73,7 @@ void splitTokens(const string& str, vector<string>& outputVector) {
  */
 void exitWithError() {
 	cerr << "\n===============================================\n"
-	<< "Acceptance test result: FAIL" << endl;
+			<< "Acceptance test result: FAIL" << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -124,9 +126,9 @@ void command(bool verbose, string command, bool showLogMsjIfFail = false,
 		bool forkExit = false, pid_t childPIDtoKill = 0) {
 	if (verbose) {
 		cout
-		<< "______________________________________________________________________"
-		<< endl << "* Command \"" << command << "\" executed" << endl
-		<< "* Output:" << endl << endl;
+				<< "______________________________________________________________________"
+				<< endl << "* Command \"" << command << "\" executed" << endl
+				<< "* Output:" << endl << endl;
 	}
 	if (system(command.c_str()) != 0) {
 		cerr << "Command \"" << command << "\" fail" << endl;
@@ -157,7 +159,7 @@ void validateDir(fs::path path, string msj) {
  */
 void dirCleanup(fs::path path) {
 	string pattern = "\"" + path.string() + "/\"*";
-	command(false,"rm -r -f " + pattern);
+	command(false, "rm -r -f " + pattern);
 }
 
 /**
@@ -211,8 +213,8 @@ void testingDirCheck(int argc, const char * argv[]) {
 	std::size_t found = scriptContent.find("DROP DATABASE IF EXISTS");
 	if (found != std::string::npos) {
 		cerr
-		<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
-		<< sqlScriptPath << endl;
+				<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
+				<< sqlScriptPath << endl;
 		exitWithError();
 	}
 
@@ -247,9 +249,9 @@ void setTestingEnvironmentVariables(string host, string database, string user,
 void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
 	command(true,
 			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-			+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
-			+ " 2> "
-			+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
+					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
+					+ " 2> "
+					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
 			true, false, pID);
 }
 
@@ -257,21 +259,29 @@ void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
  * Run a simple program with the given commands
  */
 template<class SpecificSimpleProgram>
-void runSimpleProgram(string currentCommand) {
-	SimpleProgram* program = new SpecificSimpleProgram();
+void runProgram(string currentCommand) {
+	Program* program = new SpecificSimpleProgram();
 	cout
-	<< "______________________________________________________________________"
-	<< endl << "* Simple program: " << program->getProgramName() << endl
-	<< "* Command \"" << currentCommand << "\" executed" << endl
-	<< "* Output:" << endl << endl;
+			<< "______________________________________________________________________"
+			<< endl << "* Program: " << program->getProgramName() << endl
+			<< "* Command \"" << currentCommand << "\" executed" << endl
+			<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
-	int signal = program->run(&input);
+	int signal = program->start(&input);
 	delete program;
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
+}
+
+void printStep(string test, int number) {
+	cout << endl
+			<< "======================================================================"
+			<< endl << "Test " << test << " - Step " << number << endl
+			<< "======================================================================"
+			<< endl;
 }
 
 /**
@@ -280,15 +290,15 @@ void runSimpleProgram(string currentCommand) {
 template<class SpecificDaemon>
 void runDaemonProgram(string currentCommand) {
 	SpecificDaemon commandRunner;
-	Daemon<SpecificDaemon> program;
+	Program* program = new Daemon<SpecificDaemon>();
 	cout
-	<< "______________________________________________________________________"
-	<< endl << "* Simple program: " << commandRunner.getProgramName()
-	<< endl << "* Command \"" << currentCommand << "\" executed" << endl
-	<< "* Output:" << endl << endl;
+			<< "______________________________________________________________________"
+			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
+			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
+			<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
-	int signal = program.start(&input, true);
+	int signal = program->start(&input);
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
@@ -304,11 +314,11 @@ void runDaemonProgram(string currentCommand) {
  */
 void simpleTest(int argc, const char * argv[]) {
 
-	//--------------------------------------------------------------
-	//  Test Setup
-	//--------------------------------------------------------------
+//--------------------------------------------------------------
+//  Test Setup
+//--------------------------------------------------------------
 
-	//testing database data
+//testing database data
 	string database = "AnakinAcceptanceTesting";
 	string userDB = "postgres";
 	string hostDB = "localhost";
@@ -326,90 +336,89 @@ void simpleTest(int argc, const char * argv[]) {
 	fs::path logsDir = testDir / "logs";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
-	fs::path patternMatchingLastStderr = logsDir
-	/ "patternMatchingLastStderr.txt";
-	fs::path patternMatchingLastStdout = logsDir
-	/ "patternMatchingLastStdout.txt";
-	fs::path trainerOutput = outputs / "trainerOutput";
+	fs::path trainerOutput = outputs / "patternTrainerOutput";
 
-	fs::path logsAnakin = logsDir / "anakin.log";
-	fs::path logsDbConnector = logsDir / "dbconnector.log";
-	fs::path logsTrainer = logsDir / "trainer.log";
-	fs::path logsExtractor = logsDir / "extractor.log";
+	fs::path logsAnakin = logsDir / "patternMatcher.log";
+	fs::path logsDbConnector = logsDir / "patternDBconnector.log";
+	fs::path logsTrainer = logsDir / "patternTrainer.log";
+	fs::path logsExtractor = logsDir / "patternExtractor.log";
 
-	//dir cleanups
+//dir cleanups
 	dirCleanup(outputLogos);
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
-	command(false,"rm -f " + pathToAnakinPath(severalXML));
+	command(false, "rm -f " + pathToAnakinPath(severalXML));
 
-	//testing database cleanup
-	command(false,"dropdb --if-exists " + database);
+//testing database cleanup
+	command(false, "dropdb --if-exists " + database);
 
-	//testing database creation.
-	command(false,"createdb " + database);
+//testing database creation.
+	command(false, "createdb " + database);
 
-	//run SQL script into database.
+//run SQL script into database.
 	command(false,
 			"psql -U " + userDB + " -d " + database + " -q -f "
-			+ pathToAnakinPath(sqlScriptPath));
+					+ pathToAnakinPath(sqlScriptPath));
 
-	//setting up new testing temporary environment variables
+//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);
 
-	//TODO verify stdout!
-	//--------------------------------------------------------------
-	//  Step 1 - Extractor Basic Test
-	//--------------------------------------------------------------
+//TODO verify stdout!
+//--------------------------------------------------------------
+//  Step 1 - Extractor Basic Test
+//--------------------------------------------------------------
+	printStep("SimpleTest", 1);
 
-	runSimpleProgram<SimpleProgramExtractor>(
+	runProgram<PatternExtractor>(
 			"-oLogFile " + pathToAnakinPath(logsExtractor)
-			+ " -matching -iFolder " + pathToAnakinPath(inputLogos)
-			+ " -oPath " + pathToAnakinPath(outputLogos)
-			+ " -lod -xml");
+					+ " -matching -iFolder " + pathToAnakinPath(inputLogos)
+					+ " -oPath " + pathToAnakinPath(outputLogos)
+					+ " -lod -xml");
 
-	runSimpleProgram<SimpleProgramExtractor>(
+	runProgram<PatternExtractor>(
 			"-oLogFile " + pathToAnakinPath(logsExtractor)
-			+ " -matching -iFile " + pathToAnakinPath(severalJPG)
-			+ " -oPath " + pathToAnakinPath(outputs) + " -lod -xml");
+					+ " -matching -iFile " + pathToAnakinPath(severalJPG)
+					+ " -oPath " + pathToAnakinPath(outputs) + " -lod -xml");
 
-	//--------------------------------------------------------------
-	//  Step 2 - DBconnector Basic Test
-	//--------------------------------------------------------------
+//--------------------------------------------------------------
+//  Step 2 - DBconnector Basic Test
+//--------------------------------------------------------------
+	printStep("SimpleTest", 2);
 
-	runSimpleProgram<SimpleProgramDBConnector>(
+	runProgram<PatternDBConnector>(
 			"-oLogFile " + pathToAnakinPath(logsDbConnector) + " -scenes -path "
-			+ pathToAnakinPath(severalXML));
+					+ pathToAnakinPath(severalXML));
 
-	runSimpleProgram<SimpleProgramDBConnector>(
+	runProgram<PatternDBConnector>(
 			"-oLogFile " + pathToAnakinPath(logsDbConnector) + " -user 1 -path "
-			+ pathToAnakinPath(outputLogos) + " -patterns");
+					+ pathToAnakinPath(outputLogos) + " -patterns");
 
-	//--------------------------------------------------------------
-	//  Step 3 - Trainer Basic Test
-	//--------------------------------------------------------------
-
-	runSimpleProgram<SimpleProgramTrainer>(
+//--------------------------------------------------------------
+//  Step 3 - Trainer Basic Test
+//--------------------------------------------------------------
+	printStep("SimpleTest", 3);
+	runProgram<PatternTrainer>(
 			"-oLogFile " + pathToAnakinPath(logsTrainer)
-			+ " -user 1 -saveToFile "
-			+ pathToAnakinPath(trainerOutput));
-	//--------------------------------------------------------------
-	//  Step 4 - DBconnector Basic Test (continue)
-	//--------------------------------------------------------------
-	runSimpleProgram<SimpleProgramDBConnector>(
+					+ " -user 1 -saveToFile "
+					+ pathToAnakinPath(trainerOutput));
+//--------------------------------------------------------------
+//  Step 4 - DBconnector Basic Test (continue)
+//--------------------------------------------------------------
+	printStep("SimpleTest", 4);
+	runProgram<PatternDBConnector>(
 			"-oLogFile " + pathToAnakinPath(logsDbConnector) + " -index "
-			+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns");
+					+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns");
 
-	//--------------------------------------------------------------
-	//  Step 5 - PatternMatching Basic Test
-	//--------------------------------------------------------------
-
+//--------------------------------------------------------------
+//  Step 5 - PatternMatching Basic Test
+//--------------------------------------------------------------
+	printStep("SimpleTest", 5);
 	pid_t pID = fork();
 	if (pID == 0) { // child
 		// Code only executed by child process
-		runDaemonProgram<PatternMatchingCommandRunner>(
+		runDaemonProgram<PatternMatcher>(
 				"-oLogFile " + pathToAnakinPath(logsAnakin)
-				+ " -iHTTP 8080 -oHTTP -verbose");
+						+ " -iHTTP 8080 -oHTTP -verbose");
 		_exit(EXIT_SUCCESS);
 	} else if (pID < 0) { // failed to fork
 		cerr << "Step 5 - Failed to fork for PatternMatching" << endl;
@@ -421,30 +430,30 @@ void simpleTest(int argc, const char * argv[]) {
 		for (int i = 0; i < 3; i++) {
 			command(true,
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-					+ pathToAnakinPath(lastStdout) + " 2> "
-					+ pathToAnakinPath(lastStderr), true, false, pID);
+							+ pathToAnakinPath(lastStdout) + " 2> "
+							+ pathToAnakinPath(lastStderr), true, false, pID);
 
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
 			std::string capture = get_file_contents(lastStdout.c_str());
 			if (capture.find(pattern) == std::string::npos) {
 				cerr
-				<< "PatternMatching subprogram wrong output. Anakin replied:"
-				<< endl << endl << capture << endl << endl
-				<< "and should replied something that start with:"
-				<< endl << endl << pattern << endl;
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< endl << endl << capture << endl << endl
+						<< "and should replied something that start with:"
+						<< endl << endl << pattern << endl;
 				stopAnakinHTTP(pID, logsDir);
 				exitWithError();
 			}
 
 			pattern =
-			"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
+					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
 			if (capture.find(pattern) == std::string::npos) {
 				cerr
-				<< "PatternMatching subprogram wrong output. Anakin replied:"
-				<< endl << endl << capture << endl << endl
-				<< "and should replied something that end with:" << endl
-				<< endl << pattern << endl;
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< endl << endl << capture << endl << endl
+						<< "and should replied something that end with:" << endl
+						<< endl << pattern << endl;
 				stopAnakinHTTP(pID, logsDir);
 				exitWithError();
 			}

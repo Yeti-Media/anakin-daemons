@@ -5,8 +5,8 @@
  *      Author: franco
  */
 
-#ifndef HELPTRAINER_H_
-#define HELPTRAINER_H_
+#ifndef HELPPATTERNTRAINER_H_
+#define HELPPATTERNTRAINER_H_
 
 #include <utils/help/Help.hpp>
 
@@ -15,10 +15,10 @@ namespace Anakin {
 /**
  * Trainer Help documentation
  */
-class HelpTrainer: public Help {
+class HelpPatternTrainer: public Help {
 public:
-	HelpTrainer();
-	virtual ~HelpTrainer();
+	HelpPatternTrainer();
+	virtual ~HelpPatternTrainer();
 };
 
 } /* namespace Anakin */

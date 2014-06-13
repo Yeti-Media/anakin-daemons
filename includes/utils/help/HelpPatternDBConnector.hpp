@@ -5,8 +5,8 @@
  *      Author: franco
  */
 
-#ifndef HELPDBCONNECTOR_HPP
-#define HELPDBCONNECTOR_HPP
+#ifndef HELPPATTERNDBCONNECTOR_HPP
+#define HELPPATTERNDBCONNECTOR_HPP
 
 #include <utils/help/Help.hpp>
 
@@ -15,10 +15,10 @@ namespace Anakin {
 /**
  * DbConnector Help documentation
  */
-class HelpDBConnector: public Help {
+class HelpPatternDBConnector: public Help {
 public:
-	HelpDBConnector();
-	~HelpDBConnector();
+	HelpPatternDBConnector();
+	~HelpPatternDBConnector();
 };
 
 } /* namespace Anakin */

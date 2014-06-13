@@ -18,13 +18,19 @@
 #define COMPILE_FOR_BIN_ACCEPTANCE_TESTING 2
 #define COMPILE_FOR_README_UPDATE 3
 
-#define PATTERNMATCHING 0
-#define MATCHERCACHE 1
-#define DBCONNECTOR 2
-#define EXTRACTOR 3
-#define TRAINER 4
+#define PATTERNMATCHER 1
+#define PATTERNDBCONNECTOR 2
+#define PATTERNEXTRACTOR 3
+#define PATTERNTRAINER 4
 
-#define ALLMODULES 100
+#define FACEMATCHER 101
+#define FACEDBCONNECTOR 102
+#define FACEEXTRACTOR 103
+#define FACETRAINER 104
+
+#define MATCHERCACHETEST 5000
+
+#define ALLMODULES 1000000
 
 /** ======================================================================
  *  ======================================================================
@@ -67,19 +73,26 @@
 /** ======================================================================
  *  If you choose COMPILE_FOR_PRODUCTION in COMPILE_MODE you can
  *  select ONLY ONE specific module to compile from this list:
- *
- *  PATTERNMATCHING
- *  MATCHERCACHE
- *  DBCONNECTOR
- *  EXTRACTOR
- *  TRAINER
  *  ======================================================================
  */
-#define COMPILE_MODULE PATTERNMATCHING
-//#define COMPILE_MODULE MATCHERCACHE
-//#define COMPILE_MODULE DBCONNECTOR
-//#define COMPILE_MODULE EXTRACTOR
-//#define COMPILE_MODULE TRAINER
+
+// *** PATTERN ****
+
+#define COMPILE_MODULE PATTERNMATCHER
+//#define COMPILE_MODULE PATTERNDBCONNECTOR
+//#define COMPILE_MODULE PATTERNEXTRACTOR
+//#define COMPILE_MODULE PATTERNTRAINER
+
+// *** FACE RECOGNITION ****
+
+//#define COMPILE_MODULE FACEMATCHER
+//#define COMPILE_MODULE FACEDBCONNECTOR
+//#define COMPILE_MODULE FACEEXTRACTOR
+//#define COMPILE_MODULE FACETRAINER
+
+// *** TESTS ***
+
+//#define COMPILE_MODULE MATCHERCACHETEST
 
 #else
 #define COMPILE_MODULE ALLMODULES

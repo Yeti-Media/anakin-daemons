@@ -6,6 +6,7 @@
 #include <connection/Daemon.hpp>
 #include <CompileConfigurations.hpp>
 #include <processing/Flags.hpp>
+#include <processing/Program.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -17,24 +18,46 @@ using namespace Anakin;
 // Include setup
 //=======================================================================================
 
-#if COMPILE_MODULE == PATTERNMATCHING || COMPILE_MODULE == ALLMODULES
-#include <processing/commandrunner/PatternMatchingCommandRunner.hpp>
+// *** PATTERN ****
+
+#if COMPILE_MODULE == PATTERNMATCHER || COMPILE_MODULE == ALLMODULES
+#include <processing/commandrunner/PatternMatcher.hpp>
 #endif
 
-#if COMPILE_MODULE == TRAINER || COMPILE_MODULE == ALLMODULES
-#include <processing/simpleprogram/SimpleProgramTrainer.hpp>
+#if COMPILE_MODULE == PATTERNTRAINER || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/PatternTrainer.hpp>
 #endif
 
-#if COMPILE_MODULE == EXTRACTOR || COMPILE_MODULE == ALLMODULES
-#include <processing/simpleprogram/SimpleProgramExtractor.hpp>
+#if COMPILE_MODULE == PATTERNEXTRACTOR || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/PatternExtractor.hpp>
 #endif
 
-#if COMPILE_MODULE == DBCONNECTOR || COMPILE_MODULE == ALLMODULES
-#include <processing/simpleprogram/SimpleProgramDBConnector.hpp>
+#if COMPILE_MODULE == PATTERNDBCONNECTOR || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/PatternDBConnector.hpp>
 #endif
 
-#if COMPILE_MODULE == MATCHERCACHE || COMPILE_MODULE == ALLMODULES
-#include <processing/simpleprogram/SimpleProgramMatcherCache.hpp>
+// *** FACE RECOGNITION ****
+
+#if COMPILE_MODULE == FACEMATCHER || COMPILE_MODULE == ALLMODULES
+#include <processing/commandrunner/FaceMatcher.hpp>
+#endif
+
+#if COMPILE_MODULE == FACETRAINER || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/FaceTrainer.hpp>
+#endif
+
+#if COMPILE_MODULE == FACEEXTRACTOR || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/FaceExtractor.hpp>
+#endif
+
+#if COMPILE_MODULE == FACEDBCONNECTOR || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/FaceDBConnector.hpp>
+#endif
+
+// *** TESTS ***
+
+#if COMPILE_MODULE == MATCHERCACHETEST || COMPILE_MODULE == ALLMODULES
+#include <processing/simpleprogram/MatcherCacheTest.hpp>
 #endif
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
@@ -51,32 +74,39 @@ int main(int argc, const char * argv[]) {
 
 	int signal = EXIT_SUCCESS;
 
-#if COMPILE_MODULE == PATTERNMATCHING
-	Daemon<PatternMatchingCommandRunner>* daemon = new Daemon<
-	PatternMatchingCommandRunner>();
-	signal = daemon->start(&input, true);
-	delete daemon;
+#if COMPILE_MODULE == MATCHERCACHETEST
+	Program* program = new MatcherCacheTest();
 #endif
-#if COMPILE_MODULE == MATCHERCACHE
-	SimpleProgram* matcherCache = new SimpleProgramMatcherCache();
-	signal = matcherCache->run(&input);
-	delete matcherCache;
+
+#if COMPILE_MODULE == PATTERNMATCHER
+	Program* program = new Daemon<PatternMatcher>();
 #endif
-#if COMPILE_MODULE == DBCONNECTOR
-	SimpleProgram* dbConnector = new SimpleProgramDBConnector();
-	signal = dbConnector->run(&input);
-	delete dbConnector;
+#if COMPILE_MODULE == PATTERNDBCONNECTOR
+	Program* program = new PatternDBConnector();
 #endif
-#if COMPILE_MODULE == EXTRACTOR
-	SimpleProgram* extractor = new SimpleProgramExtractor();
-	signal = extractor->run(&input);
-	delete extractor;
+#if COMPILE_MODULE == PATTERNEXTRACTOR
+	Program* program = new PatternExtractor();
 #endif
-#if COMPILE_MODULE == TRAINER
-	SimpleProgram* trainer = new SimpleProgramTrainer();
-	signal = trainer->run(&input);
-	delete trainer;
+#if COMPILE_MODULE == PATTERNTRAINER
+	Program* program = new PatternTrainer();
 #endif
+
+#if COMPILE_MODULE == FACEMATCHER
+	Program* program = new Daemon<FaceMatcher>();
+#endif
+#if COMPILE_MODULE == FACEDBCONNECTOR
+	Program* program = new FaceDBConnector();
+#endif
+#if COMPILE_MODULE == FACEEXTRACTOR
+	Program* program = new FaceExtractor();
+#endif
+#if COMPILE_MODULE == FACETRAINER
+	Program* program = new FaceTrainer();
+#endif
+
+	signal = program->start(&input);
+	delete program;
+
 	exit(signal);
 }
 
@@ -94,9 +124,9 @@ int main(int argc, const char * argv[]) {
 namespace fs = boost::filesystem;
 using namespace std;
 
-template<class Program>
+template<class SpecificProgram>
 void exportHelp(fs::path* path) {
-	Program program;
+	SpecificProgram program;
 
 	string readmeName = "README-" + program.getProgramName() + ".txt";
 	fs::path oFile = *path / readmeName;
@@ -105,7 +135,7 @@ void exportHelp(fs::path* path) {
 	if (oFileStream.is_open()) {
 		oFileStream.close();
 	}
-	oFileStream.open(oFile.string(), ios::out | ios::app);
+	oFileStream.open(oFile.string(), ios::out);
 	if (!oFileStream.is_open()) {
 		cerr << oFile << " file can't be opened" << endl;
 		exit(EXIT_FAILURE);
@@ -129,11 +159,17 @@ int main(int argc, const char * argv[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	exportHelp<Daemon<PatternMatchingCommandRunner>>(&path);
-	exportHelp<SimpleProgramMatcherCache>(&path);
-	exportHelp<SimpleProgramDBConnector>(&path);
-	exportHelp<SimpleProgramExtractor>(&path);
-	exportHelp<SimpleProgramTrainer>(&path);
+	exportHelp<MatcherCacheTest>(&path);
+
+	exportHelp<Daemon<PatternMatcher>>(&path);
+	exportHelp<PatternDBConnector>(&path);
+	exportHelp<PatternExtractor>(&path);
+	exportHelp<PatternTrainer>(&path);
+
+	exportHelp<Daemon<FaceMatcher>>(&path);
+	exportHelp<FaceDBConnector>(&path);
+	exportHelp<FaceExtractor>(&path);
+	exportHelp<FaceTrainer>(&path);
 
 	cout << "Success" << endl;
 

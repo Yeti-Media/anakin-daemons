@@ -6,33 +6,6 @@
 using namespace Anakin;
 using namespace std;
 
-/**
- * init the flags with testing additions (see testing README for mor info)
- */
-void Flags::initTestingFlags(Flags* flags) {
-#if COMPILE_MODULE == ALLMODULES
-	flags->setNoValuesFlag("modepatternmatching");
-	flags->setNoValuesFlag("modematchercache");
-	flags->setNoValuesFlag("modedbconnector");
-	flags->setNoValuesFlag("modeextractor");
-	flags->setNoValuesFlag("modetrainer");
-
-	flags->setIncompatibility("modepatternmatching", "modematchercache");
-	flags->setIncompatibility("modepatternmatching", "modedbconnector");
-	flags->setIncompatibility("modepatternmatching", "modeextractor");
-	flags->setIncompatibility("modepatternmatching", "modetrainer");
-
-	flags->setIncompatibility("modematchercache", "modedbconnector");
-	flags->setIncompatibility("modematchercache", "modeextractor");
-	flags->setIncompatibility("modematchercache", "modetrainer");
-
-	flags->setIncompatibility("modedbconnector", "modeextractor");
-	flags->setIncompatibility("modedbconnector", "modetrainer");
-
-	flags->setIncompatibility("modeextractor", "modetrainer");
-#endif
-}
-
 Flags::Flags() {
 	this->minCount = 0;
 }

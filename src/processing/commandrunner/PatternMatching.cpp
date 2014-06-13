@@ -5,30 +5,39 @@
  *      Author: Franco Pellegrini
  */
 
-#include <processing/commandrunner/CommandRunner.hpp>
-#include <processing/commandrunner/PatternMatchingCommandRunner.hpp>
-#include "output/JSONValue.h"
-#include <algorithm> // for copy
-#include <iterator> // for ostream_iterator
-#include "utils/Constants.hpp"
+#include <data/ImageInfo.hpp>
+#include <data/RichImg.hpp>
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
-#include <utils/help/HelpPatternMatching.hpp>
+#include <matching/BasicFlannDetector.hpp>
+#include <matching/FlannMatchingProcessor.hpp>
+#include <output/DataOutput.hpp>
+#include <output/JSONValue.h>
+#include <output/ResultWriter.hpp>
+#include <processing/commandrunner/PatternMatcher.hpp>
+#include <processing/Flags.hpp>
+#include <processing/SFBMCache.hpp>
+#include <sys/types.h>
+#include <utils/Constants.hpp>
+#include <utils/help/HelpPatternMatcher.hpp>
+#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace Anakin;
 using namespace std;
 
-Help* PatternMatchingCommandRunner::getHelp() {
-	return new HelpPatternMatching();
+Help* PatternMatcher::getHelp() {
+	return new HelpPatternMatcher();
 }
 
-string PatternMatchingCommandRunner::getProgramName() {
+string PatternMatcher::getProgramName() {
 	return "PatternMatcher";
 }
 
-void PatternMatchingCommandRunner::initializeCommandRunner(DataOutput* out,
+void PatternMatcher::initializeCommandRunner(DataOutput* out,
 		SFBMCache* cache) {
-	CommandRunner::initializeCommandRunner(out);
+	CommandRunner::initializeCommandRunner(out,cache);
 	this->rw = new ResultWriter();
 	this->cache = cache;
 
@@ -96,17 +105,17 @@ void PatternMatchingCommandRunner::initializeCommandRunner(DataOutput* out,
 	flags->setVerbose(true);
 }
 
-PatternMatchingCommandRunner::PatternMatchingCommandRunner() :
+PatternMatcher::PatternMatcher() :
 		CommandRunner() {
 	this->rw = NULL;
 	this->cache = NULL;
 }
 
-PatternMatchingCommandRunner::~PatternMatchingCommandRunner() {
+PatternMatcher::~PatternMatcher() {
 
 }
 
-void PatternMatchingCommandRunner::validateRequest(vector<string> *input) {
+void PatternMatcher::validateRequest(vector<string> *input) {
 	inputError = false;
 	action = NONE;
 	mma = 8;
@@ -197,7 +206,7 @@ void PatternMatchingCommandRunner::validateRequest(vector<string> *input) {
 	}
 }
 
-void PatternMatchingCommandRunner::run() {
+void PatternMatcher::run() {
 
 	if (inputError) {
 		this->out->error(

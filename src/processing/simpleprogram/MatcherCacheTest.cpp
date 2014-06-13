@@ -1,5 +1,5 @@
 /*
- * SimpleProgramMatcherCache.cpp
+ * MatcherCacheTest.cpp
  *
  *  Created on: 09/06/2014
  *      Author: Franco Pellegrini
@@ -7,10 +7,10 @@
 
 #include <db/DBDriver.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
-#include <processing/simpleprogram/SimpleProgramMatcherCache.hpp>
+#include <processing/simpleprogram/MatcherCacheTest.hpp>
 #include <processing/SFBMCache.hpp>
 #include <sys/types.h>
-#include <utils/help/HelpMatcherCache.hpp>
+#include <utils/help/HelpMatcherCacheTest.hpp>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -19,26 +19,26 @@ using namespace std;
 
 namespace Anakin {
 
-SimpleProgramMatcherCache::SimpleProgramMatcherCache() :
-		SimpleProgram() {
+MatcherCacheTest::MatcherCacheTest() :
+		Program() {
 }
 
-SimpleProgramMatcherCache::~SimpleProgramMatcherCache() {
+MatcherCacheTest::~MatcherCacheTest() {
 }
 
-Help* SimpleProgramMatcherCache::getHelp() {
-	return new HelpMatcherCache();
+Help* MatcherCacheTest::getHelp() {
+	return new HelpMatcherCacheTest();
 }
 
-string SimpleProgramMatcherCache::getProgramName() {
+string MatcherCacheTest::getProgramName() {
 	return "MatcherCacheTest";
 }
 
-void SimpleProgramMatcherCache::setupProgramFlags() {
+void MatcherCacheTest::initProgramFlags() {
 
 }
 
-int SimpleProgramMatcherCache::excecute(vector<string> *input) {
+int MatcherCacheTest::run(vector<string> *input) {
 	DBDriver dbdriver;
 	if (!dbdriver.connect("", "", "", "", "")) {
 		cerr << dbdriver.getMessage() << endl;

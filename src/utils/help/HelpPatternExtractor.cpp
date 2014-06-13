@@ -1,16 +1,16 @@
 /*
- * HelpExtractor.cpp
+ * HelpPatternExtractor.cpp
  *
  *  Created on: 23/05/2014
  *      Author: franco
  */
 
-#include <utils/help/HelpExtractor.hpp>
+#include <utils/help/HelpPatternExtractor.hpp>
 #include <string>
 
 namespace Anakin {
 
-HelpExtractor::HelpExtractor() {
+HelpPatternExtractor::HelpPatternExtractor() {
 	intro =
 			"Extracts information from images, constructs histograms for histogram and landscape matching. Extracts keypoints and descriptors for images."
 					"Labels are set using the image filename without the extension. For landscape is possible to set a custom label.\n";
@@ -35,7 +35,7 @@ HelpExtractor::HelpExtractor() {
 					"-hsv   : will use hue and saturation to generate histograms and landscape";
 }
 
-HelpExtractor::~HelpExtractor() {
+HelpPatternExtractor::~HelpPatternExtractor() {
 	// TODO Auto-generated destructor stub
 }
 

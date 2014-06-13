@@ -1,5 +1,5 @@
 /*
- * SimpleProgramDBConnector.cpp
+ * PatternDBConnector.cpp
  *
  *  Created on: 08/06/2014
  *      Author: Franco Pellegrini
@@ -12,10 +12,10 @@
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
 #include <processing/Flags.hpp>
-#include <processing/simpleprogram/SimpleProgramDBConnector.hpp>
+#include <processing/simpleprogram/PatternDBConnector.hpp>
 #include <sys/types.h>
 #include <utils/Constants.hpp>
-#include <utils/help/HelpDBConnector.hpp>
+#include <utils/help/HelpPatternDBConnector.hpp>
 #include <utils/XMLoader.hpp>
 #include <cstdlib>
 #include <iostream>
@@ -24,30 +24,30 @@ using namespace std;
 
 namespace Anakin {
 
-SimpleProgramDBConnector::SimpleProgramDBConnector() :
-		SimpleProgram() {
+PatternDBConnector::PatternDBConnector() :
+		Program() {
 }
 
-SimpleProgramDBConnector::~SimpleProgramDBConnector() {
+PatternDBConnector::~PatternDBConnector() {
 }
 
-Help* SimpleProgramDBConnector::getHelp() {
-	return new HelpDBConnector();
+Help* PatternDBConnector::getHelp() {
+	return new HelpPatternDBConnector();
 }
 
-string SimpleProgramDBConnector::getProgramName() {
+string PatternDBConnector::getProgramName() {
 	return "PatternDBConnector";
 }
 
-void SimpleProgramDBConnector::setupProgramFlags() {
-	this->programFlags->setOptionalFlag("user");
-	this->programFlags->setOptionalFlag("path");
-	this->programFlags->setNoValuesFlag("patterns");
-	this->programFlags->setNoValuesFlag("scenes");
-	this->programFlags->setNoValuesFlag("histograms");
-	this->programFlags->setNoValuesFlag("landscapes");
-	this->programFlags->setOptionalFlag("index");
-	this->programFlags->setNoValuesFlag("savePatterns");
+void PatternDBConnector::initProgramFlags() {
+	this->programFlags.setOptionalFlag("user");
+	this->programFlags.setOptionalFlag("path");
+	this->programFlags.setNoValuesFlag("patterns");
+	this->programFlags.setNoValuesFlag("scenes");
+	this->programFlags.setNoValuesFlag("histograms");
+	this->programFlags.setNoValuesFlag("landscapes");
+	this->programFlags.setOptionalFlag("index");
+	this->programFlags.setNoValuesFlag("savePatterns");
 
 	vector<string> pathLooseDeps(0);
 	pathLooseDeps.push_back("patterns");
@@ -55,19 +55,19 @@ void SimpleProgramDBConnector::setupProgramFlags() {
 	pathLooseDeps.push_back("landscapes");
 	pathLooseDeps.push_back("savePatterns");
 	pathLooseDeps.push_back("scenes");
-	this->programFlags->setLooseDependencies("path", &pathLooseDeps);
-	this->programFlags->setIncompatibility("index", "path");
-	this->programFlags->setIncompatibility("patterns", "histograms");
-	this->programFlags->setIncompatibility("patterns", "landscapes");
-	this->programFlags->setIncompatibility("patterns", "scenes");
-	this->programFlags->setIncompatibility("histograms", "landscapes");
-	this->programFlags->setIncompatibility("histograms", "scenes");
-	this->programFlags->setIncompatibility("landscapes", "scenes");
-	this->programFlags->setIncompatibility("index", "patterns");
-	this->programFlags->setIncompatibility("index", "histograms");
-	this->programFlags->setIncompatibility("index", "landscapes");
-	this->programFlags->setIncompatibility("index", "scenes");
-	this->programFlags->setNoValuesFlag("load");
+	this->programFlags.setLooseDependencies("path", &pathLooseDeps);
+	this->programFlags.setIncompatibility("index", "path");
+	this->programFlags.setIncompatibility("patterns", "histograms");
+	this->programFlags.setIncompatibility("patterns", "landscapes");
+	this->programFlags.setIncompatibility("patterns", "scenes");
+	this->programFlags.setIncompatibility("histograms", "landscapes");
+	this->programFlags.setIncompatibility("histograms", "scenes");
+	this->programFlags.setIncompatibility("landscapes", "scenes");
+	this->programFlags.setIncompatibility("index", "patterns");
+	this->programFlags.setIncompatibility("index", "histograms");
+	this->programFlags.setIncompatibility("index", "landscapes");
+	this->programFlags.setIncompatibility("index", "scenes");
+	this->programFlags.setNoValuesFlag("load");
 	vector<string> loadLooseDeps(0);
 	loadLooseDeps.push_back("user");
 	loadLooseDeps.push_back("index");
@@ -75,16 +75,16 @@ void SimpleProgramDBConnector::setupProgramFlags() {
 	loadLooseDeps.push_back("histograms");
 	loadLooseDeps.push_back("landscapes");
 	loadLooseDeps.push_back("scenes");
-	this->programFlags->setLooseDependencies("load", &loadLooseDeps);
-	this->programFlags->setIncompatibility("load", "path");
-	this->programFlags->setDependence("savePatterns", "index");
-	this->programFlags->setIncompatibility("savePatterns", "load");
-	this->programFlags->setOptionalFlag("sceneID");
-	this->programFlags->setDependence("sceneID", "load");
-	this->programFlags->setDependence("sceneID", "scenes");
+	this->programFlags.setLooseDependencies("load", &loadLooseDeps);
+	this->programFlags.setIncompatibility("load", "path");
+	this->programFlags.setDependence("savePatterns", "index");
+	this->programFlags.setIncompatibility("savePatterns", "load");
+	this->programFlags.setOptionalFlag("sceneID");
+	this->programFlags.setDependence("sceneID", "load");
+	this->programFlags.setDependence("sceneID", "scenes");
 }
 
-int SimpleProgramDBConnector::excecute(vector<string> *input) {
+int PatternDBConnector::run(vector<string> *input) {
 	string path;
 	bool saveObjects = false;
 	int userID;
@@ -98,10 +98,10 @@ int SimpleProgramDBConnector::excecute(vector<string> *input) {
 
 	vector<string>* values = new vector<string>();
 
-	if (this->programFlags->flagFound("user")) {
+	if (this->programFlags.flagFound("user")) {
 		saveUser = true;
 		values->clear();
-		values = this->programFlags->getFlagValues("user");
+		values = this->programFlags.getFlagValues("user");
 		if (values->size() == 1) {
 			userID = stoi(values->at(0));
 		} else {
@@ -109,10 +109,10 @@ int SimpleProgramDBConnector::excecute(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags->flagFound("path")) {
+	if (this->programFlags.flagFound("path")) {
 		saveObjects = true;
 		values->clear();
-		values = this->programFlags->getFlagValues("path");
+		values = this->programFlags.getFlagValues("path");
 		if (values->size() == 1) {
 			path = values->at(0);
 		} else {
@@ -120,30 +120,30 @@ int SimpleProgramDBConnector::excecute(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags->flagFound("patterns")) {
+	if (this->programFlags.flagFound("patterns")) {
 		objectsAs = Constants::PATTERN;
 	}
-	if (this->programFlags->flagFound("histograms")) {
+	if (this->programFlags.flagFound("histograms")) {
 		objectsAs = Constants::HISTOGRAM;
 	}
-	if (this->programFlags->flagFound("landscapes")) {
+	if (this->programFlags.flagFound("landscapes")) {
 		objectsAs = Constants::LANDSCAPE;
 	}
-	if (this->programFlags->flagFound("index")) {
+	if (this->programFlags.flagFound("index")) {
 		objectsAs = Constants::INDEX;
 	}
-	if (this->programFlags->flagFound("scenes")) {
+	if (this->programFlags.flagFound("scenes")) {
 		objectsAs = Constants::SCENE;
 	}
-	if (this->programFlags->flagFound("load")) {
+	if (this->programFlags.flagFound("load")) {
 		load = true;
 		if (objectsAs == Constants::SCENE) {
 			loadingScenes = true;
 		}
 	}
-	if (this->programFlags->flagFound("sceneID")) {
+	if (this->programFlags.flagFound("sceneID")) {
 		values->clear();
-		values = this->programFlags->getFlagValues("sceneID");
+		values = this->programFlags.getFlagValues("sceneID");
 		if (values->size() == 1) {
 			sceneID = stoi(values->at(0));
 		} else {
@@ -151,14 +151,14 @@ int SimpleProgramDBConnector::excecute(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags->flagFound("savePatterns")) {
+	if (this->programFlags.flagFound("savePatterns")) {
 		savePatterns = true;
 	}
 
-	if (this->programFlags->flagFound("index")) {
+	if (this->programFlags.flagFound("index")) {
 		saveObjects = true;
 		values->clear();
-		values = this->programFlags->getFlagValues("index");
+		values = this->programFlags.getFlagValues("index");
 		if (values->size() == 1 && load) {
 			smatcher_id = values->at(0);
 		} else if (values->size() == 2 && !load) {

@@ -10,14 +10,16 @@ CommandRunner::CommandRunner() {
 	this->flags = NULL;
 	this->out = NULL;
 	this->sceneID = -1;
+	this->cache = NULL;
 }
 
 /**
  * Should initializate all used variables
  */
-void CommandRunner::initializeCommandRunner(DataOutput* out) {
+void CommandRunner::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
 	this->flags = new Flags();
 	this->out = out;
+	this->cache = cache;
 }
 
 /**

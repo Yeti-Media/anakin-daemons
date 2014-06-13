@@ -1,23 +1,24 @@
 /*
- * SimpleProgramExtractor.hpp
+ * PatternExtractor.hpp
  *
  *  Created on: 09/06/2014
  *      Author: Franco Pellegrini
  */
 
-#ifndef SIMPLEPROGRAMEXTRACTOR_HPP_
-#define SIMPLEPROGRAMEXTRACTOR_HPP_
+#ifndef PATTERNEXTRACTOR_HPP_
+#define PATTERNEXTRACTOR_HPP_
 
-#include <processing/simpleprogram/SimpleProgram.hpp>
+#include <processing/Program.hpp>
+#include <utils/help/Help.hpp>
 #include <string>
 #include <vector>
 
 namespace Anakin {
 
-class SimpleProgramExtractor: public SimpleProgram {
+class PatternExtractor: public Program {
 public:
-	SimpleProgramExtractor();
-	virtual ~SimpleProgramExtractor();
+	PatternExtractor();
+	virtual ~PatternExtractor();
 	Help* getHelp();
 	string getProgramName();
 
@@ -31,8 +32,8 @@ public:
 	const static char MINMAX = 8;
 	const static char AVG = 16;
 protected:
-	int excecute(vector<string> *input);
-	void setupProgramFlags();
+	int run(vector<string> *input);
+	void initProgramFlags();
 };
 
 } /* namespace Anakin */

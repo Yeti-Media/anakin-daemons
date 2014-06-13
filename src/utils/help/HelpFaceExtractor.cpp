@@ -1,20 +1,20 @@
 /*
- * HelpMatcherCache.cpp
+ * HelpFaceExtractor.cpp
  *
- *  Created on: 09/06/2014
+ *  Created on: 13/06/2014
  *      Author: Franco Pellegrini
  */
 
-#include <utils/help/HelpMatcherCache.hpp>
+#include <utils/help/HelpFaceExtractor.hpp>
 
 namespace Anakin {
 
-HelpMatcherCache::HelpMatcherCache() {
+HelpFaceExtractor::HelpFaceExtractor() {
 	// TODO Auto-generated constructor stub
 
 }
 
-HelpMatcherCache::~HelpMatcherCache() {
+HelpFaceExtractor::~HelpFaceExtractor() {
 	// TODO Auto-generated destructor stub
 }
 
