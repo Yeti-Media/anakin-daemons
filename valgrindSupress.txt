@@ -1,0 +1,214 @@
+{
+    openssl
+    Memcheck:Cond
+    ...
+    obj:*/libcrypto*
+    ...
+}
+{
+    openssl
+    Memcheck:Value4
+    ...
+    obj:*/libcrypto*
+    ...
+}
+{
+    openssl
+    Memcheck:Cond
+    ...
+    obj:*/libssl*
+    ...
+}
+{
+    openssl
+    Memcheck:Value4
+    ...
+    obj:*/libssl*
+    ...
+}
+{
+    postgresql
+    Memcheck:Cond
+    ...
+    obj:*/libpq*
+    ...
+}
+{
+    postgresql
+    Memcheck:Value4
+    ...
+    obj:*/libpq*
+    ...
+}
+{
+    postgresql
+    Memcheck:Value8
+    ...
+    obj:*/libpq*
+    ...
+}
+{
+    postgresql
+    Memcheck:Value16
+    ...
+    obj:*/libpq*
+    ...
+}
+
+{
+    postgresql
+    Memcheck:Cond
+    ...
+    fun:PQsetdbLogin
+    ...
+}
+{
+    postgresql
+    Memcheck:Value4
+    ...
+    fun:PQsetdbLogin
+    ...
+}
+{
+    postgresql
+    Memcheck:Value8
+    ...
+    fun:PQsetdbLogin
+    ...
+}
+{
+    postgresql
+    Memcheck:Value16
+    ...
+    fun:PQsetdbLogin
+    ...
+}
+{
+    postgresql
+    Memcheck:Cond
+    fun:PQconnectPoll
+}
+{
+    postgresql
+    Memcheck:Value4
+    fun:PQconnectPoll
+}
+{
+    postgresql
+    Memcheck:Value8
+    fun:PQconnectPoll
+}
+{
+    postgresql
+    Memcheck:Value16
+    fun:PQconnectPoll
+}
+
+{
+    postgresql
+    Memcheck:Cond
+    fun:PQisBusy
+}
+{
+    postgresql
+    Memcheck:Value4
+    fun:PQisBusy
+}
+{
+    postgresql
+    Memcheck:Value8
+    fun:PQisBusy
+}
+{
+    postgresql
+    Memcheck:Value16
+    fun:PQisBusy
+}
+
+{
+   postgresql
+   Memcheck:Cond
+   fun:strlen
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ...
+}
+
+{
+   postgresql
+   Memcheck:Cond
+   fun:strcpy
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ...
+}
+{
+   postgresql
+   Memcheck:Value4
+   fun:strcpy
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ...
+}
+{
+   postgresql
+   Memcheck:Value8
+   fun:strcpy
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ...
+}
+{
+   postgresql
+   Memcheck:Value16
+   fun:strcpy
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ...
+}
+
+
+{
+  postgresql
+   Memcheck:Cond
+   fun:strcmp
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ...
+}
+
+
+{
+   postgresql
+   Memcheck:Cond
+   fun:memcpy@@GLIBC_2.14
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ... 
+}
+{
+   postgresql
+   Memcheck:Value8
+   fun:memcpy@@GLIBC_2.14
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ... 
+}
+{
+   postgresql
+   Memcheck:Value4
+   fun:memcpy@@GLIBC_2.14
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ... 
+}
+{
+   postgresql
+   Memcheck:Value16
+   fun:memcpy@@GLIBC_2.14
+   ...
+   obj:/usr/lib/libpq.so.5.6
+   ... 
+}
+
+
