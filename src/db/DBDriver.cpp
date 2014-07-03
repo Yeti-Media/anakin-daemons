@@ -1,4 +1,5 @@
 #include "db/DBDriver.hpp"
+#include <stdlib.h>
 #include <iostream>
 #include "utils/Constants.hpp"
 #include <string>
@@ -10,6 +11,7 @@
 #include <logging/OutputPolicyFile.hpp>
 
 using namespace Anakin;
+using namespace std;
 
 DBDriver::DBDriver() {
 	this->conn = NULL;
@@ -171,8 +173,8 @@ vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
 				for (int t = 0; t < tuples; t++) {
-					const char* value = PQgetvalue(res, t, 0);
-					pids.push_back(atoi(value));
+				//	const char* value = PQgetvalue(res, t, 0);
+					pids.push_back(stoi(PQgetvalue(res, t, 0)));
 				}
 				*error = false;
 			} else {
@@ -439,8 +441,8 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 			PQclear(res);
 			return false;
 		}
-		const char* tid = PQgetvalue(res, 0, 0);
-		string stid(tid);
+		//const char* tid = ;
+		string stid(PQgetvalue(res, 0, 0));
 		*smatcher_id = stoi(stid);
 		PQclear(res);
 		everythingWentOk = true;
@@ -488,10 +490,10 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 			logMessage(no_matcher_found);
 			return false;
 		}
-		const char* matcher_file_id = PQgetvalue(res, 0, 0);
-		string matcher_file_sid(matcher_file_id);
-		const char* index_file_id = PQgetvalue(res, 0, 1);
-		string index_file_sid(index_file_id);
+	//	const char* matcher_file_id = ;
+		string matcher_file_sid(PQgetvalue(res, 0, 0));
+		//const char* index_file_id = ;
+		string index_file_sid(PQgetvalue(res, 0, 1));
 		PQclear(res);
 		string filename = to_string(smatcher_id);
 		bool indexFileLoaded = loadFileFromDB(stoi(index_file_sid),
@@ -614,8 +616,8 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 			logMessage(no_pattern_found);
 			return false;
 		}
-		const char* retrieved_pid = PQgetvalue(res, 0, 0);
-		string retrieved_spid(retrieved_pid);
+		//const char* retrieved_pid = PQgetvalue(res, 0, 0);
+		string retrieved_spid(PQgetvalue(res, 0, 0));
 		PQclear(res);
 		DBPattern* dbp;
 		if (!retrievePattern(stoi(retrieved_spid), error, true, &dbp)) {
@@ -665,8 +667,8 @@ bool DBDriver::storeScene(DBPattern* scene) {
 			PQclear(res);
 			return false;
 		}
-		const char* retrieved_pid = PQgetvalue(res, 0, 0);
-		string retrieved_spid(retrieved_pid);
+		//const char* retrieved_pid = PQgetvalue(res, 0, 0);
+		string retrieved_spid(PQgetvalue(res, 0, 0));
 		int pid = stoi(retrieved_spid);
 		scene->changeID(pid);
 		string msg;
@@ -709,8 +711,8 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 			return false;
 		}
 		string xmlData = "<?xml version=\"1.0\"?>";
-		const char* scene_data = PQgetvalue(res, 0, 0);
-		string scene_sdata(scene_data);
+	//	const char* scene_data = PQgetvalue(res, 0, 0);
+		string scene_sdata(PQgetvalue(res, 0, 0));
 		xmlData.append(scene_sdata);
 		PQclear(res);
 		DBPattern* pscene = new DBPattern(xmlData);
@@ -805,8 +807,8 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error) {
 		logMessage(no_descriptors_found);
 		return false;
 	}
-	const char* desc_data = PQgetvalue(res, 0, 0);
-	string sdesc_sdata(desc_data);
+	//const char* desc_data = PQgetvalue(res, 0, 0);
+	string sdesc_sdata(PQgetvalue(res, 0, 0));
 	PQclear(res);
 	*data = sdesc_sdata;
 	string msg;
@@ -837,11 +839,11 @@ bool DBDriver::savePatternBasicInfo(int user_id, int category_id, int * pid) {
 		PQclear(res);
 		return false;
 	}
-	const char* retrieved_pid = PQgetvalue(res, 0, 0);
-	string spid(retrieved_pid);
-	*pid = stoi(spid);
+	//const char* retrieved_pid = PQgetvalue(res, 0, 0);
+	//string spid(PQgetvalue(res, 0, 0));
+	*pid = stoi(PQgetvalue(res, 0, 0));
 	string msg;
-	msg.append("Saved basic information for pattern ").append(spid);
+	msg.append("Saved basic information for pattern ").append(to_string(*pid));
 	logMessage(msg);
 	PQclear(res);
 	return true;
@@ -875,8 +877,8 @@ bool DBDriver::getPatternBasicInfo(int id, int * user_id, bool * error) {
 		logMessage(no_pattern_found);
 		return false;
 	}
-	const char* uid = PQgetvalue(res, 0, 0);
-	string suid(uid);
+//	const char* uid = PQgetvalue(res, 0, 0);
+	string suid(PQgetvalue(res, 0, 0));
 	*user_id = stoi(suid);
 	string msg;
 	msg.append("Basic information for pattern ").append(sid).append(" loaded");
@@ -944,8 +946,8 @@ int DBDriver::getCategoryID(string name, bool * error) {
 		*error = true;
 		return -1;
 	}
-	const char* id = PQgetvalue(res, 0, 0);
-	string sid(id);
+	//const char* id = PQgetvalue(res, 0, 0);
+	string sid(PQgetvalue(res, 0, 0));
 	int cid = stoi(sid);
 	string msg;
 	msg.append("Category ").append(name).append(" found with id ").append(sid);
@@ -1007,12 +1009,12 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 		if (load) {
 			if (result != NULL) {
 				DBHistogram* horl;
-				const char* cdata = PQgetvalue(res, 0, 0);
-				const char* gdata = PQgetvalue(res, 0, 1);
-				const char* hdata = PQgetvalue(res, 0, 2);
-				string scdata(cdata);
-				string sgdata(gdata);
-				string shdata(hdata);
+				//const char* cdata = PQgetvalue(res, 0, 0);
+				//const char* gdata = PQgetvalue(res, 0, 1);
+			//	const char* hdata = PQgetvalue(res, 0, 2);
+				string scdata(PQgetvalue(res, 0, 0));
+				string sgdata(PQgetvalue(res, 0, 1));
+				string shdata(PQgetvalue(res, 0, 2));
 				horl = new DBHistogram(id, (mode & Constants::LANDSCAPE));
 				horl->setColorData(scdata);
 				horl->setGrayData(sgdata);
@@ -1069,8 +1071,8 @@ vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
 				for (int t = 0; t < tuples; t++) {
-					const char* value = PQgetvalue(res, t, 0);
-					pids.push_back(atoi(value));
+			//		const char* value = PQgetvalue(res, t, 0);
+					pids.push_back(stoi(PQgetvalue(res, t, 0)));
 				}
 				*error = false;
 			} else {
