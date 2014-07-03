@@ -343,24 +343,24 @@ void simpleTest(int argc, const char * argv[]) {
 	fs::path logsTrainer = logsDir / "patternTrainer.log";
 	fs::path logsExtractor = logsDir / "patternExtractor.log";
 
-//dir cleanups
+	//dir cleanups
 	dirCleanup(outputLogos);
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
 	command(false, "rm -f " + pathToAnakinPath(severalXML));
 
-//testing database cleanup
+	//testing database cleanup
 	command(false, "dropdb --if-exists " + database);
 
-//testing database creation.
+	//testing database creation.
 	command(false, "createdb " + database);
 
-//run SQL script into database.
+	//run SQL script into database.
 	command(false,
 			"psql -U " + userDB + " -d " + database + " -q -f "
 					+ pathToAnakinPath(sqlScriptPath));
 
-//setting up new testing temporary environment variables
+	//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);
 
 //TODO verify stdout!
