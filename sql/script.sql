@@ -3,6 +3,7 @@
 
 DROP DATABASE IF EXISTS anakin;
 CREATE DATABASE anakin;
+\c anakin
 
 ---------------------------------------------------------------------------------------------------------------
 CREATE TABLE "users" (
