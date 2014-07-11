@@ -13,13 +13,13 @@
 #include <matching/FlannMatchingProcessor.hpp>
 #include <output/DataOutput.hpp>
 #include <output/JSONValue.h>
-#include <output/ResultWriter.hpp>
 #include <processing/commandrunner/PatternMatcher.hpp>
 #include <processing/Flags.hpp>
 #include <processing/SFBMCache.hpp>
 #include <sys/types.h>
 #include <utils/Constants.hpp>
 #include <utils/help/HelpPatternMatcher.hpp>
+#include <utils/ClearVector.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -49,8 +49,8 @@ string PatternMatcher::getProgramName() {
 
 void PatternMatcher::initializeCommandRunner(DataOutput* out,
 		SFBMCache* cache) {
-	CommandRunner::initializeCommandRunner(out, cache);
-	this->rw = new ResultWriter();
+	CommandRunner::initializeCommandRunner(out,cache);
+	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->cache = cache;
 
 	flags->setMinCount(1);
@@ -215,11 +215,11 @@ void PatternMatcher::run() {
 	}
 
 	int ireqID = std::stoi(reqID);
-	wstring* auxiliarForConversion;
 
 	switch (action) {
 	case E_PatternMatchingAction::NONE: {
 		LOG_F("ERROR")<< "You can't process NONE action in PatternMatchingCommandRunner::run()";
+		//shouldn't come in here
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
@@ -241,12 +241,12 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult());
 				return;
 			}
-			*auxiliarForConversion = this->cache->getLastOperationResult();
-			inserts.push_back(auxiliarForConversion);
+			inserts.push_back(this->cache->getLastOperationResult());
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_ADD,
 						inserts), ireqID);
+		//TODO delete inserts;
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
@@ -263,21 +263,21 @@ void PatternMatcher::run() {
 			string smatcherID = this->indexes.at(i);
 			int idxID = stoi(smatcherID);
 			this->cache->unloadMatcher(idxID);
-			*auxiliarForConversion = this->cache->getLastOperationResult();
-			deletes.push_back(auxiliarForConversion);
+			deletes.push_back(this->cache->getLastOperationResult());
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_DEL,
 						deletes), ireqID);
+		//TODO delete deletes;
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
 		std::vector<wstring*> status;
-		*auxiliarForConversion = this->cache->indexCacheStatus();
-		status.push_back(auxiliarForConversion);
+		status.push_back(this->cache->indexCacheStatus());
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_CACHE_IDX_STATUS, status), ireqID);
+		//TODO delete status;
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
@@ -300,12 +300,12 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult());
 				return;
 			}
-			*auxiliarForConversion = this->cache->getLastOperationResult();
-			updates.push_back(auxiliarForConversion);
+			updates.push_back(this->cache->getLastOperationResult());
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_UPD,
 						updates), ireqID);
+		//TODO delete updates;
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
@@ -349,25 +349,15 @@ void PatternMatcher::run() {
 				return;
 			}
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
-			delete cmatches; 
 		}
 		std::vector<wstring*> sceneMatches;
-		wstring estrin;
-		estrin = this->cfm->outputMatches(scene->getLabel(), *matches);
-		wcout << "estrin " << estrin<< endl;
-		//*auxiliarForConversion = this->cfm->outputMatches(scene->getLabel(), *matches);
-		*auxiliarForConversion = estrin;
-		sceneMatches.push_back(auxiliarForConversion);
+		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), *matches));
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_PATTERN_MATCHING, sceneMatches),
 				ireqID);
 		delete matches;
 		delete rscene;
-		break;
-	}
-	case E_PatternMatchingAction::NONE: {
-		//shouldn't come in here
 		break;
 	}
 	}
