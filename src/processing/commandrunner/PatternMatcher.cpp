@@ -349,14 +349,14 @@ void PatternMatcher::run() {
 				return;
 			}
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
-			delete cmatches; //TODO review if this is WRONG
-			//delete this->detector;
-			//delete this->processor;
+			delete cmatches; 
 		}
 		std::vector<wstring*> sceneMatches;
 		wstring estrin;
 		estrin = this->cfm->outputMatches(scene->getLabel(), *matches);
-		*auxiliarForConversion = this->cfm->outputMatches(scene->getLabel(), *matches);
+		wcout << "estrin " << estrin<< endl;
+		//*auxiliarForConversion = this->cfm->outputMatches(scene->getLabel(), *matches);
+		*auxiliarForConversion = estrin;
 		sceneMatches.push_back(auxiliarForConversion);
 		this->out->output(
 				this->cfm->outputResponse(reqID,

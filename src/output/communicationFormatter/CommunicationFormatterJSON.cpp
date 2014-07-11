@@ -57,13 +57,16 @@ wstring CommunicationFormatterJSON::outputResponse(string requestID,
 	JSONArray valuesJSON;
 	for (uint v = 0; v < values.size(); v++) {
 		wstring* auxiliar = values.at(v);
-		JSONValue *auxValue = new JSONValue(*auxiliar);
+		const wchar_t * lala = auxiliar->c_str();
+		JSONValue *auxValue = JSON::Parse(lala);
+		//JSONValue *auxValue = new JSONValue(*auxiliar);
 		valuesJSON.push_back(auxValue);
 	}
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *returnValue = new JSONValue(root);
+	wcout << "outputResponse" << returnValue->Stringify().c_str() << endl;
 	return returnValue->Stringify().c_str();
 
 }
@@ -103,10 +106,13 @@ wstring CommunicationFormatterJSON::outputError(e_error errorType,
 	root[L"message"] = new JSONValue(wmessage.str());
 	root[L"origin"] = new JSONValue(worigin.str());
 	JSONValue *value = new JSONValue(root);
+	wcout << "outputError" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
 wstring CommunicationFormatterJSON::format(const char * data) {
+	cout << "format data = " << data << endl;
+	wcout << "format return" << (JSON::Parse(data))->Stringify().c_str() << endl;
 	return (JSON::Parse(data))->Stringify().c_str();
 }
 
@@ -148,10 +154,12 @@ wstring CommunicationFormatterJSON::format(char mode, string data, char colors){
 	root[L"data"] = new JSONValue(ws.str());
 
 	JSONValue *value = new JSONValue(root);
+	wcout << "format" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
 string CommunicationFormatterJSON::formatRequest(const char * data){
+	cout << "formatRequest data" << data << endl;
 	JSONValue* req = JSON::Parse(data);
 	std::string request = "";
 		if (req->HasChild(L"action")) {
@@ -163,7 +171,7 @@ string CommunicationFormatterJSON::formatRequest(const char * data){
 			request += "-" + Constants::PARAM_IDXS + " ";
 			JSONArray indexes =
 					req->Child(Constants::WPARAM_IDXS.c_str())->AsArray();
-			for (int i = 0; i < indexes.size(); i++) {
+			for (unsigned int i = 0; i < indexes.size(); i++) {
 				JSONValue* v = indexes.at(i);
 				std::string sv = std::to_string((int) v->AsNumber());
 				request += sv + " ";
@@ -198,6 +206,7 @@ string CommunicationFormatterJSON::formatRequest(const char * data){
 				request += mma + " ";
 			}
 		}
+		cout << "formatRequest" << request << endl;
 		return request;
 }
 

@@ -61,6 +61,8 @@ wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
+	wstring salida = value->Stringify().c_str();
+	wcout << "outputMatch" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
@@ -79,6 +81,7 @@ wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
 //		estrin = *(values.at(ig));
 //		wcout << "values->at(ig) " << estrin<< endl;
 //	}
+	//VERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 	JSONObject root;
 	wstringstream ws;
 	ws << label.c_str();
@@ -87,17 +90,21 @@ wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
 
 	for (uint v = 0; v < values.size(); v++) {
 		wstring* auxiliar = values.at(v);
-//		wcout << "auxiliar" << *auxiliar << endl;
-		JSONValue *auxValue = new JSONValue(*auxiliar);//(values.at(v));
+		wcout << "auxiliar outputMatches values" << /*auxiliar->c_str()*/ *values.at(v) << endl;
+		//JSONValue *auxValue = new JSONValue(*auxiliar);/*/(*values.at(v));*/
+		const wchar_t * lala = auxiliar->c_str();
+		JSONValue *auxValue = JSON::Parse(lala);
 		valuesJSON.push_back(auxValue);
 	}
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *value = new JSONValue(root);
-//	wstring estrin = value->Stringify().c_str();
+	wstring estrin = value->Stringify().c_str();
+	wcout << "outputMatches" << estrin << endl;
 //	wcout << "value->Stringify().c_str()" << estrin << endl;
-	return value->Stringify().c_str();
+//	wcout << "outputMatches" << value->Stringify().c_str() << endl;
+	return estrin;//value->Stringify().c_str();
 }
 
 CommunicationFormatterMatchingJSON::~CommunicationFormatterMatchingJSON() {

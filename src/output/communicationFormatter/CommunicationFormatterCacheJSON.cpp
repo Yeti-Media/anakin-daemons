@@ -30,11 +30,13 @@ wstring CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 	root[L"index_removed"] = new JSONValue((double) smatcher_id_removed);
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);
 	JSONValue *value = new JSONValue(root);
+	wcout << "trainerAdd" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
 wstring CommunicationFormatterCacheJSON::trainerDel(
 		int smatcher_id_deleted, int cacheFreeSpace) {
+	cout << "la proxima salida corresponde al trainerDel" << endl;
 	return trainerAdd(-1, cacheFreeSpace, smatcher_id_deleted);
 }
 
@@ -47,6 +49,7 @@ wstring CommunicationFormatterCacheJSON::trainerUPD(
 	JSONObject root;
 	root[L"index_updated"] = new JSONValue((double) smatcher_id_updated);
 	JSONValue *value = new JSONValue(root);
+	wcout << "trainerUPD" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
@@ -70,6 +73,7 @@ wstring CommunicationFormatterCacheJSON::cacheStatus(
 	root[L"indexes"] = new JSONValue(values);
 
 	JSONValue *value = new JSONValue(root);
+	wcout << "cacheStatus" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
