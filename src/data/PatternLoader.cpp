@@ -82,7 +82,7 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 		} else {
 			I_CommunicationFormatter* cf = new CommunicationFormatterJSON();
 			string data = fs.releaseAndGetString();
-			std::wcout << cf->format(I_CommunicationFormatter::CF_PATTERNS, data, 0)
+			std::wcout << cf->format(I_CommunicationFormatter::e_mode::CF_PATTERNS, data, I_CommunicationFormatter::e_color::CF_NONE)
 					<< std::endl;
 		}
 		if (filesToLoad > 0) {

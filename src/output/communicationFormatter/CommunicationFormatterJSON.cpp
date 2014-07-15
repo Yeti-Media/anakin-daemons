@@ -18,7 +18,7 @@ CommunicationFormatterJSON::CommunicationFormatterJSON() {
 wstring CommunicationFormatterJSON::outputResponse(string requestID,
 		e_category category, vector<wstring *> values) {
 
-	/*  Result as JSONObject
+	/*  Result as wstring representing a JSONObject
 
 	 root    -> requestID (string)
 
@@ -30,43 +30,41 @@ wstring CommunicationFormatterJSON::outputResponse(string requestID,
 	wstringstream ws;
 	ws << requestID.c_str();
 	root[L"requestID"] = new JSONValue(ws.str());
-	wstringstream ys;
 	switch (category){
 		case CF_PATTERN_MATCHING: {
-			ys << "PATTERN";
+			root[L"category"] = new JSONValue(L"PATTERN");
 			break;
 		}
 		case CF_CACHE_IDX_ADD: {
-			ys << "INDEX ADD";
+			root[L"category"] = new JSONValue(L"INDEX ADD");
 			break;
 		}
 		case CF_CACHE_IDX_DEL: {
-			ys << "INDEX DELETE";
+			root[L"category"] = new JSONValue(L"INDEX DELETE");
 			break;
 		}
 		case CF_CACHE_IDX_UPD: {
-			ys << "INDEX UPDATE";
+			root[L"category"] = new JSONValue(L"INDEX UPDATE");
 			break;
 		}
 		case CF_CACHE_IDX_STATUS: {
-			ys << "INDEX STATUS";
+			root[L"category"] = new JSONValue(L"INDEX STATUS");
+			break;
+		}
+		default: {
+			root[L"category"] = new JSONValue(L"NONE---ERROR");
 			break;
 		}
 	}
-	root[L"category"] = new JSONValue(ys.str());
 	JSONArray valuesJSON;
 	for (uint v = 0; v < values.size(); v++) {
-		wstring* auxiliar = values.at(v);
-		const wchar_t * lala = auxiliar->c_str();
-		JSONValue *auxValue = JSON::Parse(lala);
-		//JSONValue *auxValue = new JSONValue(*auxiliar);
+		JSONValue *auxValue = JSON::Parse(values.at(v)->c_str());
 		valuesJSON.push_back(auxValue);
 	}
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *returnValue = new JSONValue(root);
-	wcout << "outputResponse" << returnValue->Stringify().c_str() << endl;
 	return returnValue->Stringify().c_str();
 
 }
@@ -74,7 +72,7 @@ wstring CommunicationFormatterJSON::outputResponse(string requestID,
 wstring CommunicationFormatterJSON::outputError(e_error errorType,
 		std::string message, std::string origin) {
 
-	/*  Result as JSONObject
+	/*  Result as wstring representing a JSONObject
 
 	 root    -> error_type (string)
 
@@ -106,18 +104,15 @@ wstring CommunicationFormatterJSON::outputError(e_error errorType,
 	root[L"message"] = new JSONValue(wmessage.str());
 	root[L"origin"] = new JSONValue(worigin.str());
 	JSONValue *value = new JSONValue(root);
-	wcout << "outputError" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
 wstring CommunicationFormatterJSON::format(const char * data) {
-	cout << "format data = " << data << endl;
-	wcout << "format return" << (JSON::Parse(data))->Stringify().c_str() << endl;
 	return (JSON::Parse(data))->Stringify().c_str();
 }
 
-wstring CommunicationFormatterJSON::format(char mode, string data, char colors){
-	/*  Result as JSONObject
+wstring CommunicationFormatterJSON::format(e_mode mode, string data, e_color colors){
+	/*  Result as wstring representing a JSONObject
 
 	 root    -> type ("pattern" | "histogram" | "landscape")
 	 -> colors (only if type != "pattern")   ->  color (bool)
@@ -128,20 +123,19 @@ wstring CommunicationFormatterJSON::format(char mode, string data, char colors){
 	 */
 
 	JSONObject root;
-
-	if (mode & I_CommunicationFormatter::CF_PATTERNS) {
+	if (mode & CF_PATTERNS) {
 		root[L"type"] = new JSONValue(L"pattern");
-	} else if (mode & I_CommunicationFormatter::CF_HISTOGRAMS) {
+	} else if (mode & CF_HISTOGRAMS) {
 		root[L"type"] = new JSONValue(L"histogram");
-	} else if (mode & I_CommunicationFormatter::CF_LANDSCAPE) {
+	} else if (mode & CF_LANDSCAPE) {
 		root[L"type"] = new JSONValue(L"landscape");
 	}
 
-	if ((mode & I_CommunicationFormatter::CF_HISTOGRAMS) || (mode & I_CommunicationFormatter::CF_LANDSCAPE)) {
+	if ((mode & CF_HISTOGRAMS) || (mode & CF_LANDSCAPE)) {
 		JSONObject jcolors;
-		bool color = colors & I_CommunicationFormatter::CF_COLOR;
-		bool gray = colors & I_CommunicationFormatter::CF_GRAY;
-		bool hsv = colors & I_CommunicationFormatter::CF_HSV;
+		bool color = colors & CF_COLOR;
+		bool gray = colors & CF_GRAY;
+		bool hsv = colors & CF_HSV;
 		jcolors[L"color"] = new JSONValue(color);
 		jcolors[L"gray"] = new JSONValue(gray);
 		jcolors[L"hsv"] = new JSONValue(hsv);
@@ -154,12 +148,10 @@ wstring CommunicationFormatterJSON::format(char mode, string data, char colors){
 	root[L"data"] = new JSONValue(ws.str());
 
 	JSONValue *value = new JSONValue(root);
-	wcout << "format" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
 string CommunicationFormatterJSON::formatRequest(const char * data){
-	cout << "formatRequest data" << data << endl;
 	JSONValue* req = JSON::Parse(data);
 	std::string request = "";
 		if (req->HasChild(L"action")) {
@@ -206,7 +198,6 @@ string CommunicationFormatterJSON::formatRequest(const char * data){
 				request += mma + " ";
 			}
 		}
-		cout << "formatRequest" << request << endl;
 		return request;
 }
 

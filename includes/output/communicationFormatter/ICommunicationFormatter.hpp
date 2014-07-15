@@ -32,25 +32,18 @@ public:
 		CF_CACHE_IDX_STATUS
 	};
 
-//	enum e_mode{
-//		CF_PATTERNS = 1,
-//		CF_HISTOGRAMS = 2,
-//		CF_LANDSCAPE = 4
-//	};
-//
-//	enum e_color{
-//		CF_COLOR = 8,
-//		CF_GRAY = 16,
-//		CF_HSV = 32
-//	};
+	enum e_mode{
+		CF_PATTERNS = 1,
+		CF_HISTOGRAMS = 2,
+		CF_LANDSCAPE = 4
+	};
 
-	static const char CF_PATTERNS = 1;
-	static const char CF_HISTOGRAMS = 2;
-	static const char CF_LANDSCAPE = 4;
-
-	static const char CF_COLOR = 8;
-	static const char CF_GRAY = 16;
-	static const char CF_HSV = 32;
+	enum e_color{
+		CF_NONE = 0,
+		CF_COLOR = 8,
+		CF_GRAY = 16,
+		CF_HSV = 32
+	};
 
 	virtual wstring outputResponse(string requestID, e_category category,
 			vector<wstring *> values) {
@@ -78,15 +71,7 @@ public:
 				"own implementation inside a child class";
 	};// = 0;
 
-//	virtual wstring format(e_mode mode, string data, e_color colors) {
-//		return L"Place holder implementation due a bug on gcc. "
-//				"It seems doesn't work well with pure virtual "
-//				"classes when you implement an interface. Please "
-//				"don't use this implementation, you must provide your"
-//				"own implementation inside a child class";
-//	};// = 0;
-
-	virtual wstring format(char mode, string data, char colors) {
+	virtual wstring format(e_mode mode, string data, e_color colors) {
 		return L"Place holder implementation due a bug on gcc. "
 				"It seems doesn't work well with pure virtual "
 				"classes when you implement an interface. Please "

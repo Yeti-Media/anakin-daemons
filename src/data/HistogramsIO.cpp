@@ -94,10 +94,10 @@ void HistogramsIO::save(string filename, Histogram* histogram,
 		bool color = histogram->getChannels() == 3;
 		bool hsv = histogram->getChannels() == 2;
 		wstring out = cf->format(isLandscape ?
-				I_CommunicationFormatter::CF_LANDSCAPE :
-				I_CommunicationFormatter::CF_HISTOGRAMS, data,
-				color ? I_CommunicationFormatter::CF_COLOR : (
-						hsv ? I_CommunicationFormatter::CF_HSV : I_CommunicationFormatter::CF_GRAY));
+						I_CommunicationFormatter::e_mode::CF_LANDSCAPE :
+						I_CommunicationFormatter::e_mode::CF_HISTOGRAMS, data,
+						color ? I_CommunicationFormatter::e_color::CF_COLOR : (
+								hsv ? I_CommunicationFormatter::e_color::CF_HSV : I_CommunicationFormatter::e_color::CF_GRAY));
 		wcout << out << endl;
 	}
 }

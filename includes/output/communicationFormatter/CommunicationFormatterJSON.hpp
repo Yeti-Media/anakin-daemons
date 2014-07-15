@@ -28,7 +28,7 @@ public:
 
 	virtual wstring format(const char * data);
 
-	virtual wstring format(char mode, string data, char colors);
+	virtual wstring format(e_mode mode, string data, e_color colors);
 
 	virtual string formatRequest(const char * data);
 
