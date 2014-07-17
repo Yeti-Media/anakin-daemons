@@ -7,15 +7,17 @@
 
 #include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
 
-#define LIGHT_RESULTS 1 //TODO delete this and define a const in the appropriate place
 namespace Anakin {
 
+
+
 CommunicationFormatterMatchingJSON::CommunicationFormatterMatchingJSON() {
+	ligthResults = true;
 }
 
 wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 		string label, vector<KeyPoint> matchedKeypoints) {
-	/*  Result as JSONObject
+	/*   Result as wstring representing a  JSONObject
 
 	 root    -> center   -> x (float)
 	 -> y (float)
@@ -31,6 +33,12 @@ wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 
 	 -> response (float)
 	 */
+
+
+	cout << "CommunicationFormatterMatchingJSON::outputMatch 38" << endl;
+
+
+
 	JSONObject root;
 	JSONObject jcenter;
 	JSONArray keypoints;
@@ -44,7 +52,7 @@ wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 	ws << label.c_str();
 	root[L"label"] = new JSONValue(ws.str());
 
-	for (uint k = 0; k < matchedKeypoints.size() && !LIGHT_RESULTS; k++) {
+	for (uint k = 0; k < matchedKeypoints.size() && !ligthResults; k++) {
 		KeyPoint current = matchedKeypoints[k];
 		JSONObject keypoint;
 		JSONObject pos;
@@ -56,32 +64,26 @@ wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 		keypoint[L"response"] = new JSONValue(current.response);
 		keypoints.push_back(new JSONValue(keypoint));
 	}
-	if (!LIGHT_RESULTS)
+	if (!ligthResults)
 		root[L"keypoints"] = new JSONValue(keypoints);
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
-	wstring salida = value->Stringify().c_str();
-	wcout << "outputMatch" << value->Stringify().c_str() << endl;
 	return value->Stringify().c_str();
 }
 
 wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
 		vector<wstring *> values) {
-	/*  Result as JSONObject
+	/*   Result as wstring representing a JSONObject
 
 	 root    -> scene label (string)
 
 	 -> values (JSONArray)    -> <see function above>
 	 */
 
-//	wstring estrin;
-//	for (uint ig = 0; ig < values.size(); ig++) {
-//		cout << "values->at(ig)" << values.at(ig) << endl;
-//		estrin = *(values.at(ig));
-//		wcout << "values->at(ig) " << estrin<< endl;
-//	}
-	//VERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+
+	cout << "CommunicationFormatterMatchingJSON::outputMatches 85" << endl;
+
 	JSONObject root;
 	wstringstream ws;
 	ws << label.c_str();
@@ -89,22 +91,14 @@ wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
 	JSONArray valuesJSON;
 
 	for (uint v = 0; v < values.size(); v++) {
-		wstring* auxiliar = values.at(v);
-		wcout << "auxiliar outputMatches values" << /*auxiliar->c_str()*/ *values.at(v) << endl;
-		//JSONValue *auxValue = new JSONValue(*auxiliar);/*/(*values.at(v));*/
-		const wchar_t * lala = auxiliar->c_str();
-		JSONValue *auxValue = JSON::Parse(lala);
+		JSONValue *auxValue = JSON::Parse((const wchar_t *)values.at(v)->c_str());
 		valuesJSON.push_back(auxValue);
 	}
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *value = new JSONValue(root);
-	wstring estrin = value->Stringify().c_str();
-	wcout << "outputMatches" << estrin << endl;
-//	wcout << "value->Stringify().c_str()" << estrin << endl;
-//	wcout << "outputMatches" << value->Stringify().c_str() << endl;
-	return estrin;//value->Stringify().c_str();
+	return value->Stringify().c_str();
 }
 
 CommunicationFormatterMatchingJSON::~CommunicationFormatterMatchingJSON() {

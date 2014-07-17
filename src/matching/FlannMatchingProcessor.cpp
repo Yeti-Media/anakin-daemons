@@ -22,7 +22,6 @@ std::vector<wstring*>* FlannMatchingProcessor::process(RichImg* scene,
 				match.getPattern()->getImage()->getLabel(),
 				match.getMatchedKeypoints());
 		sceneResult->push_back(auxiliarForConversion);
-		wcout << "Flan process auxiliarForConversion " << *auxiliarForConversion << endl;
 	}
 	return sceneResult;
 }

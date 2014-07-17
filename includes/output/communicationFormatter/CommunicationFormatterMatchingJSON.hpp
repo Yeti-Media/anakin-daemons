@@ -30,6 +30,10 @@ public:
 	virtual wstring outputMatches(string label, vector<wstring *> values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
+
+private:
+
+	bool ligthResults; // variable to obtain full results (false) or ligth results (true)
 };
 
 } /* namespace Anakin */
