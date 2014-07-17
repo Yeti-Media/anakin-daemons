@@ -2,7 +2,7 @@
  * CommunicationFormatterMatchingJSON.cpp
  *
  *  Created on: May 28, 2014
- *      Author: renx
+ *      Author: Renzo Bianchini
  */
 
 #include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
@@ -15,7 +15,7 @@ CommunicationFormatterMatchingJSON::CommunicationFormatterMatchingJSON() {
 	ligthResults = true;
 }
 
-wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
+wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 		string label, vector<KeyPoint> matchedKeypoints) {
 	/*   Result as wstring representing a  JSONObject
 
@@ -69,10 +69,10 @@ wstring CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
-	return value->Stringify().c_str();
+	return new wstring(value->Stringify().c_str());
 }
 
-wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
+wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
 		vector<wstring *> values) {
 	/*   Result as wstring representing a JSONObject
 
@@ -98,7 +98,7 @@ wstring CommunicationFormatterMatchingJSON::outputMatches(string label,
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *value = new JSONValue(root);
-	return value->Stringify().c_str();
+	return new wstring(value->Stringify().c_str());
 }
 
 CommunicationFormatterMatchingJSON::~CommunicationFormatterMatchingJSON() {

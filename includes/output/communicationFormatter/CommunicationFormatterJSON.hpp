@@ -2,7 +2,7 @@
  * CommunicationFormatterJSON.hpp
  *
  *  Created on: May 23, 2014
- *      Author: renx
+ *      Author: Renzo Bianchini
  */
 
 #ifndef COMMUNICATIONFORMATTERJSON_HPP_
@@ -20,17 +20,17 @@ public:
 
 	CommunicationFormatterJSON();
 
-	virtual wstring outputResponse(string requestID, e_category category,
+	virtual wstring* outputResponse(string requestID, e_category category,
 			vector<wstring *> values);
 
-	virtual wstring outputError(e_error errorType, string message,
+	virtual wstring* outputError(e_error errorType, string message,
 			string origin);
 
-	virtual wstring format(const char * data);
+	virtual wstring* format(const char * data);
 
-	virtual wstring format(e_mode mode, string data, e_color colors);
+	virtual wstring* format(e_mode mode, string data, e_color colors);
 
-	virtual string formatRequest(const char * data);
+	virtual string* formatRequest(const char * data);
 
 	~CommunicationFormatterJSON();
 };

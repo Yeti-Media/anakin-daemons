@@ -49,21 +49,9 @@ public:
 	 * --------------------------------
 	 * note : if using HTTPSocket then reqID must be set
 	 */
-	void output(string data, int reqID = 0);
+	void output(wstring* data, int reqID = 0);
 
-	/**
-	 * output data and can optionally set an id for the message
-	 *
-	 * data : the data to output
-	 * reqID : the message id
-	 * --------------------------------
-	 * note : if using HTTPSocket then reqID must be set
-	 */
-	void output(wstring data, int reqID = 0);
-
-	void error(string data);
-
-	void error(wstring data);
+	void error(wstring* data);
 
 	/**
 	 * On some cases the internal mechanism used to output data

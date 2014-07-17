@@ -73,7 +73,8 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 		} else {
 			//first we convert the body (in JSON format) to a string representing a request
 			I_CommunicationFormatter* cf = new CommunicationFormatterJSON();
-			request = cf->formatRequest(body.c_str());
+			//TODO Renzo how to delete the result of cf->formatRequest(body.c_str())
+			request = *cf->formatRequest(body.c_str());
 			reqID = generateRandomID(); //generate a random request ID
 			std::string sreqID = std::to_string(reqID);
 			request += " -" + Constants::PARAM_REQID + " " + sreqID; //add a -reqID id to the request

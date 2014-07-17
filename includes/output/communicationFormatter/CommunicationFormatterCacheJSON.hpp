@@ -2,7 +2,7 @@
  * CommunicationFormatterCacheJSON.hpp
  *
  *  Created on: May 29, 2014
- *      Author: renx
+ *      Author: Renzo Bianchini
  */
 
 #ifndef COMMUNICATIONFORMATTERCACHEJSON_HPP_

@@ -142,7 +142,7 @@ public:
 	 * @see ResultWriter.hpp
 	 * @see SFBMCache.cpp
 	 */
-	wstring getLastOperationResult(bool * error = NULL);
+	wstring* getLastOperationResult(bool * error = NULL);
 protected:
 private:
 

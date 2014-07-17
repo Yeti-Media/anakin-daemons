@@ -2,7 +2,7 @@
  * CommunicationFormatterMatchingJSON.hpp
  *
  *  Created on: May 28, 2014
- *      Author: renx
+ *      Author: Renzo Bianchini
  */
 
 #ifndef COMMUNICATIONFORMATTERMATCHINGJSON_HPP_
@@ -24,10 +24,10 @@ public:
 
 	CommunicationFormatterMatchingJSON();
 
-	virtual wstring outputMatch(Point2f center, string label,
+	virtual wstring* outputMatch(Point2f center, string label,
 			vector<KeyPoint> matchedKeypoints);
 
-	virtual wstring outputMatches(string label, vector<wstring *> values);
+	virtual wstring* outputMatches(string label, vector<wstring *> values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
 

@@ -128,7 +128,7 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
 	if (this->initialization) {
 		this->cache = new SFBMCache(this->dbdriver, cacheConfig);
 		this->cacheInitializationError = false;
-		wstring cacheError = this->cache->getLastOperationResult(
+		wstring cacheError = *this->cache->getLastOperationResult(
 				&this->cacheInitializationError);
 		if (this->cacheInitializationError) {
 			this->cacheInitializationErrorMsj = cacheError;

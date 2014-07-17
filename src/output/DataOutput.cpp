@@ -52,28 +52,34 @@ void* DataOutput::startWorker(void *ptr) {
 DataOutput::~DataOutput() {
 	delete workingQueue;
 }
-void DataOutput::output(string data, int reqID) {
-	lock_guard<mutex> lck(mutex1);
-	Msj* msj = new Msj(data, E_DataOutputMsjType::common, reqID);
-	workingQueue->push(msj);
-}
+//void DataOutput::output(string data, int reqID) {
+//	lock_guard<mutex> lck(mutex1);
+//	Msj* msj = new Msj(data, E_DataOutputMsjType::common, reqID);
+//	workingQueue->push(msj);
+//}
 
-void DataOutput::output(wstring data, int reqID) {
+void DataOutput::output(wstring* data, int reqID) {
 	lock_guard<mutex> lck(mutex2);
-	string s(data.begin(), data.end());
-	output(s, reqID);
-}
-
-void DataOutput::error(string data) {
-	lock_guard<mutex> lck(mutex1);
-	Msj* msj = new Msj(data, E_DataOutputMsjType::error);
+	string* s = new string(data->begin(), data->end());
+	Msj* msj = new Msj(s, E_DataOutputMsjType::common, reqID);
 	workingQueue->push(msj);
+	//hacer que data sea puntero
+	//delete data
+	//output(s, reqID);
 }
 
-void DataOutput::error(wstring data) {
+//void DataOutput::error(string data) {
+//	lock_guard<mutex> lck(mutex1);
+//	Msj* msj = new Msj(data, E_DataOutputMsjType::error);
+//	workingQueue->push(msj);
+//}
+
+void DataOutput::error(wstring* data) {
 	lock_guard<mutex> lck(mutex2);
-	string s(data.begin(), data.end());
-	error(s);
+	string* s = new string(data->begin(), data->end());
+	Msj* msj = new Msj(s, E_DataOutputMsjType::error);
+	workingQueue->push(msj);
+	//error(s);
 }
 
 void DataOutput::close() {

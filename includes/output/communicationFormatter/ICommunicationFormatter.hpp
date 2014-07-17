@@ -2,7 +2,7 @@
  * ICommunicationFormatter.hpp
  *
  *  Created on: May 23, 2014
- *      Author: renx
+ *      Author: Renzo Bianchini
  */
 
 #ifndef ICOMMUNICATIONFORMATTER_HPP_
@@ -45,46 +45,61 @@ public:
 		CF_HSV = 32
 	};
 
-	virtual wstring outputResponse(string requestID, e_category category,
+	/* Place holder implementation due a bug on gcc.
+	 * It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please
+	 * don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	*/
+
+	virtual wstring* outputResponse(string requestID, e_category category,
 			vector<wstring *> values) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
+		return NULL;
 	};// = 0;
 
-	virtual wstring outputError(e_error errorType, std::string message,
+	/* Place holder implementation due a bug on gcc.
+	 * It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please
+	 * don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	*/
+
+	virtual wstring* outputError(e_error errorType, std::string message,
 			std::string origin) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
+		return NULL;
 	};// = 0;
 
-	virtual wstring format(const char * data) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
+	/* Place holder implementation due a bug on gcc.
+	 * It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please
+	 * don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	*/
+
+	virtual wstring* format(const char * data) {
+		return NULL;
 	};// = 0;
 
-	virtual wstring format(e_mode mode, string data, e_color colors) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
+	/* Place holder implementation due a bug on gcc.
+	 * It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please
+	 * don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	*/
+
+	virtual wstring* format(e_mode mode, string data, e_color colors) {
+		return NULL;
 	};// = 0;
 
-	virtual string formatRequest(const char * data) {
-		return "Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
+	/* Place holder implementation due a bug on gcc.
+	 * It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please
+	 * don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	*/
+
+	virtual string* formatRequest(const char * data) {
+		return NULL;
 	};// = 0;
 
 	virtual ~I_CommunicationFormatter() {

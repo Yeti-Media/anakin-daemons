@@ -203,22 +203,22 @@ void SFBMCache::printLoadCount() {
 	delete values;
 }
 
-wstring SFBMCache::getLastOperationResult(bool * error) {
+wstring* SFBMCache::getLastOperationResult(bool * error) {
 	//internal function, do not init *error=false
-	wstring result;
+	wstring* result = new wstring();
 	switch (operation) {
 	case SFBMCache::INSERTOP: {
-		result = this->cfc->trainerAdd(lastInsertedIndex,
+		*result = this->cfc->trainerAdd(lastInsertedIndex,
 				this->cacheMaxSize - this->cacheSize, lastRemovedIndex);
 		break;
 	}
 	case SFBMCache::DELETEOP: {
-		result = this->cfc->trainerDel(lastRemovedIndex,
+		*result = this->cfc->trainerDel(lastRemovedIndex,
 				this->cacheMaxSize - this->cacheSize);
 		break;
 	}
 	case SFBMCache::UPDATEOP: {
-		result = this->cfc->trainerUPD(lastInsertedIndex);
+		*result = this->cfc->trainerUPD(lastInsertedIndex);
 		break;
 	}
 	case SFBMCache::ERROR: {

@@ -2,7 +2,7 @@
  * CommunicationFormatterCacheJSON.cpp
  *
  *  Created on: May 29, 2014
- *      Author: renx
+ *      Author: Renzo Bianchini
  */
 
 #include <output/communicationFormatter/CommunicationFormatterCacheJSON.hpp>

@@ -93,7 +93,7 @@ void HistogramsIO::save(string filename, Histogram* histogram,
 		bool isLandscape = histogram->isMinMax() || histogram->hasAvg();
 		bool color = histogram->getChannels() == 3;
 		bool hsv = histogram->getChannels() == 2;
-		wstring out = cf->format(isLandscape ?
+		wstring out = *cf->format(isLandscape ?
 						I_CommunicationFormatter::e_mode::CF_LANDSCAPE :
 						I_CommunicationFormatter::e_mode::CF_HISTOGRAMS, data,
 						color ? I_CommunicationFormatter::e_color::CF_COLOR : (
