@@ -284,8 +284,8 @@ void Flags::clean() {
 	map<string, vector<string>*>::const_iterator itr;
 
 	for (itr = optionalFlags.begin(); itr != optionalFlags.end(); ++itr) {
-		vector<string>* vector = (*itr).second;
-		cout << "** " <<(*itr).first << " size() = " << vector->size() << endl;
+		//vector<string>* vector = (*itr).second;
+		//cout << "** " <<(*itr).first << " size() = " << vector->size() << endl;
 		(*itr).second->clear();
 	}
 
