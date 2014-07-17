@@ -33,7 +33,7 @@ int Program::start(vector<string> *input) {
 	//______________________________________________________________________//
 
 	if (programFlags.validateInput(input)) {
-		vector<string>* values = new vector<string>();
+		vector<string>* values = NULL;
 
 		if (programFlags.flagFound("help")) {
 			cout << this->getFullTextHelp();
@@ -44,7 +44,6 @@ int Program::start(vector<string> *input) {
 		}
 
 		if (programFlags.flagFound("oLogFile")) {
-			values->clear();
 			values = programFlags.getFlagValues("oLogFile");
 			if (values->size() == 1) {
 				logFile = values->at(0);
@@ -53,7 +52,7 @@ int Program::start(vector<string> *input) {
 				return EXIT_FAILURE;
 			}
 		}
-		delete values;
+		// delete values; DO NOT ADD THIS!! value is an alias from a flag content
 	} else {
 		cout << "Input error!" << endl;
 		return EXIT_FAILURE;

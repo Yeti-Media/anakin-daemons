@@ -426,13 +426,14 @@ void simpleTest(int argc, const char * argv[]) {
 	} else { // parent
 		// Code only executed by parent process
 		sleep(2);
-		//repeated 3 times, to obtain solid outputs
-		for (int i = 0; i < 3; i++) {
+		//repeated 30 times, to obtain solid outputs
+		for (int i = 0; i < 30; i++) {
+
 			command(true,
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
 							+ pathToAnakinPath(lastStdout) + " 2> "
 							+ pathToAnakinPath(lastStderr), true, false, pID);
-
+			cout << "* Request number " << i << endl;
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
 			std::string capture = get_file_contents(lastStdout.c_str());

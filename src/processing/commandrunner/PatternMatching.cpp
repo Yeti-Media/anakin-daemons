@@ -124,8 +124,9 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 	indexes.clear();
 	reqID = "";
 	lastError = "";
+
 	if (flags->validateInput(input)) {
-		vector<string>* values = new vector<string>();
+		vector<string>* values = NULL;
 		if (flags->flagFound(Constants::ACTION_MATCH)) {
 			action = E_PatternMatchingAction::MATCH;
 		}
@@ -142,7 +143,6 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 			action = E_PatternMatchingAction::IDXSTATUS;
 		}
 		if (flags->flagFound(Constants::PARAM_SCENEID)) {
-			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_SCENEID);
 			if (values->size() != 1) {
 				lastError = "flag " + Constants::PARAM_SCENEID
@@ -153,7 +153,6 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 			sceneID = stoi(values->at(0));
 		}
 		if (flags->flagFound(Constants::PARAM_REQID)) {
-			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_REQID);
 			if (values->size() != 1) {
 				lastError = "flag " + Constants::PARAM_REQID
@@ -164,7 +163,6 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 			reqID = values->at(0);
 		}
 		if (flags->flagFound(Constants::PARAM_MIN_RATIO)) {
-			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_MIN_RATIO);
 			if (values->size() == 1) {
 				this->mr = stof(values->at(0));
@@ -176,7 +174,6 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 			}
 		}
 		if (flags->flagFound(Constants::PARAM_MIN_MATCHES_ALLOWED)) {
-			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_MIN_MATCHES_ALLOWED);
 			if (values->size() == 1) {
 				this->mma = stoi(values->at(0));
@@ -189,7 +186,6 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 		}
 		if (flags->flagFound(Constants::PARAM_IDXS))   //MUST BE AT THE END
 				{
-			values->clear();
 			values = flags->getFlagValues(Constants::PARAM_IDXS);
 			if (values->empty()) {
 				lastError = "flag " + Constants::PARAM_IDXS
@@ -199,7 +195,8 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 			}
 			indexes.insert(indexes.begin(), values->begin(), values->end());
 		}
-		delete values;
+		// DO NOT DELETE VALUES! there are alias to flags content!
+		//delete values;
 	} else {
 		lastError = "input error!";
 		inputError = true;
