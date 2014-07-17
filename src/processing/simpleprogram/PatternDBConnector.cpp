@@ -96,11 +96,10 @@ int PatternDBConnector::run(vector<string> *input) {
 	int sceneID = -1;
 	bool loadingScenes = false;
 
-	vector<string>* values = new vector<string>();
+	vector<string>* values = NULL;
 
 	if (this->programFlags.flagFound("user")) {
 		saveUser = true;
-		values->clear();
 		values = this->programFlags.getFlagValues("user");
 		if (values->size() == 1) {
 			userID = stoi(values->at(0));
@@ -111,7 +110,6 @@ int PatternDBConnector::run(vector<string> *input) {
 	}
 	if (this->programFlags.flagFound("path")) {
 		saveObjects = true;
-		values->clear();
 		values = this->programFlags.getFlagValues("path");
 		if (values->size() == 1) {
 			path = values->at(0);
@@ -142,7 +140,6 @@ int PatternDBConnector::run(vector<string> *input) {
 		}
 	}
 	if (this->programFlags.flagFound("sceneID")) {
-		values->clear();
 		values = this->programFlags.getFlagValues("sceneID");
 		if (values->size() == 1) {
 			sceneID = stoi(values->at(0));
@@ -157,7 +154,6 @@ int PatternDBConnector::run(vector<string> *input) {
 
 	if (this->programFlags.flagFound("index")) {
 		saveObjects = true;
-		values->clear();
 		values = this->programFlags.getFlagValues("index");
 		if (values->size() == 1 && load) {
 			smatcher_id = values->at(0);
@@ -171,8 +167,6 @@ int PatternDBConnector::run(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-
-	delete values;
 
 	if (loadingScenes && sceneID == -1)   //THIS MUST BE AT THE END
 			{

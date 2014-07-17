@@ -263,12 +263,11 @@ vector<string>* Flags::getNoValuesFlags() {
 vector<string>* Flags::getFlagValues(string flag) {
 	if (isRequired(flag)) {
 		return this->requiredFlags.find(flag)->second;
-	}
-	if (isOptional(flag)) {
+	} else if (isOptional(flag)) {
 		return this->optionalFlags.find(flag)->second;
+	} else {
+		return NULL; //TODO check null in the code before use.
 	}
-	//FIXME can cause memory leaks
-	return new vector<string>(0);
 }
 
 void Flags::setMinCount(uint val) {

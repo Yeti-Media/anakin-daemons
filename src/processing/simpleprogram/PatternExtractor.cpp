@@ -107,7 +107,7 @@ int PatternExtractor::run(vector<string> *input) {
 	bool useYaml = true;
 	bool loadOnDemand = false;
 
-	vector<string>* values = new vector<string>();
+	vector<string>* values = NULL;
 
 	if (this->programFlags.flagFound("landscape")) {
 		inputMode = LANDSCAPE;
@@ -120,7 +120,6 @@ int PatternExtractor::run(vector<string> *input) {
 	}
 	if (this->programFlags.flagFound("iFile")) {
 		useInputPathAsDir = false;
-		values->clear();
 		values = this->programFlags.getFlagValues("iFile");
 		if (values->size() == 1) {
 			inputDir = values->at(0);
@@ -131,7 +130,6 @@ int PatternExtractor::run(vector<string> *input) {
 	}
 	if (this->programFlags.flagFound("iFolder")) {
 		useInputPathAsDir = true;
-		values->clear();
 		values = this->programFlags.getFlagValues("iFolder");
 		if (values->size() == 1) {
 			inputDir = values->at(0);
@@ -141,7 +139,6 @@ int PatternExtractor::run(vector<string> *input) {
 		}
 	}
 	if (this->programFlags.flagFound("oPath")) {
-		values->clear();
 		values = this->programFlags.getFlagValues("oPath");
 		if (values->size() == 1) {
 			outputDir = values->at(0);
@@ -151,7 +148,6 @@ int PatternExtractor::run(vector<string> *input) {
 		}
 	}
 	if (this->programFlags.flagFound("label")) {
-		values->clear();
 		values = this->programFlags.getFlagValues("label");
 		if (values->size() == 1) {
 			label = values->at(0);
@@ -181,7 +177,6 @@ int PatternExtractor::run(vector<string> *input) {
 	if (this->programFlags.flagFound("lod")) {
 		loadOnDemand = true;
 	}
-	delete values;
 
 	cv::Ptr<cv::FeatureDetector> fdetector;
 	cv::Ptr<cv::DescriptorExtractor> dextractor;

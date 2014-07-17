@@ -52,10 +52,9 @@ int PatternTrainer::run(vector<string> *input) {
 	vector<int>* patternsId;
 	bool user = false;
 
-	vector<string>* values = new vector<string>();
+	vector<string>* values = NULL;
 
 	if (this->programFlags.flagFound("user")) {
-		values->clear();
 		values = this->programFlags.getFlagValues("user");
 		user = true;
 		if (values->size() == 1) {
@@ -66,7 +65,6 @@ int PatternTrainer::run(vector<string> *input) {
 		}
 	}
 	if (this->programFlags.flagFound("patternsId")) {
-		values->clear();
 		values = this->programFlags.getFlagValues("patternsId");
 		if (!values->empty()) {
 			patternsId = new vector<int>(0);
@@ -79,7 +77,6 @@ int PatternTrainer::run(vector<string> *input) {
 		}
 	}
 	if (this->programFlags.flagFound("saveToFile")) {
-		values->clear();
 		values = this->programFlags.getFlagValues("saveToFile");
 		if (values->size() == 1) {
 			folder = "";
@@ -92,7 +89,6 @@ int PatternTrainer::run(vector<string> *input) {
 			return EXIT_FAILURE;
 		}
 	}
-	delete values;
 
 	//TRAINING
 	const Ptr<flann::IndexParams>& indexParams = new flann::KDTreeIndexParams(

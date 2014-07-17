@@ -153,12 +153,11 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	//                         FLAGS PARSING                                //
 	//______________________________________________________________________//
 
-	vector<string>* values = new vector<string>();
+	vector<string>* values = NULL;
 
 	//POSTGRES config
 
 	if (programFlags.flagFound("pghost")) {
-		values->clear();
 		values = programFlags.getFlagValues("pghost");
 		if (values->size() == 1) {
 			pghost = values->at(0);
@@ -169,7 +168,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("pgport")) {
-		values->clear();
 		values = programFlags.getFlagValues("pgport");
 		if (values->size() == 1) {
 			pgport = values->at(0);
@@ -180,7 +178,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("dbName")) {
-		values->clear();
 		values = programFlags.getFlagValues("dbName");
 		if (values->size() == 1) {
 			dbName = values->at(0);
@@ -191,7 +188,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("login")) {
-		values->clear();
 		values = programFlags.getFlagValues("login");
 		if (values->size() == 1) {
 			login = values->at(0);
@@ -202,7 +198,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("pwd")) {
-		values->clear();
 		values = programFlags.getFlagValues("pwd");
 		if (values->size() == 1) {
 			pwd = values->at(0);
@@ -214,7 +209,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 
 	//CACHE CONFIG
 	if (programFlags.flagFound("cacheLoadingTimeWeight")) {
-		values->clear();
 		values = programFlags.getFlagValues("cacheLoadingTimeWeight");
 		if (values->size() == 1) {
 			cacheConfig.cacheLoadingTimeWeight = stoi(values->at(0));
@@ -229,7 +223,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("cacheSize")) {
-		values->clear();
 		values = programFlags.getFlagValues("cacheSize");
 		if (values->size() == 1) {
 			cacheConfig.cacheSize = stoi(values->at(0));
@@ -240,7 +233,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("cacheLife")) {
-		values->clear();
 		values = programFlags.getFlagValues("cacheLife");
 		if (values->size() == 1) {
 			cacheConfig.cacheLife = stoi(values->at(0));
@@ -251,7 +243,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("cacheScenesSize")) {
-		values->clear();
 		values = programFlags.getFlagValues("cacheScenesSize");
 		if (values->size() == 1) {
 			cacheConfig.cacheScenesSize = stoi(values->at(0));
@@ -262,7 +253,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	}
 
 	if (programFlags.flagFound("cacheScenesLife")) {
-		values->clear();
 		values = programFlags.getFlagValues("cacheScenesLife");
 		if (values->size() == 1) {
 			cacheConfig.cacheScenesLife = stoi(values->at(0));
@@ -274,7 +264,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 
 	//THREADS
 	if (programFlags.flagFound("threads")) {
-		values->clear();
 		values = programFlags.getFlagValues("threads");
 		if (values->size() == 1) {
 			threads = stoi(values->at(0));
@@ -286,7 +275,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 
 	//BLOCKING CAPACITY QUEUE
 	if (programFlags.flagFound("queueCapacity")) {
-		values->clear();
 		values = programFlags.getFlagValues("queueCapacity");
 		if (values->size() == 1) {
 			queueCapacity = stoi(values->at(0));
@@ -319,8 +307,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	if (programFlags.flagFound("oHTTP")) {
 		oMode = Server<SpecificCommandRunner>::HTTP;
 	}
-
-	delete values;
 
 	//______________________________________________________________________//
 	//                         DAEMON INITIALIZATION                        //
