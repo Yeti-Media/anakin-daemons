@@ -12,6 +12,7 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 #define TESTING_DEBUGMODE
 
+#include <sys/param.h>
 #include <unistd.h>
 #include <cstddef>
 #include <vector>
@@ -29,6 +30,7 @@
 #include <processing/simpleprogram/PatternTrainer.hpp>
 #include <connection/Daemon.hpp>
 #include <processing/commandrunner/PatternMatcher.hpp>
+#include <boost/timer/timer.hpp>
 
 using namespace std;
 using namespace Anakin;
@@ -130,6 +132,7 @@ void command(bool verbose, string command, bool showLogMsjIfFail = false,
 				<< endl << "* Command \"" << command << "\" executed" << endl
 				<< "* Output:" << endl << endl;
 	}
+	boost::timer::cpu_timer timer;
 	if (system(command.c_str()) != 0) {
 		cerr << "Command \"" << command << "\" fail" << endl;
 		if (showLogMsjIfFail) {
@@ -140,6 +143,17 @@ void command(bool verbose, string command, bool showLogMsjIfFail = false,
 			_exit(EXIT_FAILURE);
 		} else {
 			exitWithError();
+		}
+	} else {
+		if (verbose) {
+			auto nanoseconds = boost::chrono::nanoseconds(
+					timer.elapsed().user + timer.elapsed().system);
+			boost::chrono::milliseconds milliseconds =
+					boost::chrono::duration_cast<boost::chrono::milliseconds>(
+							nanoseconds);
+
+			cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
+					<< endl;
 		}
 	}
 }
@@ -259,7 +273,7 @@ void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
  * Run a simple program with the given commands
  */
 template<class SpecificSimpleProgram>
-void runProgram(string currentCommand) {
+boost::chrono::milliseconds runProgram(string currentCommand) {
 	Program* program = new SpecificSimpleProgram();
 	cout
 			<< "______________________________________________________________________"
@@ -269,11 +283,20 @@ void runProgram(string currentCommand) {
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
+	boost::timer::cpu_timer timer;
 	int signal = program->start(&input);
+	auto nanoseconds = boost::chrono::nanoseconds(
+			timer.elapsed().user + timer.elapsed().system);
+	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
+			boost::chrono::milliseconds>(nanoseconds);
+
+	cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
+			<< endl;
 	delete program;
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
+	return milliseconds;
 }
 
 void printStep(string test, int number) {
@@ -298,7 +321,16 @@ void runDaemonProgram(string currentCommand) {
 			<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
+
+	boost::timer::cpu_timer timer;
 	int signal = program->start(&input);
+	auto nanoseconds = boost::chrono::nanoseconds(
+			timer.elapsed().user + timer.elapsed().system);
+	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
+			boost::chrono::milliseconds>(nanoseconds);
+
+	//cout << endl << "* Elapsed Time: " <<  milliseconds.count() << " ms." << endl;
+
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
