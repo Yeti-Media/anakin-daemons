@@ -9,10 +9,14 @@
 
 #if COMPILE_MODE == COMPILE_FOR_UNIT_TESTING
 
-#define BOOST_TEST_MODULE Logging_Test_Module
+#define BOOST_TEST_DYN_LINK
+#ifdef STAND_ALONE
+#   define BOOST_TEST_MODULE Main
+#endif
+#include <boost/test/unit_test.hpp>
+
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/test/included/unit_test.hpp>
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
 #include <iostream>
@@ -63,7 +67,7 @@ namespace Testing {
 
 //____________________________________________________________________________//
 
-	BOOST_FIXTURE_TEST_SUITE( acceptance , PathFixture)
+	BOOST_FIXTURE_TEST_SUITE( logging , PathFixture)
 
 	BOOST_FIXTURE_TEST_CASE( file_output, PathFixture ) {
 

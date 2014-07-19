@@ -99,7 +99,8 @@ Help* Program::getHelp() {
 
 string Program::getFullTextHelp() {
 	Help* help = getHelp();
-	string output = "\n" + getProgramName() + " Manual\n\n" + help->getFullHelp();
+	string output = "\n" + getProgramName() + " Manual\n\n"
+			+ help->getFullHelp();
 	delete help;
 	return output;
 }

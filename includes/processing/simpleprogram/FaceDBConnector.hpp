@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+using namespace std;
 namespace Anakin {
 
 class FaceDBConnector: public Program {

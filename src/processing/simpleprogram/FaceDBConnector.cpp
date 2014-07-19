@@ -7,7 +7,6 @@
 
 #include <processing/simpleprogram/FaceDBConnector.hpp>
 #include <utils/help/HelpFaceDBConnector.hpp>
-#include <cstdlib>
 
 namespace Anakin {
 
@@ -33,7 +32,7 @@ void FaceDBConnector::initProgramFlags() {
 }
 
 int FaceDBConnector::run(vector<string> *input) {
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 } /* namespace Anakin */

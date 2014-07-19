@@ -37,7 +37,7 @@ string PatternMatcher::getProgramName() {
 
 void PatternMatcher::initializeCommandRunner(DataOutput* out,
 		SFBMCache* cache) {
-	CommandRunner::initializeCommandRunner(out,cache);
+	CommandRunner::initializeCommandRunner(out, cache);
 	this->rw = new ResultWriter();
 	this->cache = cache;
 

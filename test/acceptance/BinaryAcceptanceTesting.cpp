@@ -12,6 +12,7 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 #define TESTING_DEBUGMODE
 
+#include <sys/param.h>
 #include <unistd.h>
 #include <cstddef>
 #include <vector>
@@ -29,6 +30,8 @@
 #include <processing/simpleprogram/PatternTrainer.hpp>
 #include <connection/Daemon.hpp>
 #include <processing/commandrunner/PatternMatcher.hpp>
+#include <boost/timer/timer.hpp>
+#include <utils/statistics/StatisticsCollector.hpp>
 
 using namespace std;
 using namespace Anakin;
@@ -37,6 +40,9 @@ namespace fs = boost::filesystem;
 //=================================================================================
 //========================== UTILS SECTION ========================================
 //=================================================================================
+
+//statistic collector
+StatisticsCollector collector;
 
 /**
  * Separate a string into tokens, ignoring quoted phrases.
@@ -89,6 +95,16 @@ void exitWithSucces() {
 }
 
 /**
+ *  Print final statistics
+ */
+void printStatistics() {
+	cout << endl << "===============================================\n"
+			<< "**************    Benchmark   *****************\n"
+			<< "===============================================\n"
+			<< collector.compute();
+}
+
+/**
  * kill the process with pid = childPIDtoKill, and pid>0
  */
 void killPID(pid_t childPIDtoKill) {
@@ -130,6 +146,7 @@ void command(bool verbose, string command, bool showLogMsjIfFail = false,
 				<< endl << "* Command \"" << command << "\" executed" << endl
 				<< "* Output:" << endl << endl;
 	}
+	boost::timer::cpu_timer timer;
 	if (system(command.c_str()) != 0) {
 		cerr << "Command \"" << command << "\" fail" << endl;
 		if (showLogMsjIfFail) {
@@ -140,6 +157,18 @@ void command(bool verbose, string command, bool showLogMsjIfFail = false,
 			_exit(EXIT_FAILURE);
 		} else {
 			exitWithError();
+		}
+	} else {
+		if (verbose) {
+			auto nanoseconds = boost::chrono::nanoseconds(
+					timer.elapsed().user + timer.elapsed().system);
+			boost::chrono::milliseconds milliseconds =
+					boost::chrono::duration_cast<boost::chrono::milliseconds>(
+							nanoseconds);
+
+			cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
+					<< endl;
+			collector.addItem(command, milliseconds.count());
 		}
 	}
 }
@@ -269,7 +298,17 @@ void runProgram(string currentCommand) {
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
+	boost::timer::cpu_timer timer;
 	int signal = program->start(&input);
+	auto nanoseconds = boost::chrono::nanoseconds(
+			timer.elapsed().user + timer.elapsed().system);
+	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
+			boost::chrono::milliseconds>(nanoseconds);
+
+	cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
+			<< endl;
+	collector.addItem(program->getProgramName() + " " + currentCommand,
+			milliseconds.count());
 	delete program;
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
@@ -298,7 +337,17 @@ void runDaemonProgram(string currentCommand) {
 			<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
+
+	boost::timer::cpu_timer timer;
 	int signal = program->start(&input);
+	auto nanoseconds = boost::chrono::nanoseconds(
+			timer.elapsed().user + timer.elapsed().system);
+	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
+			boost::chrono::milliseconds>(nanoseconds);
+
+	collector.addItem(program->getProgramName() + " " + currentCommand,
+			milliseconds.count());
+
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
@@ -466,6 +515,7 @@ void simpleTest(int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
 	testingDirCheck(argc, argv);
 	simpleTest(argc, argv);
+	printStatistics();
 	exitWithSucces();
 }
 

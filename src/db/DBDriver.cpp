@@ -173,7 +173,7 @@ vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
 				for (int t = 0; t < tuples; t++) {
-				//	const char* value = PQgetvalue(res, t, 0);
+					//	const char* value = PQgetvalue(res, t, 0);
 					pids.push_back(stoi(PQgetvalue(res, t, 0)));
 				}
 				*error = false;
@@ -490,7 +490,7 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 			logMessage(no_matcher_found);
 			return false;
 		}
-	//	const char* matcher_file_id = ;
+		//	const char* matcher_file_id = ;
 		string matcher_file_sid(PQgetvalue(res, 0, 0));
 		//const char* index_file_id = ;
 		string index_file_sid(PQgetvalue(res, 0, 1));
@@ -711,7 +711,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 			return false;
 		}
 		string xmlData = "<?xml version=\"1.0\"?>";
-	//	const char* scene_data = PQgetvalue(res, 0, 0);
+		//	const char* scene_data = PQgetvalue(res, 0, 0);
 		string scene_sdata(PQgetvalue(res, 0, 0));
 		xmlData.append(scene_sdata);
 		PQclear(res);
@@ -1011,7 +1011,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				DBHistogram* horl;
 				//const char* cdata = PQgetvalue(res, 0, 0);
 				//const char* gdata = PQgetvalue(res, 0, 1);
-			//	const char* hdata = PQgetvalue(res, 0, 2);
+				//	const char* hdata = PQgetvalue(res, 0, 2);
 				string scdata(PQgetvalue(res, 0, 0));
 				string sgdata(PQgetvalue(res, 0, 1));
 				string shdata(PQgetvalue(res, 0, 2));
@@ -1071,7 +1071,7 @@ vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 			if (PQresultStatus(res) == PGRES_TUPLES_OK) {
 				int tuples = PQntuples(res);
 				for (int t = 0; t < tuples; t++) {
-			//		const char* value = PQgetvalue(res, t, 0);
+					//		const char* value = PQgetvalue(res, t, 0);
 					pids.push_back(stoi(PQgetvalue(res, t, 0)));
 				}
 				*error = false;
