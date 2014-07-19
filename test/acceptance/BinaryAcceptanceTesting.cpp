@@ -31,6 +31,7 @@
 #include <connection/Daemon.hpp>
 #include <processing/commandrunner/PatternMatcher.hpp>
 #include <boost/timer/timer.hpp>
+#include <utils/statistics/StatisticsCollector.hpp>
 
 using namespace std;
 using namespace Anakin;
@@ -39,6 +40,9 @@ namespace fs = boost::filesystem;
 //=================================================================================
 //========================== UTILS SECTION ========================================
 //=================================================================================
+
+//statistic collector
+StatisticsCollector collector;
 
 /**
  * Separate a string into tokens, ignoring quoted phrases.
@@ -88,6 +92,16 @@ void exitWithSucces() {
 #endif
 	cout << "Acceptance test result: SUCCESS" << endl;
 	exit(EXIT_SUCCESS);
+}
+
+/**
+ *  Print final statistics
+ */
+void printStatistics() {
+	cout << endl << "===============================================\n"
+			<< "**************    Benchmark   *****************\n"
+			<< "===============================================\n"
+			<< collector.compute();
 }
 
 /**
@@ -154,6 +168,7 @@ void command(bool verbose, string command, bool showLogMsjIfFail = false,
 
 			cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
 					<< endl;
+			collector.addItem(command, milliseconds.count());
 		}
 	}
 }
@@ -273,7 +288,7 @@ void stopAnakinHTTP(pid_t pID, fs::path logsDir) {
  * Run a simple program with the given commands
  */
 template<class SpecificSimpleProgram>
-boost::chrono::milliseconds runProgram(string currentCommand) {
+void runProgram(string currentCommand) {
 	Program* program = new SpecificSimpleProgram();
 	cout
 			<< "______________________________________________________________________"
@@ -292,11 +307,12 @@ boost::chrono::milliseconds runProgram(string currentCommand) {
 
 	cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
 			<< endl;
+	collector.addItem(program->getProgramName() + " " + currentCommand,
+			milliseconds.count());
 	delete program;
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
-	return milliseconds;
 }
 
 void printStep(string test, int number) {
@@ -329,7 +345,8 @@ void runDaemonProgram(string currentCommand) {
 	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
 			boost::chrono::milliseconds>(nanoseconds);
 
-	//cout << endl << "* Elapsed Time: " <<  milliseconds.count() << " ms." << endl;
+	collector.addItem(program->getProgramName() + " " + currentCommand,
+			milliseconds.count());
 
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
@@ -498,6 +515,7 @@ void simpleTest(int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
 	testingDirCheck(argc, argv);
 	simpleTest(argc, argv);
+	printStatistics();
 	exitWithSucces();
 }
 

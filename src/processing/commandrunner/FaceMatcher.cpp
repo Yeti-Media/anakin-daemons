@@ -16,13 +16,12 @@ FaceMatcher::FaceMatcher() {
 FaceMatcher::~FaceMatcher() {
 }
 
-void FaceMatcher::validateRequest(
-		std::vector<std::string> *input) {
+void FaceMatcher::validateRequest(std::vector<std::string> *input) {
 
 }
 
 void FaceMatcher::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
-	CommandRunner::initializeCommandRunner(out,cache);
+	CommandRunner::initializeCommandRunner(out, cache);
 }
 
 void FaceMatcher::run() {
