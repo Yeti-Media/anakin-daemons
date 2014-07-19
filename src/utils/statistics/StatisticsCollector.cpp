@@ -32,8 +32,9 @@ string StatisticsCollector::compute() {
 			it != items.end(); ++it) {
 		output << "Worst " << it->second.worstTime << " ms. | Best "
 				<< it->second.bestTime << " ms. | Avg "
-				<< it->second.getAvgTime() << " ms. | Command: "
-				<< it->first << '\n';
+				<< it->second.getAvgTime() << " ms. | Executed "
+				<< it->second.samples << " times | Command: " << it->first
+				<< '\n';
 	}
 	return output.str();
 }
