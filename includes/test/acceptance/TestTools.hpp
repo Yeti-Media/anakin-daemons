@@ -13,7 +13,7 @@
 #include <boost/chrono/duration.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/timer/timer.hpp>
+#include <chrono>
 #include <connection/Daemon.hpp>
 #include <signal.h>
 #include <stdlib.h>
@@ -118,17 +118,17 @@ void runProgram(StatisticsCollector* collector, string currentCommand) {
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
-	boost::timer::cpu_timer timer;
+	auto begin = chrono::high_resolution_clock::now();
 	int signal = program->start(&input);
-	auto nanoseconds = boost::chrono::nanoseconds(
-			timer.elapsed().user + timer.elapsed().system);
-	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
-			boost::chrono::milliseconds>(nanoseconds);
+	if (collector != NULL) {
+		auto delay = chrono::high_resolution_clock::now() - begin;
+		double ms = (double) std::chrono::duration_cast<
+				std::chrono::milliseconds>(delay).count();
 
-	cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
-			<< endl;
-	collector->addItem(program->getProgramName() + " " + currentCommand,
-			milliseconds.count());
+		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
+		collector->addItem(program->getProgramName() + " " + currentCommand,
+				ms);
+	}
 	delete program;
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
@@ -150,15 +150,18 @@ void runDaemonProgram(StatisticsCollector* collector, string currentCommand) {
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
-	boost::timer::cpu_timer timer;
+	auto begin = chrono::high_resolution_clock::now();
 	int signal = program->start(&input);
-	auto nanoseconds = boost::chrono::nanoseconds(
-			timer.elapsed().user + timer.elapsed().system);
-	boost::chrono::milliseconds milliseconds = boost::chrono::duration_cast<
-			boost::chrono::milliseconds>(nanoseconds);
+	if (collector != NULL) {
+		auto delay = chrono::high_resolution_clock::now() - begin;
+		double ms = (double) std::chrono::duration_cast<
+				std::chrono::milliseconds>(delay).count();
 
-	collector->addItem(program->getProgramName() + " " + currentCommand,
-			milliseconds.count());
+		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
+		collector->addItem(program->getProgramName() + " " + currentCommand,
+				ms);
+	}
+	delete program;
 
 	if (signal == EXIT_FAILURE) {
 		exitWithError();

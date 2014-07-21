@@ -9,21 +9,6 @@
 
 #include <test/acceptance/TestTools.hpp>
 
-#include <boost/chrono/duration.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/timer/timer.hpp>
-#include <connection/Daemon.hpp>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <utils/Files.hpp>
-#include <utils/statistics/StatisticsCollector.hpp>
-#include <cstddef>
-#include <iostream>
-#include <string>
-#include <vector>
-
 using namespace std;
 using namespace Anakin;
 namespace fs = boost::filesystem;
@@ -82,8 +67,7 @@ void exitWithSucces() {
  *  Print final statistics
  */
 void printStatistics(StatisticsCollector* collector) {
-	cout << endl
-			<< "===============================================\n"
+	cout << endl << "===============================================\n"
 			<< "************  Benchmark Results  **************\n"
 			<< "===============================================\n"
 			<< collector->compute();
@@ -142,7 +126,7 @@ void command(StatisticsCollector* collector, bool verbose, string command,
 				<< endl << "* Command \"" << command << "\" executed" << endl
 				<< "* Output:" << endl << endl;
 	}
-	boost::timer::cpu_timer timer;
+	auto begin = chrono::high_resolution_clock::now();
 	if (system(command.c_str()) != 0) {
 		cerr << "Command \"" << command << "\" fail" << endl;
 		if (showLogMsjIfFail) {
@@ -156,16 +140,13 @@ void command(StatisticsCollector* collector, bool verbose, string command,
 		}
 	} else {
 		if (verbose) {
-			auto nanoseconds = boost::chrono::nanoseconds(
-					timer.elapsed().user + timer.elapsed().system);
-			boost::chrono::milliseconds milliseconds =
-					boost::chrono::duration_cast<boost::chrono::milliseconds>(
-							nanoseconds);
+			auto delay = chrono::high_resolution_clock::now() - begin;
+			double ms = (double) std::chrono::duration_cast<
+					std::chrono::milliseconds>(delay).count();
 
-			cout << endl << "* Elapsed Time: " << milliseconds.count() << " ms."
-					<< endl;
+			cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
 			if (collector != NULL) {
-				collector->addItem(command, milliseconds.count());
+				collector->addItem(command, ms);
 			}
 		}
 	}
@@ -286,7 +267,7 @@ void stopAnakinHTTP(pid_t pID, fs::path logsDir,
 void printStep(string test, int number) {
 	cout << endl
 			<< "----------------------------------------------------------------------"
-			<< endl << "Test " << test << " - Step " << number << endl
+			<< endl << "* Testing: " << test << " - Step " << number << endl
 			<< "----------------------------------------------------------------------"
 			<< endl;
 }

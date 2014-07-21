@@ -60,13 +60,13 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	fs::path logsExtractor = logsDir / "patternExtractor.log";
 
 	//testing database cleanup
-	command(collector, false, "dropdb --if-exists " + database);
+	command(NULL, false, "dropdb --if-exists " + database);
 
 	//testing database creation.
-	command(collector, false, "createdb " + database);
+	command(NULL, false, "createdb " + database);
 
 	//run SQL script into database.
-	command(collector, false,
+	command(NULL, false,
 			"psql -U " + userDB + " -d " + database + " -q -f "
 					+ pathToAnakinPath(sqlScriptPath));
 
@@ -74,7 +74,7 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	dirCleanup(outputLogos);
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
-	command(collector, false, "rm -f " + pathToAnakinPath(severalXML));
+	command(NULL, false, "rm -f " + pathToAnakinPath(severalXML));
 
 	//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);

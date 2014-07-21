@@ -5,6 +5,7 @@
  *      Author: Franco Pellegrini
  */
 
+#include <logging/OutputPolicyFile.hpp>
 #include <utils/statistics/StatisticsCollector.hpp>
 #include <sstream>
 #include <utility>
@@ -16,6 +17,7 @@ StatisticsCollector::StatisticsCollector() {
 }
 
 void StatisticsCollector::addItem(string command, double time) {
+	boost::mutex::scoped_lock l(StatisticsCollector::GetMutex());
 	map<string, StatisticData>::iterator it = items.find(command);
 	if (it != items.end()) {
 		//element found;
@@ -27,6 +29,7 @@ void StatisticsCollector::addItem(string command, double time) {
 }
 
 string StatisticsCollector::compute() {
+	boost::mutex::scoped_lock l(StatisticsCollector::GetMutex());
 	std::stringstream output;
 	for (map<string, StatisticData>::iterator it = items.begin();
 			it != items.end(); ++it) {

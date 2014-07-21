@@ -36,7 +36,7 @@ void benchmarkTest(int argc, const char * argv[],
 	//--------------------------------------------------------------
 
 	//testing database data
-	string database = "AnakinAcceptanceTesting";
+	string database = "AnakinBenckmarkTesting";
 	string userDB = "postgres";
 	string hostDB = "localhost";
 	string passDB = "postgres";
@@ -44,11 +44,11 @@ void benchmarkTest(int argc, const char * argv[],
 	fs::path testDir = argv[1];
 	fs::path sqlScriptPath = testDir / "script.sql";
 	fs::path examplesDir = testDir / "examples";
-	fs::path simpleTest = examplesDir / "simpleTest";
-	fs::path inputLogos = simpleTest / "input-logos";
-	fs::path outputLogos = simpleTest / "output-logos";
-	fs::path outputs = simpleTest / "outputs";
-	fs::path severalJPG = simpleTest / "several.jpg";
+	fs::path benchmark = examplesDir / "benchmark";
+	fs::path inputLogos = benchmark / "input-logos";
+	fs::path outputLogos = benchmark / "output-logos";
+	fs::path outputs = benchmark / "outputs";
+	fs::path severalJPG = benchmark / "several.jpg";
 	fs::path severalXML = outputs / "several.xml";
 	fs::path logsDir = testDir / "logs";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
@@ -61,13 +61,13 @@ void benchmarkTest(int argc, const char * argv[],
 	fs::path logsExtractor = logsDir / "patternExtractor.log";
 
 	//testing database cleanup
-	command(collector, false, "dropdb --if-exists " + database);
+	command(NULL, false, "dropdb --if-exists " + database);
 
 	//testing database creation.
-	command(collector, false, "createdb " + database);
+	command(NULL, false, "createdb " + database);
 
 	//run SQL script into database.
-	command(collector, false,
+	command(NULL, false,
 			"psql -U " + userDB + " -d " + database + " -q -f "
 					+ pathToAnakinPath(sqlScriptPath));
 
@@ -75,7 +75,7 @@ void benchmarkTest(int argc, const char * argv[],
 	dirCleanup(outputLogos);
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
-	command(collector, false, "rm -f " + pathToAnakinPath(severalXML));
+	command(NULL, false, "rm -f " + pathToAnakinPath(severalXML));
 
 	//setting up new testing temporary environment variables
 	setTestingEnvironmentVariables(hostDB, database, userDB, passDB);
@@ -133,7 +133,7 @@ void benchmarkTest(int argc, const char * argv[],
 	pid_t pID = fork();
 	if (pID == 0) { // child
 		// Code only executed by child process
-		runDaemonProgram<PatternMatcher>(collector,
+		runDaemonProgram<PatternMatcher>(NULL,
 				"-oLogFile " + pathToAnakinPath(logsAnakin)
 						+ " -iHTTP 8080 -oHTTP -verbose");
 		_exit(EXIT_SUCCESS);
@@ -144,7 +144,7 @@ void benchmarkTest(int argc, const char * argv[],
 		// Code only executed by parent process
 		sleep(2);
 		//repeated 30 times, to obtain solid outputs
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 3; i++) {
 
 			command(collector, true,
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
@@ -163,9 +163,8 @@ void benchmarkTest(int argc, const char * argv[],
 				stopAnakinHTTP(pID, logsDir, collector);
 				exitWithError();
 			}
-
 			pattern =
-					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
+					"\",\"values\":[{\"center\":{\"x\":202.592300415039,\"y\":361.972229003906},\"label\":\"3\"}]}]}";
 			if (capture.find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
