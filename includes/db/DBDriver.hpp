@@ -33,6 +33,12 @@ public:
 	 * Constructor
 	 */
 	DBDriver();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~DBDriver();
+
 	/**
 	 * connects to the db
 	 */

@@ -9,6 +9,7 @@
 #define STATISTICSCOLLECTOR_HPP_
 
 #include <utils/statistics/StatisticData.hpp>
+#include <boost/thread/pthread/mutex.hpp>
 #include <map>
 #include <string>
 
@@ -25,6 +26,10 @@ public:
 	string compute();
 private:
 	map<string, StatisticData> items;
+	static boost::mutex& GetMutex() {
+		static boost::mutex mutex;
+		return mutex;
+	}
 };
 
 } /* namespace Anakin */

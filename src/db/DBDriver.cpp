@@ -18,6 +18,12 @@ DBDriver::DBDriver() {
 	this->dbdriverLog.clear();
 }
 
+DBDriver::~DBDriver() {
+	if (this->conn != NULL) {
+		PQfinish(conn);
+	}
+}
+
 bool DBDriver::connect() {
 	return DBDriver::connect("", "", "", "", "");
 }
