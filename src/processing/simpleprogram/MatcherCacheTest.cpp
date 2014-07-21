@@ -64,6 +64,7 @@ int MatcherCacheTest::run(vector<string> *input) {
 				<< " | current miss ratio: " << cache.getMissRatio() << endl;
 	}
 	cache.printLoadCount();
+	dbdriver.disconnect();
 	return EXIT_SUCCESS;
 }
 
