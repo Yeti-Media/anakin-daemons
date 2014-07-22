@@ -24,16 +24,20 @@ public:
 
 	CommunicationFormatterMatchingJSON();
 
+	/**
+	 * returns a wstring* representation of a JSONValue of a match (center, pattern label, matched keypoints)
+	 */
 	virtual wstring* outputMatch(Point2f center, string label,
 			vector<KeyPoint> matchedKeypoints);
 
+	/**
+	 * returns a wstring* representation of a JSONValue of patterns matches in a scene
+	 * (scene label, [match1,...,matchN])
+	 */
 	virtual wstring* outputMatches(string label, vector<wstring *> values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
 
-private:
-
-	bool ligthResults; // variable to obtain full results (false) or ligth results (true)
 };
 
 } /* namespace Anakin */

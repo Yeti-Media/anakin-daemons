@@ -24,15 +24,27 @@ public:
 
 	CommunicationFormatterCacheJSON();
 
-	virtual wstring trainerAdd(int smatcher_id_added, int cacheFreeSpace,
+	/**
+	 * returns a wstring* representing a JSONValue of changes made after adding a trainer to the cache
+	 */
+	virtual wstring* trainerAdd(int smatcher_id_added, int cacheFreeSpace,
 			int smatcher_id_removed);
 
-	virtual wstring trainerDel(int smatcher_id_deleted, int cacheFreeSpace);
+	/**
+	 * returns a wstring* representing a JSONValue of changes made after deleting a trainer from the cache
+	 */
+	virtual wstring* trainerDel(int smatcher_id_deleted, int cacheFreeSpace);
 
-	virtual wstring trainerUPD(int smatcher_id_updated);
+	/**
+	 * returns a wstring* representing a JSONValue of changes made after updating a trainer on the cache
+	 */
+	virtual wstring* trainerUPD(int smatcher_id_updated);
 
-	virtual wstring cacheStatus(vector<int> smatchers_in_cache,
-				int cacheFreeSpace);
+	/**
+	 * returns a wstring* representing a JSONValue of the cache status
+	 */
+	virtual wstring* cacheStatus(vector<int> smatchers_in_cache,
+			int cacheFreeSpace);
 
 	virtual ~CommunicationFormatterCacheJSON();
 };

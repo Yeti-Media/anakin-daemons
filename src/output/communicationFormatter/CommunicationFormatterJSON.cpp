@@ -33,31 +33,31 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 	wstringstream ws;
 	ws << requestID.c_str();
 	root[L"requestID"] = new JSONValue(ws.str());
-	switch (category){
-		case CF_PATTERN_MATCHING: {
-			root[L"category"] = new JSONValue(L"PATTERN");
-			break;
-		}
-		case CF_CACHE_IDX_ADD: {
-			root[L"category"] = new JSONValue(L"INDEX ADD");
-			break;
-		}
-		case CF_CACHE_IDX_DEL: {
-			root[L"category"] = new JSONValue(L"INDEX DELETE");
-			break;
-		}
-		case CF_CACHE_IDX_UPD: {
-			root[L"category"] = new JSONValue(L"INDEX UPDATE");
-			break;
-		}
-		case CF_CACHE_IDX_STATUS: {
-			root[L"category"] = new JSONValue(L"INDEX STATUS");
-			break;
-		}
-		default: {
-			root[L"category"] = new JSONValue(L"NONE---ERROR");
-			break;
-		}
+	switch (category) {
+	case CF_PATTERN_MATCHING: {
+		root[L"category"] = new JSONValue(L"PATTERN");
+		break;
+	}
+	case CF_CACHE_IDX_ADD: {
+		root[L"category"] = new JSONValue(L"INDEX ADD");
+		break;
+	}
+	case CF_CACHE_IDX_DEL: {
+		root[L"category"] = new JSONValue(L"INDEX DELETE");
+		break;
+	}
+	case CF_CACHE_IDX_UPD: {
+		root[L"category"] = new JSONValue(L"INDEX UPDATE");
+		break;
+	}
+	case CF_CACHE_IDX_STATUS: {
+		root[L"category"] = new JSONValue(L"INDEX STATUS");
+		break;
+	}
+	default: {
+		root[L"category"] = new JSONValue(L"NONE---ERROR");
+		break;
+	}
 	}
 	JSONArray valuesJSON;
 	for (uint v = 0; v < values.size(); v++) {
@@ -84,9 +84,7 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 	 -> origin (string)
 	 */
 
-
 	cout << "CommunicationFormatterJSON::outputError 88" << endl;
-
 
 	JSONObject root;
 	wstringstream wmessage;
@@ -117,14 +115,13 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 
 wstring* CommunicationFormatterJSON::format(const char * data) {
 
-
 	cout << "CommunicationFormatterJSON::format 121" << endl;
-
 
 	return new wstring((JSON::Parse(data))->Stringify().c_str());
 }
 
-wstring* CommunicationFormatterJSON::format(e_mode mode, string data, e_color colors){
+wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
+		e_color colors) {
 	/*  Result as wstring representing a JSONObject
 
 	 root    -> type ("pattern" | "histogram" | "landscape")
@@ -135,9 +132,7 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data, e_color co
 	 -> data (string)
 	 */
 
-
 	cout << "CommunicationFormatterJSON::format 139" << endl;
-
 
 	JSONObject root;
 	if (mode & CF_PATTERNS) {
@@ -168,74 +163,63 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data, e_color co
 	return new wstring(value->Stringify().c_str());
 }
 
-string* CommunicationFormatterJSON::formatRequest(const char * data){
-
+string* CommunicationFormatterJSON::formatRequest(const char * data) {
 
 	cout << "CommunicationFormatterJSON::formatRequest 174" << endl;
 
-
 	JSONValue* req = JSON::Parse(data);
 	std::string* request = new string();
-		if (req->HasChild(L"action")) {
-			std::wstring waction = req->Child(L"action")->AsString();
-			std::string saction(waction.begin(), waction.end());
-			saction.append(" ");
-			request->append("-");
-			request->append(saction);
-			//request += "-" + saction + " ";
+	if (req->HasChild(L"action")) {
+		std::wstring waction = req->Child(L"action")->AsString();
+		std::string saction(waction.begin(), waction.end());
+		saction.append(" ");
+		request->append("-");
+		request->append(saction);
+	}
+	if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
+		request->append("-" + Constants::PARAM_IDXS + " ");
+		JSONArray indexes =
+				req->Child(Constants::WPARAM_IDXS.c_str())->AsArray();
+		for (unsigned int i = 0; i < indexes.size(); i++) {
+			JSONValue* v = indexes.at(i);
+			std::string sv = std::to_string((int) v->AsNumber());
+			sv.append(" ");
+			request->append(sv);
 		}
-		if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
-			request->append("-" + Constants::PARAM_IDXS + " ");
-			//request += "-" + Constants::PARAM_IDXS + " ";
-			JSONArray indexes =
-					req->Child(Constants::WPARAM_IDXS.c_str())->AsArray();
-			for (unsigned int i = 0; i < indexes.size(); i++) {
-				JSONValue* v = indexes.at(i);
-				std::string sv = std::to_string((int) v->AsNumber());
-				sv.append(" ");
-				request->append(sv);
-				//request += sv + " ";
-			}
-		}
-		if (req->HasChild(Constants::WPARAM_SCENEID.c_str())) {
-			request->append("-" + Constants::PARAM_SCENEID + " ");
-			//request += "-" + Constants::PARAM_SCENEID + " ";
-			std::string scenario =
+	}
+	if (req->HasChild(Constants::WPARAM_SCENEID.c_str())) {
+		request->append("-" + Constants::PARAM_SCENEID + " ");
+		std::string scenario =
+				std::to_string(
+						(int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
+		scenario.append(" ");
+		request->append(scenario);
+	}
+	if (req->HasChild(Constants::WOPTIONAL_FLAGS.c_str())) {
+		JSONObject optionalFlags = req->Child(
+				Constants::WOPTIONAL_FLAGS.c_str())->AsObject();
+		if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())
+				!= optionalFlags.end()) {
+			request->append("-" + Constants::PARAM_MIN_RATIO + " ");
+			std::string mr =
 					std::to_string(
-							(int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
-			scenario.append(" ");
-			request->append(scenario);
-			//request += scenario + " ";
+							(float) optionalFlags.find(
+									Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
+			mr.append(" ");
+			request->append(mr);
 		}
-		if (req->HasChild(Constants::WOPTIONAL_FLAGS.c_str())) {
-			JSONObject optionalFlags = req->Child(
-					Constants::WOPTIONAL_FLAGS.c_str())->AsObject();
-			if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())
-					!= optionalFlags.end()) {
-				request->append("-" + Constants::PARAM_MIN_RATIO + " ");
-				//request += "-" + Constants::PARAM_MIN_RATIO + " ";
-				std::string mr =
-						std::to_string(
-								(float) optionalFlags.find(
-										Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
-				mr.append(" ");
-				request->append(mr);
-				//request += mr + " ";
-			}
-			if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())
-					!= optionalFlags.end()) {
-				request->append("-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ");
-				//request += "-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ";
-				std::string mma =
-						std::to_string(
-								(int) optionalFlags.find(
-										Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
-				mma.append(" ");
-				request->append(mma);
-				//request += mma + " ";
-			}
+		if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())
+				!= optionalFlags.end()) {
+			request->append("-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ");
+			std::string mma =
+					std::to_string(
+							(int) optionalFlags.find(
+									Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
+			mma.append(" ");
+			request->append(mma);
 		}
-		return request;
+	}
+	return request;
 }
 
 CommunicationFormatterJSON::~CommunicationFormatterJSON() {

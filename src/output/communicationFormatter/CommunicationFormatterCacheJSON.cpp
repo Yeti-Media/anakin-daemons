@@ -12,9 +12,9 @@ namespace Anakin {
 CommunicationFormatterCacheJSON::CommunicationFormatterCacheJSON() {
 }
 
-wstring CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
+wstring* CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 		int cacheFreeSpace, int smatcher_id_removed) {
-	/*   Result as wstring representing a JSONObject
+	/*   Result as wstring* representing a JSONObject
 
 	 root    -> index_added (int)
 
@@ -33,22 +33,19 @@ wstring CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 	root[L"index_removed"] = new JSONValue((double) smatcher_id_removed);
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);
 	JSONValue *value = new JSONValue(root);
-	return value->Stringify().c_str();
+	return new wstring(value->Stringify().c_str());
 }
 
-wstring CommunicationFormatterCacheJSON::trainerDel(
-		int smatcher_id_deleted, int cacheFreeSpace) {
-
+wstring* CommunicationFormatterCacheJSON::trainerDel(int smatcher_id_deleted,
+		int cacheFreeSpace) {
 
 	cout << "CommunicationFormatterCacheJSON::trainerDel 41" << endl;
-
 
 	return trainerAdd(-1, cacheFreeSpace, smatcher_id_deleted);
 }
 
-wstring CommunicationFormatterCacheJSON::trainerUPD(
-		int smatcher_id_updated) {
-	/*   Result as wstring representing a JSONObject
+wstring* CommunicationFormatterCacheJSON::trainerUPD(int smatcher_id_updated) {
+	/*   Result as wstring* representing a JSONObject
 
 	 root    -> index_updated (int)
 	 */
@@ -58,18 +55,17 @@ wstring CommunicationFormatterCacheJSON::trainerUPD(
 	JSONObject root;
 	root[L"index_updated"] = new JSONValue((double) smatcher_id_updated);
 	JSONValue *value = new JSONValue(root);
-	return value->Stringify().c_str();
+	return new wstring(value->Stringify().c_str());
 }
 
-wstring CommunicationFormatterCacheJSON::cacheStatus(
+wstring* CommunicationFormatterCacheJSON::cacheStatus(
 		vector<int> smatchers_in_cache, int cacheFreeSpace) {
-	/*   Result as wstring representing a JSONObject
+	/*   Result as wstring* representing a JSONObject
 
 	 root       -> cache_free_space (int)
 
 	 -> indexes (JSONArray)    -> index (int)
 	 */
-
 
 	cout << "CommunicationFormatterCacheJSON::cacheStatus 74" << endl;
 
@@ -85,7 +81,7 @@ wstring CommunicationFormatterCacheJSON::cacheStatus(
 	root[L"indexes"] = new JSONValue(values);
 
 	JSONValue *value = new JSONValue(root);
-	return value->Stringify().c_str();
+	return new wstring(value->Stringify().c_str());
 }
 
 CommunicationFormatterCacheJSON::~CommunicationFormatterCacheJSON() {

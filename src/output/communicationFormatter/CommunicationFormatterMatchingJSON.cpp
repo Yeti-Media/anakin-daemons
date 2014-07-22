@@ -5,14 +5,13 @@
  *      Author: Renzo Bianchini
  */
 
+#define LIGTH_RESULTS 1
+
 #include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
 
 namespace Anakin {
 
-
-
 CommunicationFormatterMatchingJSON::CommunicationFormatterMatchingJSON() {
-	ligthResults = true;
 }
 
 wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
@@ -34,10 +33,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 	 -> response (float)
 	 */
 
-
 	cout << "CommunicationFormatterMatchingJSON::outputMatch 38" << endl;
-
-
 
 	JSONObject root;
 	JSONObject jcenter;
@@ -52,7 +48,8 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 	ws << label.c_str();
 	root[L"label"] = new JSONValue(ws.str());
 
-	for (uint k = 0; k < matchedKeypoints.size() && !ligthResults; k++) {
+#if !LIGTH_RESULTS
+	for (uint k = 0; k < matchedKeypoints.size(); k++) {
 		KeyPoint current = matchedKeypoints[k];
 		JSONObject keypoint;
 		JSONObject pos;
@@ -64,8 +61,8 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 		keypoint[L"response"] = new JSONValue(current.response);
 		keypoints.push_back(new JSONValue(keypoint));
 	}
-	if (!ligthResults)
-		root[L"keypoints"] = new JSONValue(keypoints);
+	root[L"keypoints"] = new JSONValue(keypoints);
+#endif //LIGTH_RESULTS
 
 	// Create a value
 	JSONValue *value = new JSONValue(root);
@@ -81,7 +78,6 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
 	 -> values (JSONArray)    -> <see function above>
 	 */
 
-
 	cout << "CommunicationFormatterMatchingJSON::outputMatches 85" << endl;
 
 	JSONObject root;
@@ -91,7 +87,8 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
 	JSONArray valuesJSON;
 
 	for (uint v = 0; v < values.size(); v++) {
-		JSONValue *auxValue = JSON::Parse((const wchar_t *)values.at(v)->c_str());
+		JSONValue *auxValue = JSON::Parse(
+				(const wchar_t *) values.at(v)->c_str());
 		valuesJSON.push_back(auxValue);
 	}
 

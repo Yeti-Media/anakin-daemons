@@ -104,13 +104,10 @@ void SFBMCache::updateMatcher(QuickLZ* quickLZstate, int smatcher_id,
 		this->operation = UPDATEOP;
 }
 
-wstring SFBMCache::indexCacheStatus() {
+wstring* SFBMCache::indexCacheStatus() {
 	std::vector<int>* values = new std::vector<int>(0);
 	getKeys(this->cache, values);
 	int freeCacheSpace = this->cacheMaxSize - this->cacheSize;
-//	wstring* returnValue = new wstring();
-//	*returnValue = this->cfc->cacheStatus(*values, freeCacheSpace);
-//	return returnValue;
 	return this->cfc->cacheStatus(*values, freeCacheSpace);
 }
 
@@ -208,17 +205,17 @@ wstring* SFBMCache::getLastOperationResult(bool * error) {
 	wstring* result = new wstring();
 	switch (operation) {
 	case SFBMCache::INSERTOP: {
-		*result = this->cfc->trainerAdd(lastInsertedIndex,
+		result = this->cfc->trainerAdd(lastInsertedIndex,
 				this->cacheMaxSize - this->cacheSize, lastRemovedIndex);
 		break;
 	}
 	case SFBMCache::DELETEOP: {
-		*result = this->cfc->trainerDel(lastRemovedIndex,
+		result = this->cfc->trainerDel(lastRemovedIndex,
 				this->cacheMaxSize - this->cacheSize);
 		break;
 	}
 	case SFBMCache::UPDATEOP: {
-		*result = this->cfc->trainerUPD(lastInsertedIndex);
+		result = this->cfc->trainerUPD(lastInsertedIndex);
 		break;
 	}
 	case SFBMCache::ERROR: {

@@ -14,56 +14,62 @@ using namespace std;
 
 namespace Anakin {
 
-class I_CommunicationFormatterCache : virtual public I_CommunicationFormatter {
+class I_CommunicationFormatterCache: virtual public I_CommunicationFormatter {
 public:
 
 	/**
-	 * returns a JSONValue of changes made after adding a trainer to the cache
+	 * Place holder implementation due a bug on gcc. It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	 *
+	 * returns a wstring* representing the actual CommunicationFormatter of changes made after adding a trainer to the cache
 	 */
-	virtual wstring trainerAdd(int smatcher_id_added, int cacheFreeSpace,
+	virtual wstring* trainerAdd(int smatcher_id_added, int cacheFreeSpace,
 			int smatcher_id_removed) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
-	};// = 0;
+		return NULL;
+	}
+	; // = 0;
 
 	/**
-	 * returns a JSONValue of changes made after deleting a trainer from the cache
+	 * Place holder implementation due a bug on gcc. It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	 *
+	 * returns a wstring* representing the actual CommunicationFormatter of changes made after deleting a trainer from the cache
 	 */
-	virtual wstring trainerDel(int smatcher_id_deleted, int cacheFreeSpace) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
-	};// = 0;
+	virtual wstring* trainerDel(int smatcher_id_deleted, int cacheFreeSpace) {
+		return NULL;
+	}
+	; // = 0;
 
 	/**
-	 * returns a JSONValue of changes made after updating a trainer on the cache
+	 * Place holder implementation due a bug on gcc. It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	 *
+	 * returns a wstring* representing the actual CommunicationFormatter of changes made after updating a trainer on the cache
 	 */
-	virtual wstring trainerUPD(int smatcher_id_updated) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
-	};// = 0;
+	virtual wstring* trainerUPD(int smatcher_id_updated) {
+		return NULL;
+	}
+	; // = 0;
 
 	/**
-	 * returns a JSONValue of the cache status
+	 * Place holder implementation due a bug on gcc. It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	 *
+	 * returns a wstring* representing the actual CommunicationFormatter of the cache status
 	 */
-	virtual wstring cacheStatus(vector<int> smatchers_in_cache,
+	virtual wstring* cacheStatus(vector<int> smatchers_in_cache,
 			int cacheFreeSpace) {
-		return L"Place holder implementation due a bug on gcc. "
-				"It seems doesn't work well with pure virtual "
-				"classes when you implement an interface. Please "
-				"don't use this implementation, you must provide your"
-				"own implementation inside a child class";
-	};// = 0;
+		return NULL;
+	}
+	; // = 0;
 
-	virtual ~I_CommunicationFormatterCache(){};
+	virtual ~I_CommunicationFormatterCache() {
+	}
+	;
 };
 
 } /* namespace Anakin */

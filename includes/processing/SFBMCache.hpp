@@ -97,9 +97,9 @@ public:
 	 */
 	void updateMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error);
 	/**
-	 * returns a JSONValue with the trainers and the free space in the cache
+	 * returns a wstring* representing the actual CommunicationFormatter with the trainers and the free space in the cache
 	 */
-	wstring indexCacheStatus();
+	wstring* indexCacheStatus();
 	/**
 	 * load a scene
 	 *
@@ -138,8 +138,8 @@ public:
 	 */
 	void printLoadCount();
 	/**
-	 * a JSONValue with the information of the last request
-	 * @see ResultWriter.hpp
+	 * a wstring* representing the actual CommunicationFormatter with the information of the last request
+	 * @see ICommunicationFormatter.hpp
 	 * @see SFBMCache.cpp
 	 */
 	wstring* getLastOperationResult(bool * error = NULL);
