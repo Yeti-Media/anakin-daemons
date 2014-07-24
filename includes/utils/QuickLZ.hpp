@@ -10,14 +10,17 @@
 
 #include <quicklz.h>
 #include <stddef.h>
+#include <string>
+
+using namespace std;
 
 class QuickLZ {
 public:
 	QuickLZ();
 	virtual ~QuickLZ();
 
-	char * compressText(const char * text, size_t * size);
-	char * decompressText(const char * compressedText, size_t * size);
+	char * compressText(const string * text, size_t * size);
+	char * decompressText(const string * compressedText, size_t * size);
 private:
 	qlz_state_compress* state_compress;
 	qlz_state_decompress* state_decompress;

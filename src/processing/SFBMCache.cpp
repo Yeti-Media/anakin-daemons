@@ -1,10 +1,10 @@
 #include <boost/foreach.hpp>
-#include <boost/mpl/aux_/preprocessed/gcc/or.hpp>
+#include <db/DBDriver.hpp>
+#include <output/JSONValue.h>
+#include <output/ResultWriter.hpp>
 #include <processing/SFBMCache.hpp>
-#include <pthread.h>
 #include <sys/time.h>
-#include <iostream>
-#include <limits>
+#include <ctime>
 #include <utility>
 
 using namespace Anakin;
@@ -47,7 +47,7 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	this->pcache = new map<int, map<int, ImageInfo*>*>();
 }
 
-SerializableFlannBasedMatcher* SFBMCache::loadMatcher(int smatcher_id,
+SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,int smatcher_id,
 		bool * error) {
 	sem_wait(&this->sem);
 	//internal function, do not init *error=false
@@ -62,7 +62,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcher(int smatcher_id,
 	} else {
 		this->misses++;
 		float lt;
-		matcher = loadMatcherFromDB(smatcher_id, &lt, error);
+		matcher = loadMatcherFromDB(quickLZstate,smatcher_id, &lt, error);
 		if (*error) {
 			sem_post(&this->sem);
 			return NULL;
@@ -104,11 +104,11 @@ void SFBMCache::unloadMatcher(int smatcher_id, bool keepPatterns) {
 	sem_post(&this->sem);
 }
 
-void SFBMCache::updateMatcher(int smatcher_id, bool * error) {
+void SFBMCache::updateMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error) {
 	//VERY DUMB IMPLEMENTATION FOR THE MOMENT
 	//internal function, do not init *error=false
 	unloadMatcher(smatcher_id, true);
-	loadMatcher(smatcher_id, error);
+	loadMatcher(quickLZstate,smatcher_id, error);
 	if (!*error)
 		this->operation = UPDATEOP;
 }
@@ -336,8 +336,9 @@ void SFBMCache::getKeys(map<int, int>* m, vector<int>* keys) {
 }
 }
 
-SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id,
-		float* loadingTime, bool * error) {
+SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
+		QuickLZ* quickLZstate, int smatcher_id, float* loadingTime,
+		bool * error) {
 	//internal function, do not init *error=false
 	int loadCount = 0;
 	if (keyExist(this->loadingCount, smatcher_id)) {
@@ -361,7 +362,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(int smatcher_id,
 	}
 	string sid = to_string(smatcher_id);
 	SerializableFlannBasedMatcher* matcher = new SerializableFlannBasedMatcher(
-			sid, true);
+			quickLZstate, sid, true);
 	clock_t t_2 = clock();
 	float tt = ((float) (t_2 - t_1)) / CLOCKS_PER_SEC;
 	*loadingTime = tt;

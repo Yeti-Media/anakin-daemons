@@ -88,8 +88,8 @@ namespace Testing {
 
 		//TODO make a pattern for time
 		std::regex regexLOG(".*- Info: \ttest - 12345\n 1239\n\n\n");
-		std::string capture = get_file_contents(logFile.c_str());
-		if (!std::regex_match(capture, regexLOG)) {
+		std::string * capture = get_file_contents(logFile.string());
+		if (!std::regex_match(*capture, regexLOG)) {
 			BOOST_FAIL("Wrong console output.");
 		}
 
@@ -98,8 +98,8 @@ namespace Testing {
 		//TODO make a pattern for time
 		std::regex regexLOG2(
 				".*- Info: \ttest - 12345\n 1239\n\n\n.*- Info: \ttest - 12345\n 1239\n\n\n");
-		capture = get_file_contents(logFile.c_str());
-		if (!std::regex_match(capture, regexLOG2)) {
+		capture = get_file_contents(logFile.string());
+		if (!std::regex_match(*capture, regexLOG2)) {
 			BOOST_FAIL("Wrong console output.");
 		}
 	}

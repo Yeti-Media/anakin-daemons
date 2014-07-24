@@ -12,7 +12,7 @@
 
 namespace Anakin {
 
-std::string get_file_contents(const std::string filename);
+std::string * get_file_contents(const std::string filename);
 
 }
 ;

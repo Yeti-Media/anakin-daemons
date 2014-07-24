@@ -1,7 +1,14 @@
 #ifndef SERIALIZABLEFLANNBASEDMATCHER_HPP
 #define SERIALIZABLEFLANNBASEDMATCHER_HPP
 
-#include "opencv2/features2d/features2d.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/flann/miniflann.hpp>
+#include <stddef.h>
+#include <string>
+#include <vector>
+#include <utils/QuickLZ.hpp>
+
 
 namespace Anakin {
 
@@ -34,7 +41,7 @@ public:
 	 * filename : refers to the name of the two files that define a SFBM
 	 * removeFileAfterLoad : if true then the xml and if files will be deleted after the SFBM is loaded
 	 */
-	SerializableFlannBasedMatcher(std::string filename,
+	SerializableFlannBasedMatcher(QuickLZ* quickLZstate, std::string filename,
 			bool removeFileAfterLoad = false);
 
 	/**
@@ -44,7 +51,7 @@ public:
 	 * filename  :   the name for the xml and if files (<filename>.xml, <filename>.xml)
 	 * xmlData   :   the data of the xml file (if NULL then the <filename>.xml file will be used)
 	 */
-	void save(std::string filename, std::string * xmlData = NULL);
+	void save(QuickLZ* quickLZstate, std::string filename, std::string * xmlData = NULL);
 
 	/**
 	 * trains the matcher
@@ -95,7 +102,7 @@ private:
 	 * removeOriginal :  if true then the compressed files will overwrite the originals
 	 *                   else the compressed files will have cif and cxml extension
 	 */
-	void compress(bool removeOriginal = false);
+	void compress(QuickLZ* quickLZstate, bool removeOriginal = false);
 
 	/**
 	 * decompresses the if and xml files
@@ -105,18 +112,8 @@ private:
 	 * xmlData           :   if not NULL then the xml file will be decompressed and stored in this variable
 	 *                       else it will be decompressed into a file
 	 */
-	void decompress(bool useOriginalNames = false,
+	void decompress(QuickLZ* quickLZstate, bool useOriginalNames = false,
 			std::string * xmlData = NULL);
-
-	/**
-	 * read the content of a file (as binary)
-	 *
-	 * data : where the file's data will be stored
-	 * filename : the file to read (full name)
-	 *
-	 * returns the length of the data read from the file
-	 */
-	int readFile(char ** data, std::string filename);
 
 	/**
 	 * write content to a file (as binary)
@@ -125,7 +122,7 @@ private:
 	 * filename : the file in which to write (full name)
 	 * lenght : the data's length
 	 */
-	void writeFile(char * data, std::string filename, int length);
+	void writeFile(char * data, std::string filename, size_t length);
 	std::string smatcher_id;
 };
 

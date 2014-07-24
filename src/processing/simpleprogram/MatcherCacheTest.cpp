@@ -40,6 +40,7 @@ void MatcherCacheTest::initProgramFlags() {
 
 int MatcherCacheTest::run(vector<string> *input) {
 	DBDriver dbdriver;
+	QuickLZ* quickLZstate = new QuickLZ();
 	if (!dbdriver.connect("", "", "", "", "")) {
 		cerr << dbdriver.getMessage() << endl;
 		return EXIT_FAILURE;
@@ -57,7 +58,7 @@ int MatcherCacheTest::run(vector<string> *input) {
 	for (uint r = 0; r < requests; r++) {
 		int id = rand() % 2;
 		bool matcherError = false;
-		sfbm = cache.loadMatcher(patternsID.at(id), &matcherError);
+		sfbm = cache.loadMatcher(quickLZstate,patternsID.at(id), &matcherError);
 		cout << "loaded matcher(" << patternsID.at(id) << "), matcher is "
 				<< (sfbm->empty() ? "empty" : "not empty") << endl;
 		cout << "current hit ratio: " << cache.getHitRatio()

@@ -217,8 +217,8 @@ void testingDirCheck(int argc, const char * argv[]) {
 	fs::path sqlScriptPath = testDir / "script.sql";
 	validateFile(sqlScriptPath, "SQL script");
 
-	string scriptContent = get_file_contents(sqlScriptPath.c_str());
-	std::size_t found = scriptContent.find("DROP DATABASE IF EXISTS");
+	string * scriptContent = get_file_contents(sqlScriptPath.string());
+	std::size_t found = scriptContent->find("DROP DATABASE IF EXISTS");
 	if (found != std::string::npos) {
 		cerr
 				<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "

@@ -13,6 +13,7 @@
 #include <vector>
 #include <utils/help/Help.hpp>
 #include <processing/Flags.hpp>
+#include <utils/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -37,6 +38,7 @@ public:
 protected:
 	E_PatternMatchingAction action = NONE;
 	ResultWriter* rw;
+	QuickLZ* quickLZstate;
 };
 
 } /* namespace Anakin */
