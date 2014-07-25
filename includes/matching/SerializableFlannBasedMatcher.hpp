@@ -58,7 +58,7 @@ public:
 	 *
 	 * descriptors   : the descriptors of the patterns used to train the matcher
 	 */
-	void train(std::vector<cv::Mat> descriptors);
+	void train(std::vector<cv::Mat> * descriptors);
 
 	/**
 	 * if the SFBM was de-serialized this will return false, else will return FlannBasedMatcher empty()
@@ -94,7 +94,7 @@ private:
 	 * load the if file and creates a new index with it
 	 * data : a matrix used by the index and stored in the xml file
 	 */
-	void loadIndex(cv::Mat data);
+	void loadIndex(cv::Mat * data);
 
 	/**
 	 * compresses the if and xml files
@@ -115,14 +115,6 @@ private:
 	void decompress(QuickLZ* quickLZstate, bool useOriginalNames = false,
 			std::string * xmlData = NULL);
 
-	/**
-	 * write content to a file (as binary)
-	 *
-	 * data : the data to write
-	 * filename : the file in which to write (full name)
-	 * lenght : the data's length
-	 */
-	void writeFile(char * data, std::string filename, size_t length);
 	std::string smatcher_id;
 };
 

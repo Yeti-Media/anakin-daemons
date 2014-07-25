@@ -8,6 +8,8 @@
 #ifndef QUICKLZ_HPP_
 #define QUICKLZ_HPP_
 
+#define QLZ_STREAMING_BUFFER 0
+
 #include <quicklz.h>
 #include <stddef.h>
 #include <string>

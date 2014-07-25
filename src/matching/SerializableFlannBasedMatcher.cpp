@@ -6,8 +6,6 @@
 #include <fstream>      // ifstream
 #include <iostream>               // for cout
 
-#define QLZ_STREAMING_BUFFER 0
-
 using namespace Anakin;
 using namespace cv;
 using namespace std;
@@ -88,8 +86,8 @@ bool SerializableFlannBasedMatcher::empty() const {
 	return trainDescCollection.empty();
 }
 
-void SerializableFlannBasedMatcher::train(vector<cv::Mat> descriptors) {
-	mergedDescriptors.set(descriptors);
+void SerializableFlannBasedMatcher::train(vector<cv::Mat> * descriptors) {
+	mergedDescriptors.set(*descriptors);
 	//FIXME can cause memory leaks
 	flannIndex = new flann::Index(mergedDescriptors.getDescriptors(),
 			*indexParams);
@@ -134,8 +132,9 @@ void SerializableFlannBasedMatcher::load(string xmlData) {
 	cv::Mat* mergedDescriptorsDescriptors = ((cv::Mat *) mdptr);
 	root["mergedDescriptorsDescriptors"] >> *mergedDescriptorsDescriptors;
 	addedDescCount = mergedDescriptorsDescriptors->rows;
-	loadIndex(*mergedDescriptorsDescriptors);
+	loadIndex(mergedDescriptorsDescriptors);
 	this->loadedFromFile = true;
+	//delete mergedDescriptorsDescriptors;
 }
 
 void SerializableFlannBasedMatcher::saveIndex() {
@@ -143,13 +142,12 @@ void SerializableFlannBasedMatcher::saveIndex() {
 	flannIndex->save(tmpFile);
 }
 
-//FIXME create Mat * data!
-void SerializableFlannBasedMatcher::loadIndex(cv::Mat data) {
+void SerializableFlannBasedMatcher::loadIndex(cv::Mat * data) {
 	string tmpFile = this->filename + ".if";
 	cv::flann::IndexParams* params = new cv::flann::SavedIndexParams(
 			tmpFile.c_str());
 	//FIXME can cause memory leaks
-	flannIndex = new cv::flann::Index(data, *params);
+	flannIndex = new cv::flann::Index(*data, *params);
 }
 
 void SerializableFlannBasedMatcher::compress(QuickLZ* quickLZstate,
@@ -179,8 +177,8 @@ void SerializableFlannBasedMatcher::compress(QuickLZ* quickLZstate,
 	//clock_t t_2 = clock();
 	//float tt = ((float)(t_2 - t_1))/CLOCKS_PER_SEC;
 	//cout << "compressing time: " << tt << endl;
-	writeFile(compressedIndexData, compressedIndexFileName, ir);
-	writeFile(compressedMatcherData, compressedMatcherFileName, mr);
+	write_to_file(compressedIndexData, compressedIndexFileName, ir);
+	write_to_file(compressedMatcherData, compressedMatcherFileName, mr);
 	delete uindexData;
 	delete umatcherData;
 	delete compressedIndexData;
@@ -216,9 +214,9 @@ void SerializableFlannBasedMatcher::decompress(QuickLZ* quickLZstate,
 	//clock_t t_2 = clock();
 	//float tt = ((float)(t_2 - t_1))/CLOCKS_PER_SEC;
 	//cout << "decompressing time: " << tt << endl;
-	writeFile(ucompressedIndexData, uncompressedIndexFileName, ir);
+	write_to_file(ucompressedIndexData, uncompressedIndexFileName, ir);
 	if (decompressMatcherToFile) {
-		writeFile(ucompressedMatcherData, uncompressedMatcherFileName, mr);
+		write_to_file(ucompressedMatcherData, uncompressedMatcherFileName, mr);
 	} else {
 		string loadedMatcherDara(ucompressedMatcherData, mr);
 		*xmlData = loadedMatcherDara;
@@ -229,10 +227,3 @@ void SerializableFlannBasedMatcher::decompress(QuickLZ* quickLZstate,
 	delete ucompressedMatcherData;
 }
 
-void SerializableFlannBasedMatcher::writeFile(char * data, string filename,
-		size_t length) {
-	ofstream os(filename.c_str(), ofstream::out | ofstream::binary);
-	//cout << data << endl << "length " << length <<endl << "archivo " << filename << endl;
-	os.write(data, length);
-	os.close();
-}

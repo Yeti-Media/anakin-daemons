@@ -28,3 +28,17 @@ string * Anakin::get_file_contents(const string filename) {
 	throw(errno);
 }
 
+void Anakin::write_to_file(const string * data, const string filename) {
+	ofstream os(filename.c_str(), ofstream::out | ofstream::binary);
+	//cout << data << endl << "length " << length <<endl << "archivo " << filename << endl;
+	os << *data;
+	os.close();
+}
+
+void Anakin::write_to_file(const char * data, const string filename,
+		const size_t length) {
+	ofstream os(filename.c_str(), ofstream::out | ofstream::binary);
+	//cout << data << endl << "length " << length <<endl << "archivo " << filename << endl;
+	os.write(data, length);
+	os.close();
+}
