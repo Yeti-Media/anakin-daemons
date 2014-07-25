@@ -152,8 +152,8 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 			cout << "* Request number " << i << endl;
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
-			std::string capture = get_file_contents(lastStdout.c_str());
-			if (capture.find(pattern) == std::string::npos) {
+			std::string * capture = get_file_contents(lastStdout.string());
+			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << capture << endl << endl
@@ -165,7 +165,7 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 
 			pattern =
 					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
-			if (capture.find(pattern) == std::string::npos) {
+			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << capture << endl << endl

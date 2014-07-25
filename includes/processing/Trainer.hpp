@@ -6,6 +6,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <string>
 #include <vector>
+#include <utils/QuickLZ.hpp>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ public:
 	Trainer(cv::Ptr<cv::DescriptorMatcher> detector, vector<RichImg*>& patterns,
 			string outputFolder, string fileName);
 
-	virtual void train_and_save() = 0;
+	virtual void train_and_save(QuickLZ* quickLZstate) = 0;
 	virtual ~Trainer();
 protected:
 	cv::Ptr<cv::DescriptorMatcher> detector;

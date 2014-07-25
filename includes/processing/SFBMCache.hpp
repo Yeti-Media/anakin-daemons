@@ -1,15 +1,19 @@
 #ifndef SFBMCACHE_HPP
 #define SFBMCACHE_HPP
 
-#include "db/DBDriver.hpp"
-#include "matching/SerializableFlannBasedMatcher.hpp"
-#include <map>
-#include <vector>
-#include <string>
+#include <data/ImageInfo.hpp>
+#include <matching/SerializableFlannBasedMatcher.hpp>
 #include <semaphore.h>
-#include "data/ImageInfo.hpp"
-#include "output/JSONValue.h"
-#include "output/ResultWriter.hpp"
+#include <map>
+#include <string>
+#include <vector>
+#include <utils/QuickLZ.hpp>
+
+class JSONValue;
+namespace Anakin {
+class DBDriver;
+class ResultWriter;
+} /* namespace Anakin */
 
 namespace Anakin {
 
@@ -78,7 +82,7 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	SerializableFlannBasedMatcher* loadMatcher(int smatcher_id, bool * error);
+	SerializableFlannBasedMatcher* loadMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error);
 	/**
 	 * unload a matcher from cache
 	 *
@@ -94,7 +98,7 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	void updateMatcher(int smatcher_id, bool * error);
+	void updateMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error);
 	/**
 	 * returns a JSONValue with the trainers and the free space in the cache
 	 */
@@ -197,7 +201,7 @@ private:
 	void getKeys(std::map<int, SerializableFlannBasedMatcher*>* m,
 			std::vector<int>* keys);
 	void getKeys(std::map<int, int>* m, std::vector<int>* keys);
-	SerializableFlannBasedMatcher* loadMatcherFromDB(int smatcher_id,
+	SerializableFlannBasedMatcher* loadMatcherFromDB(QuickLZ* quickLZstate,int smatcher_id,
 			float* loadingTime, bool * error);
 	ImageInfo* loadSceneFromDB(int sceneID, bool * error);
 	void incLife(int smatcher_id, bool matchersCache = true);

@@ -9,9 +9,9 @@
 #define PATTERNTRAINER_HPP_
 
 #include <processing/Program.hpp>
-#include <utils/help/Help.hpp>
 #include <string>
 #include <vector>
+#include <utils/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -25,6 +25,7 @@ public:
 protected:
 	int run(vector<string> *input);
 	void initProgramFlags();
+	QuickLZ* quickLZstate;
 };
 
 } /* namespace Anakin */

@@ -9,6 +9,7 @@
 #include <data/RichImg.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
 #include <opencv2/core/core.hpp>
+#include <opencv2/core/operations.hpp>
 #include <opencv2/flann/miniflann.hpp>
 #include <processing/BasicFlannTrainer.hpp>
 #include <processing/Flags.hpp>
@@ -25,9 +26,11 @@ namespace Anakin {
 
 PatternTrainer::PatternTrainer() :
 		Program() {
+	quickLZstate = new QuickLZ();
 }
 
 PatternTrainer::~PatternTrainer() {
+	delete quickLZstate;
 }
 
 Help* PatternTrainer::getHelp() {
@@ -109,7 +112,7 @@ int PatternTrainer::run(vector<string> *input) {
 
 	Trainer* trainer = new BasicFlannTrainer(matcher, patterns, folder,
 			fileName);
-	trainer->train_and_save();
+	trainer->train_and_save(quickLZstate);
 
 	//FIXME verify this
 //	if (patternsId != NULL) {

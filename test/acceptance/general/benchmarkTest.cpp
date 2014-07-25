@@ -153,8 +153,8 @@ void benchmarkTest(int argc, const char * argv[],
 			cout << "* Request number " << i << endl;
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
-			std::string capture = get_file_contents(lastStdout.c_str());
-			if (capture.find(pattern) == std::string::npos) {
+			std::string * capture = get_file_contents(lastStdout.c_str());
+			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << capture << endl << endl
@@ -165,7 +165,7 @@ void benchmarkTest(int argc, const char * argv[],
 			}
 			pattern =
 					"\",\"values\":[{\"center\":{\"x\":202.592300415039,\"y\":361.972229003906},\"label\":\"3\"}]}]}";
-			if (capture.find(pattern) == std::string::npos) {
+			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << capture << endl << endl

@@ -27,6 +27,17 @@
 using namespace Anakin;
 using namespace std;
 
+PatternMatcher::PatternMatcher() :
+		CommandRunner() {
+	this->rw = NULL;
+	this->cache = NULL;
+	this->quickLZstate = new QuickLZ();
+}
+
+PatternMatcher::~PatternMatcher() {
+	delete this->quickLZstate;
+}
+
 Help* PatternMatcher::getHelp() {
 	return new HelpPatternMatcher();
 }
@@ -103,16 +114,6 @@ void PatternMatcher::initializeCommandRunner(DataOutput* out,
 			Constants::ACTION_MATCH);
 
 	flags->setVerbose(true);
-}
-
-PatternMatcher::PatternMatcher() :
-		CommandRunner() {
-	this->rw = NULL;
-	this->cache = NULL;
-}
-
-PatternMatcher::~PatternMatcher() {
-
 }
 
 void PatternMatcher::validateRequest(vector<string> *input) {
@@ -232,7 +233,7 @@ void PatternMatcher::run() {
 		for (uint i = 0; i < this->indexes.size(); i++) {
 			int idxID = stoi(this->indexes.at(i));
 			bool error = false;
-			this->cache->loadMatcher(idxID, &error);
+			this->cache->loadMatcher(quickLZstate,idxID, &error);
 			if (error) {
 				this->out->error(
 						this->cache->getLastOperationResult()->Stringify().c_str());
@@ -288,7 +289,7 @@ void PatternMatcher::run() {
 			string smatcherID = this->indexes.at(i);
 			int idxID = stoi(smatcherID);
 			bool error = false;
-			this->cache->updateMatcher(idxID, &error);
+			this->cache->updateMatcher(quickLZstate,idxID, &error);
 			if (error) {
 				this->out->error(
 						this->cache->getLastOperationResult()->Stringify().c_str());
@@ -323,7 +324,7 @@ void PatternMatcher::run() {
 			string smatcherID = this->indexes.at(i);
 			int idxID = stoi(smatcherID);
 			bool matcherError = false;
-			SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(
+			SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(quickLZstate,
 					idxID, &matcherError);
 			if (matcherError) {
 				this->out->error(

@@ -7,6 +7,7 @@
 #include <processing/Trainer.hpp>
 #include <string>
 #include <vector>
+#include <utils/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -15,7 +16,7 @@ public:
 	BasicFlannTrainer(cv::Ptr<SerializableFlannBasedMatcher> detector,
 			std::vector<Anakin::RichImg*>& patterns, std::string outputFolder,
 			std::string fileName);
-	void train_and_save();
+	void train_and_save(QuickLZ* quickLZstate);
 	virtual ~BasicFlannTrainer();
 };
 

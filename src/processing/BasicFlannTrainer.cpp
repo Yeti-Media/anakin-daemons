@@ -5,18 +5,19 @@
 using namespace Anakin;
 using namespace std;
 
-void BasicFlannTrainer::train_and_save() {
-	vector<cv::Mat> pdescriptors(this->patterns->size());
+void BasicFlannTrainer::train_and_save(QuickLZ* quickLZstate) {
+	vector<cv::Mat> * pdescriptors = new vector<cv::Mat>(this->patterns->size());
 	for (uint i = 0; i < this->patterns->size(); i++) {
 		RichImg* p = this->patterns->at(i);
-		pdescriptors.at(i) = p->getDescriptors().clone();
+		pdescriptors->at(i) = p->getDescriptors().clone();
 	}
 	((cv::Ptr<SerializableFlannBasedMatcher>) this->detector)->train(
 			pdescriptors);
 	//this->detector->add(pdescriptors);
 	//this->detector->train();
-	((cv::Ptr<SerializableFlannBasedMatcher>) this->detector)->save(
+	((cv::Ptr<SerializableFlannBasedMatcher>) this->detector)->save(quickLZstate,
 			this->outputFolder + this->fileName);
+	delete pdescriptors;
 }
 
 BasicFlannTrainer::BasicFlannTrainer(

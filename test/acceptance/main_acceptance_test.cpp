@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
 	testingDirCheck(argc, argv);
 
 	simpleTest(argc, argv, &collector);
-	benchmarkTest(argc, argv, &collector);
+	//benchmarkTest(argc, argv, &collector);
 
 	printStatistics(&collector);
 	exitWithSucces();
