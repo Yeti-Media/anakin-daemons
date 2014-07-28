@@ -3,7 +3,10 @@
 
 #include <string>
 
+using namespace std;
+
 namespace Anakin {
+
 
 /**
  * Describes a pattern (that can be a pattern or a scenario) stored in the db
@@ -19,28 +22,30 @@ public:
 	 * user id : the id of the user who owns this pattern
 	 * data : the data associated with this pattern
 	 */
-	DBPattern(int id, int userID, std::string data);
+	DBPattern(int id, int userID, string * data);
 	/**
 	 * Constructor
 	 * user id : the id of the user who owns this pattern
 	 * data : the data associated with this pattern
 	 */
-	DBPattern(int userID, std::string data);
+	DBPattern(int userID, string * data);
 	/**
 	 * Constructor (only for scenarios)
 	 * data : the data associated with this pattern
 	 */
-	DBPattern(std::string data); //USE ONLY FOR SCENARIOS
+	DBPattern(string * data); //USE ONLY FOR SCENARIOS
+
+	virtual ~DBPattern();
 	int getID();
 	int getUserID();
 	void changeID(int id);
 	void changeUID(int user_id);
-	std::string getData() const;
+	string * getData() const;
 protected:
 private:
 	int id;
 	int userID;
-	std::string data;
+	string * data = new string();
 };
 }
 ;

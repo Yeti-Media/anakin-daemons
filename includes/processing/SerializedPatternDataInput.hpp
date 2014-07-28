@@ -23,7 +23,7 @@ private:
 	std::vector<ImageInfo*>* cache;
 	bool loaded;
 	int current;
-	void loadData(std::vector<ImageInfo*>* data, std::string rawData);
+	void loadData(std::vector<ImageInfo*>* data, std::string * rawData);
 	bool initAndConnectDriver(const char *pghost, const char *pgport,
 			const char *dbName, const char *login, const char *pwd);
 	void reportDBDriverError();

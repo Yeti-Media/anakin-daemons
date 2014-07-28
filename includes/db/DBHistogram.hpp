@@ -3,6 +3,7 @@
 
 #include <string>
 
+using namespace std;
 namespace Anakin {
 
 /**
@@ -33,14 +34,15 @@ public:
 	 * isLandscape : if true then this object will represent a landscape otherwise will represent a histogram
 	 */
 	DBHistogram(bool isLandscape);
-	void setColorData(std::string data);
-	void setGrayData(std::string data);
-	void setHSVData(std::string data);
+	virtual ~DBHistogram();
+	void setColorData(string * data);
+	void setGrayData(string * data);
+	void setHSVData(string * data);
 	int getID();
 	int getUserID();
-	std::string getColorData() const;
-	std::string getGrayData() const;
-	std::string getHSVData() const;
+	string * getColorData() const;
+	string * getGrayData() const;
+	string * getHSVData() const;
 	char getMode() const;
 	void changeID(int id);
 	void changeUID(int user_id);
@@ -48,9 +50,9 @@ protected:
 private:
 	int id;
 	int userID;
-	std::string colorData;
-	std::string grayData;
-	std::string hsvData;
+	string * colorData = new string();
+	string * grayData = new string();
+	string * hsvData = new string(); //TODO memory leak here
 	char mode;
 };
 }
