@@ -1,19 +1,15 @@
 #ifndef SFBMCACHE_HPP
 #define SFBMCACHE_HPP
 
+#include <boost/thread/pthread/mutex.hpp>
+#include <db/DBDriver.hpp>
 #include <data/ImageInfo.hpp>
+#include <output/JSONValue.h>
+#include <output/ResultWriter.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
-#include <semaphore.h>
 #include <map>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
-
-class JSONValue;
-namespace Anakin {
-class DBDriver;
-class ResultWriter;
-} /* namespace Anakin */
 
 namespace Anakin {
 
@@ -148,6 +144,7 @@ public:
 	JSONValue* getLastOperationResult(bool * error = NULL);
 protected:
 private:
+
 	//FIELDS
 	DBDriver* dbdriver;
 	ResultWriter* rw;
@@ -190,9 +187,11 @@ private:
 	//PATTERNS
 	std::map<int, std::map<int, ImageInfo*>*>* pcache;
 
-	sem_t sem;
-
 	//FUNCTIONS
+	static boost::mutex& GetMutex() {
+		static boost::mutex mutex;
+		return mutex;
+	}
 	void tic(int ignore, bool matchersCache = true);
 	void freeCacheSlot(bool matchersCache = true);
 	void storeMatcher(int smatcher_id, SerializableFlannBasedMatcher* matcher);
