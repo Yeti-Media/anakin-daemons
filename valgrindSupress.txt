@@ -211,4 +211,175 @@
    ... 
 }
 
+{
+   String to int with libcrypto
+   Memcheck:Cond
+   ...
+   fun:_ZN6Anakin8DBDriver11stringToIntEPKc
+   fun:_ZN6Anakin8DBDriver15getUserPatternsEiPb
+   ...
+}
+
+{
+   String to int with libcrypto
+   Memcheck:Value8
+   ...
+   fun:_ZN6Anakin8DBDriver11stringToIntEPKc
+   fun:_ZN6Anakin8DBDriver15getUserPatternsEiPb
+   ...
+}
+{
+   String to int with libcrypto
+   Memcheck:Value4
+   ...
+   fun:_ZN6Anakin8DBDriver11stringToIntEPKc
+   fun:_ZN6Anakin8DBDriver15getUserPatternsEiPb
+   ...
+}
+{
+   String to int with libcrypto
+   Memcheck:Value16
+   ...
+   fun:_ZN6Anakin8DBDriver11stringToIntEPKc
+   fun:_ZN6Anakin8DBDriver15getUserPatternsEiPb
+   ...
+}
+
+
+{
+   String with libcrypto
+   Memcheck:Cond
+   fun:strlen
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN6Anakin8DBDriver21getPatternDescriptorsEiPSsPb
+   ...
+}
+
+{
+   String with libcrypto
+   Memcheck:Value4
+   fun:strlen
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN6Anakin8DBDriver21getPatternDescriptorsEiPSsPb
+   ...
+}
+
+{
+   String with libcrypto
+   Memcheck:Value8
+   fun:strlen
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN6Anakin8DBDriver21getPatternDescriptorsEiPSsPb
+   ...
+}
+
+{
+   String with libcrypto PatternDescriptor
+   Memcheck:Value16
+   fun:strlen
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN6Anakin8DBDriver21getPatternDescriptorsEiPSsPb
+   ...
+}
+
+{
+   String with libcrypto PatternDataInput
+   Memcheck:Cond
+   ...
+   fun:*SerializedPatternData*loadData*
+   ...
+}
+
+{
+   String with libcrypto PatternDataInput
+   Memcheck:Value4
+   ...
+   fun:*SerializedPatternData*loadData*
+   ...
+}
+
+{
+   String with libcrypto PatternDataInput
+   Memcheck:Value8
+   ...
+   fun:*SerializedPatternData*loadData*
+   ...
+}
+
+{
+   String with libcrypto PatternDataInput
+   Memcheck:Value16
+   ...
+   fun:*SerializedPatternData*loadData*
+   ...
+}
+
+{
+   Mat problems with uninitilizated values
+   Memcheck:Cond
+   fun:*Mat*
+   ...
+   fun:*Anakin*ImageInfo*getDescriptors*
+   ...
+}
+
+{
+   Mat problems with uninitilizated values
+   Memcheck:Value4
+   fun:*Mat*
+   ...
+   fun:*Anakin*ImageInfo*getDescriptors*
+   ...
+}
+
+{
+   Mat problems with uninitilizated values
+   Memcheck:Value8
+   fun:*Mat*
+   ...
+   fun:*Anakin*ImageInfo*getDescriptors*
+   ...
+}
+
+{
+   Mat problems with uninitilizated values
+   Memcheck:Value16
+   fun:*Mat*
+   ...
+   fun:*Anakin*ImageInfo*getDescriptors*
+   ...
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:*Mat*
+   ...
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:*Mat*
+   ...
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value4
+   fun:*Mat*
+   ...
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value8
+   fun:*Mat*
+   ...
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Value16
+   fun:*Mat*
+   ...
+}
+
 

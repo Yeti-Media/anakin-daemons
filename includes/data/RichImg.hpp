@@ -44,7 +44,7 @@ public:
 	/**
 	 * result: the keypoints of the image asociated to this object : std::vector<cv::KeyPoint>
 	 */
-	std::vector<cv::KeyPoint> getKeypoints();
+	std::vector<cv::KeyPoint> * getKeypoints();
 
 	/**
 	 *   this will recalculate the descriptors after deleting keypoints using an int vector mask
@@ -57,17 +57,17 @@ public:
 	/**
 	 * result: re-calculated image keypoints : std::vector<cv::KeyPoint>
 	 */
-	std::vector<cv::KeyPoint> getFreshKeypoints();
+	std::vector<cv::KeyPoint> * getFreshKeypoints();
 
 	/**
 	 * result: image descriptors : cv::Mat
 	 */
-	cv::Mat getDescriptors();
+	cv::Mat * getDescriptors();
 
 	/**
 	 * result: re-calculated image descriptors : cv::Mat
 	 */
-	cv::Mat getFreshDescriptors();
+	cv::Mat * getFreshDescriptors();
 
 	/**
 	 * result: a pointer to the Img object asociated with this object
@@ -89,8 +89,8 @@ private:
 	Img *aimg;
 	cv::Ptr<cv::FeatureDetector> detector;
 	cv::Ptr<cv::DescriptorExtractor> extractor;
-	std::vector<cv::KeyPoint> keypoints;
-	cv::Mat descriptors;
+	std::vector<cv::KeyPoint> * keypoints;
+	cv::Mat * descriptors;
 	bool descriptorsCalculated = false;
 	bool keypointsCalculated = false;
 	/**

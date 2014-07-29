@@ -70,7 +70,7 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 	//internal function, do not init *error=false
 	vector<Match>* result = new std::vector<Match>();
 	vector<DMatch>* good_matches = new vector<DMatch>(0);
-	getMatches(scene->getDescriptors(), *good_matches);
+	getMatches(*scene->getDescriptors(), *good_matches);
 	map<int, vector<DMatch>*>* patternsMatched =
 			new map<int, vector<DMatch>*>();
 	for (uint m = 0; m < good_matches->size(); m++) {
@@ -113,9 +113,9 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 				//obj_points.push_back( pattern->getKeypoints()[ (*pattern_matches)[i].queryIdx ].pt );
 				//scene_points.push_back( scene->getKeypoints()[ (*pattern_matches)[i].trainIdx ].pt );
 				obj_points.push_back(
-						pattern->getKeypoints()[(*pattern_matches)[i].trainIdx].pt);
+						pattern->getKeypoints()->at((*pattern_matches)[i].trainIdx).pt);
 				scene_points.push_back(
-						scene->getKeypoints()[(*pattern_matches)[i].queryIdx].pt);
+						scene->getKeypoints()->at((*pattern_matches)[i].queryIdx).pt);
 			}
 
 			std::vector<cv::KeyPoint>* matchedKeypoints = new std::vector<
@@ -124,7 +124,7 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 				DMatch cmatch = (*pattern_matches)[m];
 				//matchedKeypoints->push_back(scene->getKeypoints()[cmatch.trainIdx]);
 				matchedKeypoints->push_back(
-						scene->getKeypoints()[cmatch.queryIdx]);
+						scene->getKeypoints()->at(cmatch.queryIdx));
 			}
 
 			cv::Point2f center(0, 0);
