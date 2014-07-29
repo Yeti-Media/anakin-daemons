@@ -47,7 +47,7 @@ void exitWithSucces();
 /**
  * Msj used to start a new test
  */
-void printTestMsj(string msj);
+void printTestMsj(string msj, uint testRepetition);
 
 /**
  *  Print final statistics
