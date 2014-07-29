@@ -9,7 +9,7 @@ void BasicFlannTrainer::train_and_save(QuickLZ* quickLZstate) {
 	vector<cv::Mat> * pdescriptors = new vector<cv::Mat>(this->patterns->size());
 	for (uint i = 0; i < this->patterns->size(); i++) {
 		RichImg* p = this->patterns->at(i);
-		pdescriptors->at(i) = p->getDescriptors().clone();
+		pdescriptors->at(i) = p->getDescriptors()->clone();
 	}
 	((cv::Ptr<SerializableFlannBasedMatcher>) this->detector)->train(
 			pdescriptors);

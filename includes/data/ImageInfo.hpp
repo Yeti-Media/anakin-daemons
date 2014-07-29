@@ -14,8 +14,8 @@ public:
 	/**
 	 * Constructor, takes a label, keypoints and descriptors of an image
 	 */
-	ImageInfo(std::string label, std::vector<cv::KeyPoint> keypoints,
-			cv::Mat descriptors);
+	ImageInfo(std::string label, std::vector<cv::KeyPoint> * keypoints,
+			cv::Mat * descriptors);
 	/**
 	 * Empty constructor, used when des-serializing an serialized ImageInfo object
 	 */
@@ -31,11 +31,11 @@ public:
 	/**
 	 * gets the keypoints
 	 */
-	std::vector<cv::KeyPoint> getKeypoints();
+	std::vector<cv::KeyPoint> * getKeypoints();
 	/**
 	 * gets the descriptors
 	 */
-	cv::Mat getDescriptors();
+	cv::Mat * getDescriptors();
 	/**
 	 * destructor
 	 */
@@ -55,8 +55,8 @@ public:
 protected:
 private:
 	std::string label;
-	std::vector<cv::KeyPoint> keypoints;
-	cv::Mat descriptors;
+	std::vector<cv::KeyPoint> * keypoints;
+	cv::Mat * descriptors;
 };
 
 }
