@@ -13,10 +13,6 @@ HTTPSocket::HTTPSocket(string port, int threads) {
 	this->readingQueue = new tbb::concurrent_bounded_queue<MessageData*>();
 	this->writtingQueue = new BlockingMap<int, MessageData*>(NULL);
 	this->writtingQueue->setOverridingKey(-1);
-	if (sem_init(&this->sem, 0, 1) != 0) {
-		cout << "HTTPSocket#HTTPSocket: error initializing semaphore" << endl;
-		exit(EXIT_SUCCESS);
-	}
 	startToListen(this->port, this->readingQueue, this->writtingQueue, threads);
 }
 

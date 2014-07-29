@@ -2,22 +2,29 @@
 
 using namespace Anakin;
 
-DBPattern::DBPattern(int id, int userID, std::string data) {
+DBPattern::DBPattern(int id, int userID, std::string * data) {
 	this->id = id;
 	this->userID = userID;
 	this->data = data;
 }
 
-DBPattern::DBPattern(int userID, std::string data) {
+DBPattern::DBPattern(int userID, std::string * data) {
+	this->id = 0; //can couse problems
 	this->userID = userID;
 	this->data = data;
 }
 
-DBPattern::DBPattern(std::string data) {
+DBPattern::DBPattern(std::string * data) {
+	this->id = 0; //can couse problems
+	this->userID = 0;
 	this->data = data;
 }
 
-std::string DBPattern::getData() const {
+DBPattern::~DBPattern() {
+	delete data;
+}
+
+std::string * DBPattern::getData() const {
 	return this->data;
 }
 

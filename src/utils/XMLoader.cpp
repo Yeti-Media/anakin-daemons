@@ -1,11 +1,16 @@
-#include "utils/XMLoader.hpp"
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <opencv2/core/core.hpp>
+#include <sys/types.h>
+#include <utils/Constants.hpp>
+#include <utils/Files.hpp>
+#include <utils/XMLoader.hpp>
+#include <cstdlib>
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include "utils/Constants.hpp"
-#include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
-namespace fs = boost::filesystem;
+#include <iterator>
 #include <algorithm>
+
+namespace fs = boost::filesystem;
 
 using namespace Anakin;
 using namespace std;
@@ -22,7 +27,7 @@ vector<DBPattern*>* XMLoader::loadAsPattern() {
 	vector<DBPattern*>* patterns = new vector<DBPattern*>(0);
 	for (uint f = 0; f < files->size(); f++) {
 		string filepath = files->at(f);
-		string data = loadFile(filepath);
+		string * data = get_file_contents(filepath);
 		DBPattern* pattern = new DBPattern(data);
 		patterns->push_back(pattern);
 	}
@@ -41,7 +46,7 @@ vector<DBHistogram*>* XMLoader::loadAsLandscape() {
 
 ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
 	string xmlData = "";
-	xmlData.append(dbp->getData());
+	xmlData.append(*dbp->getData());
 	ImageInfo *ii = new ImageInfo();
 	string label = to_string(dbp->getID());
 	cv::FileStorage fstorage(xmlData.c_str(),
@@ -51,15 +56,6 @@ ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
 	fstorage.release();
 	ii->setLabel(label);
 	return ii;
-}
-
-string XMLoader::loadFile(const string filename) {
-	string data;
-	ifstream t(filename);
-	stringstream buffer;
-	buffer << t.rdbuf();
-	data = buffer.str();
-	return data;
 }
 
 //PRIVATE
@@ -79,9 +75,9 @@ vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
 		string cfilepath = cfiles->at(f);
 		string gfilepath = gfiles->at(f);
 		string hfilepath = hfiles->at(f);
-		string cdata = loadFile(cfilepath);
-		string gdata = loadFile(gfilepath);
-		string hdata = loadFile(hfilepath);
+		string * cdata = get_file_contents(cfilepath);
+		string * gdata = get_file_contents(gfilepath);
+		string * hdata = get_file_contents(hfilepath);
 		DBHistogram* horl = new DBHistogram(isLandscape);
 		horl->setColorData(cdata);
 		horl->setGrayData(gdata);

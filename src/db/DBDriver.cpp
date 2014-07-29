@@ -280,16 +280,13 @@ bool DBDriver::saveHORL(DBHistogram* h, bool saveNeededObjectsFirst) {
 		const char *spid = sspid.c_str();
 		h->changeID(pattern_id);
 
-		string colorData = h->getColorData();
-		string grayData = h->getGrayData();
-		string hsvData = h->getHSVData();
-		colorData = colorData.empty() ? "NULL" : colorData;
-		grayData = grayData.empty() ? "NULL" : grayData;
-		hsvData = hsvData.empty() ? "NULL" : hsvData;
+		string * colorData = h->getColorData();
+		string * grayData = h->getGrayData();
+		string * hsvData = h->getHSVData();
 		PGresult *res;
 		const int numParam = 4;
-		const char *paramValues[numParam] = { spid, colorData.c_str(),
-				grayData.c_str(), hsvData.c_str() };
+		const char *paramValues[numParam] = { spid, colorData->c_str(),
+				grayData->c_str(), hsvData->c_str() };
 		string tableName = Constants::HISTLAND_TABLE;
 		string table;
 		table = table.append("public.\"").append(tableName).append("\"");
@@ -361,14 +358,14 @@ bool DBDriver::retrievePattern(int id, bool * error, bool load,
 	//internal function, do not init *error=false
 	if (checkConn()) {
 		int user_id;
-		string data;
+		string * data = new string();
 		if (!getPatternBasicInfo(id, &user_id, error)) {
 			return false;
 		}
 		string basicInfo = getMessage();
 		string descInfo = "";
 		if (load) {
-			if (!getPatternDescriptors(id, &data, error)) {
+			if (!getPatternDescriptors(id, data, error)) {
 				return false;
 			}
 			descInfo = getMessage();
@@ -631,7 +628,7 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 		}
 
 		string xmlData = "<?xml version=\"1.0\"?>";
-		xmlData.append(dbp->getData());
+		xmlData.append(*dbp->getData());
 		ImageInfo *ii = new ImageInfo();
 		cv::FileStorage fstorage(xmlData.c_str(),
 				cv::FileStorage::READ | cv::FileStorage::MEMORY);
@@ -657,7 +654,7 @@ bool DBDriver::storeScene(DBPattern* scene) {
 	if (checkConn()) {
 		PGresult *res;
 		const int numParam = 1;
-		const char *paramValues[numParam] = { scene->getData().c_str() };
+		const char *paramValues[numParam] = { scene->getData()->c_str() };
 		string table;
 		table.append("public.\"").append(Constants::SCENE_TABLE).append("\"");
 		string command;
@@ -716,10 +713,10 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 			logMessage(no_scene_found);
 			return false;
 		}
-		string xmlData = "<?xml version=\"1.0\"?>";
+		string * xmlData = new string("<?xml version=\"1.0\"?>");
 		//	const char* scene_data = PQgetvalue(res, 0, 0);
 		string scene_sdata(PQgetvalue(res, 0, 0));
-		xmlData.append(scene_sdata);
+		xmlData->append(scene_sdata);
 		PQclear(res);
 		DBPattern* pscene = new DBPattern(xmlData);
 		pscene->changeID(sceneID);
@@ -755,11 +752,11 @@ int DBDriver::getLogSize() {
 
 //PRIVATE
 
-bool DBDriver::savePatternDescriptors(int id, string data) {
+bool DBDriver::savePatternDescriptors(int id, string * data) {
 	PGresult *res;
 	string sid = to_string(id);
 	const int numParam = 2;
-	const char *paramValues[numParam] = { data.c_str(), sid.c_str() };
+	const char *paramValues[numParam] = { data->c_str(), sid.c_str() };
 	string table;
 	table.append("public.\"").append(Constants::DESCRIPTORS_TABLE).append("\"");
 	string command;
@@ -1018,13 +1015,10 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				//const char* cdata = PQgetvalue(res, 0, 0);
 				//const char* gdata = PQgetvalue(res, 0, 1);
 				//	const char* hdata = PQgetvalue(res, 0, 2);
-				string scdata(PQgetvalue(res, 0, 0));
-				string sgdata(PQgetvalue(res, 0, 1));
-				string shdata(PQgetvalue(res, 0, 2));
 				horl = new DBHistogram(id, (mode & Constants::LANDSCAPE));
-				horl->setColorData(scdata);
-				horl->setGrayData(sgdata);
-				horl->setHSVData(shdata);
+				horl->setColorData(new string(PQgetvalue(res, 0, 0)));
+				horl->setGrayData(new string(PQgetvalue(res, 0, 1)));
+				horl->setHSVData(new string(PQgetvalue(res, 0, 2)));
 				*result = horl;
 			} else {
 				logMessage("DBHistogram** param is NULL");

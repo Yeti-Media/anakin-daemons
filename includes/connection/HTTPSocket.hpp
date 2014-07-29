@@ -3,7 +3,6 @@
 
 #include "mongoose.h"
 #include <tbb/concurrent_queue.h>
-#include "semaphore.h"
 #include <vector>
 #include <pthread.h>
 #include "utils/BlockingMap.hpp"
@@ -111,7 +110,6 @@ private:
 	//struct mg_server *server;
 	std::string port;
 
-	sem_t sem;
 	pthread_t t;
 
 	tbb::concurrent_bounded_queue<MessageData*>* readingQueue;

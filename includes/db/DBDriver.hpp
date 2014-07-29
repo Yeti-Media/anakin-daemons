@@ -309,7 +309,7 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool savePatternDescriptors(int id, std::string data);
+	bool savePatternDescriptors(int id, std::string * data);
 	/**
 	 * retrieves the descriptors (descriptors and keypoints) of the pattern with id <id>
 	 *

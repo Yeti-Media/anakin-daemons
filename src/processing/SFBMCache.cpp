@@ -1,23 +1,15 @@
 #include <boost/foreach.hpp>
-#include <db/DBDriver.hpp>
-#include <output/JSONValue.h>
-#include <output/ResultWriter.hpp>
 #include <processing/SFBMCache.hpp>
 #include <sys/time.h>
+#include <utils/QuickLZ.hpp>
 #include <ctime>
+#include <iostream>
+#include <limits>
 #include <utility>
 
 using namespace Anakin;
 
 SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
-	if (sem_init(&this->sem, 0, 1) != 0) {
-		//cout << "SFBMCache#SFBMCache: error initializing semaphore\n";
-		this->errorType = ResultWriter::RW_ERROR_TYPE_FATAL;
-		this->errorMessage = "error initializing semaphore";
-		this->origin = "SFBMCache#SFBMCache";
-		this->operation = ERROR;
-		//exit(-1);
-	}
 	this->dbdriver = dbdriver;
 	this->rw = new ResultWriter();
 	//MATCHES CACHE
@@ -47,9 +39,9 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	this->pcache = new map<int, map<int, ImageInfo*>*>();
 }
 
-SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,int smatcher_id,
-		bool * error) {
-	sem_wait(&this->sem);
+SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,
+		int smatcher_id, bool * error) {
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	//internal function, do not init *error=false
 	this->requests++;
 	SerializableFlannBasedMatcher* matcher;
@@ -62,9 +54,8 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,int 
 	} else {
 		this->misses++;
 		float lt;
-		matcher = loadMatcherFromDB(quickLZstate,smatcher_id, &lt, error);
+		matcher = loadMatcherFromDB(quickLZstate, smatcher_id, &lt, error);
 		if (*error) {
-			sem_post(&this->sem);
 			return NULL;
 		}
 		int newMatcherLife = (int) lt * this->loadingTimeWeight;
@@ -84,12 +75,11 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,int 
 		tic(smatcher_id);
 	}
 	this->operation = INSERTOP;
-	sem_post(&this->sem);
 	return matcher;
 }
 
 void SFBMCache::unloadMatcher(int smatcher_id, bool keepPatterns) {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	if (this->cache->find(smatcher_id) != this->cache->end()) {
 		this->cache->erase(smatcher_id);
 		this->matchersLife->erase(smatcher_id);
@@ -101,14 +91,14 @@ void SFBMCache::unloadMatcher(int smatcher_id, bool keepPatterns) {
 		this->lastRemovedIndex = smatcher_id;
 		this->operation = DELETEOP;
 	}
-	sem_post(&this->sem);
 }
 
-void SFBMCache::updateMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error) {
+void SFBMCache::updateMatcher(QuickLZ* quickLZstate, int smatcher_id,
+		bool * error) {
 	//VERY DUMB IMPLEMENTATION FOR THE MOMENT
 	//internal function, do not init *error=false
 	unloadMatcher(smatcher_id, true);
-	loadMatcher(quickLZstate,smatcher_id, error);
+	loadMatcher(quickLZstate, smatcher_id, error);
 	if (!*error)
 		this->operation = UPDATEOP;
 }
@@ -122,7 +112,7 @@ JSONValue* SFBMCache::indexCacheStatus() {
 }
 
 ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	//internal function, do not init *error=false
 	this->sceneRequests++;
 	ImageInfo* scene;
@@ -135,18 +125,16 @@ ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
 		this->sceneMisses++;
 		scene = loadSceneFromDB(sceneID, error);
 		if (*error) {
-			sem_post(&this->sem);
 			return NULL;
 		}
 		storeScene(sceneID, scene);
 		tic(sceneID, false);
 	}
-	sem_post(&this->sem);
 	return scene;
 }
 
 ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	//internal function, do not init *error=false
 	ImageInfo* pattern;
 	map<int, ImageInfo*>* smatcherPatterns;
@@ -168,55 +156,48 @@ ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 							ResultWriter::RW_ERROR_TYPE_FATAL :
 							ResultWriter::RW_ERROR_TYPE_ERROR;
 			this->origin = "SFBMCache#loadPattern";
-			sem_post(&this->sem);
 			return NULL;
 		}
 		(*smatcherPatterns)[pidx] = pattern;
 	}
 	pattern = smatcherPatterns->find(pidx)->second;
-	sem_post(&this->sem);
 	return pattern;
 }
 
 float SFBMCache::getHitRatio() {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	float hitRatio = (float) this->hits / (float) this->requests;
-	sem_post(&this->sem);
 	return hitRatio;
 }
 
 float SFBMCache::getMissRatio() {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	float missRatio = (float) this->misses / (float) this->requests;
-	sem_post(&this->sem);
 	return missRatio;
 }
 
 float SFBMCache::getSceneCacheHitRatio() {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	float hitRatio = (float) this->sceneHits / (float) this->sceneRequests;
-	sem_post(&this->sem);
 	return hitRatio;
 }
 
 float SFBMCache::getSceneCacheMissRatio() {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	float hitRatio = (float) this->sceneMisses / (float) this->sceneRequests;
-	sem_post(&this->sem);
 	return hitRatio;
 }
 
 void SFBMCache::printLoadCount() {
-	sem_wait(&this->sem);
+	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	int value;
 	vector<int>* values = new vector<int>(0);
 	getKeys(this->loadingCount, values);
 	BOOST_FOREACH(value, *values){
-	int loadCount = this->loadingCount->find(value)->second;
-	cout << value << " loaded " << loadCount << " times" << endl;
-}
+		int loadCount = this->loadingCount->find(value)->second;
+		cout << value << " loaded " << loadCount << " times" << endl;
+	}
 	delete values;
-	sem_post(&this->sem);
 }
 
 JSONValue* SFBMCache::getLastOperationResult(bool * error) {
