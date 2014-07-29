@@ -76,10 +76,11 @@ void printStatistics(StatisticsCollector* collector) {
 /**
  *  Print final statistics
  */
-void printTestMsj(string msj) {
+void printTestMsj(string msj, uint testRepetition) {
 	cout << endl
 			<< "======================================================================"
-			<< endl << "***** Testing: " << msj << endl
+			<< endl << "***** Testing: " << msj << endl << "***** Repetition number "
+			<< testRepetition << endl
 			<< "======================================================================"
 			<< endl;
 }
