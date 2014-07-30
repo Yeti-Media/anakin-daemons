@@ -5,7 +5,6 @@
 #include <db/DBDriver.hpp>
 #include <data/ImageInfo.hpp>
 #include <output/JSONValue.h>
-#include <output/ResultWriter.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
 #include <map>
 #include <string>
