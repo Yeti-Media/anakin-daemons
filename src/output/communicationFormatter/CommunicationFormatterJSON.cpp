@@ -28,6 +28,10 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 	 */
 
 	cout << "CommunicationFormatterJSON::outputResponse 30" << endl;
+	cout << "requestID" << requestID << endl;
+	cout << "category" << category << endl;
+	for(int i = 0; i< values.size(); i++)
+		wcout << "values " << i << ": " << *values.at(i) << endl;
 
 	JSONObject root;
 	wstringstream ws;
@@ -68,7 +72,10 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *returnValue = new JSONValue(root);
-	return new wstring(returnValue->Stringify().c_str());
+	//return new wstring(returnValue->Stringify().c_str());
+	wstring * ll = new wstring(returnValue->Stringify().c_str());
+	wcout << "Retorno = " << *ll << endl;
+	return ll;
 
 }
 
