@@ -9,6 +9,7 @@
 #include <vector>
 #include <utils/QuickLZ.hpp>
 
+using namespace std;
 
 namespace Anakin {
 
@@ -41,7 +42,7 @@ public:
 	 * filename : refers to the name of the two files that define a SFBM
 	 * removeFileAfterLoad : if true then the xml and if files will be deleted after the SFBM is loaded
 	 */
-	SerializableFlannBasedMatcher(QuickLZ* quickLZstate, std::string filename,
+	SerializableFlannBasedMatcher(QuickLZ* quickLZstate, string filename,
 			bool removeFileAfterLoad = false);
 
 	/**
@@ -51,14 +52,14 @@ public:
 	 * filename  :   the name for the xml and if files (<filename>.xml, <filename>.xml)
 	 * xmlData   :   the data of the xml file (if NULL then the <filename>.xml file will be used)
 	 */
-	void save(QuickLZ* quickLZstate, std::string filename, std::string * xmlData = NULL);
+	void save(QuickLZ* quickLZstate, string filename, string * xmlData = NULL);
 
 	/**
 	 * trains the matcher
 	 *
 	 * descriptors   : the descriptors of the patterns used to train the matcher
 	 */
-	void train(std::vector<cv::Mat> * descriptors);
+	void train(vector<cv::Mat> * descriptors);
 
 	/**
 	 * if the SFBM was de-serialized this will return false, else will return FlannBasedMatcher empty()
@@ -68,12 +69,12 @@ public:
 	/**
 	 * sets an identifier for this matcher
 	 */
-	void setID(std::string id);
+	void setID(string id);
 
 	/**
 	 * returns the identifier of this matcher
 	 */
-	std::string getID();
+	string getID();
 protected:
 private:
 	/**
@@ -81,8 +82,8 @@ private:
 	 * will load the xml data from xml file if xmlData is empty or from xmlData otherwise
 	 * will load the if data from if file
 	 */
-	void load(std::string xmlData = "");
-	std::string filename;
+	void load(string * xmlData, string * indexData);
+	string filename;
 	bool loadedFromFile = false;
 
 	/**
@@ -113,9 +114,9 @@ private:
 	 *                       else it will be decompressed into a file
 	 */
 	void decompress(QuickLZ* quickLZstate, bool useOriginalNames = false,
-			std::string * xmlData = NULL);
+			string * xmlData, string * indexData);
 
-	std::string smatcher_id;
+	string smatcher_id;
 };
 
 }
