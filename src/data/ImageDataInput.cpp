@@ -14,19 +14,11 @@ ImageDataInput::ImageDataInput(string imagesFolder, bool loadOnDemand) {
 	if (this->loadOnDemand) {
 		initializeIterator();
 	} else {
-		this->images = new vector<cv::Mat>(0);
-		this->labels = new vector<string>(0);
-		loadImages(this->images);
+		loadImages();
 	}
 }
 
 ImageDataInput::~ImageDataInput() {
-	if (this->images != NULL) {
-		delete this->images;
-	}
-	if (this->labels != NULL) {
-		delete this->labels;
-	}
 	if (this->fileItr != NULL) {
 		delete fileItr;
 	}
@@ -47,11 +39,11 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
 			return true;
 		}
 	} else {
-		if (!this->images->empty()) {
-			nextMat = this->images->back();
-			label = this->labels->back();
-			this->images->pop_back();
-			this->labels->pop_back();
+		if (!this->images.empty()) {
+			nextMat = this->images.back();
+			label = this->labels.back();
+			this->images.pop_back();
+			this->labels.pop_back();
 			Img* nextImg = new Img(nextMat, label);
 			*output = nextImg;
 			return true;
@@ -61,7 +53,7 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
 }
 
 void ImageDataInput::reload() {
-	loadImages(this->images);
+	loadImages();
 }
 
 int ImageDataInput::imagesToLoad() {
@@ -71,12 +63,12 @@ int ImageDataInput::imagesToLoad() {
 
 //PROTECTED
 
-void ImageDataInput::loadImages(vector<cv::Mat>* images) {
+void ImageDataInput::loadImages() {
 	int loadedFiles = 0;
 	if (fs::exists(imagesFolder)) {
 		int files = imagesToLoad();
-		this->images->resize(files);
-		this->labels->resize(files);
+		this->images.resize(files);
+		this->labels.resize(files);
 		int idx = 0;
 		fs::directory_iterator end_itr; // default construction yields past-the-end
 		for (fs::directory_iterator itr(imagesFolder); itr != end_itr; ++itr) {
@@ -92,9 +84,9 @@ void ImageDataInput::loadImages(vector<cv::Mat>* images) {
 					LOG_F("ERROR")<< "Error loading image : " << itr->path().c_str();
 					exit(EXIT_FAILURE);
 				}
-				this->images->at(idx) = img;
+				this->images.at(idx) = img;
 				string label(itr->path().string());
-				this->labels->at(idx) = label;
+				this->labels.at(idx) = label;
 				loadedFiles++;
 				idx++;
 			}

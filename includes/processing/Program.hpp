@@ -47,7 +47,7 @@ public:
 	virtual ~Program();
 
 	/**
-	 * Start the program. It initialize common vars and flags.
+	 * Start the program. It initialize common vars and flags. User shoul delete the input.
 	 */
 	int start(vector<string> *input);
 

@@ -89,7 +89,7 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 		} else {
 			this->patterns->push_back(richImage);
 		}
-
+		delete ii;
 //processedFiles += 1;
 	}
 //std::cout << "total processed files : " << processedFiles << std::endl;

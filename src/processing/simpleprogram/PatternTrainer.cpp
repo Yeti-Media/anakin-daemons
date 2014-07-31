@@ -18,6 +18,7 @@
 #include <utils/help/HelpPatternTrainer.hpp>
 #include <cstdlib>
 #include <iostream>               // for cout
+#include <utils/ClearVector.hpp>
 
 using namespace std;
 using namespace cv;
@@ -114,20 +115,12 @@ int PatternTrainer::run(vector<string> *input) {
 			fileName);
 	trainer->train_and_save(quickLZstate);
 
-	//FIXME verify this
-//	if (patternsId != NULL) {
-//		delete patternsId;
-//	}
+	delete trainer;
+	delete loader;
+	delete sinput;
+	//delete patternsId;
 
-	if (trainer != NULL) {
-		delete trainer;
-	}
-	if (loader != NULL) {
-		delete loader;
-	}
-	if (sinput != NULL) {
-		delete sinput;
-	}
+	std::for_each( patterns.begin(), patterns.end(), delete_pointer_element<RichImg*>());
 	return EXIT_SUCCESS;
 }
 

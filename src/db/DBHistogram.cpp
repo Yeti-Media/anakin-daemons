@@ -30,15 +30,18 @@ DBHistogram::~DBHistogram() {
 }
 
 void DBHistogram::setColorData(std::string * data) {
+	delete this->colorData;
 	this->colorData = data;
 	this->mode = this->mode | Constants::COLOR;
 }
 void DBHistogram::setGrayData(std::string * data) {
+	delete this->grayData;
 	this->grayData = data;
 	this->mode = this->mode | Constants::GRAY;
 }
 
 void DBHistogram::setHSVData(std::string * data) {
+	delete this->hsvData;
 	this->hsvData = data;
 	this->mode = this->mode | Constants::HSV;
 }

@@ -88,6 +88,7 @@ vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
 }
 
 vector<string>* XMLoader::getFilePaths(char mode, bool reload) {
+	//FIXME MEMORY LEAKS
 	static vector<string>* ppaths = new vector<string>(0);
 	static vector<string>* cpaths = new vector<string>(0);
 	static vector<string>* gpaths = new vector<string>(0);

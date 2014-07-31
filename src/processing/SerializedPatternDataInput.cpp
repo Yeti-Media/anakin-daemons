@@ -1,7 +1,16 @@
-#include "processing/SerializedPatternDataInput.hpp"
-#include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
-#include <logging/Log.hpp>
+#include <db/DBDriver.hpp>
+#include <db/DBPattern.hpp>
 #include <logging/OutputPolicyFile.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/core/operations.hpp>
+#include <processing/SerializedPatternDataInput.hpp>
+#include <sys/types.h>
+#include <utils/ClearVector.hpp>
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <boost/filesystem.hpp>
+
 namespace fs = boost::filesystem;
 
 using namespace Anakin;
@@ -34,9 +43,20 @@ SerializedPatternDataInput::SerializedPatternDataInput(
 	this->current = -1;
 }
 
+SerializedPatternDataInput::~SerializedPatternDataInput() {
+	if (driver!=NULL) {
+		delete driver;
+	}
+	if (this->cache!=NULL) {
+		std::for_each( cache->begin(), cache->end(), delete_pointer_element<ImageInfo*>());
+		delete cache;
+	}
+}
+
 bool SerializedPatternDataInput::nextInput(ImageInfo** output) {
 	if (this->current < 0) {
 		if (!this->loaded) {
+			std::for_each( cache->begin(), cache->end(), delete_pointer_element<ImageInfo*>());
 			this->cache->clear();
 			if (!loadDataFromDB(this->cache)) {
 				reportDBDriverError();

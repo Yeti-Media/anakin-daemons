@@ -31,7 +31,7 @@ void benchmarkTest(int argc, const char * argv[],
 	//  Test Setup
 	//--------------------------------------------------------------
 	string testName = "Benchmark";
-	uint maxTestRepetition = 5;
+	uint maxTestRepetition = 10;
 
 	string database = "AnakinBenckmarkTesting";
 	string userDB = "postgres";
@@ -133,58 +133,61 @@ void benchmarkTest(int argc, const char * argv[],
 		//  Step 5 - PatternMatching Basic Test
 		//--------------------------------------------------------------
 		printStep(testName, 5);
-		pid_t pID = fork();
-		if (pID == 0) { // child
-			// Code only executed by child process
-			runDaemonProgram<PatternMatcher>(NULL,
-					"-oLogFile " + pathToAnakinPath(logsAnakin)
-							+ " -iHTTP 8080 -oHTTP -verbose");
-			_exit(EXIT_SUCCESS);
-		} else if (pID < 0) { // failed to fork
-			cerr << "Step 5 - Failed to fork for PatternMatching" << endl;
-			exitWithError();
-		} else { // parent
-			// Code only executed by parent process
-			sleep(2);
-			//repeated 30 times, to obtain solid outputs
-			for (int query = 1; query <= 10; query++) {
 
-				command(collector, true,
-						"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-								+ pathToAnakinPath(lastStdout) + " 2> "
-								+ pathToAnakinPath(lastStderr), true, false,
-						pID);
-				cout << "* Request number " << query << endl;
-				//Analyzing output
-				string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
-				std::string * capture = get_file_contents(lastStdout.c_str());
-				if (capture->find(pattern) == std::string::npos) {
-					cerr
-							<< "PatternMatching subprogram wrong output. Anakin replied:"
-							<< endl << endl << capture << endl << endl
-							<< "and should replied something that start with:"
-							<< endl << endl << pattern << endl;
-					stopAnakinHTTP(pID, logsDir, collector);
-					exitWithError();
-				}
-				pattern =
-						"\",\"values\":[{\"center\":{\"x\":202.592300415039,\"y\":361.972229003906},\"label\":\"3\"}]}]}";
-				if (capture->find(pattern) == std::string::npos) {
-					cerr
-							<< "PatternMatching subprogram wrong output. Anakin replied:"
-							<< endl << endl << capture << endl << endl
-							<< "and should replied something that end with:"
-							<< endl << endl << pattern << endl;
-					stopAnakinHTTP(pID, logsDir, collector);
-					exitWithError();
-				}
+		pthread_t * thread = NULL;
+		thread = runDaemonProgram<PatternMatcher>(
+				"-oLogFile " + pathToAnakinPath(logsAnakin)
+						+ " -iHTTP 8080 -oHTTP -verbose");
+
+		//check if the server start
+		bool serverStarted = false;
+		while (!serverStarted) {
+			sleep(2);
+			std::string * capture = get_file_contents(logsAnakin.c_str());
+			if (capture->find("* Server started *") != std::string::npos) {
+				serverStarted = true;
 			}
-			stopAnakinHTTP(pID, logsDir, collector);
 		}
+
+		//repeated "query" times, to obtain solid benchmarks
+		for (int query = 1; query <= 10; query++) {
+
+			command(collector, true,
+					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
+							+ pathToAnakinPath(lastStdout) + " 2> "
+							+ pathToAnakinPath(lastStderr), true);
+			cout << "* Request number " << query << endl;
+			//Analyzing output
+			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
+			std::string * capture = get_file_contents(lastStdout.c_str());
+			if (capture->find(pattern) == std::string::npos) {
+				cerr
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< endl << endl << capture << endl << endl
+						<< "and should replied something that start with:"
+						<< endl << endl << pattern << endl;
+				stopAnakinHTTP(thread, logsDir, NULL);
+				exitWithError();
+			}
+			pattern =
+					"\",\"values\":[{\"center\":{\"x\":202.592300415039,\"y\":361.972229003906},\"label\":\"3\"}]}]}";
+			if (capture->find(pattern) == std::string::npos) {
+				cerr
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< endl << endl << capture << endl << endl
+						<< "and should replied something that end with:" << endl
+						<< endl << pattern << endl;
+				stopAnakinHTTP(thread, logsDir, NULL);
+				exitWithError();
+			}
+			delete capture;
+		}
+		stopAnakinHTTP(thread, logsDir, collector);
 
 		//Closing remaining connections
 		cout << endl
-				<< "******* Closing remaining connections (ignore warning) *********" << endl;
+				<< "******* Closing remaining connections (ignore warning) *********"
+				<< endl;
 		command(NULL, false,
 				"psql -U " + userDB + " -d " + database + " -q -c "
 						+ "\"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'"

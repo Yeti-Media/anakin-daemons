@@ -1,8 +1,8 @@
 #ifndef USER_HPP
 #define USER_HPP
 
-#include "DBPattern.hpp"
-#include "DBHistogram.hpp"
+#include <db/DBHistogram.hpp>
+#include <db/DBPattern.hpp>
 #include <vector>
 
 using namespace std;

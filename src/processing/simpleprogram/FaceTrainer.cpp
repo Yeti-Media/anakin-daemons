@@ -7,7 +7,6 @@
 
 #include <processing/simpleprogram/FaceTrainer.hpp>
 #include <utils/help/HelpFaceTrainer.hpp>
-#include <cstdlib>
 
 namespace Anakin {
 
@@ -33,7 +32,7 @@ void FaceTrainer::initProgramFlags() {
 }
 
 int FaceTrainer::run(vector<string> *input) {
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 } /* namespace Anakin */

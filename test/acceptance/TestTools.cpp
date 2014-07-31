@@ -13,6 +13,18 @@ using namespace std;
 using namespace Anakin;
 namespace fs = boost::filesystem;
 
+void * startDaemon(void *ptr) {
+	DaemonArgs* dargs = (DaemonArgs*) ptr;
+	int signal = dargs->program->start(dargs->input);
+
+	delete dargs->program;
+	delete dargs->input;
+
+	if (signal == EXIT_FAILURE) {
+		exitWithError();
+	}
+}
+
 /**
  * Separate a string into tokens, ignoring quoted phrases.
  */
@@ -79,26 +91,10 @@ void printStatistics(StatisticsCollector* collector) {
 void printTestMsj(string msj, uint testRepetition) {
 	cout << endl
 			<< "======================================================================"
-			<< endl << "***** Testing: " << msj << endl << "***** Repetition number "
-			<< testRepetition << endl
+			<< endl << "***** Testing: " << msj << endl
+			<< "***** Repetition number " << testRepetition << endl
 			<< "======================================================================"
 			<< endl;
-}
-
-/**
- * kill the process with pid = childPIDtoKill, and pid>0
- */
-void killPID(pid_t childPIDtoKill) {
-	if (childPIDtoKill > 0) {
-		if (kill(childPIDtoKill, SIGTERM) == -1) {
-			cerr << "pid " << childPIDtoKill << " can't be killed" << endl;
-		}
-#ifdef TESTING_DEBUGMODE
-		else {
-			cout << "pid " << childPIDtoKill << " killed" << endl;
-		}
-#endif
-	}
 }
 
 /**
@@ -120,7 +116,7 @@ string pathToAnakinPath(fs::path path) {
  * the child PID will be killed by a signal before exit;
  */
 void command(StatisticsCollector* collector, bool verbose, string command,
-		bool showLogMsjIfFail, bool forkExit, pid_t childPIDtoKill) {
+		bool showLogMsjIfFail) {
 	if (verbose) {
 		cout
 				<< "______________________________________________________________________"
@@ -133,12 +129,7 @@ void command(StatisticsCollector* collector, bool verbose, string command,
 		if (showLogMsjIfFail) {
 			cerr << "See log directory for program error outputs" << endl;
 		}
-		killPID(childPIDtoKill);
-		if (forkExit) {
-			_exit(EXIT_FAILURE);
-		} else {
-			exitWithError();
-		}
+		exitWithError();
 	} else {
 		if (verbose) {
 			auto delay = chrono::high_resolution_clock::now() - begin;
@@ -255,14 +246,16 @@ void setTestingEnvironmentVariables(string host, string database, string user,
 #endif
 }
 
-void stopAnakinHTTP(pid_t pID, fs::path logsDir,
+void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 		StatisticsCollector* collector) {
 	command(collector, true,
 			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
 					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
 					+ " 2> "
 					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
-			true, false, pID);
+			true);
+	pthread_join(*thread, NULL);
+	delete thread;
 }
 
 void printStep(string test, int number) {

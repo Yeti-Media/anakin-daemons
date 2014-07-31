@@ -9,7 +9,6 @@
 #define PATTERNDBCONNECTOR_HPP_
 
 #include <processing/Program.hpp>
-#include <utils/help/Help.hpp>
 #include <string>
 #include <vector>
 

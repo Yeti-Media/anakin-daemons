@@ -1,5 +1,5 @@
 /*
- * PatternMatchingCommandRunner.cpp
+ * PatternMatcher.cpp
  *
  *  Created on: 20/05/2014
  *      Author: Franco Pellegrini
@@ -345,6 +345,8 @@ void PatternMatcher::run() {
 			}
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
 			delete cmatches; //TODO review if this is WRONG
+			//delete this->detector;
+			//delete this->processor;
 		}
 		vector<JSONValue*> sceneMatches;
 		sceneMatches.push_back(
@@ -354,6 +356,7 @@ void PatternMatcher::run() {
 						ResultWriter::RW_PATTERN_MATCHING, sceneMatches),
 				ireqID);
 		delete matches;
+		delete rscene;
 		break;
 	}
 }
