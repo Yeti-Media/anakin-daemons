@@ -24,6 +24,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <pthread.h>
 
 using namespace std;
 using namespace Anakin;
@@ -57,7 +58,7 @@ void printStatistics(StatisticsCollector* collector);
 /**
  * kill the process with pid = childPIDtoKill, and pid>0
  */
-void killPID(pid_t childPIDtoKill);
+void killThread(pthread_t * threadToKill);
 
 /**
  * adapt a path to anakin compatible directory style
@@ -70,8 +71,7 @@ string pathToAnakinPath(fs::path path);
  * the child PID will be killed by a signal before exit;
  */
 void command(StatisticsCollector* collector, bool verbose, string command,
-		bool showLogMsjIfFail = false, bool forkExit = false,
-		pid_t childPIDtoKill = 0);
+		bool showLogMsjIfFail = false);
 
 /**
  * Validate a directory existence.
@@ -99,7 +99,10 @@ void testingDirCheck(int argc, const char * argv[]);
 void setTestingEnvironmentVariables(string host, string database, string user,
 		string password);
 
-void stopAnakinHTTP(pid_t pID, fs::path logsDir,
+/**
+ * Stop anakin. If cllector is NULL, no statistics will be collected.
+ */
+void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 		StatisticsCollector* collector);
 
 void printStep(string test, int number);
@@ -134,12 +137,55 @@ void runProgram(StatisticsCollector* collector, string currentCommand) {
 		exitWithError();
 	}
 }
+//
+///**
+// * Run a simple program with the given commands
+// */
+//template<class SpecificDaemon>
+//void runDaemonProgram(StatisticsCollector* collector, string currentCommand) {
+//	SpecificDaemon commandRunner;
+//	Program* program = new Daemon<SpecificDaemon>();
+//	cout
+//			<< "______________________________________________________________________"
+//			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
+//			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
+//			<< "* Output:" << endl << endl;
+//	vector<string> input(0);
+//	splitTokens(currentCommand, input);
+//
+//	auto begin = chrono::high_resolution_clock::now();
+//	int signal = program->start(&input);
+//	if (collector != NULL) {
+//		auto delay = chrono::high_resolution_clock::now() - begin;
+//		double ms = (double) std::chrono::duration_cast<
+//				std::chrono::milliseconds>(delay).count();
+//
+//		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
+//		collector->addItem(program->getProgramName() + " " + currentCommand,
+//				ms);
+//	}
+//	delete program;
+//
+//	if (signal == EXIT_FAILURE) {
+//		exitWithError();
+//	}
+//}
+
+struct DaemonArgs {
+	Program* program;
+	vector<string> * input;
+	DaemonArgs(Program* program, vector<string> * input) :
+			program(program), input(input) {
+	}
+};
+
+void * startDaemon(void *ptr);
 
 /**
  * Run a simple program with the given commands
  */
 template<class SpecificDaemon>
-void runDaemonProgram(StatisticsCollector* collector, string currentCommand) {
+pthread_t * runDaemonProgram(string currentCommand) {
 	SpecificDaemon commandRunner;
 	Program* program = new Daemon<SpecificDaemon>();
 	cout
@@ -147,25 +193,14 @@ void runDaemonProgram(StatisticsCollector* collector, string currentCommand) {
 			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
 			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
 			<< "* Output:" << endl << endl;
-	vector<string> input(0);
-	splitTokens(currentCommand, input);
+	vector<string> * input = new vector<string>(0);
+	splitTokens(currentCommand, *input);
 
-	auto begin = chrono::high_resolution_clock::now();
-	int signal = program->start(&input);
-	if (collector != NULL) {
-		auto delay = chrono::high_resolution_clock::now() - begin;
-		double ms = (double) std::chrono::duration_cast<
-				std::chrono::milliseconds>(delay).count();
+	pthread_t * thread = new pthread_t();
 
-		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
-		collector->addItem(program->getProgramName() + " " + currentCommand,
-				ms);
-	}
-	delete program;
-
-	if (signal == EXIT_FAILURE) {
-		exitWithError();
-	}
+	DaemonArgs* dargs = new DaemonArgs(program, input);
+	pthread_create(thread, NULL, startDaemon, (void*) dargs);
+	return thread;
 }
 
 #endif  /*COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING*/

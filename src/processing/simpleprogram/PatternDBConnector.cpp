@@ -9,14 +9,15 @@
 #include <db/DBHistogram.hpp>
 #include <db/DBPattern.hpp>
 #include <db/DBUser.hpp>
-#include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
 #include <processing/Flags.hpp>
 #include <processing/simpleprogram/PatternDBConnector.hpp>
 #include <sys/types.h>
+#include <utils/ClearVector.hpp>
 #include <utils/Constants.hpp>
 #include <utils/help/HelpPatternDBConnector.hpp>
 #include <utils/XMLoader.hpp>
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 
@@ -289,16 +290,15 @@ int PatternDBConnector::run(vector<string> *input) {
 		if (user != NULL) {
 			delete user;
 		}
-		//TODO review this
-//		if (patterns != NULL) {
-//			delete patterns;
-//		}
-//		if (histograms != NULL) {
-//			delete histograms;
-//		}
-//		if (landscapes != NULL) {
-//			delete landscapes;
-//		}
+		if (patterns != NULL) {
+			delete patterns;
+		}
+		if (histograms != NULL) {
+			delete histograms;
+		}
+		if (landscapes != NULL) {
+			delete landscapes;
+		}
 		return EXIT_SUCCESS;
 	}
 	if (saveUser) {
@@ -426,16 +426,15 @@ int PatternDBConnector::run(vector<string> *input) {
 	if (user != NULL) {
 		delete user;
 	}
-	//TODO review this
-//	if (patterns != NULL) {
-//		delete patterns;
-//	}
-//	if (histograms != NULL) {
-//		delete histograms;
-//	}
-//	if (landscapes != NULL) {
-//		delete landscapes;
-//	}
+	if (patterns != NULL) {
+		delete patterns;
+	}
+	if (histograms != NULL) {
+		delete histograms;
+	}
+	if (landscapes != NULL) {
+		delete landscapes;
+	}
 	return EXIT_SUCCESS;
 }
 

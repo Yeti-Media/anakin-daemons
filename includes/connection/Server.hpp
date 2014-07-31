@@ -151,6 +151,7 @@ void Server<SpecificCommandRunner>::start(DataOutput* output) {
 	string msg;
 	bool run = true;
 	bool stopReceivedInsideInput = false;
+	LOG_F("INFO")<< "* Server started *";
 	do {
 		msg = read();
 		if (!stopMessageReceived(msg)) {

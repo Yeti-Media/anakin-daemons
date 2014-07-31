@@ -1,10 +1,13 @@
 #ifndef SERIALIZEDPATTERNDATAINPUT_HPP
 #define SERIALIZEDPATTERNDATAINPUT_HPP
 
-#include "data/ImageInfo.hpp"
-#include "db/DBDriver.hpp"
-#include "db/DBUser.hpp"
-#include "db/DBPattern.hpp"
+#include <data/ImageInfo.hpp>
+#include <string>
+#include <vector>
+
+namespace Anakin {
+class DBDriver;
+} /* namespace Anakin */
 
 namespace Anakin {
 
@@ -16,6 +19,7 @@ public:
 	SerializedPatternDataInput(std::vector<int>* patternsToFind,
 			const char *pghost, const char *pgport, const char *dbName,
 			const char *login, const char *pwd);
+	virtual ~SerializedPatternDataInput();
 	bool nextInput(ImageInfo** output);
 	void reload();
 protected:
@@ -31,7 +35,7 @@ private:
 	static void read(const cv::FileNode& node, ImageInfo& x,
 			const ImageInfo& default_value = ImageInfo());
 	std::string userID;
-	DBDriver* driver;
+	DBDriver* driver = NULL;
 	std::vector<int>* patternsToFind;
 };
 }

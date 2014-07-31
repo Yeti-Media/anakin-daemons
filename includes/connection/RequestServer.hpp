@@ -115,6 +115,7 @@ void RequestServer<SpecificCommandRunner>::executeStop() {
 template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::startServer() {
 	startWorkers(this->output);
+
 }
 
 template<class SpecificCommandRunner>

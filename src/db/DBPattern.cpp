@@ -17,6 +17,7 @@ DBPattern::DBPattern(int userID, std::string * data) {
 DBPattern::DBPattern(std::string * data) {
 	this->id = 0; //can couse problems
 	this->userID = 0;
+	delete this->data;
 	this->data = data;
 }
 

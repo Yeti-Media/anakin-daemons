@@ -18,6 +18,7 @@
 #include <utils/help/HelpPatternExtractor.hpp>
 #include <cstdlib>
 #include <iostream>               // for cout
+#include <utils/ClearVector.hpp>
 
 namespace Anakin {
 
@@ -199,15 +200,9 @@ int PatternExtractor::run(vector<string> *input) {
 		char mode = useYaml ? PatternLoader::YAML : PatternLoader::XML;
 		patternsLoader->load_and_save(outputDir, saveToFile, mode);
 
-		//FIXME refactor this exit
-		if (patternsLoader != NULL) {
-			delete patternsLoader;
-		}
-
-		//TODO verify why not this
-//		if (patternsDataInput != NULL) {
-//			delete patternsDataInput;
-//		}
+		delete patternsLoader;
+		std::for_each( patterns.begin(), patterns.end(), delete_pointer_element<RichImg*>());
+		delete patternsDataInput;
 		return EXIT_SUCCESS;
 	} else {
 		patternsLoader = new PatternLoader(patternsDataInput, patterns,
@@ -228,12 +223,9 @@ int PatternExtractor::run(vector<string> *input) {
 		hComparator.makeAndSaveLandscape(mode, label, saveToFile);
 	}
 
-	if (patternsLoader != NULL) {
-		delete patternsLoader;
-	}
-	if (patternsDataInput != NULL) {
-		delete patternsDataInput;
-	}
+	delete patternsLoader;
+	std::for_each( patterns.begin(), patterns.end(), delete_pointer_element<RichImg*>());
+	delete patternsDataInput;
 	return EXIT_SUCCESS;
 }
 
