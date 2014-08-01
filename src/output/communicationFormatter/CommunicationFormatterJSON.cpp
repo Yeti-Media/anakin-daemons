@@ -27,12 +27,6 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 	 -> values (JSONArray)
 	 */
 
-	cout << "CommunicationFormatterJSON::outputResponse 30" << endl;
-	cout << "requestID" << requestID << endl;
-	cout << "category" << category << endl;
-	for(int i = 0; i< values.size(); i++)
-		wcout << "values " << i << ": " << *values.at(i) << endl;
-
 	JSONObject root;
 	wstringstream ws;
 	ws << requestID.c_str();
@@ -72,10 +66,7 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 	root[L"values"] = new JSONValue(valuesJSON);
 
 	JSONValue *returnValue = new JSONValue(root);
-	//return new wstring(returnValue->Stringify().c_str());
-	wstring * ll = new wstring(returnValue->Stringify().c_str());
-	wcout << "Retorno = " << *ll << endl;
-	return ll;
+	return new wstring(returnValue->Stringify().c_str());
 
 }
 
@@ -90,8 +81,6 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 
 	 -> origin (string)
 	 */
-
-	cout << "CommunicationFormatterJSON::outputError 88" << endl;
 
 	JSONObject root;
 	wstringstream wmessage;
@@ -122,8 +111,6 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 
 wstring* CommunicationFormatterJSON::format(const char * data) {
 
-	cout << "CommunicationFormatterJSON::format 121" << endl;
-
 	return new wstring((JSON::Parse(data))->Stringify().c_str());
 }
 
@@ -138,8 +125,6 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	 -> dataType ("YML" | "XML")
 	 -> data (string)
 	 */
-
-	cout << "CommunicationFormatterJSON::format 139" << endl;
 
 	JSONObject root;
 	if (mode & CF_PATTERNS) {
@@ -171,8 +156,6 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 }
 
 string* CommunicationFormatterJSON::formatRequest(const char * data) {
-
-	cout << "CommunicationFormatterJSON::formatRequest 174" << endl;
 
 	JSONValue* req = JSON::Parse(data);
 	std::string* request = new string();

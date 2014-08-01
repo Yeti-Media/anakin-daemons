@@ -23,8 +23,6 @@ wstring* CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 	 -> cache_free_space (int)
 	 */
 
-	cout << "CommunicationFormatterCacheJSON::trainerAdd 26" << endl;
-
 	JSONObject root;
 
 	if (smatcher_id_added != -1)
@@ -39,8 +37,6 @@ wstring* CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 wstring* CommunicationFormatterCacheJSON::trainerDel(int smatcher_id_deleted,
 		int cacheFreeSpace) {
 
-	cout << "CommunicationFormatterCacheJSON::trainerDel 41" << endl;
-
 	return trainerAdd(-1, cacheFreeSpace, smatcher_id_deleted);
 }
 
@@ -49,8 +45,6 @@ wstring* CommunicationFormatterCacheJSON::trainerUPD(int smatcher_id_updated) {
 
 	 root    -> index_updated (int)
 	 */
-
-	cout << "CommunicationFormatterCacheJSON::trainerUPD 56" << endl;
 
 	JSONObject root;
 	root[L"index_updated"] = new JSONValue((double) smatcher_id_updated);
@@ -66,8 +60,6 @@ wstring* CommunicationFormatterCacheJSON::cacheStatus(
 
 	 -> indexes (JSONArray)    -> index (int)
 	 */
-
-	cout << "CommunicationFormatterCacheJSON::cacheStatus 74" << endl;
 
 	JSONObject root;
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);

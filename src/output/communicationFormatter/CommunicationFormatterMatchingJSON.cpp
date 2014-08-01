@@ -33,8 +33,6 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 	 -> response (float)
 	 */
 
-	cout << "CommunicationFormatterMatchingJSON::outputMatch 38" << endl;
-
 	JSONObject root;
 	JSONObject jcenter;
 	JSONArray keypoints;
@@ -77,8 +75,6 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
 
 	 -> values (JSONArray)    -> <see function above>
 	 */
-
-	cout << "CommunicationFormatterMatchingJSON::outputMatches 85" << endl;
 
 	JSONObject root;
 	wstringstream ws;

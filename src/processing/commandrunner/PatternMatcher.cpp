@@ -19,7 +19,7 @@
 #include <sys/types.h>
 #include <utils/Constants.hpp>
 #include <utils/help/HelpPatternMatcher.hpp>
-#include <utils/ClearVector.h>
+#include <utils/ClearVector.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -49,7 +49,7 @@ string PatternMatcher::getProgramName() {
 
 void PatternMatcher::initializeCommandRunner(DataOutput* out,
 		SFBMCache* cache) {
-	CommandRunner::initializeCommandRunner(out,cache);
+	CommandRunner::initializeCommandRunner(out, cache);
 	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->cache = cache;
 
@@ -209,12 +209,13 @@ void PatternMatcher::run() {
 
 	if (inputError) {
 		this->out->error(
-				this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_ERROR,
+				this->cfm->outputError(
+						CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_ERROR,
 						lastError, "CommandRunner::run"));
 		return;
 	}
 
-	int ireqID = std::stoi(reqID);
+	int ireqID = stoi(reqID);
 
 	switch (action) {
 	case E_PatternMatchingAction::NONE: {
@@ -223,8 +224,8 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
-		std::vector<wstring*> inserts;
-		std::string duplicated;
+		vector<wstring*> inserts;
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
@@ -250,8 +251,8 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
-		std::vector<wstring*> deletes;
-		std::string duplicated;
+		vector<wstring*> deletes;
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
@@ -272,7 +273,7 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
-		std::vector<wstring*> status;
+		vector<wstring*> status;
 		status.push_back(this->cache->indexCacheStatus());
 		this->out->output(
 				this->cfm->outputResponse(reqID,
@@ -281,8 +282,8 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
-		std::vector<wstring*> updates;
-		std::string duplicated;
+		vector<wstring*> updates;
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
@@ -309,8 +310,8 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
-		std::vector<wstring*>* matches = new std::vector<wstring*>();
-		std::string duplicated;
+		vector<wstring*>* matches = new std::vector<wstring*>();
+		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
@@ -341,7 +342,7 @@ void PatternMatcher::run() {
 					this->mr, this->mma);
 			this->processor = new FlannMatchingProcessor(this->detector);
 			bool processingError = false;
-			std::vector<wstring*>* cmatches = this->processor->process(rscene,
+			vector<wstring*>* cmatches = this->processor->process(rscene,
 					&processingError);
 			if (processingError) {
 				this->out->error(
@@ -350,18 +351,17 @@ void PatternMatcher::run() {
 			}
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
 		}
-		std::vector<wstring*> sceneMatches;
+		vector<wstring*> sceneMatches;
 		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), *matches));
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_PATTERN_MATCHING, sceneMatches),
 				ireqID);
+		//for_each( matches->begin(), matches->end(), delete_pointer_element<wstring*>()); if you uncomment this line running acceptance testing with 10 repetitions of simpleTest will FAIL
 		delete matches;
 		delete rscene;
 		break;
 	}
-	}
 }
-
-
+}
 
