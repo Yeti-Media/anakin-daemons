@@ -82,7 +82,7 @@ private:
 	 * will load the xml data from xml file if xmlData is empty or from xmlData otherwise
 	 * will load the if data from if file
 	 */
-	void load(string * xmlData, string * indexData);
+	void load(const string& xmlData);
 	string filename;
 	bool loadedFromFile = false;
 
@@ -113,8 +113,8 @@ private:
 	 * xmlData           :   if not NULL then the xml file will be decompressed and stored in this variable
 	 *                       else it will be decompressed into a file
 	 */
-	void decompress(QuickLZ* quickLZstate, bool useOriginalNames = false,
-			string * xmlData, string * indexData);
+	void decompress(QuickLZ* quickLZstate, bool useOriginalNames,
+			string & xmlData);
 
 	string smatcher_id;
 };

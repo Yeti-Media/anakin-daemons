@@ -24,19 +24,15 @@ SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 		QuickLZ* quickLZstate, string filename, bool removeFileAfterLoad) {
 	this->filename = filename;
-	string* xmlData;
-	string* indexData;
-	decompress(quickLZstate, true, xmlData, indexData);
-	//BUG ACA!
-	this->load(xmlData,indexData);
+	string xmlData;
+	decompress(quickLZstate, true, xmlData);
+	this->load(xmlData);
 	if (removeFileAfterLoad) {
 		string indexFile = filename + ".if";
 		string matcherFile = filename + ".xml";
 		remove(indexFile.c_str());
 		remove(matcherFile.c_str());
 	}
-	delete xmlData;
-	delete indexData;
 }
 
 void SerializableFlannBasedMatcher::save(QuickLZ* quickLZstate, string filename,
@@ -105,8 +101,8 @@ string SerializableFlannBasedMatcher::getID() {
 
 //PRIVATE
 
-void SerializableFlannBasedMatcher::load(string * xmlData, string * indexData) {
-	cv::FileStorage fs(*xmlData,
+void SerializableFlannBasedMatcher::load(const string& xmlData) {
+	cv::FileStorage fs(xmlData,
 			(cv::FileStorage::READ | cv::FileStorage::MEMORY));
 
 	cv::FileNode root = fs.root();
@@ -130,7 +126,6 @@ void SerializableFlannBasedMatcher::load(string * xmlData, string * indexData) {
 	cv::Mat* mergedDescriptorsDescriptors = ((cv::Mat *) mdptr);
 	root["mergedDescriptorsDescriptors"] >> *mergedDescriptorsDescriptors;
 	addedDescCount = mergedDescriptorsDescriptors->rows;
-	acascnalcnajsnck
 	loadIndex(mergedDescriptorsDescriptors);
 	this->loadedFromFile = true;
 	//delete mergedDescriptorsDescriptors;
@@ -185,7 +180,7 @@ void SerializableFlannBasedMatcher::compress(QuickLZ* quickLZstate,
 }
 
 void SerializableFlannBasedMatcher::decompress(QuickLZ* quickLZstate,
-		bool useOriginalNames, string * xmlData, string * indexData) {
+		bool useOriginalNames, string & xmlData) {
 	//bool decompressMatcherToFile = xmlData == NULL;
 	string uncompressedIndexFileName = this->filename
 			+ (useOriginalNames ? ".if" : ".uif");
@@ -210,20 +205,14 @@ void SerializableFlannBasedMatcher::decompress(QuickLZ* quickLZstate,
 	char * ucompressedMatcherData = quickLZstate->decompressText(cmatcherData,
 			&mr);
 
-	//string loadedMatcherDara(ucompressedMatcherData, mr);
-	xmlData = new string(ucompressedMatcherData, mr);
-	indexData = new string(ucompressedIndexData, ir);
+	xmlData = string(ucompressedMatcherData, mr);
+	//indexData = new string(ucompressedIndexData, ir);
 
 //	//clock_t t_2 = clock();
 //	//float tt = ((float)(t_2 - t_1))/CLOCKS_PER_SEC;
 //	//cout << "decompressing time: " << tt << endl;
-//	write_to_file(ucompressedIndexData, uncompressedIndexFileName, ir);
-//	if (decompressMatcherToFile) {
-//		write_to_file(ucompressedMatcherData, uncompressedMatcherFileName, mr);
-//	} else {
-//		string loadedMatcherDara(ucompressedMatcherData, mr);
-//		*xmlData = loadedMatcherDara;
-//	}
+	write_to_file(ucompressedIndexData, uncompressedIndexFileName, ir);
+
 	delete cindexData;
 	delete cmatcherData;
 	delete ucompressedIndexData;
