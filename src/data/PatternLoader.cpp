@@ -1,5 +1,6 @@
 #include "data/PatternLoader.hpp"
-#include "output/ResultWriter.hpp"
+#include <output/communicationFormatter/ICommunicationFormatter.hpp>
+#include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 
 using namespace Anakin;
 using namespace cv;
@@ -79,8 +80,9 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 		if (saveToFile) {
 			fs.release();
 		} else {
+			I_CommunicationFormatter* cf = new CommunicationFormatterJSON();
 			string data = fs.releaseAndGetString();
-			std::wcout << ResultWriter::output(ResultWriter::RW_PATTERNS, data)
+			std::wcout << cf->format(I_CommunicationFormatter::e_mode::CF_PATTERNS, data, I_CommunicationFormatter::e_color::CF_NONE)
 					<< std::endl;
 		}
 		if (filesToLoad > 0) {

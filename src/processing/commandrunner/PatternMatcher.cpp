@@ -13,23 +13,24 @@
 #include <matching/FlannMatchingProcessor.hpp>
 #include <output/DataOutput.hpp>
 #include <output/JSONValue.h>
-#include <output/ResultWriter.hpp>
 #include <processing/commandrunner/PatternMatcher.hpp>
 #include <processing/Flags.hpp>
 #include <processing/SFBMCache.hpp>
 #include <sys/types.h>
 #include <utils/Constants.hpp>
 #include <utils/help/HelpPatternMatcher.hpp>
+#include <utils/ClearVector.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
 
 using namespace Anakin;
 using namespace std;
 
 PatternMatcher::PatternMatcher() :
 		CommandRunner() {
-	this->rw = NULL;
+	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->cache = NULL;
 	this->quickLZstate = new QuickLZ();
 }
@@ -49,7 +50,7 @@ string PatternMatcher::getProgramName() {
 void PatternMatcher::initializeCommandRunner(DataOutput* out,
 		SFBMCache* cache) {
 	CommandRunner::initializeCommandRunner(out, cache);
-	this->rw = new ResultWriter();
+	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->cache = cache;
 
 	flags->setMinCount(1);
@@ -208,7 +209,8 @@ void PatternMatcher::run() {
 
 	if (inputError) {
 		this->out->error(
-				this->rw->outputError(ResultWriter::RW_ERROR_TYPE_ERROR,
+				this->cfm->outputError(
+						CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_ERROR,
 						lastError, "CommandRunner::run"));
 		return;
 	}
@@ -218,14 +220,15 @@ void PatternMatcher::run() {
 	switch (action) {
 	case E_PatternMatchingAction::NONE: {
 		LOG_F("ERROR")<< "You can't process NONE action in PatternMatchingCommandRunner::run()";
+		//shouldn't come in here
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
-		vector<JSONValue*> inserts;
+		vector<wstring*> inserts;
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
-					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
+					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
 							"CommandRunner::run"));
 			return;
@@ -236,22 +239,23 @@ void PatternMatcher::run() {
 			this->cache->loadMatcher(quickLZstate,idxID, &error);
 			if (error) {
 				this->out->error(
-						this->cache->getLastOperationResult()->Stringify().c_str());
+						this->cache->getLastOperationResult());
 				return;
 			}
 			inserts.push_back(this->cache->getLastOperationResult());
 		}
 		this->out->output(
-				this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_ADD,
+				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_ADD,
 						inserts), ireqID);
+		//TODO delete inserts;
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
-		vector<JSONValue*> deletes;
+		vector<wstring*> deletes;
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
-					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
+					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
 							"CommandRunner::run"));
 			return;
@@ -263,24 +267,26 @@ void PatternMatcher::run() {
 			deletes.push_back(this->cache->getLastOperationResult());
 		}
 		this->out->output(
-				this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_DEL,
+				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_DEL,
 						deletes), ireqID);
+		//TODO delete deletes;
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
-		vector<JSONValue*> status;
+		vector<wstring*> status;
 		status.push_back(this->cache->indexCacheStatus());
 		this->out->output(
-				this->rw->outputResponse(reqID,
-						ResultWriter::RW_CACHE_IDX_STATUS, status), ireqID);
+				this->cfm->outputResponse(reqID,
+						CommunicationFormatterMatchingJSON::CF_CACHE_IDX_STATUS, status), ireqID);
+		//TODO delete status;
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
-		vector<JSONValue*> updates;
+		vector<wstring*> updates;
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
-					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
+					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
 							"CommandRunner::run"));
 			return;
@@ -292,22 +298,23 @@ void PatternMatcher::run() {
 			this->cache->updateMatcher(quickLZstate,idxID, &error);
 			if (error) {
 				this->out->error(
-						this->cache->getLastOperationResult()->Stringify().c_str());
+						this->cache->getLastOperationResult());
 				return;
 			}
 			updates.push_back(this->cache->getLastOperationResult());
 		}
 		this->out->output(
-				this->rw->outputResponse(reqID, ResultWriter::RW_CACHE_IDX_UPD,
+				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_UPD,
 						updates), ireqID);
+		//TODO delete updates;
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
-		vector<JSONValue*>* matches = new vector<JSONValue*>();
+		vector<wstring*>* matches = new std::vector<wstring*>();
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
-					this->rw->outputError(ResultWriter::RW_ERROR_TYPE_WARNING,
+					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
 							"CommandRunner::run"));
 			return;
@@ -316,7 +323,7 @@ void PatternMatcher::run() {
 		ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
 		if (loadSceneError) {
 			this->out->error(
-					this->cache->getLastOperationResult()->Stringify().c_str());
+					this->cache->getLastOperationResult());
 			return;
 		}
 		RichImg* rscene = new RichImg(scene);
@@ -328,33 +335,29 @@ void PatternMatcher::run() {
 					idxID, &matcherError);
 			if (matcherError) {
 				this->out->error(
-						this->cache->getLastOperationResult()->Stringify().c_str());
+						this->cache->getLastOperationResult());
 				return;
 			}
 			this->detector = new BasicFlannDetector(matcher, this->cache,
 					this->mr, this->mma);
-			this->processor = new FlannMatchingProcessor(this->detector,
-					this->rw);
+			this->processor = new FlannMatchingProcessor(this->detector);
 			bool processingError = false;
-			vector<JSONValue*>* cmatches = this->processor->process(rscene,
+			vector<wstring*>* cmatches = this->processor->process(rscene,
 					&processingError);
 			if (processingError) {
 				this->out->error(
-						this->cache->getLastOperationResult()->Stringify().c_str());
+						this->cache->getLastOperationResult());
 				return;
 			}
 			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
-			delete cmatches; //TODO review if this is WRONG
-			//delete this->detector;
-			//delete this->processor;
 		}
-		vector<JSONValue*> sceneMatches;
-		sceneMatches.push_back(
-				this->rw->matchesAsJSON(scene->getLabel(), *matches));
+		vector<wstring*> sceneMatches;
+		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), *matches));
 		this->out->output(
-				this->rw->outputResponse(reqID,
-						ResultWriter::RW_PATTERN_MATCHING, sceneMatches),
+				this->cfm->outputResponse(reqID,
+						CommunicationFormatterMatchingJSON::CF_PATTERN_MATCHING, sceneMatches),
 				ireqID);
+		//for_each( matches->begin(), matches->end(), delete_pointer_element<wstring*>()); if you uncomment this line running acceptance testing with 10 repetitions of simpleTest will FAIL
 		delete matches;
 		delete rscene;
 		break;

@@ -14,12 +14,19 @@
 #include <utils/help/Help.hpp>
 #include <processing/Flags.hpp>
 #include <utils/QuickLZ.hpp>
+#include <output/communicationFormatter/ICommunicationFormatterMatching.hpp>
 
 namespace Anakin {
 
-enum E_PatternMatchingAction {
-	NONE = 0, MATCH = 1, ADDIDXS = 2, DELIDXS = 3, UPDIDXS = 4, IDXSTATUS = 5
+enum E_PatternMatchingAction{
+	NONE = 0,
+	MATCH = 1,
+	ADDIDXS = 2,
+	DELIDXS = 3,
+	UPDIDXS = 4,
+	IDXSTATUS = 5
 };
+
 
 class PatternMatcher: public CommandRunner {
 public:
@@ -37,7 +44,7 @@ public:
 
 protected:
 	E_PatternMatchingAction action = NONE;
-	ResultWriter* rw;
+	I_CommunicationFormatterMatching* cfm;
 	QuickLZ* quickLZstate;
 };
 

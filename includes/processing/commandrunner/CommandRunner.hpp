@@ -12,7 +12,6 @@
 #include "opencv2/nonfree/nonfree.hpp"
 
 #include "matching/BasicFlannDetector.hpp"
-#include "output/ResultWriter.hpp"
 #include "output/DataOutput.hpp"
 #include "matching/SerializableFlannBasedMatcher.hpp"
 #include "processing/SFBMCache.hpp"
