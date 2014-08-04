@@ -16,10 +16,7 @@ namespace fs = boost::filesystem;
 void * startDaemon(void *ptr) {
 	DaemonArgs* dargs = (DaemonArgs*) ptr;
 	int signal = dargs->program->start(dargs->input);
-
-	delete dargs->program;
-	delete dargs->input;
-
+	delete dargs;
 	if (signal == EXIT_FAILURE) {
 		exitWithError();
 	}
@@ -189,14 +186,10 @@ void testingDirCheck(int argc, const char * argv[]) {
 
 	validateDir(testDir, "Test");
 	validateDir(testDir / "examples", "Examples");
-	validateDir(testDir / "logs", "Logs");
 
 	fs::path simpleTest = testDir / "examples" / "simpleTest";
 	validateDir(simpleTest / "input-logos",
 			"Extractor input logos (for examples)");
-	validateDir(simpleTest / "output-logos",
-			"Extractor output Logos (for examples)");
-	validateDir(simpleTest / "outputs", "Program outputs (from examples)");
 
 	//--------------------------------------------------------------
 	//  Files validation
