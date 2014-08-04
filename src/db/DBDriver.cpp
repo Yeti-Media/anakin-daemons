@@ -463,7 +463,8 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 	return deletionWentOK;
 }
 
-bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
+bool DBDriver::retrieveSFBM(int smatcher_id, bool * error,
+		const string & tmpDir) {
 	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
@@ -500,9 +501,9 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error) {
 		PQclear(res);
 		string filename = to_string(smatcher_id);
 		bool indexFileLoaded = loadFileFromDB(stoi(index_file_sid),
-				filename + ".if");
+				filename + ".if", tmpDir);
 		bool matcherFileLoaded = loadFileFromDB(stoi(matcher_file_sid),
-				filename + ".xml");
+				filename + ".xml", tmpDir);
 		if (indexFileLoaded && matcherFileLoaded) {
 			string msg;
 			msg.append("Trainer ").append(filename).append(
@@ -1139,15 +1140,17 @@ bool DBDriver::saveFileToDB(string filename, int * fid) {
 	}
 }
 
-bool DBDriver::loadFileFromDB(int fid, string filename) {
+bool DBDriver::loadFileFromDB(int fid, const string & filename,
+		const string & tmpDir) {
 	PGresult * pqres;
+	string tmpFile = tmpDir + '/' + filename;
 	pqres = PQexec(conn, "BEGIN");
 	if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
 		logMessage(PQerrorMessage(conn));
 		return false;
 	}
 	PQclear(pqres);
-	int res = lo_export(conn, fid, filename.c_str());
+	int res = lo_export(conn, fid, tmpFile.c_str());
 	pqres = PQexec(conn, "END");
 	if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
 		logMessage(PQerrorMessage(conn));
@@ -1158,12 +1161,12 @@ bool DBDriver::loadFileFromDB(int fid, string filename) {
 		string sfid = to_string(fid);
 		string msg;
 		msg.append("file with id ").append(sfid).append(
-				" exported from db to file ").append(filename);
+				" exported from db to file ").append(tmpFile.c_str());
 		logMessage(msg);
 		return true;
 	} else {
 		string errorExporting;
-		errorExporting.append("Error exporting ").append(filename).append(
+		errorExporting.append("Error exporting ").append(tmpFile.c_str()).append(
 				" from db");
 		logMessage(errorExporting);
 		return false;

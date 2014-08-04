@@ -7,7 +7,6 @@ using namespace std;
 
 namespace Anakin {
 
-
 /**
  * Describes a pattern (that can be a pattern or a scenario) stored in the db
  * a pattern have an id (generated when inserting it in the db)

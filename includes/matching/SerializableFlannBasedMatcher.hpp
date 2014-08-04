@@ -43,7 +43,7 @@ public:
 	 * removeFileAfterLoad : if true then the xml and if files will be deleted after the SFBM is loaded
 	 */
 	SerializableFlannBasedMatcher(QuickLZ* quickLZstate, string filename,
-			bool removeFileAfterLoad = false);
+			const string & tmpDir);
 
 	/**
 	 * serialize the SFBM
@@ -82,7 +82,7 @@ private:
 	 * will load the xml data from xml file if xmlData is empty or from xmlData otherwise
 	 * will load the if data from if file
 	 */
-	void load(const string& xmlData);
+	void load(const string& xmlData, const string & tmpDir);
 	string filename;
 	bool loadedFromFile = false;
 
@@ -95,7 +95,7 @@ private:
 	 * load the if file and creates a new index with it
 	 * data : a matrix used by the index and stored in the xml file
 	 */
-	void loadIndex(cv::Mat * data);
+	void loadIndex(cv::Mat * data, const string & tmpDir);
 
 	/**
 	 * compresses the if and xml files
@@ -114,7 +114,7 @@ private:
 	 *                       else it will be decompressed into a file
 	 */
 	void decompress(QuickLZ* quickLZstate, bool useOriginalNames,
-			string & xmlData);
+			string & xmlData, const string & tmpDir);
 
 	string smatcher_id;
 };

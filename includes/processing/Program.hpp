@@ -80,6 +80,7 @@ protected:
 	Flags programFlags;
 	bool verbose;
 	string logFile;
+	string tempDir;
 };
 
 } /* namespace Anakin */

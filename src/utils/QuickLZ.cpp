@@ -23,7 +23,8 @@ QuickLZ::~QuickLZ() {
 
 char * QuickLZ::compressText(const string * text, size_t * size) {
 	char *compressed = (char *) malloc(text->size() + 400);
-	*size = qlz_compress(text->c_str(), compressed,text->size(), state_compress);
+	*size = qlz_compress(text->c_str(), compressed, text->size(),
+			state_compress);
 	return compressed;
 }
 

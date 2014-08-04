@@ -16,9 +16,10 @@ std::vector<wstring*>* FlannMatchingProcessor::process(RichImg* scene,
 	std::vector<Match>* matches = this->detector->findPatterns(scene, error);
 	for (uint m = 0; m < matches->size() && !*error; m++) {
 		Match match = (*matches)[m];
-		sceneResult->push_back(this->cfm->outputMatch(match.getCenter(),
-								match.getPattern()->getImage()->getLabel(),
-								match.getMatchedKeypoints()));
+		sceneResult->push_back(
+				this->cfm->outputMatch(match.getCenter(),
+						match.getPattern()->getImage()->getLabel(),
+						match.getMatchedKeypoints()));
 	}
 	return sceneResult;
 }

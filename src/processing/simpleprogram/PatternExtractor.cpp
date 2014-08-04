@@ -201,7 +201,8 @@ int PatternExtractor::run(vector<string> *input) {
 		patternsLoader->load_and_save(outputDir, saveToFile, mode);
 
 		delete patternsLoader;
-		std::for_each( patterns.begin(), patterns.end(), delete_pointer_element<RichImg*>());
+		std::for_each(patterns.begin(), patterns.end(),
+				delete_pointer_element<RichImg*>());
 		delete patternsDataInput;
 		return EXIT_SUCCESS;
 	} else {
@@ -224,7 +225,8 @@ int PatternExtractor::run(vector<string> *input) {
 	}
 
 	delete patternsLoader;
-	std::for_each( patterns.begin(), patterns.end(), delete_pointer_element<RichImg*>());
+	std::for_each(patterns.begin(), patterns.end(),
+			delete_pointer_element<RichImg*>());
 	delete patternsDataInput;
 	return EXIT_SUCCESS;
 }

@@ -14,11 +14,14 @@ DBUser::DBUser(int id) {
 
 DBUser::~DBUser() {
 	//TODO revie possible design failure about access in getPatterns() and others
-	for_each( patterns->begin(), patterns->end(), delete_pointer_element<DBPattern*>());
+	for_each(patterns->begin(), patterns->end(),
+			delete_pointer_element<DBPattern*>());
 	delete this->patterns;
-	for_each( histograms->begin(), histograms->end(), delete_pointer_element<DBHistogram*>());
+	for_each(histograms->begin(), histograms->end(),
+			delete_pointer_element<DBHistogram*>());
 	delete this->histograms;
-	for_each( landscapes->begin(), landscapes->end(), delete_pointer_element<DBHistogram*>());
+	for_each(landscapes->begin(), landscapes->end(),
+			delete_pointer_element<DBHistogram*>());
 	delete this->landscapes;
 }
 

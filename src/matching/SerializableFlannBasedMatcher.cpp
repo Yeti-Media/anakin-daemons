@@ -22,17 +22,17 @@ SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 }
 
 SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
-		QuickLZ* quickLZstate, string filename, bool removeFileAfterLoad) {
+		QuickLZ* quickLZstate, string filename, const string & tmpDir) {
 	this->filename = filename;
 	string xmlData;
-	decompress(quickLZstate, true, xmlData);
-	this->load(xmlData);
-	if (removeFileAfterLoad) {
-		string indexFile = filename + ".if";
-		string matcherFile = filename + ".xml";
-		remove(indexFile.c_str());
-		remove(matcherFile.c_str());
-	}
+	decompress(quickLZstate, true, xmlData, tmpDir);
+	this->load(xmlData, tmpDir);
+//	if (removeFileAfterLoad) {
+//		string indexFile = filename + ".if";
+//		string matcherFile = filename + ".xml";
+//		remove(indexFile.c_str());
+//		remove(matcherFile.c_str());
+//	}
 }
 
 void SerializableFlannBasedMatcher::save(QuickLZ* quickLZstate, string filename,
@@ -101,7 +101,8 @@ string SerializableFlannBasedMatcher::getID() {
 
 //PRIVATE
 
-void SerializableFlannBasedMatcher::load(const string& xmlData) {
+void SerializableFlannBasedMatcher::load(const string& xmlData,
+		const string & tmpDir) {
 	cv::FileStorage fs(xmlData,
 			(cv::FileStorage::READ | cv::FileStorage::MEMORY));
 
@@ -126,7 +127,7 @@ void SerializableFlannBasedMatcher::load(const string& xmlData) {
 	cv::Mat* mergedDescriptorsDescriptors = ((cv::Mat *) mdptr);
 	root["mergedDescriptorsDescriptors"] >> *mergedDescriptorsDescriptors;
 	addedDescCount = mergedDescriptorsDescriptors->rows;
-	loadIndex(mergedDescriptorsDescriptors);
+	loadIndex(mergedDescriptorsDescriptors, tmpDir);
 	this->loadedFromFile = true;
 	//delete mergedDescriptorsDescriptors;
 }
@@ -136,12 +137,14 @@ void SerializableFlannBasedMatcher::saveIndex() {
 	flannIndex->save(tmpFile);
 }
 
-void SerializableFlannBasedMatcher::loadIndex(cv::Mat * data) {
-	string tmpFile = this->filename + ".if";
+void SerializableFlannBasedMatcher::loadIndex(cv::Mat * data,
+		const string & tmpDir) {
+	string tmpFile = tmpDir + "/" + this->filename + ".if";
 	cv::flann::IndexParams* params = new cv::flann::SavedIndexParams(
 			tmpFile.c_str());
 	//FIXME can cause memory leaks
 	flannIndex = new cv::flann::Index(*data, *params);
+	delete params; //FIXME can cause problems
 }
 
 void SerializableFlannBasedMatcher::compress(QuickLZ* quickLZstate,
@@ -180,24 +183,24 @@ void SerializableFlannBasedMatcher::compress(QuickLZ* quickLZstate,
 }
 
 void SerializableFlannBasedMatcher::decompress(QuickLZ* quickLZstate,
-		bool useOriginalNames, string & xmlData) {
+		bool useOriginalNames, string & xmlData, const string & tmpDir) {
 	//bool decompressMatcherToFile = xmlData == NULL;
-	string uncompressedIndexFileName = this->filename
+	string uncompressedIndexFileName = tmpDir + "/" + this->filename
 			+ (useOriginalNames ? ".if" : ".uif");
-	string uncompressedMatcherFileName = this->filename
+	string uncompressedMatcherFileName = tmpDir + "/" + this->filename
 			+ (useOriginalNames ? ".xml" : ".uxml");
-	string compressedIndexFileName = this->filename
+	string compressedIndexFileName = tmpDir + "/" + this->filename
 			+ (useOriginalNames ? ".if" : ".cif");
-	string compressedMatcherFileName = this->filename
+	string compressedMatcherFileName = tmpDir + "/" + this->filename
 			+ (useOriginalNames ? ".xml" : ".cxml");
 
 	string * cindexData = get_file_contents(compressedIndexFileName);
 	string * cmatcherData = get_file_contents(compressedMatcherFileName);
-
-	if (useOriginalNames) {
-		remove(compressedIndexFileName.c_str());
-		remove(compressedMatcherFileName.c_str());
-	}
+//
+//	if (useOriginalNames) {
+//		remove(compressedIndexFileName.c_str());
+//		remove(compressedMatcherFileName.c_str());
+//	}
 	//clock_t t_1 = clock();
 	size_t ir;
 	size_t mr;
