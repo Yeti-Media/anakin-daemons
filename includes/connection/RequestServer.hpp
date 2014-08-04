@@ -28,9 +28,10 @@ public:
 	 * a blocking queue with a capacity of <cap>
 	 * a vector of threads of size <threads>
 	 */
-	RequestServer(CacheConfig * cacheConfig, char mode, string pghost,
-			string pgport, string dbName, string login, string pwd,
-			unsigned int httpPort, int cap, int threads, bool verbose);
+	RequestServer(const string & programName, CacheConfig * cacheConfig,
+			char mode, string pghost, string pgport, string dbName,
+			string login, string pwd, unsigned int httpPort, int cap,
+			int threads, bool verbose);
 
 	virtual ~RequestServer();
 protected:
@@ -86,11 +87,12 @@ private:
 };
 
 template<class SpecificCommandRunner>
-RequestServer<SpecificCommandRunner>::RequestServer(CacheConfig * cacheConfig,
-		char mode, string pghost, string pgport, string dbName, string login,
-		string pwd, unsigned int httpPort, int cap, int threads, bool verbose) :
-		Server<SpecificCommandRunner>(cacheConfig, mode, pghost, pgport, dbName,
-				login, pwd, httpPort, verbose) {
+RequestServer<SpecificCommandRunner>::RequestServer(const string & programName,
+		CacheConfig * cacheConfig, char mode, string pghost, string pgport,
+		string dbName, string login, string pwd, unsigned int httpPort, int cap,
+		int threads, bool verbose) :
+		Server<SpecificCommandRunner>(programName, cacheConfig, mode, pghost,
+				pgport, dbName, login, pwd, httpPort, verbose) {
 	this->threads = threads;
 	this->workerThreads = new std::vector<pthread_t>(threads);
 	this->qcap = cap;

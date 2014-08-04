@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include <connection/HTTPSocket.hpp>
 #include <db/DBDriver.hpp>
 #include <logging/Log.hpp>
@@ -14,6 +16,7 @@
 #include <string>
 #include <vector>
 
+namespace fs = boost::filesystem;
 using namespace std;
 namespace Anakin {
 
@@ -26,9 +29,9 @@ public:
 	 * verbose : if the server will output information to console or not
 	 * mode : how to listen to requests (CONSOLE, TCP, UDP, DTCP, HTTP)
 	 */
-	Server(CacheConfig * cacheConfig, char mode, string pghost, string pgport,
-			string dbName, string login, string pwd, unsigned int httpPort,
-			bool verbose);
+	Server(const string & programName, CacheConfig * cacheConfig, char mode,
+			string pghost, string pgport, string dbName, string login,
+			string pwd, unsigned int httpPort, bool verbose);
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * output : this is used to output the processing results
@@ -97,6 +100,7 @@ protected:
 	DataOutput* output;
 	SFBMCache* cache;
 	DBDriver* dbdriver;
+	string tempDir;
 
 	bool initialization = false;
 	string initializationError;
@@ -106,14 +110,22 @@ private:
 };
 
 template<class SpecificCommandRunner>
-Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
-		string pghost, string pgport, string dbName, string login, string pwd,
-		unsigned int httpPort, bool verbose) {
+Server<SpecificCommandRunner>::Server(const string & programName,
+		CacheConfig * cacheConfig, char mode, string pghost, string pgport,
+		string dbName, string login, string pwd, unsigned int httpPort,
+		bool verbose) {
 	this->output = NULL;
 	this->cache = NULL;
 	this->port = httpPort;
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
+
+	fs::path temp("/tmp/Anakin/" + programName);
+	if (!fs::is_directory(temp)) {
+		fs::create_directories(temp);
+	}
+	tempDir = temp.string();
+
 	if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
 		this->initialization = true;
 		cout << this->dbdriver->getMessage() << endl;
@@ -126,7 +138,7 @@ Server<SpecificCommandRunner>::Server(CacheConfig * cacheConfig, char mode,
 		exit(EXIT_FAILURE);
 	}
 	if (this->initialization) {
-		this->cache = new SFBMCache(this->dbdriver, cacheConfig);
+		this->cache = new SFBMCache(this->dbdriver, cacheConfig, tempDir);
 		this->cacheInitializationError = false;
 		wstring cacheError = *this->cache->getLastOperationResult(
 				&this->cacheInitializationError);

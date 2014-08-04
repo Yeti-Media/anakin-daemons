@@ -70,7 +70,7 @@ public:
 	 *
 	 * dbdriver              : used to make requests to the db
 	 */
-	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig);
+	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig, string tmpDir);
 	/**
 	 * load a matcher
 	 *
@@ -78,7 +78,8 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	SerializableFlannBasedMatcher* loadMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error);
+	SerializableFlannBasedMatcher* loadMatcher(QuickLZ* quickLZstate,
+			int smatcher_id, bool * error);
 	/**
 	 * unload a matcher from cache
 	 *
@@ -94,7 +95,7 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	void updateMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error);
+	void updateMatcher(QuickLZ* quickLZstate, int smatcher_id, bool * error);
 	/**
 	 * returns a wstring* representing the actual CommunicationFormatter with the trainers and the free space in the cache
 	 */
@@ -147,6 +148,7 @@ private:
 
 	//FIELDS
 	DBDriver* dbdriver;
+	string tmpDir;
 	I_CommunicationFormatterCache* cfc;
 	int lastInsertedIndex = -1;
 	int lastRemovedIndex = -1;
@@ -200,8 +202,8 @@ private:
 	void getKeys(std::map<int, SerializableFlannBasedMatcher*>* m,
 			std::vector<int>* keys);
 	void getKeys(std::map<int, int>* m, std::vector<int>* keys);
-	SerializableFlannBasedMatcher* loadMatcherFromDB(QuickLZ* quickLZstate,int smatcher_id,
-			float* loadingTime, bool * error);
+	SerializableFlannBasedMatcher* loadMatcherFromDB(QuickLZ* quickLZstate,
+			int smatcher_id, float* loadingTime, bool * error);
 	ImageInfo* loadSceneFromDB(int sceneID, bool * error);
 	void incLife(int smatcher_id, bool matchersCache = true);
 	int decLife(int smatcher_id, bool matchersCache = true);
