@@ -177,6 +177,10 @@ struct DaemonArgs {
 	DaemonArgs(Program* program, vector<string> * input) :
 			program(program), input(input) {
 	}
+	~DaemonArgs() {
+		delete program;
+		delete input;
+	}
 };
 
 void * startDaemon(void *ptr);
