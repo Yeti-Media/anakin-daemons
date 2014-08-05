@@ -14,8 +14,8 @@ namespace Anakin {
 CommunicationFormatterMatchingJSON::CommunicationFormatterMatchingJSON() {
 }
 
-wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
-		string label, vector<KeyPoint> matchedKeypoints) {
+wstring* CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
+		const string & label, const vector<KeyPoint> & matchedKeypoints) {
 	/*   Result as wstring representing a  JSONObject
 
 	 root    -> center   -> x (float)
@@ -44,7 +44,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 	root[L"center"] = new JSONValue(jcenter);
 	wstringstream ws;
 	ws << label.c_str();
-	root[L"label"] = new JSONValue(ws.str());
+	root[L"label"] = new JSONValue(ws);
 
 #if !LIGTH_RESULTS
 	for (uint k = 0; k < matchedKeypoints.size(); k++) {
@@ -62,13 +62,11 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(Point2f center,
 	root[L"keypoints"] = new JSONValue(keypoints);
 #endif //LIGTH_RESULTS
 
-	// Create a value
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
-		vector<wstring *> values) {
+wstring* CommunicationFormatterMatchingJSON::outputMatches(const string & label,
+		const		vector<wstring *> & values) {
 	/*   Result as wstring representing a JSONObject
 
 	 root    -> scene label (string)
@@ -79,7 +77,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
 	JSONObject root;
 	wstringstream ws;
 	ws << label.c_str();
-	root[L"label"] = new JSONValue(ws.str());
+	root[L"label"] = new JSONValue(ws);
 	JSONArray valuesJSON;
 
 	for (uint v = 0; v < values.size(); v++) {
@@ -90,8 +88,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(string label,
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 }
 
 CommunicationFormatterMatchingJSON::~CommunicationFormatterMatchingJSON() {

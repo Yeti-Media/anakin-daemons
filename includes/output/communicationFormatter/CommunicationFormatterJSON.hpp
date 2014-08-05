@@ -23,14 +23,14 @@ public:
 	/**
 	 * returns a wstring* representation of a JSONValue of a response
 	 */
-	virtual wstring* outputResponse(string requestID, e_category category,
-			vector<wstring *> values);
+	virtual wstring* outputResponse(const string & requestID, e_category category,
+			const vector<wstring *> & values);
 
 	/**
 	 * returns a wstring* representation of a JSONValue of an error
 	 */
-	virtual wstring* outputError(e_error errorType, string message,
-			string origin);
+	virtual wstring* outputError(e_error errorType, const string &  message,
+			const string &  origin);
 
 	/**
 	 * returns a wstring* representation of a JSONValue

@@ -60,11 +60,10 @@ DataOutput::~DataOutput() {
 
 void DataOutput::output(wstring* data, int reqID) {
 	lock_guard<mutex> lck(mutex2);
-	string* s = new string(data->begin(), data->end());
-	Msj* msj = new Msj(s, E_DataOutputMsjType::common, reqID);
+	Msj* msj = new Msj(string(data->begin(), data->end()),
+			E_DataOutputMsjType::common, reqID);
 	workingQueue->push(msj);
-	//hacer que data sea puntero
-	//delete data
+	delete data;
 	//output(s, reqID);
 }
 
@@ -76,9 +75,10 @@ void DataOutput::output(wstring* data, int reqID) {
 
 void DataOutput::error(wstring* data) {
 	lock_guard<mutex> lck(mutex2);
-	string* s = new string(data->begin(), data->end());
-	Msj* msj = new Msj(s, E_DataOutputMsjType::error);
+	Msj* msj = new Msj(string(data->begin(), data->end()),
+			E_DataOutputMsjType::error);
 	workingQueue->push(msj);
+	delete data;
 	//error(s);
 }
 

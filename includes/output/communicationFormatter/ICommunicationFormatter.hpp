@@ -47,8 +47,8 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter of a response
 	 */
 
-	virtual wstring* outputResponse(string requestID, e_category category,
-			vector<wstring *> values) {
+	virtual wstring* outputResponse(const string & requestID, e_category category,
+			const vector<wstring *> & values) {
 		return NULL;
 	}
 	; // = 0;
@@ -60,8 +60,8 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter of an error
 	 */
 
-	virtual wstring* outputError(e_error errorType, string message,
-			std::string origin) {
+	virtual wstring* outputError(e_error errorType, const string & message,
+			const string & origin) {
 		return NULL;
 	}
 	; // = 0;
