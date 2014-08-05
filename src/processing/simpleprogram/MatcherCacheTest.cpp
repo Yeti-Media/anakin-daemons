@@ -48,7 +48,7 @@ int MatcherCacheTest::run(vector<string> *input) {
 	cout << dbdriver.getMessage() << endl;
 	CacheConfig cacheConfig;
 	cacheConfig.cacheLoadingTimeWeight = 9;
-	SFBMCache cache(&dbdriver, &cacheConfig, "/tmp/");
+	SFBMCache cache(&dbdriver, &cacheConfig);
 	SerializableFlannBasedMatcher* sfbm;
 	vector<int> patternsID;
 	patternsID.push_back(5);
@@ -58,8 +58,7 @@ int MatcherCacheTest::run(vector<string> *input) {
 	for (uint r = 0; r < requests; r++) {
 		int id = rand() % 2;
 		bool matcherError = false;
-		sfbm = cache.loadMatcher(quickLZstate, patternsID.at(id),
-				&matcherError);
+		sfbm = cache.loadMatcher(quickLZstate,patternsID.at(id), &matcherError);
 		cout << "loaded matcher(" << patternsID.at(id) << "), matcher is "
 				<< (sfbm->empty() ? "empty" : "not empty") << endl;
 		cout << "current hit ratio: " << cache.getHitRatio()

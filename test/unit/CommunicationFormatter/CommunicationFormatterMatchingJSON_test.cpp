@@ -5,6 +5,7 @@
  *      Author: Renzo Bianchini
  */
 
+
 #include <CompileConfigurations.hpp>
 #include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
 #include <boost/test/unit_test.hpp>
@@ -18,10 +19,13 @@
 #   define BOOST_TEST_MODULE Main
 #endif
 
+
 namespace fs = boost::filesystem;
 using namespace Anakin;
 
 namespace Testing {
+
+
 
 	BOOST_AUTO_TEST_SUITE(CommunicationFormatterMatching)
 
@@ -64,6 +68,7 @@ namespace Testing {
 	}
 
 //____________________________________________________________________________//
+
 
 	BOOST_AUTO_TEST_SUITE_END()
 

@@ -120,8 +120,7 @@ int PatternTrainer::run(vector<string> *input) {
 	delete sinput;
 	//delete patternsId;
 
-	std::for_each(patterns.begin(), patterns.end(),
-			delete_pointer_element<RichImg*>());
+	std::for_each( patterns.begin(), patterns.end(), delete_pointer_element<RichImg*>());
 	return EXIT_SUCCESS;
 }
 

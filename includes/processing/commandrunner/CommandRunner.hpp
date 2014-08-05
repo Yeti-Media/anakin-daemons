@@ -20,6 +20,8 @@
 #include <processing/Flags.hpp>
 #include <utils/help/Help.hpp>
 
+namespace fs = boost::filesystem;
+
 namespace Anakin {
 
 /**
@@ -86,7 +88,6 @@ protected:
 	BasicFlannDetector* detector = NULL;
 	Flags* flags;
 	SFBMCache* cache;
-	string tempDir;
 };
 
 } /* namespace Anakin */

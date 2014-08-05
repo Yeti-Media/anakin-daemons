@@ -44,12 +44,11 @@ SerializedPatternDataInput::SerializedPatternDataInput(
 }
 
 SerializedPatternDataInput::~SerializedPatternDataInput() {
-	if (driver != NULL) {
+	if (driver!=NULL) {
 		delete driver;
 	}
-	if (this->cache != NULL) {
-		std::for_each(cache->begin(), cache->end(),
-				delete_pointer_element<ImageInfo*>());
+	if (this->cache!=NULL) {
+		std::for_each( cache->begin(), cache->end(), delete_pointer_element<ImageInfo*>());
 		delete cache;
 	}
 }
@@ -57,8 +56,7 @@ SerializedPatternDataInput::~SerializedPatternDataInput() {
 bool SerializedPatternDataInput::nextInput(ImageInfo** output) {
 	if (this->current < 0) {
 		if (!this->loaded) {
-			std::for_each(cache->begin(), cache->end(),
-					delete_pointer_element<ImageInfo*>());
+			std::for_each( cache->begin(), cache->end(), delete_pointer_element<ImageInfo*>());
 			this->cache->clear();
 			if (!loadDataFromDB(this->cache)) {
 				reportDBDriverError();

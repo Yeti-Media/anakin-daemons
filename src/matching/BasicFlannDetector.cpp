@@ -103,8 +103,8 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 
 			ImageInfo* pii = this->cache->loadPattern(trainerID, currentKey,
 					error);
-			if (*error) {
-				cout << "*error " << *error << endl;
+			if (*error){
+				cout<<"*error "<<*error<<endl;
 				break;
 			}
 			//RichImg* pattern = this->patterns->at(currentKey);
@@ -115,11 +115,9 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 				//obj_points.push_back( pattern->getKeypoints()[ (*pattern_matches)[i].queryIdx ].pt );
 				//scene_points.push_back( scene->getKeypoints()[ (*pattern_matches)[i].trainIdx ].pt );
 				obj_points.push_back(
-						pattern->getKeypoints()->at(
-								(*pattern_matches)[i].trainIdx).pt);
+						pattern->getKeypoints()->at((*pattern_matches)[i].trainIdx).pt);
 				scene_points.push_back(
-						scene->getKeypoints()->at(
-								(*pattern_matches)[i].queryIdx).pt);
+						scene->getKeypoints()->at((*pattern_matches)[i].queryIdx).pt);
 			}
 
 			std::vector<cv::KeyPoint>* matchedKeypoints = new std::vector<

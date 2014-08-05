@@ -10,10 +10,8 @@
 
 using namespace Anakin;
 
-SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
-		string tmpDir) {
+SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	this->dbdriver = dbdriver;
-	this->tmpDir = tmpDir;
 	this->cfc = new CommunicationFormatterCacheJSON();
 	//MATCHES CACHE
 	this->cacheMaxSize = cacheConfig->cacheSize;
@@ -196,9 +194,9 @@ void SFBMCache::printLoadCount() {
 	vector<int>* values = new vector<int>(0);
 	getKeys(this->loadingCount, values);
 	BOOST_FOREACH(value, *values){
-	int loadCount = this->loadingCount->find(value)->second;
-	cout << value << " loaded " << loadCount << " times" << endl;
-}
+		int loadCount = this->loadingCount->find(value)->second;
+		cout << value << " loaded " << loadCount << " times" << endl;
+	}
 	delete values;
 }
 
@@ -334,8 +332,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
 	(*this->loadingCount)[smatcher_id] = loadCount;
 	clock_t t_1 = clock();
 	bool trainerFound;
-	trainerFound = this->dbdriver->retrieveSFBM(smatcher_id, error,
-			this->tmpDir);
+	trainerFound = this->dbdriver->retrieveSFBM(smatcher_id, error);
 	if (!trainerFound) {
 		this->operation = ERROR;
 		this->errorMessage = this->dbdriver->getMessage();
@@ -349,7 +346,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
 	}
 	string sid = to_string(smatcher_id);
 	SerializableFlannBasedMatcher* matcher = new SerializableFlannBasedMatcher(
-			quickLZstate, sid, this->tmpDir);
+			quickLZstate, sid, true);
 	clock_t t_2 = clock();
 	float tt = ((float) (t_2 - t_1)) / CLOCKS_PER_SEC;
 	*loadingTime = tt;

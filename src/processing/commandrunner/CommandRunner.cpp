@@ -1,5 +1,3 @@
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <processing/commandrunner/CommandRunner.hpp>
 #include <sys/types.h>
 #include <map>
@@ -8,18 +6,11 @@
 using namespace Anakin;
 using namespace cv;
 
-namespace fs = boost::filesystem;
-
 CommandRunner::CommandRunner() {
 	this->flags = NULL;
 	this->out = NULL;
 	this->sceneID = -1;
 	this->cache = NULL;
-	fs::path temp("/tmp/Anakin/" + getProgramName());
-	if (!fs::is_directory(temp)) {
-		fs::create_directories(temp);
-	}
-	tempDir = temp.string();
 }
 
 /**

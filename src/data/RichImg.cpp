@@ -4,8 +4,8 @@ using namespace Anakin;
 
 RichImg::RichImg(Img *img, cv::Ptr<cv::FeatureDetector>& detector,
 		cv::Ptr<cv::DescriptorExtractor>& extractor) {
-	keypoints = new std::vector<cv::KeyPoint>();
-	descriptors = new cv::Mat();
+	keypoints= new std::vector<cv::KeyPoint> ();
+	descriptors= new cv::Mat();
 	this->aimg = img;
 	this->detector = detector;
 	this->extractor = extractor;

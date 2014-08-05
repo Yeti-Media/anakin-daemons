@@ -19,11 +19,11 @@ ImageInfo::ImageInfo() {
 
 ImageInfo::~ImageInfo() {
 
-	if (this->keypoints != NULL) {
+	if (this->keypoints!=NULL) {
 		delete this->keypoints; //FIXME memory leak, delete contents?
 	}
 
-	if (this->descriptors != NULL) {
+	if (this->descriptors!=NULL) {
 		delete this->descriptors;
 	}
 }
@@ -51,11 +51,11 @@ void ImageInfo::write(FileStorage& fs) const {
 
 void ImageInfo::read(const FileNode& node) {
 
-	if (this->keypoints != NULL) {
+	if (this->keypoints!=NULL) {
 		delete this->keypoints;
 	}
 
-	if (this->descriptors != NULL) {
+	if (this->descriptors!=NULL) {
 		delete this->descriptors;
 	}
 
