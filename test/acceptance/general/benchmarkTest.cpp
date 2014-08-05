@@ -38,30 +38,16 @@ void benchmarkTest(int argc, const char * argv[],
 	string hostDB = "localhost";
 	string passDB = "postgres";
 
-	fs::path ramDir("/tmp/ram/Anakin/test/" + testName);
-	if (!fs::is_directory(ramDir)) {
-		fs::create_directories(ramDir);
-	}
-
 	fs::path testDir = argv[1];
 	fs::path sqlScriptPath = testDir / "script.sql";
 	fs::path examplesDir = testDir / "examples";
-	fs::path simpleTest = examplesDir / "benchmark";
-	fs::path inputLogos = simpleTest / "input-logos";
-	fs::path outputLogos = ramDir / "output-logos";
-	if (!fs::is_directory(outputLogos)) {
-		fs::create_directories(outputLogos);
-	}
-	fs::path outputs = ramDir / "outputs";
-	if (!fs::is_directory(outputs)) {
-		fs::create_directories(outputs);
-	}
-	fs::path severalJPG = simpleTest / "several.jpg";
+	fs::path benchmark = examplesDir / "benchmark";
+	fs::path inputLogos = benchmark / "input-logos";
+	fs::path outputLogos = benchmark / "output-logos";
+	fs::path outputs = benchmark / "outputs";
+	fs::path severalJPG = benchmark / "several.jpg";
 	fs::path severalXML = outputs / "several.xml";
-	fs::path logsDir = ramDir / "logs";
-	if (!fs::is_directory(logsDir)) {
-		fs::create_directories(logsDir);
-	}
+	fs::path logsDir = testDir / "logs";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
 	fs::path trainerOutput = outputs / "patternTrainerOutput";

@@ -120,7 +120,7 @@ Server<SpecificCommandRunner>::Server(const string & programName,
 	this->mode = mode;
 	this->dbdriver = new DBDriver();
 
-	fs::path temp("/tmp/ram/Anakin/" + programName);
+	fs::path temp("/tmp/Anakin/" + programName);
 	if (!fs::is_directory(temp)) {
 		fs::create_directories(temp);
 	}

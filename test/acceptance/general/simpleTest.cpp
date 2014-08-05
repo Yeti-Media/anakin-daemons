@@ -31,37 +31,23 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	//--------------------------------------------------------------
 
 	string testName = "General";
-	uint maxTestRepetition = 10;
+	uint maxTestRepetition = 1;
 
 	string database = "AnakinAcceptanceTesting";
 	string userDB = "postgres";
 	string hostDB = "localhost";
 	string passDB = "postgres";
 
-	fs::path ramDir("/tmp/ram/Anakin/test/" + testName);
-	if (!fs::is_directory(ramDir)) {
-		fs::create_directories (ramDir);
-	}
-
 	fs::path testDir = argv[1];
 	fs::path sqlScriptPath = testDir / "script.sql";
 	fs::path examplesDir = testDir / "examples";
 	fs::path simpleTest = examplesDir / "simpleTest";
 	fs::path inputLogos = simpleTest / "input-logos";
-	fs::path outputLogos = ramDir / "output-logos";
-	if (!fs::is_directory(outputLogos)) {
-		fs::create_directories (outputLogos);
-	}
-	fs::path outputs = ramDir / "outputs";
-	if (!fs::is_directory(outputs)) {
-		fs::create_directories (outputs);
-	}
+	fs::path outputLogos = simpleTest / "output-logos";
+	fs::path outputs = simpleTest / "outputs";
 	fs::path severalJPG = simpleTest / "several.jpg";
 	fs::path severalXML = outputs / "several.xml";
-	fs::path logsDir = ramDir / "logs";
-	if (!fs::is_directory(logsDir)) {
-		fs::create_directories (logsDir);
-	}
+	fs::path logsDir = testDir / "logs";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
 	fs::path trainerOutput = outputs / "patternTrainerOutput";
@@ -74,6 +60,9 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	for (uint testRepetition = 1; testRepetition <= maxTestRepetition;
 			testRepetition++) {
 		printTestMsj(testName, testRepetition);
+
+		//trying to kill any user using the test database
+		//command(NULL, false, "psql -U postgres -c \"SELECT * FROM pg_stat_activity WHERE datname='"+database+"'\";");
 
 		//testing database cleanup
 		command(NULL, false, "dropdb --if-exists " + database);

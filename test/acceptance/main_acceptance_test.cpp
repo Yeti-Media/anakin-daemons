@@ -16,8 +16,8 @@ int main(int argc, const char * argv[]) {
 	StatisticsCollector collector;
 	testingDirCheck(argc, argv);
 
-	//simpleTest(argc, argv, &collector);
-	benchmarkTest(argc, argv, &collector);
+	simpleTest(argc, argv, &collector);
+	//benchmarkTest(argc, argv, &collector);
 
 	printStatistics(&collector);
 	exitWithSucces();
