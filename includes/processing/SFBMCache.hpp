@@ -5,11 +5,11 @@
 #include <db/DBDriver.hpp>
 #include <data/ImageInfo.hpp>
 #include <output/JSONValue.h>
+#include <output/ResultWriter.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
 #include <map>
 #include <string>
 #include <vector>
-#include <output/communicationFormatter/ICommunicationFormatterCache.hpp>
 
 namespace Anakin {
 
@@ -96,9 +96,9 @@ public:
 	 */
 	void updateMatcher(QuickLZ* quickLZstate,int smatcher_id, bool * error);
 	/**
-	 * returns a wstring* representing the actual CommunicationFormatter with the trainers and the free space in the cache
+	 * returns a JSONValue with the trainers and the free space in the cache
 	 */
-	wstring* indexCacheStatus();
+	JSONValue* indexCacheStatus();
 	/**
 	 * load a scene
 	 *
@@ -137,17 +137,17 @@ public:
 	 */
 	void printLoadCount();
 	/**
-	 * a wstring* representing the actual CommunicationFormatter with the information of the last request
-	 * @see ICommunicationFormatter.hpp
+	 * a JSONValue with the information of the last request
+	 * @see ResultWriter.hpp
 	 * @see SFBMCache.cpp
 	 */
-	wstring* getLastOperationResult(bool * error = NULL);
+	JSONValue* getLastOperationResult(bool * error = NULL);
 protected:
 private:
 
 	//FIELDS
 	DBDriver* dbdriver;
-	I_CommunicationFormatterCache* cfc;
+	ResultWriter* rw;
 	int lastInsertedIndex = -1;
 	int lastRemovedIndex = -1;
 	static const char INSERTOP = 1;
@@ -156,7 +156,7 @@ private:
 	static const char ERROR = 4;
 	char operation = 0;
 	std::string errorMessage;
-	I_CommunicationFormatterCache::e_error errorType;
+	char errorType;
 	std::string origin;
 
 	//MATCHERS

@@ -1,6 +1,5 @@
 #include "data/HistogramsIO.hpp"
-#include <output/communicationFormatter/ICommunicationFormatter.hpp>
-#include <output/communicationFormatter/CommunicationFormatterJSON.hpp>>
+#include "output/ResultWriter.hpp"
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
@@ -88,17 +87,18 @@ void HistogramsIO::save(string filename, Histogram* histogram,
 	if (saveToFile) {
 		fs.release();
 	} else {
-		I_CommunicationFormatter* cf = new CommunicationFormatterJSON();
 		string data = fs.releaseAndGetString();
 		bool isLandscape = histogram->isMinMax() || histogram->hasAvg();
 		bool color = histogram->getChannels() == 3;
 		bool hsv = histogram->getChannels() == 2;
-		wstring out = *cf->format(isLandscape ?
-						I_CommunicationFormatter::e_mode::CF_LANDSCAPE :
-						I_CommunicationFormatter::e_mode::CF_HISTOGRAMS, data,
-						color ? I_CommunicationFormatter::e_color::CF_COLOR : (
-								hsv ? I_CommunicationFormatter::e_color::CF_HSV : I_CommunicationFormatter::e_color::CF_GRAY));
-		wcout << out << endl;
+		wcout
+				<< ResultWriter::output(
+						isLandscape ?
+								ResultWriter::RW_LANDSCAPE :
+								ResultWriter::RW_HISTOGRAMS, data,
+						color ? ResultWriter::RW_COLOR : (
+								hsv ? ResultWriter::RW_HSV : ResultWriter::RW_GRAY))
+				<< endl;
 	}
 }
 

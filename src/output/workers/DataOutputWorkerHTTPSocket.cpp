@@ -29,13 +29,13 @@ void DataOutputWorkerHTTPSocket::processOutput(Msj* msj) {
 	switch (msj->type) {
 	//error data
 	case error: {
-		this->httpSocket->respond(msj->data->c_str(), false, -1);
-		LOG_F("ERROR")<< msj->data->c_str();
+		this->httpSocket->respond(msj->data, false, -1);
+		LOG_F("ERROR")<< msj->data;
 		break;
 	}
 		//common data
 	case common: {
-		this->httpSocket->respond(msj->data->c_str(), true, msj->reqID);
+		this->httpSocket->respond(msj->data, true, msj->reqID);
 		break;
 	}
 	} //case

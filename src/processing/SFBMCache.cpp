@@ -6,13 +6,12 @@
 #include <iostream>
 #include <limits>
 #include <utility>
-#include <output/communicationFormatter/CommunicationFormatterCacheJSON.hpp>
 
 using namespace Anakin;
 
 SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig) {
 	this->dbdriver = dbdriver;
-	this->cfc = new CommunicationFormatterCacheJSON();
+	this->rw = new ResultWriter();
 	//MATCHES CACHE
 	this->cacheMaxSize = cacheConfig->cacheSize;
 	this->cacheSize = 0;
@@ -104,11 +103,12 @@ void SFBMCache::updateMatcher(QuickLZ* quickLZstate, int smatcher_id,
 		this->operation = UPDATEOP;
 }
 
-wstring* SFBMCache::indexCacheStatus() {
-	std::vector<int>* values = new std::vector<int>(0);
+JSONValue* SFBMCache::indexCacheStatus() {
+	vector<int>* values = new vector<int>(0);
 	getKeys(this->cache, values);
 	int freeCacheSpace = this->cacheMaxSize - this->cacheSize;
-	return this->cfc->cacheStatus(*values, freeCacheSpace);
+	//FIXME memory leaks at values
+	return this->rw->cacheStatusAsJSON(*values, freeCacheSpace);
 }
 
 ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
@@ -153,8 +153,8 @@ ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 			this->errorMessage = this->dbdriver->getMessage();
 			this->errorType =
 					*error ?
-							CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL :
-							CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
+							ResultWriter::RW_ERROR_TYPE_FATAL :
+							ResultWriter::RW_ERROR_TYPE_ERROR;
 			this->origin = "SFBMCache#loadPattern";
 			return NULL;
 		}
@@ -200,35 +200,32 @@ void SFBMCache::printLoadCount() {
 	delete values;
 }
 
-wstring* SFBMCache::getLastOperationResult(bool * error) {
+JSONValue* SFBMCache::getLastOperationResult(bool * error) {
 	//internal function, do not init *error=false
-	wstring* result = new wstring();
+	JSONValue* result;
 	switch (operation) {
 	case SFBMCache::INSERTOP: {
-		result = this->cfc->trainerAdd(lastInsertedIndex,
+		result = this->rw->trainerAddAsJSON(lastInsertedIndex,
 				this->cacheMaxSize - this->cacheSize, lastRemovedIndex);
 		break;
 	}
 	case SFBMCache::DELETEOP: {
-		result = this->cfc->trainerDel(lastRemovedIndex,
+		result = this->rw->trainerDelAsJSON(lastRemovedIndex,
 				this->cacheMaxSize - this->cacheSize);
 		break;
 	}
 	case SFBMCache::UPDATEOP: {
-		result = this->cfc->trainerUPD(lastInsertedIndex);
+		result = this->rw->trainerUPDAsJSON(lastInsertedIndex);
 		break;
 	}
 	case SFBMCache::ERROR: {
 		*error = true;
-		result = this->cfc->outputError(this->errorType, this->errorMessage,
+		result = this->rw->errorAsJSON(this->errorType, this->errorMessage,
 				this->origin);
 		break;
 	}
 	}
 	this->operation = 0;
-//	wstring* returnValue = new wstring();
-//	*returnValue = result.c_str();
-//	return returnValue;
 	return result;
 }
 
@@ -338,8 +335,8 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
 		this->errorMessage = this->dbdriver->getMessage();
 		this->errorType =
 				*error ?
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL :
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
+						ResultWriter::RW_ERROR_TYPE_FATAL :
+						ResultWriter::RW_ERROR_TYPE_ERROR;
 		this->origin = "SFBMCache#loadMatcherFromDB";
 		*error |= !trainerFound;
 		return NULL;
@@ -364,8 +361,8 @@ ImageInfo* SFBMCache::loadSceneFromDB(int sceneID, bool * error) {
 		this->errorMessage = this->dbdriver->getMessage();
 		this->errorType =
 				*error ?
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL :
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
+						ResultWriter::RW_ERROR_TYPE_FATAL :
+						ResultWriter::RW_ERROR_TYPE_ERROR;
 		this->origin = "SFBMCache#loadSceneFromDB";
 		*error |= !sceneFound;
 		return NULL;
