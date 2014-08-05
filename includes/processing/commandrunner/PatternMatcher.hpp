@@ -18,9 +18,15 @@
 
 namespace Anakin {
 
-enum E_PatternMatchingAction {
-	NONE = 0, MATCH = 1, ADDIDXS = 2, DELIDXS = 3, UPDIDXS = 4, IDXSTATUS = 5
+enum E_PatternMatchingAction{
+	NONE = 0,
+	MATCH = 1,
+	ADDIDXS = 2,
+	DELIDXS = 3,
+	UPDIDXS = 4,
+	IDXSTATUS = 5
 };
+
 
 class PatternMatcher: public CommandRunner {
 public:

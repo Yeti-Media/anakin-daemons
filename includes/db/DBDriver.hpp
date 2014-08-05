@@ -208,7 +208,7 @@ public:
 	 *
 	 * returns true if the trainer was successfully loaded
 	 */
-	bool retrieveSFBM(int smatcher_id, bool * error, const string & tmpDir);
+	bool retrieveSFBM(int smatcher_id, bool * error);
 	/**
 	 * Will check if a trainer with id <smatcher_id> is present in the db
 	 *
@@ -415,8 +415,7 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool loadFileFromDB(int fid, const string & filename,
-			const string & tmpDir);
+	bool loadFileFromDB(int fid, std::string filename);
 	/**
 	 * delete a file from disk
 	 *

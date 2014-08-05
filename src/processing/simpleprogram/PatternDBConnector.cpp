@@ -261,7 +261,7 @@ int PatternDBConnector::run(vector<string> *input) {
 		case Constants::INDEX: {
 			int trainerID = stoi(smatcher_id);
 			bool SFBMError = false;
-			if (driver->retrieveSFBM(trainerID, &SFBMError, this->tempDir)) {
+			if (driver->retrieveSFBM(trainerID, &SFBMError)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {

@@ -58,7 +58,7 @@ std::string * DBHistogram::getGrayData() const {
 	if (this->mode & Constants::GRAY) {
 		return this->grayData;
 	} else {
-		return new string("NULL");
+		return  new string("NULL");
 	}
 }
 
@@ -66,7 +66,7 @@ std::string * DBHistogram::getHSVData() const {
 	if (this->mode & Constants::HSV) {
 		return this->hsvData;
 	} else {
-		return new string("NULL");
+		return  new string("NULL");
 	}
 }
 

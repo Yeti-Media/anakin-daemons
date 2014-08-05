@@ -315,9 +315,8 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	HTTPSocket* httpSocket;
 
 	Server<SpecificCommandRunner>* server = new RequestServer<
-			SpecificCommandRunner>(this->getProgramName(), pCacheConfig, iMode,
-			pghost, pgport, dbName, login, pwd, httpPort, queueCapacity,
-			threads, verbose);
+			SpecificCommandRunner>(pCacheConfig, iMode, pghost, pgport, dbName,
+			login, pwd, httpPort, queueCapacity, threads, verbose);
 
 	DataOutput* output;
 	if (oMode & Server<SpecificCommandRunner>::CONSOLE) {

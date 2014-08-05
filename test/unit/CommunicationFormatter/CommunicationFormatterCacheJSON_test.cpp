@@ -5,6 +5,7 @@
  *      Author: Renzo Bianchini
  */
 
+
 #include <CompileConfigurations.hpp>
 #include <output/communicationFormatter/CommunicationFormatterCacheJSON.hpp>
 #include <boost/test/unit_test.hpp>
@@ -18,10 +19,13 @@
 #   define BOOST_TEST_MODULE Main
 #endif
 
+
 namespace fs = boost::filesystem;
 using namespace Anakin;
 
 namespace Testing {
+
+
 
 	BOOST_AUTO_TEST_SUITE(CommunicationFormatterCache)
 
@@ -73,7 +77,7 @@ namespace Testing {
 		int cacheFreeSpace = 595871;
 		vector<int> smatchers_in_cache = vector<int>(5);
 		for(int i = 0; i < 5; i++)
-		smatchers_in_cache.at(i) = i+1;
+			smatchers_in_cache.at(i) = i+1;
 		wstring expectedResult = L"{\"cache_free_space\":595871,\"indexes\":\[1,2,3,4,5]}";
 		wstring* result = cfc->cacheStatus(smatchers_in_cache, cacheFreeSpace);
 		BOOST_CHECK_EQUAL (expectedResult.compare(*result), 0);
@@ -90,4 +94,6 @@ namespace Testing {
 //namespace Testing
 
 #endif  /*COMPILE_MODE == COMPILE_FOR_UNIT_TESTING*/
+
+
 

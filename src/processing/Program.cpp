@@ -5,26 +5,14 @@
  *      Author: Franco Pellegrini
  */
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-#include <logging/OutputPolicyFile.hpp>
 #include <processing/Program.hpp>
-#include <sys/types.h>
-#include <utils/help/Help.hpp>
-#include <cstdlib>
-#include <iostream>
-
-namespace fs = boost::filesystem;
+#include <logging/Log.hpp>
+#include <logging/OutputPolicyFile.hpp>
 
 namespace Anakin {
 
 Program::Program() {
 	verbose = false;
-	fs::path temp("/tmp/Anakin/" + getProgramName());
-	if (!fs::is_directory(temp)) {
-		fs::create_directories(temp);
-	}
-	tempDir = temp.string();
 }
 
 Program::~Program() {
@@ -34,7 +22,6 @@ void Program::initProgramFlags() {
 }
 
 int Program::start(vector<string> *input) {
-
 	programFlags.setOverridingFlag("help");
 	programFlags.setNoValuesFlag("verbose");
 	programFlags.setOptionalFlag("oLogFile");
