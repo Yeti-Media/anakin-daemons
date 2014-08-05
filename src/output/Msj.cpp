@@ -9,18 +9,17 @@
 
 namespace Anakin {
 
-Msj::Msj(string* data, E_DataOutputMsjType msjType, int reqID) :
+Msj::Msj(const string & data, E_DataOutputMsjType msjType, int reqID) :
 		data(data), type(msjType), reqID(reqID) {
 
 }
 
-Msj::Msj(string* data, E_DataOutputMsjType msjType) :
+Msj::Msj(const string & data, E_DataOutputMsjType msjType) :
 		data(data), type(msjType) {
 	this->reqID = -1;
 }
 
 Msj::~Msj() {
-	delete data;
 }
 
 } /* namespace Anakin */

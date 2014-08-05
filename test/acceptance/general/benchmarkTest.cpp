@@ -177,7 +177,7 @@ void benchmarkTest(int argc, const char * argv[],
 			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << capture << endl << endl
+						<< endl << endl << *capture << endl << endl
 						<< "and should replied something that start with:"
 						<< endl << endl << pattern << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
@@ -188,7 +188,7 @@ void benchmarkTest(int argc, const char * argv[],
 			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << capture << endl << endl
+						<< endl << endl << *capture << endl << endl
 						<< "and should replied something that end with:" << endl
 						<< endl << pattern << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);

@@ -247,7 +247,7 @@ void PatternMatcher::run() {
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_ADD,
 						inserts), ireqID);
-		//TODO delete inserts;
+		std::for_each( inserts.begin(), inserts.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
@@ -269,7 +269,7 @@ void PatternMatcher::run() {
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_DEL,
 						deletes), ireqID);
-		//TODO delete deletes;
+		std::for_each( deletes.begin(), deletes.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
@@ -278,7 +278,7 @@ void PatternMatcher::run() {
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_CACHE_IDX_STATUS, status), ireqID);
-		//TODO delete status;
+		std::for_each( status.begin(), status.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
@@ -306,11 +306,11 @@ void PatternMatcher::run() {
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_UPD,
 						updates), ireqID);
-		//TODO delete updates;
+		std::for_each( updates.begin(), updates.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
-		vector<wstring*>* matches = new std::vector<wstring*>();
+		vector<wstring*> matches;
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
 			this->out->error(
@@ -338,6 +338,7 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult());
 				return;
 			}
+			//FIXME memory leaks!!???
 			this->detector = new BasicFlannDetector(matcher, this->cache,
 					this->mr, this->mma);
 			this->processor = new FlannMatchingProcessor(this->detector);
@@ -349,16 +350,15 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult());
 				return;
 			}
-			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
+			matches.insert(matches.end(), cmatches->begin(), cmatches->end());
 		}
 		vector<wstring*> sceneMatches;
-		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), *matches));
+		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), matches));
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_PATTERN_MATCHING, sceneMatches),
 				ireqID);
-		//for_each( matches->begin(), matches->end(), delete_pointer_element<wstring*>()); if you uncomment this line running acceptance testing with 10 repetitions of simpleTest will FAIL
-		delete matches;
+		for_each( matches.begin(), matches.end(), delete_pointer_element<wstring*>());
 		delete rscene;
 		break;
 	}

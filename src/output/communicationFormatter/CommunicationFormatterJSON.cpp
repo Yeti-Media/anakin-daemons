@@ -15,8 +15,8 @@ using namespace Anakin;
 CommunicationFormatterJSON::CommunicationFormatterJSON() {
 }
 
-wstring* CommunicationFormatterJSON::outputResponse(string requestID,
-		e_category category, vector<wstring *> values) {
+wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
+		e_category category,const vector<wstring *> & values) {
 
 	/*  Result as wstring representing a JSONObject
 
@@ -30,7 +30,7 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 	JSONObject root;
 	wstringstream ws;
 	ws << requestID.c_str();
-	root[L"requestID"] = new JSONValue(ws.str());
+	root[L"requestID"] = new JSONValue(ws);
 	switch (category) {
 	case CF_PATTERN_MATCHING: {
 		root[L"category"] = new JSONValue(L"PATTERN");
@@ -65,13 +65,12 @@ wstring* CommunicationFormatterJSON::outputResponse(string requestID,
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
-	JSONValue *returnValue = new JSONValue(root);
-	return new wstring(returnValue->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 
 }
 
 wstring* CommunicationFormatterJSON::outputError(e_error errorType,
-		std::string message, std::string origin) {
+		const string &  message, const string & origin) {
 
 	/*  Result as wstring representing a JSONObject
 
@@ -103,15 +102,14 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 	}
 	}
 	root[L"error_type"] = new JSONValue(werror_type);
-	root[L"message"] = new JSONValue(wmessage.str());
-	root[L"origin"] = new JSONValue(worigin.str());
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	root[L"message"] = new JSONValue(wmessage);
+	root[L"origin"] = new JSONValue(worigin);
+	return new wstring(JSONValue(root).Stringify());
 }
 
 wstring* CommunicationFormatterJSON::format(const char * data) {
 
-	return new wstring((JSON::Parse(data))->Stringify().c_str());
+	return new wstring((JSON::Parse(data))->Stringify());
 }
 
 wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
@@ -149,10 +147,9 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	root[L"dataType"] = new JSONValue(L"YML");
 	wstringstream ws;
 	ws << data.c_str();
-	root[L"data"] = new JSONValue(ws.str());
+	root[L"data"] = new JSONValue(ws);
 
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 }
 
 string* CommunicationFormatterJSON::formatRequest(const char * data) {

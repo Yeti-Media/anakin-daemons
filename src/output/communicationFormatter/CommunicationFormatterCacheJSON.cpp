@@ -30,8 +30,7 @@ wstring* CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 
 	root[L"index_removed"] = new JSONValue((double) smatcher_id_removed);
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 }
 
 wstring* CommunicationFormatterCacheJSON::trainerDel(int smatcher_id_deleted,
@@ -48,8 +47,7 @@ wstring* CommunicationFormatterCacheJSON::trainerUPD(int smatcher_id_updated) {
 
 	JSONObject root;
 	root[L"index_updated"] = new JSONValue((double) smatcher_id_updated);
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 }
 
 wstring* CommunicationFormatterCacheJSON::cacheStatus(
@@ -72,8 +70,7 @@ wstring* CommunicationFormatterCacheJSON::cacheStatus(
 
 	root[L"indexes"] = new JSONValue(values);
 
-	JSONValue *value = new JSONValue(root);
-	return new wstring(value->Stringify().c_str());
+	return new wstring(JSONValue(root).Stringify());
 }
 
 CommunicationFormatterCacheJSON::~CommunicationFormatterCacheJSON() {
