@@ -20,7 +20,7 @@ namespace Anakin {
 
 Program::Program() {
 	verbose = false;
-	fs::path temp("/tmp/ram/Anakin/" + getProgramName());
+	fs::path temp("/tmp/Anakin/" + getProgramName());
 	if (!fs::is_directory(temp)) {
 		fs::create_directories(temp);
 	}
