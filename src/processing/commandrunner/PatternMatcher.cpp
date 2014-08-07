@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <utils/Constants.hpp>
 #include <utils/help/HelpPatternMatcher.hpp>
+#include <utils/ClearVector.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -355,6 +356,7 @@ void PatternMatcher::run() {
 				this->rw->outputResponse(reqID,
 						ResultWriter::RW_PATTERN_MATCHING, sceneMatches),
 				ireqID);
+		for_each( matches->begin(), matches->end(), delete_pointer_element<RichImg*>());
 		delete matches;
 		delete rscene;
 		break;

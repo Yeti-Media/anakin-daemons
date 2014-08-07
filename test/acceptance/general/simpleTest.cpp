@@ -31,7 +31,7 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	//--------------------------------------------------------------
 
 	string testName = "General";
-	uint maxTestRepetition = 10;
+	uint maxTestRepetition = 100;
 
 	string database = "AnakinAcceptanceTesting";
 	string userDB = "postgres";
@@ -47,6 +47,8 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	fs::path outputs = simpleTest / "outputs";
 	fs::path severalJPG = simpleTest / "several.jpg";
 	fs::path severalXML = outputs / "several.xml";
+	fs::path dpizzaPNG = simpleTest / "dpizza.png";
+	fs::path dpizzaXML = outputs / "dpizza.xml";
 	fs::path logsDir = testDir / "logs";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
@@ -103,6 +105,12 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 						+ " -oPath " + pathToAnakinPath(outputs)
 						+ " -lod -xml");
 
+		runProgram<PatternExtractor>(collector,
+				"-oLogFile " + pathToAnakinPath(logsExtractor)
+						+ " -matching -iFile " + pathToAnakinPath(dpizzaPNG)
+						+ " -oPath " + pathToAnakinPath(outputs)
+						+ " -lod -xml");
+
 		//--------------------------------------------------------------
 		//  Step 2 - DBconnector Basic Test
 		//--------------------------------------------------------------
@@ -111,6 +119,10 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 		runProgram<PatternDBConnector>(collector,
 				"-oLogFile " + pathToAnakinPath(logsDbConnector)
 						+ " -scenes -path " + pathToAnakinPath(severalXML));
+
+		runProgram<PatternDBConnector>(collector,
+				"-oLogFile " + pathToAnakinPath(logsDbConnector)
+						+ " -scenes -path " + pathToAnakinPath(dpizzaXML));
 
 		runProgram<PatternDBConnector>(collector,
 				"-oLogFile " + pathToAnakinPath(logsDbConnector)
@@ -161,13 +173,14 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 							+ pathToAnakinPath(lastStdout) + " 2> "
 							+ pathToAnakinPath(lastStderr), true);
 			cout << "* Request number " << query << endl;
+
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
 			std::string * capture = get_file_contents(lastStdout.string());
 			if (capture->find(pattern) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << capture << endl << endl
+						<< endl << endl << *capture << endl << endl
 						<< "and should replied something that start with:"
 						<< endl << endl << pattern << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
@@ -177,15 +190,60 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 			pattern =
 					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
 			if (capture->find(pattern) == std::string::npos) {
+				// compare with a similar pattern.
+				pattern =
+						"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":228.708847045898,\"y\":151.395462036133},\"label\":\"9\"}]}]}";
+				if (capture->find(pattern) == std::string::npos) {
+					// compare with a similar pattern.
+					pattern =
+							"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.288116455078,\"y\":151.411666870117},\"label\":\"9\"}]}]}";
+					if (capture->find(pattern) == std::string::npos) {
+						cerr
+								<< "PatternMatching subprogram wrong output. Anakin replied:"
+								<< endl << endl << *capture << endl << endl
+								<< "and should replied something that end with:"
+								<< endl << endl << pattern << endl;
+						stopAnakinHTTP(thread, logsDir, NULL);
+						exitWithError();
+					}
+
+				}
+
+			}
+			delete capture;
+
+			//Trying other query
+			command(collector, true,
+					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":2}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
+							+ pathToAnakinPath(lastStdout) + " 2> "
+							+ pathToAnakinPath(lastStderr), true);
+			cout << "* Request number " << query << endl;
+
+			//Analyzing output
+			string pattern2 = "{\"category\":\"PATTERN\",\"requestID\":\"";
+			std::string * capture2 = get_file_contents(lastStdout.string());
+			if (capture2->find(pattern2) == std::string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << capture << endl << endl
-						<< "and should replied something that end with:" << endl
-						<< endl << pattern << endl;
+						<< endl << endl << *capture2 << endl << endl
+						<< "and should replied something that start with:"
+						<< endl << endl << pattern2 << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
-			delete capture;
+
+			pattern2 =
+					"\",\"values\":[{\"label\":\"2\",\"values\":[{\"center\":{\"x\":133.31559753418,\"y\":146.899322509766},\"label\":\"7\"}]}]}";
+			if (capture2->find(pattern2) == std::string::npos) {
+				cerr
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< endl << endl << *capture2 << endl << endl
+						<< "and should replied something that end with:" << endl
+						<< endl << pattern2 << endl;
+				stopAnakinHTTP(thread, logsDir, NULL);
+				exitWithError();
+			}
+			delete capture2;
 		}
 		stopAnakinHTTP(thread, logsDir, collector);
 
