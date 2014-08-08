@@ -5,8 +5,6 @@
  *      Author: Renzo Bianchini
  */
 
-#define LIGTH_RESULTS 1
-
 #include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
 
 namespace Anakin {
@@ -44,7 +42,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
 	root[L"center"] = new JSONValue(jcenter);
 	wstringstream ws;
 	ws << label.c_str();
-	root[L"label"] = new JSONValue(ws);
+	root[L"label"] = new JSONValue(ws.str());
 
 #if !LIGTH_RESULTS
 	for (uint k = 0; k < matchedKeypoints.size(); k++) {
@@ -66,7 +64,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
 }
 
 wstring* CommunicationFormatterMatchingJSON::outputMatches(const string & label,
-		const		vector<wstring *> & values) {
+		const vector<wstring *> & values) {
 	/*   Result as wstring representing a JSONObject
 
 	 root    -> scene label (string)
@@ -77,7 +75,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(const string & label,
 	JSONObject root;
 	wstringstream ws;
 	ws << label.c_str();
-	root[L"label"] = new JSONValue(ws);
+	root[L"label"] = new JSONValue(ws.str());
 	JSONArray valuesJSON;
 
 	for (uint v = 0; v < values.size(); v++) {

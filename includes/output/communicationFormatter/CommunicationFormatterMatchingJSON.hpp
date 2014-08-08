@@ -8,6 +8,8 @@
 #ifndef COMMUNICATIONFORMATTERMATCHINGJSON_HPP_
 #define COMMUNICATIONFORMATTERMATCHINGJSON_HPP_
 
+#define LIGTH_RESULTS 1
+
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <output/communicationFormatter/ICommunicationFormatterMatching.hpp>
 

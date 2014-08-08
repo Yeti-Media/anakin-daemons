@@ -25,8 +25,6 @@ namespace Testing {
 
 	BOOST_AUTO_TEST_SUITE(CommunicationFormatterMatching)
 
-	BOOST_AUTO_TEST_CASE_EXPECTED_FAILURES(outputMatchGood, 1)
-
 	BOOST_AUTO_TEST_CASE(outputMatchGood) {
 
 		CommunicationFormatterMatchingJSON* cfm = new CommunicationFormatterMatchingJSON();
@@ -40,13 +38,14 @@ namespace Testing {
 		int class_id = 7;
 		KeyPoint kp1 = KeyPoint(center,size, angle, response, octave, class_id);
 		matchedKeypoints.at(0) = kp1;
-		wstring expectedLigthResult = L"{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"label\":\"This is a test label\"}";
-		wstring expectedNoLigthResult = L"{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"keypoints\":[{\"angle\":95.0999984741211,\"pos\":{\"x\":2.79999995231628,\"y\":3.5},\"response\":1.10000002384186,\"size\":9.5}],\"label\":\"This is a test label\"}";
+		wstring expectedResult = L"{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"label\":\"This is a test label\"}";
+#if !LIGTH_RESULTS
+		expectedResult = L"{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"keypoints\":[{\"angle\":95.0999984741211,\"pos\":{\"x\":2.79999995231628,\"y\":3.5},\"response\":1.10000002384186,\"size\":9.5}],\"label\":\"This is a test label\"}";
+	}
+#endif //LIGTH_RESULTS
 		wstring* result = cfm->outputMatch(center, label, matchedKeypoints);
 
-		BOOST_CHECK_EQUAL (expectedLigthResult.compare(*result), 0);
-		BOOST_CHECK_EQUAL (expectedNoLigthResult.compare(*result), 0);
-
+		BOOST_CHECK_EQUAL (expectedResult.compare(*result), 0);
 	}
 
 //____________________________________________________________________________//
