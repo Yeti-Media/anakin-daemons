@@ -87,10 +87,10 @@ void SerializedPatternDataInput::reload() {
 
 void SerializedPatternDataInput::loadData(vector<ImageInfo*>* data,
 		std::string * rawData) {
-	std::string xmlData = "<?xml version=\"1.0\"?>";
-	xmlData.append(*rawData);
+	//std::string xmlData = "<?xml version=\"1.0\"?>";
+	//xmlData.append(*rawData);
 	ImageInfo *ii = new ImageInfo();
-	cv::FileStorage fstorage(xmlData.c_str(),
+	cv::FileStorage fstorage((*rawData).c_str(),
 			cv::FileStorage::READ | cv::FileStorage::MEMORY);
 	cv::FileNode n = fstorage.root();
 	read(n, *ii);

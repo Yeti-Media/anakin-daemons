@@ -271,7 +271,7 @@ int PatternDBConnector::run(vector<string> *input) {
 		case Constants::SCENE: {
 			ImageInfo* scene;
 			bool sceneError = false;
-			if (driver->retrieveScene(&scene, sceneID, &sceneError)) {
+			if (driver->retrieveScene(&scene, sceneID, &sceneError, this->tempDir)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -304,7 +304,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				for (uint p = 0; p < patterns->size(); p++) {
 					user->addPattern(patterns->at(p));
 				}
-				driver->saveUserPatterns(user,this->tempDir, true);
+				driver->saveUserPatterns(user, this->tempDir, true);
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -323,7 +323,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				for (uint p = 0; p < histograms->size(); p++) {
 					user->addHistogram(histograms->at(p));
 				}
-				driver->saveUserHistograms(user,this->tempDir, true);
+				driver->saveUserHistograms(user, this->tempDir, true);
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -342,7 +342,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				for (uint p = 0; p < landscapes->size(); p++) {
 					user->addLandscape(landscapes->at(p));
 				}
-				driver->saveUserLandscapes(user,this->tempDir, true);
+				driver->saveUserLandscapes(user, this->tempDir, true);
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -357,7 +357,8 @@ int PatternDBConnector::run(vector<string> *input) {
 		}
 		case Constants::INDEX: {
 			int trainer_id;
-			if (driver->storeSFBM(smatcher_id, &trainer_id, userID,this->tempDir, true)) {
+			if (driver->storeSFBM(smatcher_id, &trainer_id, userID,
+					this->tempDir, true)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {

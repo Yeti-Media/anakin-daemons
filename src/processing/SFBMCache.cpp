@@ -361,7 +361,7 @@ ImageInfo* SFBMCache::loadSceneFromDB(int sceneID, bool * error) {
 	ImageInfo* scene;
 	//internal function, do not init *error=false
 	bool sceneFound;
-	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error);
+	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error, this->tmpDir);
 	if (!sceneFound) {
 		this->operation = ERROR;
 		this->errorMessage = this->dbdriver->getMessage();

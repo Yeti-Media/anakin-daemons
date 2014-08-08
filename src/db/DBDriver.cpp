@@ -198,11 +198,13 @@ vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 	return pids;
 }
 
-bool DBDriver::saveUserPatterns(DBUser* u, const string & tmpDir, bool saveNeededObjectsFirst) {
+bool DBDriver::saveUserPatterns(DBUser* u, const string & tmpDir,
+		bool saveNeededObjectsFirst) {
 	vector<DBPattern*>* patterns = u->getPatterns();
 	string spatterns = "";
 	bool error = false;
-	bool userExist = retrieveUser(u->getID(), &error, false, NULL,false, tmpDir);
+	bool userExist = retrieveUser(u->getID(), &error, false, NULL, false,
+			tmpDir);
 	if (!userExist && !error) {
 		if (saveNeededObjectsFirst) {
 			if (!userExist) {
@@ -242,7 +244,8 @@ vector<int> DBDriver::getUserLandscapes(int id, bool* error) {
 	return getUserHORLS(id, Constants::LANDSCAPE, error);
 }
 
-bool DBDriver::saveHORL(DBHistogram* h,const string & tmpDir, bool saveNeededObjectsFirst) {
+bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
+		bool saveNeededObjectsFirst) {
 	if (!h->hasFileData()) {
 		logMessage(
 				"The DBHistogram can't be saved as a data. File must be provided.");
@@ -253,7 +256,8 @@ bool DBDriver::saveHORL(DBHistogram* h,const string & tmpDir, bool saveNeededObj
 				(h->getMode() & Constants::HISTOGRAM) ?
 						"histogram" : "landscape";
 		bool error = false;
-		bool userExist = retrieveUser(h->getUserID(), &error, false, NULL,false, tmpDir);
+		bool userExist = retrieveUser(h->getUserID(), &error, false, NULL,
+				false, tmpDir);
 		if (!userExist && !error) {
 			if (saveNeededObjectsFirst) {
 				if (!userExist) {
@@ -344,12 +348,16 @@ bool DBDriver::saveHORL(DBHistogram* h,const string & tmpDir, bool saveNeededObj
 	}
 }
 
-bool DBDriver::saveUserHistograms(DBUser* u,const string & tmpDir, bool saveNeededObjectsFirst) {
-	return saveUserHORLS(u, Constants::HISTOGRAM, tmpDir,saveNeededObjectsFirst);
+bool DBDriver::saveUserHistograms(DBUser* u, const string & tmpDir,
+		bool saveNeededObjectsFirst) {
+	return saveUserHORLS(u, Constants::HISTOGRAM, tmpDir,
+			saveNeededObjectsFirst);
 }
 
-bool DBDriver::saveUserLandscapes(DBUser* u, const string & tmpDir,bool saveNeededObjectsFirst) {
-	return saveUserHORLS(u, Constants::LANDSCAPE, tmpDir,saveNeededObjectsFirst);
+bool DBDriver::saveUserLandscapes(DBUser* u, const string & tmpDir,
+		bool saveNeededObjectsFirst) {
+	return saveUserHORLS(u, Constants::LANDSCAPE, tmpDir,
+			saveNeededObjectsFirst);
 }
 
 //PATTERN
@@ -425,9 +433,10 @@ bool DBDriver::retrieveLandscape(int id, bool * error, bool load,
 
 //SERIALIZED FLANN BASED MATCHER
 bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
-		 const string & tmpDir, bool checkExistence) {
+		const string & tmpDir, bool checkExistence) {
 	bool error = false;
-	if (checkExistence && !retrieveUser(userID, &error, false, NULL, false,tmpDir)) {
+	if (checkExistence
+			&& !retrieveUser(userID, &error, false, NULL, false, tmpDir)) {
 		DBUser* u = new DBUser(userID);
 		if (!saveUser(u))
 			return false;
@@ -647,10 +656,10 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 			return false;
 		}
 
-		string xmlData = "<?xml version=\"1.0\"?>";
-		xmlData.append(*dbp->getData());
+		//string xmlData = "<?xml version=\"1.0\"?>";
+		//xmlData.append(*dbp->getData());
 		ImageInfo *ii = new ImageInfo();
-		cv::FileStorage fstorage(xmlData.c_str(),
+		cv::FileStorage fstorage((*dbp->getData()).c_str(),
 				cv::FileStorage::READ | cv::FileStorage::MEMORY);
 		cv::FileNode n = fstorage.root();
 		ii->read(n);
@@ -677,7 +686,7 @@ bool DBDriver::storeScene(DBPattern* scene) {
 		return false;
 	}
 	if (checkConn()) {
-		string scene_filename = *(scene->getData()) + ".xml";
+		string scene_filename = *(scene->getData());
 		int scene_id_value;
 		if (!saveFileToDB(scene_filename, &scene_id_value)) {
 			return false;
@@ -717,7 +726,7 @@ bool DBDriver::storeScene(DBPattern* scene) {
 	}
 }
 
-bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
+bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error, const string & tmpDir) {
 	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
@@ -745,16 +754,21 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 			logMessage(no_scene_found);
 			return false;
 		}
-		string * xmlData = new string("<?xml version=\"1.0\"?>");
-		//	const char* scene_data = PQgetvalue(res, 0, 0);
-		string scene_sdata(PQgetvalue(res, 0, 0));
-		xmlData->append(scene_sdata);
+
+		string * xmlData;
+		string file_sid(PQgetvalue(res, 0, 0));
 		PQclear(res);
-		DBPattern* pscene = new DBPattern(false, xmlData);
-		pscene->changeID(sceneID);
-		ImageInfo* s = XMLoader::dbpatternToImageInfo(pscene);
-		s->setLabel(sid);
-		*scene = s;
+		string file = sid + ".xml";
+		if (loadFileFromDB(stoi(file_sid), file, tmpDir)) {
+			DBPattern* pscene = new DBPattern(false, get_file_contents(tmpDir + "/" + file));
+			pscene->changeID(sceneID);
+			ImageInfo* s = XMLoader::dbpatternToImageInfo(pscene);
+			s->setLabel(sid);
+			*scene = s;
+		} else {
+			return false;
+		}
+
 		string msg;
 		msg.append("Scene ").append(sid).append(" loaded");
 		logMessage(msg);
@@ -791,7 +805,7 @@ bool DBDriver::savePatternDescriptors(DBPattern* p) {
 		return false;
 	}
 
-	string filename = *(p->getData()) + ".xml";
+	string filename = *(p->getData());
 	if (checkConn()) {
 		int file_id_value;
 		if (!saveFileToDB(filename, &file_id_value)) {
@@ -1161,7 +1175,7 @@ vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 	return pids;
 }
 
-bool DBDriver::saveUserHORLS(DBUser* u, char mode,const string & tmpDir,
+bool DBDriver::saveUserHORLS(DBUser* u, char mode, const string & tmpDir,
 		bool saveNeededObjectsFirst) {
 	vector<DBHistogram*>* horls =
 			(mode & Constants::HISTOGRAM) ?
@@ -1170,7 +1184,7 @@ bool DBDriver::saveUserHORLS(DBUser* u, char mode,const string & tmpDir,
 	string shorls = "";
 	for (uint h = 0; h < horls->size(); h++) {
 		DBHistogram* horl = horls->at(h);
-		if (!saveHORL(horl, tmpDir,saveNeededObjectsFirst)) {
+		if (!saveHORL(horl, tmpDir, saveNeededObjectsFirst)) {
 			return false;
 		}
 		shorls = shorls.append(object).append(" with pid(").append(
@@ -1183,7 +1197,7 @@ bool DBDriver::saveUserHORLS(DBUser* u, char mode,const string & tmpDir,
 	return true;
 }
 
-bool DBDriver::saveFileToDB(string filename, int * fid) {
+bool DBDriver::saveFileToDB(const std::string & filename, int * fid) {
 	PGresult * pqres;
 	pqres = PQexec(conn, "BEGIN");
 	if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {

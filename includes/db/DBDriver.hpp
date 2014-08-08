@@ -266,7 +266,7 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool retrieveScene(ImageInfo** scene, int sceneID, bool * error);
+	bool retrieveScene(ImageInfo** scene, int sceneID, bool * error, const string & tmpDir);
 
 	std::string getMessage(int msg = 0, bool append = false);
 
@@ -405,7 +405,7 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool saveFileToDB(std::string filename, int * fid);
+	bool saveFileToDB(const std::string & filename, int * fid);
 	/**
 	 * load a file from the db and saves on disk
 	 *
