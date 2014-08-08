@@ -198,7 +198,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				bool patternError = false;
 				DBPattern* pattern;
 				if (!driver->retrievePattern(pattern_ids.at(i), &patternError,
-						true, &pattern)) {
+						true, &pattern, this->tempDir)) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					return EXIT_FAILURE;
@@ -223,7 +223,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				bool histogramError = false;
 				DBHistogram* histogram;
 				if (!driver->retrieveHistogram(histogram_ids.at(i),
-						&histogramError, true, &histogram)) {
+						&histogramError, true, &histogram, this->tempDir)) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					return EXIT_FAILURE;
@@ -244,8 +244,8 @@ int PatternDBConnector::run(vector<string> *input) {
 			for (uint i = 0; i < landscape_ids.size(); i++) {
 				bool histogramError = false;
 				DBHistogram* landscape;
-				if (!driver->retrieveHistogram(landscape_ids.at(i),
-						&histogramError, true, &landscape)) {
+				if (!driver->retrieveLandscape(landscape_ids.at(i),
+						&histogramError, true, &landscape, this->tempDir)) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					return EXIT_FAILURE;
@@ -304,7 +304,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				for (uint p = 0; p < patterns->size(); p++) {
 					user->addPattern(patterns->at(p));
 				}
-				driver->saveUserPatterns(user, true); //POR ACA!!!!!acacascacsc
+				driver->saveUserPatterns(user,this->tempDir, true);
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -318,17 +318,17 @@ int PatternDBConnector::run(vector<string> *input) {
 			break;
 		}
 		case Constants::HISTOGRAM: {
-			vector<DBHistogram*>* histograms = loader->loadAsHistogram();
+			vector<DBHistogram*>* histograms = loader->loadAsHistogram(true);
 			if (saveUser) {
 				for (uint p = 0; p < histograms->size(); p++) {
 					user->addHistogram(histograms->at(p));
 				}
-				driver->saveUserHistograms(user, true);
+				driver->saveUserHistograms(user,this->tempDir, true);
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
 				for (uint p = 0; p < histograms->size(); p++) {
-					driver->saveHORL(histograms->at(p), true);
+					driver->saveHORL(histograms->at(p),this->tempDir, true);
 					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
@@ -337,17 +337,17 @@ int PatternDBConnector::run(vector<string> *input) {
 			break;
 		}
 		case Constants::LANDSCAPE: {
-			vector<DBHistogram*>* landscapes = loader->loadAsLandscape();
+			vector<DBHistogram*>* landscapes = loader->loadAsLandscape(true);
 			if (saveUser) {
 				for (uint p = 0; p < landscapes->size(); p++) {
 					user->addLandscape(landscapes->at(p));
 				}
-				driver->saveUserLandscapes(user, true);
+				driver->saveUserLandscapes(user,this->tempDir, true);
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
 				for (uint p = 0; p < landscapes->size(); p++) {
-					driver->saveHORL(landscapes->at(p), true);
+					driver->saveHORL(landscapes->at(p),this->tempDir, true);
 					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
@@ -357,7 +357,7 @@ int PatternDBConnector::run(vector<string> *input) {
 		}
 		case Constants::INDEX: {
 			int trainer_id;
-			if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true)) {
+			if (driver->storeSFBM(smatcher_id, &trainer_id, userID,this->tempDir, true)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -387,7 +387,7 @@ int PatternDBConnector::run(vector<string> *input) {
 			break;
 		}
 		case Constants::SCENE: {
-			vector<DBPattern*>* patterns = loader->loadAsPattern();
+			vector<DBPattern*>* patterns = loader->loadAsPattern(true);
 			for (uint s = 0; s < patterns->size(); s++) {
 				DBPattern* sceneAsDBPattern = patterns->at(s);
 				if (driver->storeScene(sceneAsDBPattern)) {

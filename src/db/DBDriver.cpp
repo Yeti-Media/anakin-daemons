@@ -9,6 +9,7 @@
 #include "utils/XMLoader.hpp"
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
+#include <utils/Files.hpp>
 
 using namespace Anakin;
 using namespace std;
@@ -82,7 +83,7 @@ bool DBDriver::saveUser(DBUser* u) {
 }
 
 bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
-		bool full) {
+		bool full, const string & tmpDir) {
 	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
@@ -125,7 +126,8 @@ bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
 					for (uint p = 0; p < pattern_ids.size(); p++) {
 						int pid = pattern_ids.at(p);
 						DBPattern* pattern;
-						if (!retrievePattern(pid, error, true, &pattern)) {
+						if (!retrievePattern(pid, error, true, &pattern,
+								tmpDir)) {
 							return false;
 						}
 						u->addPattern(pattern);
@@ -196,11 +198,11 @@ vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 	return pids;
 }
 
-bool DBDriver::saveUserPatterns(DBUser* u, bool saveNeededObjectsFirst) {
+bool DBDriver::saveUserPatterns(DBUser* u, const string & tmpDir, bool saveNeededObjectsFirst) {
 	vector<DBPattern*>* patterns = u->getPatterns();
 	string spatterns = "";
 	bool error = false;
-	bool userExist = retrieveUser(u->getID(), &error);
+	bool userExist = retrieveUser(u->getID(), &error, false, NULL,false, tmpDir);
 	if (!userExist && !error) {
 		if (saveNeededObjectsFirst) {
 			if (!userExist) {
@@ -240,13 +242,18 @@ vector<int> DBDriver::getUserLandscapes(int id, bool* error) {
 	return getUserHORLS(id, Constants::LANDSCAPE, error);
 }
 
-bool DBDriver::saveHORL(DBHistogram* h, bool saveNeededObjectsFirst) {
+bool DBDriver::saveHORL(DBHistogram* h,const string & tmpDir, bool saveNeededObjectsFirst) {
+	if (!h->hasFileData()) {
+		logMessage(
+				"The DBHistogram can't be saved as a data. File must be provided.");
+		return false;
+	}
 	if (checkConn()) {
 		string object =
 				(h->getMode() & Constants::HISTOGRAM) ?
 						"histogram" : "landscape";
 		bool error = false;
-		bool userExist = retrieveUser(h->getUserID(), &error);
+		bool userExist = retrieveUser(h->getUserID(), &error, false, NULL,false, tmpDir);
 		if (!userExist && !error) {
 			if (saveNeededObjectsFirst) {
 				if (!userExist) {
@@ -280,13 +287,34 @@ bool DBDriver::saveHORL(DBHistogram* h, bool saveNeededObjectsFirst) {
 		const char *spid = sspid.c_str();
 		h->changeID(pattern_id);
 
-		string * colorData = h->getColorData();
-		string * grayData = h->getGrayData();
-		string * hsvData = h->getHSVData();
+		string colorDataFile = *(h->getColorData()) + ".xml";
+		string grayDataFile = *(h->getGrayData()) + ".xml";
+		string hsvDataFile = *(h->getHSVData()) + ".xml";
+
+		int colorDataFile_id_value;
+		if (!saveFileToDB(colorDataFile, &colorDataFile_id_value)) {
+			return false;
+		}
+		string s_colorDataFile_id_value = to_string(colorDataFile_id_value);
+
+		int grayDataFile_id_value;
+		if (!saveFileToDB(grayDataFile, &grayDataFile_id_value)) {
+			return false;
+		}
+		string s_grayDataFile_id_value = to_string(grayDataFile_id_value);
+
+		int hsvDataFile_id_value;
+		if (!saveFileToDB(hsvDataFile, &hsvDataFile_id_value)) {
+			return false;
+		}
+		string s_hsvDataFile_id_value = to_string(hsvDataFile_id_value);
+
 		PGresult *res;
 		const int numParam = 4;
-		const char *paramValues[numParam] = { spid, colorData->c_str(),
-				grayData->c_str(), hsvData->c_str() };
+		const char *paramValues[numParam] =
+				{ spid, s_colorDataFile_id_value.c_str(),
+						s_grayDataFile_id_value.c_str(),
+						s_hsvDataFile_id_value.c_str() };
 		string tableName = Constants::HISTLAND_TABLE;
 		string table;
 		table = table.append("public.\"").append(tableName).append("\"");
@@ -316,12 +344,12 @@ bool DBDriver::saveHORL(DBHistogram* h, bool saveNeededObjectsFirst) {
 	}
 }
 
-bool DBDriver::saveUserHistograms(DBUser* u, bool saveNeededObjectsFirst) {
-	return saveUserHORLS(u, Constants::HISTOGRAM, saveNeededObjectsFirst);
+bool DBDriver::saveUserHistograms(DBUser* u,const string & tmpDir, bool saveNeededObjectsFirst) {
+	return saveUserHORLS(u, Constants::HISTOGRAM, tmpDir,saveNeededObjectsFirst);
 }
 
-bool DBDriver::saveUserLandscapes(DBUser* u, bool saveNeededObjectsFirst) {
-	return saveUserHORLS(u, Constants::LANDSCAPE, saveNeededObjectsFirst);
+bool DBDriver::saveUserLandscapes(DBUser* u, const string & tmpDir,bool saveNeededObjectsFirst) {
+	return saveUserHORLS(u, Constants::LANDSCAPE, tmpDir,saveNeededObjectsFirst);
 }
 
 //PATTERN
@@ -340,7 +368,7 @@ bool DBDriver::savePattern(DBPattern* p) {
 		}
 		p->changeID(pid);
 		savePattenBI = getMessage();
-		if (!savePatternDescriptors(p->getID(), p->getData())) {
+		if (!savePatternDescriptors(p)) {
 			return false;
 		}
 		string savePatternDesc(getMessage());
@@ -354,7 +382,7 @@ bool DBDriver::savePattern(DBPattern* p) {
 }
 
 bool DBDriver::retrievePattern(int id, bool * error, bool load,
-		DBPattern** result) {
+		DBPattern** result, const string & tmpDir) {
 	//internal function, do not init *error=false
 	if (checkConn()) {
 		int user_id;
@@ -365,11 +393,11 @@ bool DBDriver::retrievePattern(int id, bool * error, bool load,
 		string basicInfo = getMessage();
 		string descInfo = "";
 		if (load) {
-			if (!getPatternDescriptors(id, data, error)) {
+			if (!getPatternDescriptors(id, data, error, tmpDir)) {
 				return false;
 			}
 			descInfo = getMessage();
-			DBPattern* p = new DBPattern(id, user_id,false, data);
+			DBPattern* p = new DBPattern(id, user_id, false, data);
 			*result = p;
 		}
 		string msg;
@@ -386,20 +414,20 @@ bool DBDriver::retrievePattern(int id, bool * error, bool load,
 //HISTOGRAMS and LANDSCAPES
 
 bool DBDriver::retrieveHistogram(int id, bool * error, bool load,
-		DBHistogram** result) {
-	return retrieveHORL(id, Constants::HISTOGRAM, error, load, result);
+		DBHistogram** result, const string & tmpDir) {
+	return retrieveHORL(id, Constants::HISTOGRAM, error, load, result, tmpDir);
 }
 
 bool DBDriver::retrieveLandscape(int id, bool * error, bool load,
-		DBHistogram** result) {
-	return retrieveHORL(id, Constants::LANDSCAPE, error, load, result);
+		DBHistogram** result, const string & tmpDir) {
+	return retrieveHORL(id, Constants::LANDSCAPE, error, load, result, tmpDir);
 }
 
 //SERIALIZED FLANN BASED MATCHER
 bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
-		bool checkExistence) {
+		 const string & tmpDir, bool checkExistence) {
 	bool error = false;
-	if (checkExistence && !retrieveUser(userID, &error)) {
+	if (checkExistence && !retrieveUser(userID, &error, false, NULL, false,tmpDir)) {
 		DBUser* u = new DBUser(userID);
 		if (!saveUser(u))
 			return false;
@@ -570,7 +598,7 @@ bool DBDriver::storeNthPattern(int smatcher_id, int pidx, DBPattern* p) {
 }
 
 bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
-		ImageInfo** pattern, bool * error) {
+		ImageInfo** pattern, bool * error, const string & tmpDir) {
 	//internal function, do not init *error=false
 	if (checkConn()) {
 		PGresult *res;
@@ -615,7 +643,7 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 		string retrieved_spid(PQgetvalue(res, 0, 0));
 		PQclear(res);
 		DBPattern* dbp;
-		if (!retrievePattern(stoi(retrieved_spid), error, true, &dbp)) {
+		if (!retrievePattern(stoi(retrieved_spid), error, true, &dbp, tmpDir)) {
 			return false;
 		}
 
@@ -643,10 +671,22 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 //SCENE
 
 bool DBDriver::storeScene(DBPattern* scene) {
+	if (!scene->hasFileData()) {
+		logMessage(
+				"The DBPattern can't be saved as a data. File must be provided.");
+		return false;
+	}
 	if (checkConn()) {
+		string scene_filename = *(scene->getData()) + ".xml";
+		int scene_id_value;
+		if (!saveFileToDB(scene_filename, &scene_id_value)) {
+			return false;
+		}
+		string s_scene_id_value = to_string(scene_id_value);
+
 		PGresult *res;
 		const int numParam = 1;
-		const char *paramValues[numParam] = { scene->getData()->c_str() };
+		const char *paramValues[numParam] = { s_scene_id_value.c_str() };
 		string table;
 		table.append("public.\"").append(Constants::SCENE_TABLE).append("\"");
 		string command;
@@ -710,7 +750,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 		string scene_sdata(PQgetvalue(res, 0, 0));
 		xmlData->append(scene_sdata);
 		PQclear(res);
-		DBPattern* pscene = new DBPattern(false,xmlData);
+		DBPattern* pscene = new DBPattern(false, xmlData);
 		pscene->changeID(sceneID);
 		ImageInfo* s = XMLoader::dbpatternToImageInfo(pscene);
 		s->setLabel(sid);
@@ -744,35 +784,54 @@ int DBDriver::getLogSize() {
 
 //PRIVATE
 
-bool DBDriver::savePatternDescriptors(int id, string * file) {
-	PGresult *res;
-	string sid = to_string(id);
-	const int numParam = 2;
-	const char *paramValues[numParam] = { file->c_str(), sid.c_str() };
-	string table;
-	table.append("public.\"").append(Constants::DESCRIPTORS_TABLE).append("\"");
-	string command;
-	command.append(Constants::INSERT_COMMAND).append(table).append(" (").append(
-			Constants::DESCRIPTORS_TABLE_DATA).append(", ").append(
-			Constants::DESCRIPTORS_TABLE_PATTERN_ID).append(
-			")  VALUES ($1, $2)");
-	res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues, NULL, NULL,
-			0);
-	LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		logMessage(PQerrorMessage(conn));
-		PQclear(res);
+bool DBDriver::savePatternDescriptors(DBPattern* p) {
+	if (!p->hasFileData()) {
+		logMessage(
+				"The DBPattern can't be saved as a data. File must be provided.");
 		return false;
 	}
-	string msg;
-	msg.append("Descriptors for pattern ").append(sid).append(
-			" saved succesfully");
-	logMessage(msg);
-	PQclear(res);
-	return true;
+
+	string filename = *(p->getData()) + ".xml";
+	if (checkConn()) {
+		int file_id_value;
+		if (!saveFileToDB(filename, &file_id_value)) {
+			return false;
+		}
+		string file_id_value_value = to_string(file_id_value);
+
+		PGresult *res;
+		string sid = to_string(p->getID());
+		const int numParam = 2;
+		const char *paramValues[numParam] = { file_id_value_value.c_str(),
+				sid.c_str() };
+		string table;
+		table.append("public.\"").append(Constants::DESCRIPTORS_TABLE).append(
+				"\"");
+		string command;
+		command.append(Constants::INSERT_COMMAND).append(table).append(" (").append(
+				Constants::DESCRIPTORS_TABLE_DATA).append(", ").append(
+				Constants::DESCRIPTORS_TABLE_PATTERN_ID).append(
+				")  VALUES ($1, $2)");
+		res = PQexecParams(conn, command.c_str(), 2, NULL, paramValues, NULL,
+		NULL, 0);
+		LOG_F("SQL")<< parseSQLquery(command,paramValues,numParam);
+		if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+			logMessage(PQerrorMessage(conn));
+			PQclear(res);
+			return false;
+		}
+		string msg;
+		msg.append("Descriptors for pattern ").append(sid).append(
+				" saved succesfully");
+		logMessage(msg);
+		PQclear(res);
+		return true;
+	}
+	return false;
 }
 
-bool DBDriver::getPatternDescriptors(int id, string * data, bool * error) {
+bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
+		const string & tmpDir) {
 	//internal function, do not init *error=false
 	PGresult *res;
 	string sid = to_string(id);
@@ -802,10 +861,15 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error) {
 		logMessage(no_descriptors_found);
 		return false;
 	}
-	//const char* desc_data = PQgetvalue(res, 0, 0);
-	string sdesc_sdata(PQgetvalue(res, 0, 0));
+
+	string file_sid(PQgetvalue(res, 0, 0));
 	PQclear(res);
-	*data = sdesc_sdata;
+	string file = sid + ".xml";
+	if (loadFileFromDB(stoi(file_sid), file, tmpDir)) {
+		*data = *get_file_contents(tmpDir + "/" + file);
+	} else {
+		return false;
+	}
 	string msg;
 	msg.append("Descriptors for pattern ").append(sid).append(" loaded");
 	logMessage(msg);
@@ -962,10 +1026,10 @@ bool DBDriver::checkConn() {
 }
 
 bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
-		DBHistogram** result) {
+		DBHistogram** result, const string & tmpDir) {
 	*error = false;
 	if (checkConn()) {
-		if (!retrievePattern(id, error)) {
+		if (!retrievePattern(id, error, load, NULL, tmpDir)) {
 			return false;
 		}
 		PGresult *res;
@@ -1003,14 +1067,32 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 		}
 		if (load) {
 			if (result != NULL) {
-				DBHistogram* horl;
-				//const char* cdata = PQgetvalue(res, 0, 0);
-				//const char* gdata = PQgetvalue(res, 0, 1);
-				//	const char* hdata = PQgetvalue(res, 0, 2);
-				horl = new DBHistogram(id, (mode & Constants::LANDSCAPE));
-				horl->setColorData(new string(PQgetvalue(res, 0, 0)));
-				horl->setGrayData(new string(PQgetvalue(res, 0, 1)));
-				horl->setHSVData(new string(PQgetvalue(res, 0, 2)));
+				DBHistogram* horl = new DBHistogram(false, id,
+						(mode & Constants::LANDSCAPE));
+
+				string sid(PQgetvalue(res, 0, 0));
+				string file = sid + ".xml";
+				if (loadFileFromDB(stoi(sid), file, tmpDir)) {
+					horl->setColorData(get_file_contents(tmpDir + "/" + file));
+				} else {
+					return false;
+				}
+
+				sid = string(PQgetvalue(res, 0, 1));
+				file = sid + ".xml";
+				if (loadFileFromDB(stoi(sid), file, tmpDir)) {
+					horl->setGrayData(get_file_contents(tmpDir + "/" + file));
+				} else {
+					return false;
+				}
+
+				sid = string(PQgetvalue(res, 0, 2));
+				file = sid + ".xml";
+				if (loadFileFromDB(stoi(sid), file, tmpDir)) {
+					horl->setHSVData(get_file_contents(tmpDir + "/" + file));
+				} else {
+					return false;
+				}
 				*result = horl;
 			} else {
 				logMessage("DBHistogram** param is NULL");
@@ -1079,7 +1161,7 @@ vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 	return pids;
 }
 
-bool DBDriver::saveUserHORLS(DBUser* u, char mode,
+bool DBDriver::saveUserHORLS(DBUser* u, char mode,const string & tmpDir,
 		bool saveNeededObjectsFirst) {
 	vector<DBHistogram*>* horls =
 			(mode & Constants::HISTOGRAM) ?
@@ -1088,7 +1170,7 @@ bool DBDriver::saveUserHORLS(DBUser* u, char mode,
 	string shorls = "";
 	for (uint h = 0; h < horls->size(); h++) {
 		DBHistogram* horl = horls->at(h);
-		if (!saveHORL(horl, saveNeededObjectsFirst)) {
+		if (!saveHORL(horl, tmpDir,saveNeededObjectsFirst)) {
 			return false;
 		}
 		shorls = shorls.append(object).append(" with pid(").append(

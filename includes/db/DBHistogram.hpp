@@ -22,18 +22,18 @@ public:
 	 * user id : the id of the user who owns this histogram/landscape
 	 * isLandscape : if true then this object will represent a landscape otherwise will represent a histogram
 	 */
-	DBHistogram(int id, int userID, bool isLandscape);
+	DBHistogram(bool asFile, int id, int userID, bool isLandscape);
 	/**
 	 * Constructor
 	 * id : the histogram/landscape's id
 	 * isLandscape : if true then this object will represent a landscape otherwise will represent a histogram
 	 */
-	DBHistogram(int id, bool isLandscape);
+	DBHistogram(bool asFile, int id, bool isLandscape);
 	/**
 	 * Constructor
 	 * isLandscape : if true then this object will represent a landscape otherwise will represent a histogram
 	 */
-	DBHistogram(bool isLandscape);
+	DBHistogram(bool asFile, bool isLandscape);
 	virtual ~DBHistogram();
 	void setColorData(string * data);
 	void setGrayData(string * data);
@@ -46,8 +46,10 @@ public:
 	char getMode() const;
 	void changeID(int id);
 	void changeUID(int user_id);
+	bool hasFileData();
 protected:
 private:
+	bool asFile;
 	int id;
 	int userID;
 	string * colorData = new string();

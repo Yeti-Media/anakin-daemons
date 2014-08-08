@@ -2,41 +2,40 @@
 #define SERIALIZEDPATTERNDATAINPUT_HPP
 
 #include <data/ImageInfo.hpp>
+#include <db/DBDriver.hpp>
 #include <string>
 #include <vector>
 
-namespace Anakin {
-class DBDriver;
-} /* namespace Anakin */
-
+using namespace std;
 namespace Anakin {
 
 class SerializedPatternDataInput {
 public:
-	SerializedPatternDataInput(std::string userID, const char *pghost,
+	SerializedPatternDataInput(string userID, const char *pghost,
 			const char *pgport, const char *dbName, const char *login,
-			const char *pwd);
-	SerializedPatternDataInput(std::vector<int>* patternsToFind,
+			const char *pwd, const string & tmpDir);
+	SerializedPatternDataInput(vector<int>* patternsToFind,
 			const char *pghost, const char *pgport, const char *dbName,
-			const char *login, const char *pwd);
+			const char *login, const char *pwd, const string & tmpDir);
 	virtual ~SerializedPatternDataInput();
 	bool nextInput(ImageInfo** output);
 	void reload();
 protected:
 private:
-	std::vector<ImageInfo*>* cache;
+	vector<ImageInfo*>* cache;
 	bool loaded;
 	int current;
-	void loadData(std::vector<ImageInfo*>* data, std::string * rawData);
+	void loadData(vector<ImageInfo*>* data, string * rawData);
 	bool initAndConnectDriver(const char *pghost, const char *pgport,
 			const char *dbName, const char *login, const char *pwd);
 	void reportDBDriverError();
-	bool loadDataFromDB(std::vector<ImageInfo*>* data);
+	bool loadDataFromDB(vector<ImageInfo*>* data);
 	static void read(const cv::FileNode& node, ImageInfo& x,
 			const ImageInfo& default_value = ImageInfo());
-	std::string userID;
+	string userID;
 	DBDriver* driver = NULL;
-	std::vector<int>* patternsToFind;
+	vector<int>* patternsToFind;
+	string tmpDir;
 };
 }
 ;

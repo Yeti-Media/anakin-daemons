@@ -68,8 +68,8 @@ public:
 	 *
 	 * returns true if the user exists
 	 */
-	bool retrieveUser(int id, bool * error, bool load = false, DBUser** result =
-	NULL, bool full = false);
+	bool retrieveUser(int id, bool * error, bool load, DBUser** result,
+			bool full, const string & tmpDir);
 	/**
 	 * id : the user's id
 	 * error : will store true if an error was found
@@ -85,7 +85,7 @@ public:
 	 *
 	 * returns true if the user's patterns were successfully saved
 	 */
-	bool saveUserPatterns(DBUser* u, bool saveNeededObjectsFirst = false);
+	bool saveUserPatterns(DBUser* u, const string & tmpDir, bool saveNeededObjectsFirst = false);
 	/**
 	 * id : the user's id
 	 * error : will store true if an error was found
@@ -108,7 +108,7 @@ public:
 	 *
 	 * returns true if the DBHistogram was successfully saved
 	 */
-	bool saveHORL(DBHistogram* h, bool saveNeededObjectsFirst = false);
+	bool saveHORL(DBHistogram* h, const string & tmpDir, bool saveNeededObjectsFirst = false);
 	/**
 	 * saves the histograms of a user
 	 *
@@ -117,7 +117,7 @@ public:
 	 *
 	 * returns true if the user's histograms were successfully saved
 	 */
-	bool saveUserHistograms(DBUser* u, bool saveNeededObjectsFirst = false);
+	bool saveUserHistograms(DBUser* u, const string & tmpDir,bool saveNeededObjectsFirst = false);
 	/**
 	 * saves the landscapes of a user
 	 *
@@ -126,7 +126,7 @@ public:
 	 *
 	 * returns true if the user's landscapes were successfully saved
 	 */
-	bool saveUserLandscapes(DBUser* u, bool saveNeededObjectsFirst = false);
+	bool saveUserLandscapes(DBUser* u, const string & tmpDir,bool saveNeededObjectsFirst = false);
 
 	//PATTERNS
 	/**
@@ -150,8 +150,8 @@ public:
 	 *
 	 * returns true if the pattern exists
 	 */
-	bool retrievePattern(int id, bool * error, bool load = false,
-			DBPattern** result = NULL);
+	bool retrievePattern(int id, bool * error, bool load, DBPattern** result,
+			const string & tmpDir);
 
 	//HISTOGRAMS and LANDSCAPES
 	/**
@@ -164,8 +164,8 @@ public:
 	 *
 	 * returns true if the histogram exists
 	 */
-	bool retrieveHistogram(int id, bool * error, bool load = false,
-			DBHistogram** result = NULL);
+	bool retrieveHistogram(int id, bool * error, bool load,
+			DBHistogram** result, const string & tmpDir);
 	/**
 	 * search a landscape in the db, this function can be used just to check if
 	 * a particular landscape exists or to load one
@@ -176,8 +176,8 @@ public:
 	 *
 	 * returns true if the landscape exists
 	 */
-	bool retrieveLandscape(int id, bool * error, bool load = false,
-			DBHistogram** result = NULL);
+	bool retrieveLandscape(int id, bool * error, bool load,
+			DBHistogram** result, const string & tmpDir);
 
 	//SERIALIZED FLANN BASED MATCHER
 	/**
@@ -196,7 +196,7 @@ public:
 	 *
 	 * returns true if the SFBM was successfully saved
 	 */
-	bool storeSFBM(std::string filename, int * smatcher_id, int userID,
+	bool storeSFBM(std::string filename, int * smatcher_id, int userID, const string & tmpDir,
 			bool checkExistence = false);
 	/**
 	 * If a trainer with id <smatcher_id> exists in the db
@@ -247,7 +247,7 @@ public:
 	 * returns true if no error was found, false otherwise
 	 */
 	bool retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern,
-			bool * error);
+			bool * error, const string & tmpDir);
 
 	//SCENE
 	/**
@@ -303,12 +303,11 @@ private:
 	/**
 	 * saves the descriptors (descriptors and keypoints) for the pattern with id <id>
 	 *
-	 * id : the id of the pattern
-	 * file : files for descriptors and keypoints data to store
+	 * p : DBPattern to save
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool savePatternDescriptors(int id, std::string * file);
+	bool savePatternDescriptors(DBPattern* p);
 	/**
 	 * retrieves the descriptors (descriptors and keypoints) of the pattern with id <id>
 	 *
@@ -317,7 +316,8 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool getPatternDescriptors(int id, std::string * data, bool * error);
+	bool getPatternDescriptors(int id, std::string * data, bool * error,
+			const string & tmpDir);
 	/**
 	 * saves a pattern with category <category_id> and owned by user <user_id>
 	 *
@@ -367,7 +367,7 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool saveUserHORLS(DBUser* u, char mode,
+	bool saveUserHORLS(DBUser* u, char mode,const string & tmpDir,
 			bool saveNeededObjectsFirst = false);
 	/**
 	 * retrieves the histograms or landscapes according the value of <mode> of the user with id <user_id>
@@ -389,8 +389,8 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool retrieveHORL(int id, char mode, bool * error, bool load = false,
-			DBHistogram** result = NULL);
+	bool retrieveHORL(int id, char mode, bool * error, bool load,
+			DBHistogram** result, const string & tmpDir);
 	/**
 	 * checks if a connection to the db has been made
 	 */

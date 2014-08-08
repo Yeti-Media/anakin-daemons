@@ -11,7 +11,7 @@
 using namespace Anakin;
 
 SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
-		string tmpDir) {
+		const string & tmpDir) {
 	this->dbdriver = dbdriver;
 	this->tmpDir = tmpDir;
 	this->cfc = new CommunicationFormatterCacheJSON();
@@ -149,7 +149,7 @@ ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 	if (smatcherPatterns->find(pidx) == smatcherPatterns->end()) {
 		bool patternFound;
 		patternFound = this->dbdriver->retrieveNthPattern(smatcherID, pidx,
-				&pattern, error);
+				&pattern, error,this->tmpDir);
 		if (!patternFound) {
 			this->operation = ERROR;
 			this->errorMessage = this->dbdriver->getMessage();

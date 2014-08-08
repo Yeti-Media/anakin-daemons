@@ -70,7 +70,7 @@ public:
 	 *
 	 * dbdriver              : used to make requests to the db
 	 */
-	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig, string tmpDir);
+	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig, const string & tmpDir);
 	/**
 	 * load a matcher
 	 *

@@ -40,12 +40,12 @@ vector<DBPattern*>* XMLoader::loadAsPattern(bool filePatterns) {
 	return patterns;
 }
 
-vector<DBHistogram*>* XMLoader::loadAsHistogram() {
-	return loadAsHORL(false);
+vector<DBHistogram*>* XMLoader::loadAsHistogram(bool filePatterns) {
+	return loadAsHORL(false, filePatterns);
 }
 
-vector<DBHistogram*>* XMLoader::loadAsLandscape() {
-	return loadAsHORL(true);
+vector<DBHistogram*>* XMLoader::loadAsLandscape(bool filePatterns) {
+	return loadAsHORL(true, filePatterns);
 }
 
 ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
@@ -64,7 +64,7 @@ ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
 
 //PRIVATE
 
-vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
+vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape, bool filePatterns) {
 	if (!this->inputAsFolder) {
 		cerr << "path must lead to a folder to load landscapes or histograms"
 				<< endl;
@@ -79,13 +79,18 @@ vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape) {
 		string cfilepath = cfiles->at(f);
 		string gfilepath = gfiles->at(f);
 		string hfilepath = hfiles->at(f);
-		string * cdata = get_file_contents(cfilepath);
-		string * gdata = get_file_contents(gfilepath);
-		string * hdata = get_file_contents(hfilepath);
-		DBHistogram* horl = new DBHistogram(isLandscape);
-		horl->setColorData(cdata);
-		horl->setGrayData(gdata);
-		horl->setHSVData(hdata);
+		DBHistogram* horl;
+		if (filePatterns) {
+			horl = new DBHistogram(true, isLandscape);
+			horl->setColorData(new string(cfilepath));
+			horl->setGrayData(new string(gfilepath));
+			horl->setHSVData(new string(hfilepath));
+		} else {
+			horl = new DBHistogram(false, isLandscape);
+			horl->setColorData(get_file_contents(cfilepath));
+			horl->setGrayData(get_file_contents(gfilepath));
+			horl->setHSVData(get_file_contents(hfilepath));
+		}
 		horls->push_back(horl);
 	}
 	return horls;

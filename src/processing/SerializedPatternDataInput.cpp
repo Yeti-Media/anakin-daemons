@@ -18,11 +18,12 @@ using namespace std;
 
 SerializedPatternDataInput::SerializedPatternDataInput(std::string userID,
 		const char *pghost, const char *pgport, const char *dbName,
-		const char *login, const char *pwd) {
+		const char *login, const char *pwd, const string & tmpDir) {
 	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd)) {
 		reportDBDriverError();
 		exit(EXIT_FAILURE);
 	}
+	this->tmpDir = tmpDir;
 	this->userID = userID;
 	this->cache = new vector<ImageInfo*>(0);
 	this->loaded = false;
@@ -32,11 +33,12 @@ SerializedPatternDataInput::SerializedPatternDataInput(std::string userID,
 
 SerializedPatternDataInput::SerializedPatternDataInput(
 		vector<int>* patternsToFind, const char *pghost, const char *pgport,
-		const char *dbName, const char *login, const char *pwd) {
+		const char *dbName, const char *login, const char *pwd, const string & tmpDir) {
 	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd)) {
 		reportDBDriverError();
 		exit(EXIT_FAILURE);
 	}
+	this->tmpDir = tmpDir;
 	this->patternsToFind = patternsToFind;
 	this->cache = new vector<ImageInfo*>(0);
 	this->loaded = false;
@@ -139,7 +141,7 @@ bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {
 		int pid = userPatterns.at(up);
 		DBPattern* dbp;
 		bool patternError = false;
-		if (!this->driver->retrievePattern(pid, &patternError, true, &dbp)) {
+		if (!this->driver->retrievePattern(pid, &patternError, true, &dbp, this->tmpDir)) {
 			return false;
 		}
 		loadData(data, dbp->getData());
