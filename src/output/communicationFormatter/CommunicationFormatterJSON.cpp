@@ -16,7 +16,7 @@ CommunicationFormatterJSON::CommunicationFormatterJSON() {
 }
 
 wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
-		e_category category,const vector<wstring *> & values) {
+		e_category category, const vector<wstring *> & values) {
 
 	/*  Result as wstring representing a JSONObject
 
@@ -30,7 +30,7 @@ wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
 	JSONObject root;
 	wstringstream ws;
 	ws << requestID.c_str();
-	root[L"requestID"] = new JSONValue(ws);
+	root[L"requestID"] = new JSONValue(ws.str());
 	switch (category) {
 	case CF_PATTERN_MATCHING: {
 		root[L"category"] = new JSONValue(L"PATTERN");
@@ -70,7 +70,7 @@ wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
 }
 
 wstring* CommunicationFormatterJSON::outputError(e_error errorType,
-		const string &  message, const string & origin) {
+		const string & message, const string & origin) {
 
 	/*  Result as wstring representing a JSONObject
 
@@ -102,8 +102,8 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 	}
 	}
 	root[L"error_type"] = new JSONValue(werror_type);
-	root[L"message"] = new JSONValue(wmessage);
-	root[L"origin"] = new JSONValue(worigin);
+	root[L"message"] = new JSONValue(wmessage.str());
+	root[L"origin"] = new JSONValue(worigin.str());
 	return new wstring(JSONValue(root).Stringify());
 }
 
@@ -147,7 +147,7 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	root[L"dataType"] = new JSONValue(L"YML");
 	wstringstream ws;
 	ws << data.c_str();
-	root[L"data"] = new JSONValue(ws);
+	root[L"data"] = new JSONValue(ws.str());
 
 	return new wstring(JSONValue(root).Stringify());
 }
