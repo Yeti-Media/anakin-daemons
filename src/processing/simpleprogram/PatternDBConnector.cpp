@@ -181,9 +181,6 @@ int PatternDBConnector::run(vector<string> *input) {
 	LOG_F("Info")<< driver->getMessage();
 
 	DBUser* user = NULL;
-	vector<DBPattern*>* patterns = NULL;
-	vector<DBHistogram*>* histograms = NULL;
-	vector<DBHistogram*>* landscapes = NULL;
 	if (load) {
 		if (objectsAs != Constants::INDEX && objectsAs != Constants::SCENE)
 			user = new DBUser(userID);
@@ -290,15 +287,6 @@ int PatternDBConnector::run(vector<string> *input) {
 		if (user != NULL) {
 			delete user;
 		}
-		if (patterns != NULL) {
-			delete patterns;
-		}
-		if (histograms != NULL) {
-			delete histograms;
-		}
-		if (landscapes != NULL) {
-			delete landscapes;
-		}
 		return EXIT_SUCCESS;
 	}
 	if (saveUser) {
@@ -306,16 +294,17 @@ int PatternDBConnector::run(vector<string> *input) {
 	}
 	if (saveObjects) {
 		XMLoader* loader = NULL;
+
 		if (objectsAs != Constants::INDEX)
 			loader = new XMLoader(path);
 		switch (objectsAs) {
 		case Constants::PATTERN: {
-			patterns = loader->loadAsPattern();
+			vector<DBPattern*>* patterns = loader->loadAsPattern(true);
 			if (saveUser) {
 				for (uint p = 0; p < patterns->size(); p++) {
 					user->addPattern(patterns->at(p));
 				}
-				driver->saveUserPatterns(user, true);
+				driver->saveUserPatterns(user, true); //POR ACA!!!!!acacascacsc
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -325,10 +314,11 @@ int PatternDBConnector::run(vector<string> *input) {
 					LOG_F("Info") << driver->getMessage();
 				}
 			}
+			delete patterns;
 			break;
 		}
 		case Constants::HISTOGRAM: {
-			histograms = loader->loadAsHistogram();
+			vector<DBHistogram*>* histograms = loader->loadAsHistogram();
 			if (saveUser) {
 				for (uint p = 0; p < histograms->size(); p++) {
 					user->addHistogram(histograms->at(p));
@@ -343,10 +333,11 @@ int PatternDBConnector::run(vector<string> *input) {
 					LOG_F("Info") << driver->getMessage();
 				}
 			}
+			delete histograms;
 			break;
 		}
 		case Constants::LANDSCAPE: {
-			landscapes = loader->loadAsLandscape();
+			vector<DBHistogram*>* landscapes = loader->loadAsLandscape();
 			if (saveUser) {
 				for (uint p = 0; p < landscapes->size(); p++) {
 					user->addLandscape(landscapes->at(p));
@@ -361,12 +352,12 @@ int PatternDBConnector::run(vector<string> *input) {
 					LOG_F("Info") << driver->getMessage();
 				}
 			}
+			delete landscapes;
 			break;
 		}
 		case Constants::INDEX: {
 			int trainer_id;
-			if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true,
-					false)) {
+			if (driver->storeSFBM(smatcher_id, &trainer_id, userID, true)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -396,7 +387,7 @@ int PatternDBConnector::run(vector<string> *input) {
 			break;
 		}
 		case Constants::SCENE: {
-			patterns = loader->loadAsPattern();
+			vector<DBPattern*>* patterns = loader->loadAsPattern();
 			for (uint s = 0; s < patterns->size(); s++) {
 				DBPattern* sceneAsDBPattern = patterns->at(s);
 				if (driver->storeScene(sceneAsDBPattern)) {
@@ -408,6 +399,7 @@ int PatternDBConnector::run(vector<string> *input) {
 					return EXIT_FAILURE;
 				}
 			}
+			delete patterns;
 			break;
 		}
 		}
@@ -425,15 +417,6 @@ int PatternDBConnector::run(vector<string> *input) {
 
 	if (user != NULL) {
 		delete user;
-	}
-	if (patterns != NULL) {
-		delete patterns;
-	}
-	if (histograms != NULL) {
-		delete histograms;
-	}
-	if (landscapes != NULL) {
-		delete landscapes;
 	}
 	return EXIT_SUCCESS;
 }

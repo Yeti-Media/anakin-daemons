@@ -71,7 +71,7 @@ ALTER TABLE "patterns"
 ---------------------------------------------------------------------------------------------------------------  
 CREATE TABLE "scenarios" (
     id BIGSERIAL PRIMARY KEY,
-    descriptors xml NOT NULL
+    descriptors_file int NOT NULL
 ) WITH (
   OIDS=FALSE
 );
@@ -82,7 +82,7 @@ ALTER TABLE "scenarios"
 ---------------------------------------------------------------------------------------------------------------
 CREATE TABLE "descriptors" (
     id BIGSERIAL PRIMARY KEY,
-    body xml NOT NULL,
+    body_file int NOT NULL,
     pattern_id int NOT NULL,
     CONSTRAINT "descriptors_pattern_id_fkey" FOREIGN KEY (pattern_id)
             REFERENCES "patterns" (id) MATCH SIMPLE

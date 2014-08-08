@@ -12,7 +12,11 @@ namespace Anakin {
 class XMLoader {
 public:
 	XMLoader(std::string path);
-	std::vector<DBPattern*>* loadAsPattern();
+
+	/**
+	 * files : if true, will create DBPatterns with file path instead of data
+	 */
+	std::vector<DBPattern*>* loadAsPattern(bool filePatterns);
 	std::vector<DBHistogram*>* loadAsHistogram();
 	std::vector<DBHistogram*>* loadAsLandscape();
 	static ImageInfo* dbpatternToImageInfo(DBPattern* dbp);

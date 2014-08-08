@@ -22,13 +22,17 @@ XMLoader::XMLoader(string path) {
 			&& lastSeparator == (path.size() - 1);
 }
 
-vector<DBPattern*>* XMLoader::loadAsPattern() {
+vector<DBPattern*>* XMLoader::loadAsPattern(bool filePatterns) {
 	vector<string>* files = getFilePaths();
 	vector<DBPattern*>* patterns = new vector<DBPattern*>(0);
 	for (uint f = 0; f < files->size(); f++) {
 		string filepath = files->at(f);
-		string * data = get_file_contents(filepath);
-		DBPattern* pattern = new DBPattern(data);
+		DBPattern* pattern;
+		if (filePatterns) {
+			pattern = new DBPattern(true, new string(filepath));
+		} else {
+			pattern = new DBPattern(false, get_file_contents(filepath));
+		}
 		patterns->push_back(pattern);
 	}
 	//FIXME do not delete this static var. REFACTOR!

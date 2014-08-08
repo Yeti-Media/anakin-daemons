@@ -33,11 +33,11 @@ const std::string Constants::TRAINER_TABLE_USER_ID = "user_id";
 
 const std::string Constants::SCENE_TABLE = "scenarios";
 const std::string Constants::SCENE_TABLE_ID = "id";
-const std::string Constants::SCENE_TABLE_DATA = "descriptors";
+const std::string Constants::SCENE_TABLE_DATA = "descriptors_file";
 
 const std::string Constants::DESCRIPTORS_TABLE = "descriptors";
 const std::string Constants::DESCRIPTORS_TABLE_ID = "id";
-const std::string Constants::DESCRIPTORS_TABLE_DATA = "body";
+const std::string Constants::DESCRIPTORS_TABLE_DATA = "body_file";
 const std::string Constants::DESCRIPTORS_TABLE_PATTERN_ID = "pattern_id";
 
 const std::string Constants::CATEGORIES_TABLE = "categories";

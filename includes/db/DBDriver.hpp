@@ -193,12 +193,11 @@ public:
 	 * smatcher_id : this will store the SFBM id generated when saving to the db
 	 * userID : the user who owns this SFBM
 	 * checkExistence : if true and the user doesn't exists will save the user before saving the SFBM
-	 * delete_files : if true, both .xml and .if files will be deleted after storing the SFBM
 	 *
 	 * returns true if the SFBM was successfully saved
 	 */
 	bool storeSFBM(std::string filename, int * smatcher_id, int userID,
-			bool checkExistence = false, bool delete_files = false);
+			bool checkExistence = false);
 	/**
 	 * If a trainer with id <smatcher_id> exists in the db
 	 * then this function will get the oid values for the xml and if files
@@ -305,11 +304,11 @@ private:
 	 * saves the descriptors (descriptors and keypoints) for the pattern with id <id>
 	 *
 	 * id : the id of the pattern
-	 * data : descriptors and keypoints data to store
+	 * file : files for descriptors and keypoints data to store
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool savePatternDescriptors(int id, std::string * data);
+	bool savePatternDescriptors(int id, std::string * file);
 	/**
 	 * retrieves the descriptors (descriptors and keypoints) of the pattern with id <id>
 	 *

@@ -369,7 +369,7 @@ bool DBDriver::retrievePattern(int id, bool * error, bool load,
 				return false;
 			}
 			descInfo = getMessage();
-			DBPattern* p = new DBPattern(id, user_id, data);
+			DBPattern* p = new DBPattern(id, user_id,false, data);
 			*result = p;
 		}
 		string msg;
@@ -397,8 +397,7 @@ bool DBDriver::retrieveLandscape(int id, bool * error, bool load,
 
 //SERIALIZED FLANN BASED MATCHER
 bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
-		bool checkExistence, bool delete_files) {
-	bool exists = false;
+		bool checkExistence) {
 	bool error = false;
 	if (checkExistence && !retrieveUser(userID, &error)) {
 		DBUser* u = new DBUser(userID);
@@ -409,7 +408,6 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 	}
 	string index_filename = filename + ".if";
 	string matcher_filename = filename + ".xml";
-	bool everythingWentOk = exists;
 	if (checkConn()) {
 		int index_id_value;
 		int matcher_id_value;
@@ -448,19 +446,12 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 		string stid(PQgetvalue(res, 0, 0));
 		*smatcher_id = stoi(stid);
 		PQclear(res);
-		everythingWentOk = true;
 		string msg;
 		msg.append("succesfully uploaded ").append(matcher_filename).append(
 				" and ").append(index_filename).append(" to db");
 		logMessage(msg);
 	}
-	bool deletionWentOK = everythingWentOk;
-	if (everythingWentOk && delete_files) {
-		bool indexFileDeleted = deleteFile(index_filename);
-		bool matcherFileDeleted = deleteFile(matcher_filename);
-		deletionWentOK = indexFileDeleted && matcherFileDeleted;
-	}
-	return deletionWentOK;
+	return true;
 }
 
 bool DBDriver::retrieveSFBM(int smatcher_id, bool * error,
@@ -719,7 +710,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error) {
 		string scene_sdata(PQgetvalue(res, 0, 0));
 		xmlData->append(scene_sdata);
 		PQclear(res);
-		DBPattern* pscene = new DBPattern(xmlData);
+		DBPattern* pscene = new DBPattern(false,xmlData);
 		pscene->changeID(sceneID);
 		ImageInfo* s = XMLoader::dbpatternToImageInfo(pscene);
 		s->setLabel(sid);
@@ -753,11 +744,11 @@ int DBDriver::getLogSize() {
 
 //PRIVATE
 
-bool DBDriver::savePatternDescriptors(int id, string * data) {
+bool DBDriver::savePatternDescriptors(int id, string * file) {
 	PGresult *res;
 	string sid = to_string(id);
 	const int numParam = 2;
-	const char *paramValues[numParam] = { data->c_str(), sid.c_str() };
+	const char *paramValues[numParam] = { file->c_str(), sid.c_str() };
 	string table;
 	table.append("public.\"").append(Constants::DESCRIPTORS_TABLE).append("\"");
 	string command;
