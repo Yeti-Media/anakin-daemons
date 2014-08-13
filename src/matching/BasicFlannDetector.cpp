@@ -16,9 +16,9 @@ BasicFlannDetector::BasicFlannDetector(
 	this->cache = cache;
 }
 
-std::vector<Match>* BasicFlannDetector::findPatterns(RichImg* scene,
-		bool * error) {
-	return findPatterns_usingTraining(scene, error);
+std::vector<Match>* BasicFlannDetector::findPatterns(QuickLZ* quickLZstate,
+		RichImg* scene, bool * error) {
+	return findPatterns_usingTraining(quickLZstate, scene, error);
 }
 
 void BasicFlannDetector::changeMatcher(
@@ -66,7 +66,7 @@ void BasicFlannDetector::getKeys(map<int, vector<DMatch>*>* m,
 }
 
 vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
-		Anakin::RichImg* scene, bool * error) {
+		QuickLZ* quickLZstate, Anakin::RichImg* scene, bool * error) {
 	//internal function, do not init *error=false
 	vector<Match>* result = new std::vector<Match>();
 	vector<DMatch>* good_matches = new vector<DMatch>(0);
@@ -101,8 +101,8 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 
 			int trainerID = std::stoi(this->detector->getID());
 
-			ImageInfo* pii = this->cache->loadPattern(trainerID, currentKey,
-					error);
+			ImageInfo* pii = this->cache->loadPattern(quickLZstate, trainerID,
+					currentKey, error);
 			if (*error) {
 				cout << "*error " << *error << endl;
 				break;

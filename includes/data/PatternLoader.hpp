@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include "data/ImageInfo.hpp"
 #include "processing/SerializedPatternDataInput.hpp"
+#include <utils/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -33,7 +34,7 @@ public:
 	/**
 	 * Will load the patterns
 	 */
-	void load();
+	void load(QuickLZ* quickLZstate);
 	void load_and_save(std::string outputfolder, bool saveToFile = true,
 			char mode = YAML);
 	virtual ~PatternLoader();

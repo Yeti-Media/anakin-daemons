@@ -31,7 +31,7 @@ void simpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
 	//--------------------------------------------------------------
 
 	string testName = "General";
-	uint maxTestRepetition = 100;
+	uint maxTestRepetition = 10;
 
 	string database = "AnakinAcceptanceTesting";
 	string userDB = "postgres";

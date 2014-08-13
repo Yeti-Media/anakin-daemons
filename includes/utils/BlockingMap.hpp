@@ -17,12 +17,12 @@ public:
 		if (sem_init(&this->wsem, 0, 1) != 0) {
 			std::cout
 					<< "BlockingMap#BlockingMap: error initializing semaphore\n";
-			exit (EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		}
 		if (sem_init(&this->ssem, 0, 1) != 0) {
 			std::cout
 					<< "BlockingMap#BlockingMap: error initializing semaphore\n";
-			exit (EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		}
 		//	this->internalMap = *new std::map<K, V>();
 		this->defaultValue = defaultValue;

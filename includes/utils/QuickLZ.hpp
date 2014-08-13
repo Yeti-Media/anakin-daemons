@@ -21,8 +21,8 @@ public:
 	QuickLZ();
 	virtual ~QuickLZ();
 
-	char * compressText(const string * text, size_t * size);
-	char * decompressText(const string * compressedText, size_t * size);
+	char * compressText(const string & text, size_t & size);
+	char * decompressText(const string & compressedText, size_t & size);
 private:
 	qlz_state_compress* state_compress;
 	qlz_state_decompress* state_decompress;

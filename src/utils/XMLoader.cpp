@@ -64,7 +64,8 @@ ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
 
 //PRIVATE
 
-vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape, bool filePatterns) {
+vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape,
+		bool filePatterns) {
 	if (!this->inputAsFolder) {
 		cerr << "path must lead to a folder to load landscapes or histograms"
 				<< endl;

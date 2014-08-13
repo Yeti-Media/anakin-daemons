@@ -24,10 +24,11 @@ namespace Anakin {
 
 PatternExtractor::PatternExtractor() :
 		Program() {
-
+	quickLZState = new QuickLZ();
 }
 
 PatternExtractor::~PatternExtractor() {
+	delete quickLZState;
 }
 
 Help* PatternExtractor::getHelp() {
@@ -208,7 +209,7 @@ int PatternExtractor::run(vector<string> *input) {
 	} else {
 		patternsLoader = new PatternLoader(patternsDataInput, patterns,
 				fdetector, dextractor);
-		patternsLoader->load();
+		patternsLoader->load(quickLZState);
 	}
 
 	HistogramsIO io(outputDir);

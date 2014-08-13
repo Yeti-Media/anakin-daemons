@@ -11,6 +11,7 @@
 #include <processing/Program.hpp>
 #include <utils/help/Help.hpp>
 #include <string>
+#include <utils/QuickLZ.hpp>
 #include <vector>
 
 namespace Anakin {
@@ -34,6 +35,7 @@ public:
 protected:
 	int run(vector<string> *input);
 	void initProgramFlags();
+	QuickLZ * quickLZState;
 };
 
 } /* namespace Anakin */

@@ -23,7 +23,7 @@ public:
 protected:
 private:
 	std::vector<std::string>* getFilePaths(char mode = 0, bool reload = false);
-	std::vector<DBHistogram*>* loadAsHORL(bool isLandscape,bool filePatterns);
+	std::vector<DBHistogram*>* loadAsHORL(bool isLandscape, bool filePatterns);
 	bool hasEnding(std::string const &fullString, std::string const &ending);
 	std::string path;
 	bool inputAsFolder;

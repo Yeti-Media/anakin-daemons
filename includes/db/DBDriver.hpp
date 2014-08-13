@@ -7,6 +7,7 @@
 #include "db/DBHistogram.hpp"
 #include <opencv2/opencv.hpp>
 #include "data/ImageInfo.hpp"
+#include <utils/QuickLZ.hpp>
 #include <string>
 
 using namespace std;
@@ -69,7 +70,7 @@ public:
 	 * returns true if the user exists
 	 */
 	bool retrieveUser(int id, bool * error, bool load, DBUser** result,
-			bool full, const string & tmpDir);
+			bool full, const string & tmpDir, QuickLZ* quickLZstate);
 	/**
 	 * id : the user's id
 	 * error : will store true if an error was found
@@ -85,7 +86,8 @@ public:
 	 *
 	 * returns true if the user's patterns were successfully saved
 	 */
-	bool saveUserPatterns(DBUser* u, const string & tmpDir, bool saveNeededObjectsFirst = false);
+	bool saveUserPatterns(DBUser* u, const string & tmpDir,
+			QuickLZ* quickLZstate, bool saveNeededObjectsFirst = false);
 	/**
 	 * id : the user's id
 	 * error : will store true if an error was found
@@ -108,7 +110,8 @@ public:
 	 *
 	 * returns true if the DBHistogram was successfully saved
 	 */
-	bool saveHORL(DBHistogram* h, const string & tmpDir, bool saveNeededObjectsFirst = false);
+	bool saveHORL(DBHistogram* h, const string & tmpDir, QuickLZ* quickLZstate,
+			bool saveNeededObjectsFirst = false);
 	/**
 	 * saves the histograms of a user
 	 *
@@ -117,7 +120,8 @@ public:
 	 *
 	 * returns true if the user's histograms were successfully saved
 	 */
-	bool saveUserHistograms(DBUser* u, const string & tmpDir,bool saveNeededObjectsFirst = false);
+	bool saveUserHistograms(DBUser* u, const string & tmpDir,
+			QuickLZ* quickLZstate, bool saveNeededObjectsFirst = false);
 	/**
 	 * saves the landscapes of a user
 	 *
@@ -126,7 +130,8 @@ public:
 	 *
 	 * returns true if the user's landscapes were successfully saved
 	 */
-	bool saveUserLandscapes(DBUser* u, const string & tmpDir,bool saveNeededObjectsFirst = false);
+	bool saveUserLandscapes(DBUser* u, const string & tmpDir,
+			QuickLZ* quickLZstate, bool saveNeededObjectsFirst = false);
 
 	//PATTERNS
 	/**
@@ -138,7 +143,7 @@ public:
 	 * first, the basic info is saved
 	 * second, the data associated (descriptors and keypoints) is saved
 	 */
-	bool savePattern(DBPattern* p);
+	bool savePattern(DBPattern* p, QuickLZ* quickLZstate);
 	/**
 	 * search a pattern in the db, this function can be used just to check if
 	 * a particular pattern exists or to load one
@@ -151,7 +156,7 @@ public:
 	 * returns true if the pattern exists
 	 */
 	bool retrievePattern(int id, bool * error, bool load, DBPattern** result,
-			const string & tmpDir);
+			const string & tmpDir, QuickLZ* quickLZstate);
 
 	//HISTOGRAMS and LANDSCAPES
 	/**
@@ -165,7 +170,7 @@ public:
 	 * returns true if the histogram exists
 	 */
 	bool retrieveHistogram(int id, bool * error, bool load,
-			DBHistogram** result, const string & tmpDir);
+			DBHistogram** result, const string & tmpDir, QuickLZ* quickLZstate);
 	/**
 	 * search a landscape in the db, this function can be used just to check if
 	 * a particular landscape exists or to load one
@@ -177,7 +182,7 @@ public:
 	 * returns true if the landscape exists
 	 */
 	bool retrieveLandscape(int id, bool * error, bool load,
-			DBHistogram** result, const string & tmpDir);
+			DBHistogram** result, const string & tmpDir, QuickLZ* quickLZstate);
 
 	//SERIALIZED FLANN BASED MATCHER
 	/**
@@ -196,8 +201,9 @@ public:
 	 *
 	 * returns true if the SFBM was successfully saved
 	 */
-	bool storeSFBM(std::string filename, int * smatcher_id, int userID, const string & tmpDir,
-			bool checkExistence = false);
+	bool storeSFBM(std::string filename, int * smatcher_id, int userID,
+			const string & tmpDir, QuickLZ* quickLZstate, bool checkExistence =
+					false);
 	/**
 	 * If a trainer with id <smatcher_id> exists in the db
 	 * then this function will get the oid values for the xml and if files
@@ -236,7 +242,8 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool storeNthPattern(int smatcher_id, int pidx, DBPattern* p);
+	bool storeNthPattern(int smatcher_id, int pidx, DBPattern* p,
+			QuickLZ* quickLZstate);
 	/**
 	 * load the pattern with trainer_id <smatcher_id> and position <pidx>
 	 *
@@ -247,7 +254,7 @@ public:
 	 * returns true if no error was found, false otherwise
 	 */
 	bool retrieveNthPattern(int smatcher_id, int pidx, ImageInfo** pattern,
-			bool * error, const string & tmpDir);
+			bool * error, const string & tmpDir, QuickLZ* quickLZstate);
 
 	//SCENE
 	/**
@@ -257,7 +264,7 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool storeScene(DBPattern* scene);
+	bool storeScene(DBPattern* scene, QuickLZ* quickLZstate);
 	/**
 	 * loads a scenario with id <sceneID>
 	 *
@@ -266,7 +273,8 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool retrieveScene(ImageInfo** scene, int sceneID, bool * error, const string & tmpDir);
+	bool retrieveScene(ImageInfo** scene, int sceneID, bool * error,
+			const string & tmpDir, QuickLZ* quickLZstate);
 
 	std::string getMessage(int msg = 0, bool append = false);
 
@@ -307,7 +315,7 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool savePatternDescriptors(DBPattern* p);
+	bool savePatternDescriptors(DBPattern* p, QuickLZ* quickLZstate);
 	/**
 	 * retrieves the descriptors (descriptors and keypoints) of the pattern with id <id>
 	 *
@@ -317,7 +325,7 @@ private:
 	 * returns true if no error was found, false otherwise
 	 */
 	bool getPatternDescriptors(int id, std::string * data, bool * error,
-			const string & tmpDir);
+			const string & tmpDir, QuickLZ* quickLZstate);
 	/**
 	 * saves a pattern with category <category_id> and owned by user <user_id>
 	 *
@@ -367,8 +375,8 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool saveUserHORLS(DBUser* u, char mode,const string & tmpDir,
-			bool saveNeededObjectsFirst = false);
+	bool saveUserHORLS(DBUser* u, char mode, const string & tmpDir,
+			QuickLZ* quickLZstate, bool saveNeededObjectsFirst = false);
 	/**
 	 * retrieves the histograms or landscapes according the value of <mode> of the user with id <user_id>
 	 *
@@ -390,7 +398,7 @@ private:
 	 * returns true if no error was found, false otherwise
 	 */
 	bool retrieveHORL(int id, char mode, bool * error, bool load,
-			DBHistogram** result, const string & tmpDir);
+			DBHistogram** result, const string & tmpDir, QuickLZ* quickLZstate);
 	/**
 	 * checks if a connection to the db has been made
 	 */

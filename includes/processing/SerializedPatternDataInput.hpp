@@ -5,6 +5,7 @@
 #include <db/DBDriver.hpp>
 #include <string>
 #include <vector>
+#include <utils/QuickLZ.hpp>
 
 using namespace std;
 namespace Anakin {
@@ -14,11 +15,11 @@ public:
 	SerializedPatternDataInput(string userID, const char *pghost,
 			const char *pgport, const char *dbName, const char *login,
 			const char *pwd, const string & tmpDir);
-	SerializedPatternDataInput(vector<int>* patternsToFind,
-			const char *pghost, const char *pgport, const char *dbName,
-			const char *login, const char *pwd, const string & tmpDir);
+	SerializedPatternDataInput(vector<int>* patternsToFind, const char *pghost,
+			const char *pgport, const char *dbName, const char *login,
+			const char *pwd, const string & tmpDir);
 	virtual ~SerializedPatternDataInput();
-	bool nextInput(ImageInfo** output);
+	bool nextInput(QuickLZ* quickLZstate, ImageInfo** output);
 	void reload();
 protected:
 private:
@@ -29,7 +30,7 @@ private:
 	bool initAndConnectDriver(const char *pghost, const char *pgport,
 			const char *dbName, const char *login, const char *pwd);
 	void reportDBDriverError();
-	bool loadDataFromDB(vector<ImageInfo*>* data);
+	bool loadDataFromDB(vector<ImageInfo*>* data, QuickLZ* quickLZstate);
 	static void read(const cv::FileNode& node, ImageInfo& x,
 			const ImageInfo& default_value = ImageInfo());
 	string userID;

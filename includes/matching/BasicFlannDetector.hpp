@@ -5,6 +5,7 @@
 #include "matching/SerializableFlannBasedMatcher.hpp"
 #include "matching/Match.hpp"
 #include "processing/SFBMCache.hpp"
+#include <utils/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -28,7 +29,8 @@ public:
 	/**
 	 * find patterns in a scene and returns a vector with every match obtained
 	 */
-	std::vector<Match>* findPatterns(RichImg* scene, bool * error);
+	std::vector<Match>* findPatterns(QuickLZ* quickLZstate, RichImg* scene,
+			bool * error);
 	/**
 	 * change the SFBM to use
 	 */
@@ -39,8 +41,8 @@ protected:
 	bool keyExist(std::map<int, std::vector<cv::DMatch>*>* m, int key);
 	void getKeys(std::map<int, std::vector<cv::DMatch>*>* m,
 			std::vector<int>* keys);
-	std::vector<Match>* findPatterns_usingTraining(RichImg* scene,
-			bool * error);
+	std::vector<Match>* findPatterns_usingTraining(QuickLZ* quickLZstate,
+			RichImg* scene, bool * error);
 private:
 	float minRatio;
 	int min_matches_allowed;
