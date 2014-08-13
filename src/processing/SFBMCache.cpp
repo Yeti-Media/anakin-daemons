@@ -11,7 +11,7 @@
 using namespace Anakin;
 
 SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
-		string tmpDir) {
+		const string & tmpDir) {
 	this->dbdriver = dbdriver;
 	this->tmpDir = tmpDir;
 	this->cfc = new CommunicationFormatterCacheJSON();
@@ -113,7 +113,8 @@ wstring* SFBMCache::indexCacheStatus() {
 	return this->cfc->cacheStatus(*values, freeCacheSpace);
 }
 
-ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
+ImageInfo* SFBMCache::loadScene(QuickLZ* quickLZstate, int sceneID,
+		bool * error) {
 	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	//internal function, do not init *error=false
 	this->sceneRequests++;
@@ -125,7 +126,7 @@ ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
 		incLife(sceneID, false);
 	} else {
 		this->sceneMisses++;
-		scene = loadSceneFromDB(sceneID, error);
+		scene = loadSceneFromDB(quickLZstate, sceneID, error);
 		if (*error) {
 			return NULL;
 		}
@@ -135,7 +136,8 @@ ImageInfo* SFBMCache::loadScene(int sceneID, bool * error) {
 	return scene;
 }
 
-ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
+ImageInfo* SFBMCache::loadPattern(QuickLZ* quickLZstate, int smatcherID,
+		int pidx, bool * error) {
 	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	//internal function, do not init *error=false
 	ImageInfo* pattern;
@@ -149,7 +151,7 @@ ImageInfo* SFBMCache::loadPattern(int smatcherID, int pidx, bool * error) {
 	if (smatcherPatterns->find(pidx) == smatcherPatterns->end()) {
 		bool patternFound;
 		patternFound = this->dbdriver->retrieveNthPattern(smatcherID, pidx,
-				&pattern, error);
+				&pattern, error, this->tmpDir, quickLZstate);
 		if (!patternFound) {
 			this->operation = ERROR;
 			this->errorMessage = this->dbdriver->getMessage();
@@ -357,11 +359,13 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
 	return matcher;
 }
 
-ImageInfo* SFBMCache::loadSceneFromDB(int sceneID, bool * error) {
+ImageInfo* SFBMCache::loadSceneFromDB(QuickLZ* quickLZstate, int sceneID,
+		bool * error) {
 	ImageInfo* scene;
 	//internal function, do not init *error=false
 	bool sceneFound;
-	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error);
+	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error,
+			this->tmpDir, quickLZstate);
 	if (!sceneFound) {
 		this->operation = ERROR;
 		this->errorMessage = this->dbdriver->getMessage();

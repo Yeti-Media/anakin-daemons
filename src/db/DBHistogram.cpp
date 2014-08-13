@@ -5,19 +5,22 @@ using namespace Anakin;
 
 using namespace std;
 
-DBHistogram::DBHistogram(int id, int userID, bool isLandscape) {
+DBHistogram::DBHistogram(bool asFile, int id, int userID, bool isLandscape) {
+	this->asFile = asFile;
 	this->id = id;
 	this->userID = userID;
 	this->mode = isLandscape ? Constants::LANDSCAPE : Constants::HISTOGRAM;
 }
 
-DBHistogram::DBHistogram(int id, bool isLandscape) {
+DBHistogram::DBHistogram(bool asFile, int id, bool isLandscape) {
+	this->asFile = asFile;
 	this->id = id;
 	this->userID = 0;
 	this->mode = isLandscape ? Constants::LANDSCAPE : Constants::HISTOGRAM;
 }
 
-DBHistogram::DBHistogram(bool isLandscape) {
+DBHistogram::DBHistogram(bool asFile, bool isLandscape) {
+	this->asFile = asFile;
 	this->id = 0;
 	this->userID = 0;	//can couse problems
 	this->mode = isLandscape ? Constants::LANDSCAPE : Constants::HISTOGRAM;
@@ -27,6 +30,10 @@ DBHistogram::~DBHistogram() {
 	delete colorData;
 	delete grayData;
 	delete hsvData;
+}
+
+bool DBHistogram::hasFileData() {
+	return asFile;
 }
 
 void DBHistogram::setColorData(std::string * data) {

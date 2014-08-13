@@ -104,12 +104,14 @@ int PatternTrainer::run(vector<string> *input) {
 	vector<RichImg*> patterns;
 	SerializedPatternDataInput* sinput;
 	if (user) {
-		sinput = new SerializedPatternDataInput(userID, "", "", "", "", "");
+		sinput = new SerializedPatternDataInput(userID, "", "", "", "", "",
+				this->tempDir);
 	} else {
-		sinput = new SerializedPatternDataInput(patternsId, "", "", "", "", "");
+		sinput = new SerializedPatternDataInput(patternsId, "", "", "", "", "",
+				this->tempDir);
 	}
 	PatternLoader* loader = new PatternLoader(sinput, patterns);
-	loader->load();
+	loader->load(quickLZstate);
 
 	Trainer* trainer = new BasicFlannTrainer(matcher, patterns, folder,
 			fileName);

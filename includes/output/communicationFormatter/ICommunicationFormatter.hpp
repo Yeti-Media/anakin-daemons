@@ -47,8 +47,8 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter of a response
 	 */
 
-	virtual wstring* outputResponse(const string & requestID, e_category category,
-			const vector<wstring *> & values) {
+	virtual wstring* outputResponse(const string & requestID,
+			e_category category, const vector<wstring *> & values) {
 		return NULL;
 	}
 	; // = 0;

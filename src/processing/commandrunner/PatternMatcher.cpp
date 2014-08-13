@@ -320,7 +320,7 @@ void PatternMatcher::run() {
 			return;
 		}
 		bool loadSceneError = false;
-		ImageInfo* scene = this->cache->loadScene(sceneID, &loadSceneError);
+		ImageInfo* scene = this->cache->loadScene(this->quickLZstate,sceneID, &loadSceneError);
 		if (loadSceneError) {
 			this->out->error(
 					this->cache->getLastOperationResult());
@@ -343,7 +343,7 @@ void PatternMatcher::run() {
 					this->mr, this->mma);
 			this->processor = new FlannMatchingProcessor(this->detector);
 			bool processingError = false;
-			vector<wstring*>* cmatches = this->processor->process(rscene,
+			vector<wstring*>* cmatches = this->processor->process(this->quickLZstate,rscene,
 					&processingError);
 			if (processingError) {
 				this->out->error(

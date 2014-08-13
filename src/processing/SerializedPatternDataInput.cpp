@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <boost/filesystem.hpp>
+#include <utils/Files.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -18,11 +19,12 @@ using namespace std;
 
 SerializedPatternDataInput::SerializedPatternDataInput(std::string userID,
 		const char *pghost, const char *pgport, const char *dbName,
-		const char *login, const char *pwd) {
+		const char *login, const char *pwd, const string & tmpDir) {
 	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd)) {
 		reportDBDriverError();
 		exit(EXIT_FAILURE);
 	}
+	this->tmpDir = tmpDir;
 	this->userID = userID;
 	this->cache = new vector<ImageInfo*>(0);
 	this->loaded = false;
@@ -32,11 +34,13 @@ SerializedPatternDataInput::SerializedPatternDataInput(std::string userID,
 
 SerializedPatternDataInput::SerializedPatternDataInput(
 		vector<int>* patternsToFind, const char *pghost, const char *pgport,
-		const char *dbName, const char *login, const char *pwd) {
+		const char *dbName, const char *login, const char *pwd,
+		const string & tmpDir) {
 	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd)) {
 		reportDBDriverError();
 		exit(EXIT_FAILURE);
 	}
+	this->tmpDir = tmpDir;
 	this->patternsToFind = patternsToFind;
 	this->cache = new vector<ImageInfo*>(0);
 	this->loaded = false;
@@ -54,13 +58,14 @@ SerializedPatternDataInput::~SerializedPatternDataInput() {
 	}
 }
 
-bool SerializedPatternDataInput::nextInput(ImageInfo** output) {
+bool SerializedPatternDataInput::nextInput(QuickLZ* quickLZstate,
+		ImageInfo** output) {
 	if (this->current < 0) {
 		if (!this->loaded) {
 			std::for_each(cache->begin(), cache->end(),
 					delete_pointer_element<ImageInfo*>());
 			this->cache->clear();
-			if (!loadDataFromDB(this->cache)) {
+			if (!loadDataFromDB(this->cache, quickLZstate)) {
 				reportDBDriverError();
 				exit(EXIT_FAILURE);
 			}
@@ -85,10 +90,11 @@ void SerializedPatternDataInput::reload() {
 
 void SerializedPatternDataInput::loadData(vector<ImageInfo*>* data,
 		std::string * rawData) {
-	std::string xmlData = "<?xml version=\"1.0\"?>";
-	xmlData.append(*rawData);
+	//std::string xmlData = "<?xml version=\"1.0\"?>";
+	//xmlData.append(*rawData);
 	ImageInfo *ii = new ImageInfo();
-	cv::FileStorage fstorage(xmlData.c_str(),
+	//write_to_file(rawData,"/tmp/ram/Anakin/lastXML.xml");
+	cv::FileStorage fstorage((*rawData).c_str(),
 			cv::FileStorage::READ | cv::FileStorage::MEMORY);
 	cv::FileNode n = fstorage.root();
 	read(n, *ii);
@@ -116,7 +122,8 @@ void SerializedPatternDataInput::reportDBDriverError() {
 	LOG_F("ERROR")<< this->driver->getMessage();
 }
 
-bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {
+bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data,
+		QuickLZ* quickLZstate) {
 	bool error = false;
 	std::vector<int> userPatterns;
 	if (!this->userID.empty()) {
@@ -139,7 +146,8 @@ bool SerializedPatternDataInput::loadDataFromDB(std::vector<ImageInfo*>* data) {
 		int pid = userPatterns.at(up);
 		DBPattern* dbp;
 		bool patternError = false;
-		if (!this->driver->retrievePattern(pid, &patternError, true, &dbp)) {
+		if (!this->driver->retrievePattern(pid, &patternError, true, &dbp,
+				this->tmpDir, quickLZstate)) {
 			return false;
 		}
 		loadData(data, dbp->getData());

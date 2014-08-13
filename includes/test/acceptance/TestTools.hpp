@@ -137,39 +137,6 @@ void runProgram(StatisticsCollector* collector, string currentCommand) {
 		exitWithError();
 	}
 }
-//
-///**
-// * Run a simple program with the given commands
-// */
-//template<class SpecificDaemon>
-//void runDaemonProgram(StatisticsCollector* collector, string currentCommand) {
-//	SpecificDaemon commandRunner;
-//	Program* program = new Daemon<SpecificDaemon>();
-//	cout
-//			<< "______________________________________________________________________"
-//			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
-//			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
-//			<< "* Output:" << endl << endl;
-//	vector<string> input(0);
-//	splitTokens(currentCommand, input);
-//
-//	auto begin = chrono::high_resolution_clock::now();
-//	int signal = program->start(&input);
-//	if (collector != NULL) {
-//		auto delay = chrono::high_resolution_clock::now() - begin;
-//		double ms = (double) std::chrono::duration_cast<
-//				std::chrono::milliseconds>(delay).count();
-//
-//		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
-//		collector->addItem(program->getProgramName() + " " + currentCommand,
-//				ms);
-//	}
-//	delete program;
-//
-//	if (signal == EXIT_FAILURE) {
-//		exitWithError();
-//	}
-//}
 
 struct DaemonArgs {
 	Program* program;

@@ -36,7 +36,8 @@ public:
 	 * returns a wstring* representation of a JSONValue of patterns matches in a scene
 	 * (scene label, [match1,...,matchN])
 	 */
-	virtual wstring* outputMatches(const string & label, const vector<wstring *> & values);
+	virtual wstring* outputMatches(const string & label,
+			const vector<wstring *> & values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
 

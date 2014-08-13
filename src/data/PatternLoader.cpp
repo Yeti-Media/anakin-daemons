@@ -25,7 +25,7 @@ PatternLoader::PatternLoader(SerializedPatternDataInput* input,
 	this->usingSerializedDataInput = true;
 }
 
-void PatternLoader::load() {
+void PatternLoader::load(QuickLZ* quickLZstate) {
 
 	if (!this->usingSerializedDataInput) {
 		Img* image;
@@ -36,7 +36,7 @@ void PatternLoader::load() {
 		}
 	} else {
 		ImageInfo* ii;
-		while (this->sinput->nextInput(&ii)) {
+		while (this->sinput->nextInput(quickLZstate, &ii)) {
 			RichImg* richImg = new RichImg(ii);
 			this->patterns->push_back(richImg);
 		}

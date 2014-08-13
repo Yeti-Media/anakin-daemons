@@ -5,6 +5,7 @@
 #include "data/RichImg.hpp"
 #include <output/communicationFormatter/ICommunicationFormatterMatching.hpp>
 #include <vector>
+#include <utils/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -25,7 +26,8 @@ public:
 	/**
 	 *   Will run the detector with the scene and then translate the results
 	 */
-	std::vector<wstring*>* process(RichImg* scene, bool * error);
+	std::vector<wstring*>* process(QuickLZ* quickLZstate, RichImg* scene,
+			bool * error);
 protected:
 private:
 	BasicFlannDetector* detector;

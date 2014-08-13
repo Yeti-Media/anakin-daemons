@@ -70,7 +70,8 @@ public:
 	 *
 	 * dbdriver              : used to make requests to the db
 	 */
-	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig, string tmpDir);
+	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
+			const string & tmpDir);
 	/**
 	 * load a matcher
 	 *
@@ -107,7 +108,7 @@ public:
 	 * error     : will hold true if an error was encountered
 	 *
 	 */
-	ImageInfo* loadScene(int sceneID, bool * error);
+	ImageInfo* loadScene(QuickLZ* quickLZstate, int sceneID, bool * error);
 	/**
 	 * load a pattern
 	 *
@@ -116,7 +117,8 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	ImageInfo* loadPattern(int smatcherID, int pidx, bool * error);
+	ImageInfo* loadPattern(QuickLZ* quickLZstate, int smatcherID, int pidx,
+			bool * error);
 	/**
 	 * returns the ratio between requests that resulted in loading a trainer from the cache and the total requests
 	 */
@@ -204,7 +206,8 @@ private:
 	void getKeys(std::map<int, int>* m, std::vector<int>* keys);
 	SerializableFlannBasedMatcher* loadMatcherFromDB(QuickLZ* quickLZstate,
 			int smatcher_id, float* loadingTime, bool * error);
-	ImageInfo* loadSceneFromDB(int sceneID, bool * error);
+	ImageInfo* loadSceneFromDB(QuickLZ* quickLZstate, int sceneID,
+			bool * error);
 	void incLife(int smatcher_id, bool matchersCache = true);
 	int decLife(int smatcher_id, bool matchersCache = true);
 	int updateLife(int smatcher_id, int life, bool bounded = true,

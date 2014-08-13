@@ -9,11 +9,12 @@ FlannMatchingProcessor::FlannMatchingProcessor(BasicFlannDetector* detector) {
 	this->cfm = new CommunicationFormatterMatchingJSON();
 }
 
-std::vector<wstring*>* FlannMatchingProcessor::process(RichImg* scene,
-		bool * error) {
+std::vector<wstring*>* FlannMatchingProcessor::process(QuickLZ* quickLZstate,
+		RichImg* scene, bool * error) {
 	//internal function, do not init *error=false
 	std::vector<wstring*>* sceneResult = new std::vector<wstring*>(0);
-	std::vector<Match>* matches = this->detector->findPatterns(scene, error);
+	std::vector<Match>* matches = this->detector->findPatterns(quickLZstate,
+			scene, error);
 	for (uint m = 0; m < matches->size() && !*error; m++) {
 		Match match = (*matches)[m];
 		sceneResult->push_back(

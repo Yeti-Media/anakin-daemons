@@ -87,34 +87,34 @@ private:
 	bool loadedFromFile = false;
 
 	/**
-	 * saves the if file
+	 * saves and compress the if/XML file
 	 */
-	void saveIndex();
+	void saveIndexAndXML(QuickLZ* quickLZstate);
 
 	/**
 	 * load the if file and creates a new index with it
 	 * data : a matrix used by the index and stored in the xml file
 	 */
 	void loadIndex(cv::Mat * data, const string & tmpDir);
-
-	/**
-	 * compresses the if and xml files
-	 *
-	 * removeOriginal :  if true then the compressed files will overwrite the originals
-	 *                   else the compressed files will have cif and cxml extension
-	 */
-	void compress(QuickLZ* quickLZstate, bool removeOriginal = false);
-
-	/**
-	 * decompresses the if and xml files
-	 *
-	 * useOriginalNames  :   if true then the decompressed files will overwrite the originals
-	 *                       else the decompressed files will have uif and uxml extension
-	 * xmlData           :   if not NULL then the xml file will be decompressed and stored in this variable
-	 *                       else it will be decompressed into a file
-	 */
-	void decompress(QuickLZ* quickLZstate, bool useOriginalNames,
-			string & xmlData, const string & tmpDir);
+//
+//	/**
+//	 * compresses the if and xml files
+//	 *
+//	 * removeOriginal :  if true then the compressed files will overwrite the originals
+//	 *                   else the compressed files will have cif and cxml extension
+//	 */
+//	void compress(QuickLZ* quickLZstate, bool removeOriginal = false);
+//
+//	/**
+//	 * decompresses the if and xml files
+//	 *
+//	 * useOriginalNames  :   if true then the decompressed files will overwrite the originals
+//	 *                       else the decompressed files will have uif and uxml extension
+//	 * xmlData           :   if not NULL then the xml file will be decompressed and stored in this variable
+//	 *                       else it will be decompressed into a file
+//	 */
+//	void decompress(QuickLZ* quickLZstate, bool useOriginalNames,
+//			string & xmlData, const string & tmpDir);
 
 	string smatcher_id;
 };
