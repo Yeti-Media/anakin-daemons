@@ -54,6 +54,12 @@ using namespace Anakin;
 #include <processing/simpleprogram/FaceDBConnector.hpp>
 #endif
 
+// *** FACE RECOGNITION ****
+
+#if COMPILE_MODULE == OCRDEMO || COMPILE_MODULE == ALLMODULES
+#include <processing/commandrunner/OCRDemo.hpp>
+#endif
+
 // *** TESTS ***
 
 #if COMPILE_MODULE == MATCHERCACHETEST || COMPILE_MODULE == ALLMODULES
@@ -108,6 +114,12 @@ int main(int argc, const char * argv[]) {
 #endif
 #if COMPILE_MODULE == FACETRAINER
 	Program* program = new FaceTrainer();
+#endif
+
+	// *** OCR ****
+
+#if COMPILE_MODULE == OCRDEMO
+	Program* program = new Daemon<OCRDemo>();
 #endif
 
 	// common startup
@@ -178,6 +190,8 @@ int main(int argc, const char * argv[]) {
 	exportHelp<FaceDBConnector>(&path);
 	exportHelp<FaceExtractor>(&path);
 	exportHelp<FaceTrainer>(&path);
+
+	exportHelp<OCRDemo>(&path);
 
 	cout << "Success" << endl;
 

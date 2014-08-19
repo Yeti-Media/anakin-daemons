@@ -29,7 +29,8 @@ public:
 		CF_CACHE_IDX_ADD,
 		CF_CACHE_IDX_DEL,
 		CF_CACHE_IDX_UPD,
-		CF_CACHE_IDX_STATUS
+		CF_CACHE_IDX_STATUS,
+		CF_OCR
 	};
 
 	enum e_mode {
