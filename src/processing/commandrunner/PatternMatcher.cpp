@@ -37,6 +37,7 @@ PatternMatcher::PatternMatcher() :
 
 PatternMatcher::~PatternMatcher() {
 	delete this->quickLZstate;
+	delete this->cfm;
 }
 
 Help* PatternMatcher::getHelp() {
@@ -50,7 +51,6 @@ string PatternMatcher::getProgramName() {
 void PatternMatcher::initializeCommandRunner(DataOutput* out,
 		SFBMCache* cache) {
 	CommandRunner::initializeCommandRunner(out, cache);
-	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->cache = cache;
 
 	flags->setMinCount(1);
