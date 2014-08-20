@@ -54,7 +54,7 @@ using namespace Anakin;
 #include <processing/simpleprogram/FaceDBConnector.hpp>
 #endif
 
-// *** FACE RECOGNITION ****
+// *** OCR ****
 
 #if COMPILE_MODULE == OCRDEMO || COMPILE_MODULE == ALLMODULES
 #include <processing/commandrunner/OCRDemo.hpp>
@@ -191,7 +191,7 @@ int main(int argc, const char * argv[]) {
 	exportHelp<FaceExtractor>(&path);
 	exportHelp<FaceTrainer>(&path);
 
-	exportHelp<OCRDemo>(&path);
+	exportHelp<Daemon<OCRDemo>>(&path);
 
 	cout << "Success" << endl;
 

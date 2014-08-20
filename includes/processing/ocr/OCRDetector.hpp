@@ -2,17 +2,17 @@
 #define OCRDETECTOR_HPP
 
 #include <opencv2/core/core.hpp>
+#include <processing/commandrunner/CommandRunner.hpp>
 #include <tesseract/publictypes.h>
 #include <string>
 #include <utility>
 #include <vector>
 
 using namespace std;
-using namespace cv;
 
 namespace Anakin {
 
-class OCRDetector {
+class OCRDetector{
 public:
 	OCRDetector(string imgPath, string datapath = "/usr/share/tesseract-ocr/",
 			string lang = "eng", int mode = 0);
@@ -33,6 +33,5 @@ private:
 };
 
 }
-;
 
 #endif // OCRDETECTOR_HPP

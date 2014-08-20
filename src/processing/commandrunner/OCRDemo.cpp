@@ -82,7 +82,7 @@ void OCRDemo::validateRequest(vector<string> *input) {
 				inputError = true;
 				return;
 			}
-			sceneID = stoi(values->at(0));
+			scenesDir = values->at(0);
 			run_ocr_detect = true;
 		}
 

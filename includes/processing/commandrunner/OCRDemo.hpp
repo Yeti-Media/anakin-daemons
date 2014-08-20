@@ -48,6 +48,7 @@ private:
 	int ocrMode = 0;
 };
 
-} /* namespace Anakin */
+}
+/* namespace Anakin */
 
 #endif /* OCRDEMO_HPP_ */
