@@ -46,6 +46,7 @@ private:
 	string datapath = "";
 	string scenesDir = "landscapes/forest";
 	int ocrMode = 0;
+	wstring* resultAsJSONValue(vector<string>* ocrRecognizedText);//move this to communicationFormatter
 };
 
 }

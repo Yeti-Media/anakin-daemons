@@ -196,29 +196,39 @@ void OCRDemo::run() {
 	vector<string>* results = ocrDetector.detect(&ocrRois, show, clearEvery);
 	vector<wstring*> jsonresults;
 
-//	JSONObject root;
-//	wstringstream ws;
-//	ws << requestID.c_str();
-//	root[L"requestID"] = new JSONValue(ws.str());
-//	wstringstream ys;
-//	ys << category.c_str();
-//	root[L"category"] = new JSONValue(ys.str());
-//	JSONArray values;
-//	for (uint v = 0; v < jsonValues.size(); v++) {
-//		values.push_back(jsonValues.at(v));
-//	}
-//
-//	root[L"values"] = new JSONValue(values);
-//
-//	JSONValue *value = new JSONValue(root);
+	jsonresults.push_back(this->resultAsJSONValue(results));
 
-	for (uint v = 0; v < results->size(); v++) {
-		jsonresults.push_back(this->cfm->format(results->at(v).c_str()));
-	}
 
 	this->out->output(
 			this->cfm->outputResponse("125", I_CommunicationFormatter::CF_OCR,
 					jsonresults), 125);
+}
+
+wstring* OCRDemo::resultAsJSONValue(vector<string>* ocrRecognizedText) {
+    /*  Result as JSONObject
+
+        root    -> values (JSONArray)    -> text (string)
+
+    */
+    JSONObject root;
+	JSONArray texts;
+	for (uint v = 0; v < ocrRecognizedText->size(); v++) {
+        wstringstream ws;
+		JSONObject text;
+        ws << ocrRecognizedText->at(v).c_str();
+        text[L"text"] = new JSONValue(ws.str());
+        texts.push_back(new JSONValue(text));
+    }
+
+	root[L"values"] = new JSONValue(texts);
+
+    //JSONValue *value = new JSONValue(root);
+
+    return new wstring(JSONValue(root).Stringify());
+
+	//return value;
+
+	//wcout << root->Stringify().c_str() << "\n";
 }
 
 } /* namespace Anakin */

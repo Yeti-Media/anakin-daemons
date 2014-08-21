@@ -52,6 +52,10 @@ wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
 		root[L"category"] = new JSONValue(L"INDEX STATUS");
 		break;
 	}
+	case CF_OCR: {
+		root[L"category"] = new JSONValue(L"OCR");
+		break;
+	}
 	default: {
 		root[L"category"] = new JSONValue(L"NONE---ERROR");
 		break;
