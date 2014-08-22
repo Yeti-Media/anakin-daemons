@@ -42,6 +42,7 @@ void OCRDemo::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
 	//OCR flags
 	flags->setOptionalFlag("ocr");
 	flags->setOptionalFlag("rois");
+	flags->setOptionalFlag("reqID");
 	flags->setDependence("rois", "ocr");
 	flags->setOptionalFlag("clearEvery");
 	flags->setDependence("clearEvery", "ocr");
@@ -85,7 +86,15 @@ void OCRDemo::validateRequest(vector<string> *input) {
 			scenesDir = values->at(0);
 			run_ocr_detect = true;
 		}
-
+		if (flags->flagFound("reqID")) {
+			values = flags->getFlagValues("reqID");
+			if (values->size() != 1) {
+				lastError = "flag reqID expects only one value";
+				inputError = true;
+				return;
+			}
+			reqID = values->at(0);
+		}
 		if (flags->flagFound("rois")) {
 			values = flags->getFlagValues("rois");
 			if (values->size() > 0 && values->size() % 4 == 0) {
@@ -175,8 +184,7 @@ void OCRDemo::run() {
 						lastError, "CommandRunner::run"));
 		return;
 	}
-
-	//int ireqID = stoi(reqID);
+	int ireqID = stoi(reqID);
 
 	if (run_ocr_demo) {
 		OCRDetector ocrDetector("eng", "ocrTest.png");
@@ -196,12 +204,13 @@ void OCRDemo::run() {
 	vector<string>* results = ocrDetector.detect(&ocrRois, show, clearEvery);
 	vector<wstring*> jsonresults;
 
-	jsonresults.push_back(this->resultAsJSONValue(results));
 
+	jsonresults.push_back(this->resultAsJSONValue(results));
+	wcout << "resultado ocr" << *jsonresults.at(0) << endl;
 
 	this->out->output(
-			this->cfm->outputResponse("125", I_CommunicationFormatter::CF_OCR,
-					jsonresults), 125);
+			this->cfm->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,
+					jsonresults), ireqID);
 }
 
 wstring* OCRDemo::resultAsJSONValue(vector<string>* ocrRecognizedText) {
