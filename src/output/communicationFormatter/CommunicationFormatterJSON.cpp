@@ -156,6 +156,22 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	return new wstring(JSONValue(root).Stringify());
 }
 
+wstring* CommunicationFormatterJSON::format(vector<string>* text){
+	JSONObject root;
+	JSONArray texts;
+	for (uint v = 0; v < text->size(); v++) {
+		wstringstream ws;
+		JSONObject jText;
+		ws << text->at(v).c_str();
+		jText[L"text"] = new JSONValue(ws.str());
+		texts.push_back(new JSONValue(jText));
+	}
+
+	root[L"values"] = new JSONValue(texts);
+
+	return new wstring(JSONValue(root).Stringify());
+}
+
 string* CommunicationFormatterJSON::formatRequest(const char * data) {
 
 	JSONValue* req = JSON::Parse(data);

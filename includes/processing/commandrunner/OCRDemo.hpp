@@ -33,7 +33,7 @@ public:
 	Help* getHelp();
 	string getProgramName();
 private:
-	I_CommunicationFormatter* cfm;
+	I_CommunicationFormatter* cf;
 	bool run_ocr_demo = false;
 	bool run_ocr_adv_demo = false;
 	bool run_ocr_detect = false;

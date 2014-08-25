@@ -18,11 +18,11 @@ namespace Anakin {
 
 OCRDemo::OCRDemo() :
 		CommandRunner() {
-	this->cfm = new CommunicationFormatterJSON();
+	this->cf = new CommunicationFormatterJSON();
 }
 
 OCRDemo::~OCRDemo() {
-	delete cfm;
+	delete cf;
 }
 
 string OCRDemo::getProgramName() {
@@ -179,7 +179,7 @@ void OCRDemo::run() {
 
 	if (inputError) {
 		this->out->error(
-				this->cfm->outputError(
+				this->cf->outputError(
 						CommunicationFormatterJSON::CF_ERROR_TYPE_ERROR,
 						lastError, "CommandRunner::run"));
 		return;
@@ -205,39 +205,12 @@ void OCRDemo::run() {
 	vector<wstring*> jsonresults;
 
 
-	jsonresults.push_back(this->resultAsJSONValue(results));
+	jsonresults.push_back(this->cf->format(results));
 	wcout << "resultado ocr" << *jsonresults.at(0) << endl;
 
 	this->out->output(
-			this->cfm->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,
+			this->cf->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,
 					jsonresults), ireqID);
-}
-
-wstring* OCRDemo::resultAsJSONValue(vector<string>* ocrRecognizedText) {
-    /*  Result as JSONObject
-
-        root    -> values (JSONArray)    -> text (string)
-
-    */
-    JSONObject root;
-	JSONArray texts;
-	for (uint v = 0; v < ocrRecognizedText->size(); v++) {
-        wstringstream ws;
-		JSONObject text;
-        ws << ocrRecognizedText->at(v).c_str();
-        text[L"text"] = new JSONValue(ws.str());
-        texts.push_back(new JSONValue(text));
-    }
-
-	root[L"values"] = new JSONValue(texts);
-
-    //JSONValue *value = new JSONValue(root);
-
-    return new wstring(JSONValue(root).Stringify());
-
-	//return value;
-
-	//wcout << root->Stringify().c_str() << "\n";
 }
 
 } /* namespace Anakin */
