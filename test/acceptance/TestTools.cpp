@@ -5,6 +5,8 @@
  *      Author: Franco Pellegrini
  */
 
+#include <CompileConfigurations.hpp>
+
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <test/acceptance/TestTools.hpp>
@@ -190,6 +192,14 @@ void testingDirCheck(int argc, const char * argv[]) {
 	fs::path simpleTest = testDir / "examples" / "simpleTest";
 	validateDir(simpleTest / "input-logos",
 			"Extractor input logos (for examples)");
+
+	fs::path OCRDemoBenchmark = testDir / "examples" / "ocr";
+	validateDir(OCRDemoBenchmark / "dataset_images",
+			"OCR Image dataset");
+	validateDir(OCRDemoBenchmark / "text_localization",
+			"OCR Image dataset text localization");
+	validateDir(OCRDemoBenchmark / "word_recognition",
+			"OCR Image dataset word recognition");
 
 	//--------------------------------------------------------------
 	//  Files validation

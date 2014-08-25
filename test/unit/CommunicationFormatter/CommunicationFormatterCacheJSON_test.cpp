@@ -6,12 +6,12 @@
  */
 
 #include <CompileConfigurations.hpp>
+
+#if COMPILE_MODE == COMPILE_FOR_UNIT_TESTING
 #include <output/communicationFormatter/CommunicationFormatterCacheJSON.hpp>
 #include <boost/test/unit_test.hpp>
 #include <string>
 #include <vector>
-
-#if COMPILE_MODE == COMPILE_FOR_UNIT_TESTING
 
 #define BOOST_TEST_DYN_LINK
 #ifdef STAND_ALONE
