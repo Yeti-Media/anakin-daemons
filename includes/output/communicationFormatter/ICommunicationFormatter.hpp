@@ -93,6 +93,18 @@ public:
 
 	/* Place holder implementation due a bug on gcc. It seems doesn't work well with pure virtual
 	 * classes when you implement an interface. Please don't use this implementation, you must provide your
+	 * own implementation inside a child class
+	 *
+	 * returns a wstring* representing the actual CommunicationFormatter
+	 */
+
+	virtual wstring* format(vector<string>* text) {
+		return NULL;
+	}
+	; // = 0;
+
+	/* Place holder implementation due a bug on gcc. It seems doesn't work well with pure virtual
+	 * classes when you implement an interface. Please don't use this implementation, you must provide your
 	 * own implementation inside a child class+
 	 *
 	 * returns a string* representing the actual CommunicationFormatter of a request

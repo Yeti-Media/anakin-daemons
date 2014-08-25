@@ -43,6 +43,11 @@ public:
 	virtual wstring* format(e_mode mode, string data, e_color colors);
 
 	/**
+	 * returns a wstring* representation of a JSONValue
+	 */
+	virtual wstring* format(vector<string>* text);
+
+	/**
 	 * returns a string* representation of a JSONValue of a request
 	 */
 	virtual string* formatRequest(const char * data);
