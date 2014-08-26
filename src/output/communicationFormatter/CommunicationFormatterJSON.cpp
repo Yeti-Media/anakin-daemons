@@ -7,6 +7,10 @@
 
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <utils/Constants.hpp>
+#include <stdio.h>
+#include <locale>
+//#include <codecvt>
+#include <string>
 
 using namespace std;
 using namespace cv;
@@ -157,13 +161,17 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 }
 
 wstring* CommunicationFormatterJSON::format(vector<string>* text){
+
 	JSONObject root;
 	JSONArray texts;
 	for (uint v = 0; v < text->size(); v++) {
-		wstringstream ws;
+		//wstringstream ws;
+		string s = text->at(v);
+		wstring wsTmp(s.begin(), s.end());
+		wcout << "wsTmp: " << wsTmp << endl;
 		JSONObject jText;
-		ws << text->at(v).c_str();
-		jText[L"text"] = new JSONValue(ws.str());
+		//ws << text->at(v).c_str();
+		jText[L"text"] = new JSONValue(wsTmp);//(ws.str());
 		texts.push_back(new JSONValue(jText));
 	}
 
