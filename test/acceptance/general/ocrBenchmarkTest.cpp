@@ -39,6 +39,8 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 		fs::create_directories(ramDir);
 	}
 
+	int maxTestRepetition = 1;
+
 	// INPUTS
 	fs::path testDir = argv[1];
 	fs::path examplesDir = testDir / "examples";
@@ -87,7 +89,7 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 	list<fs::path> * filesToTest = get_file_list_from(dataset);
 
 	//repeated "query" times, to obtain solid benchmarks
-	for (int query = 1; query <= 10; query++) {
+	for (int testRepetition = 1; testRepetition <= maxTestRepetition; testRepetition++) {
 		for (std::list<fs::path>::iterator file = filesToTest->begin();
 				file != filesToTest->end(); ++file) {
 			string cmd =
@@ -97,7 +99,7 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 			collector->addItem("OCR",command(collector, true,
 					cmd + pathToAnakinPath(lastStdout) + " 2> "
 							+ pathToAnakinPath(lastStderr), true));
-			cout << "* Request number " << query << endl;
+			cout << "* Repetition number " << testRepetition << endl;
 		}
 
 	}
