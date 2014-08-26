@@ -21,6 +21,8 @@
 #include <iostream>
 #include <string>
 
+namespace fs = boost::filesystem;
+
 /**
  * This test are designed to OCR performance test.
  */
@@ -82,16 +84,21 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 		}
 	}
 
+	list<fs::path> * filesToTest = get_file_list_from(dataset);
+
 	//repeated "query" times, to obtain solid benchmarks
 	for (int query = 1; query <= 10; query++) {
-		string cmd =
-				"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"ocr\", \"ocr\":\""
-						+ dataset.string()
-						+ "/img_3.png\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
-		command(collector, true, cmd
-		+ pathToAnakinPath(lastStdout) + " 2> " + pathToAnakinPath(lastStderr),
-				true);
-		cout << "* Request number " << query << endl;
+		for (std::list<fs::path>::iterator file = filesToTest->begin();
+				file != filesToTest->end(); ++file) {
+			string cmd =
+					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"ocr\", \"ocr\":\""
+							+ (*file).string()
+							+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
+			collector->addItem("OCR",command(collector, true,
+					cmd + pathToAnakinPath(lastStdout) + " 2> "
+							+ pathToAnakinPath(lastStderr), true));
+			cout << "* Request number " << query << endl;
+		}
 
 	}
 	stopAnakinHTTP(thread, logsDir, collector);

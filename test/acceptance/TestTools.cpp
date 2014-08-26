@@ -87,6 +87,16 @@ void printStatistics(StatisticsCollector* collector) {
 /**
  *  Print final statistics
  */
+void printStatistics(StatisticsCollector* collector, const string & command) {
+	cout << endl << "===============================================\n"
+			<< "************  Benchmark Results  **************\n"
+			<< "===============================================\n"
+			<< collector->computeOnly(command);
+}
+
+/**
+ *  Print final statistics
+ */
 void printTestMsj(string msj, uint testRepetition) {
 	cout << endl
 			<< "======================================================================"
@@ -114,8 +124,9 @@ string pathToAnakinPath(fs::path path) {
  * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
  * the child PID will be killed by a signal before exit;
  */
-void command(StatisticsCollector* collector, bool verbose, string command,
+double command(StatisticsCollector* collector, bool verbose, string command,
 		bool showLogMsjIfFail) {
+	double elpasedTime = 0;
 	if (verbose) {
 		cout
 				<< "______________________________________________________________________"
@@ -132,15 +143,16 @@ void command(StatisticsCollector* collector, bool verbose, string command,
 	} else {
 		if (verbose) {
 			auto delay = chrono::high_resolution_clock::now() - begin;
-			double ms = (double) std::chrono::duration_cast<
+			elpasedTime = (double) std::chrono::duration_cast<
 					std::chrono::milliseconds>(delay).count();
 
-			cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
+			cout << endl << "* Elapsed Time: " << elpasedTime << " ms." << endl;
 			if (collector != NULL) {
-				collector->addItem(command, ms);
+				collector->addItem(command, elpasedTime);
 			}
 		}
 	}
+	return elpasedTime;
 }
 
 /**

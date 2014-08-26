@@ -18,10 +18,11 @@ int main(int argc, const char * argv[]) {
 
 	//patternSimpleTest(argc, argv, &collector);
 	//patternBenchmarkTest(argc, argv, &collector);
+	//printStatistics(&collector);
 
 	ocrBenchmarkTest(argc, argv, &collector);
+	printStatistics(&collector, "OCR");
 
-	printStatistics(&collector);
 	exitWithSucces();
 }
 

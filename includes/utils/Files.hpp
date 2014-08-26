@@ -8,12 +8,28 @@
 #ifndef FILES_HPP_
 #define FILES_HPP_
 
-#include <utils/QuickLZ.hpp>
+#include <boost/filesystem/path.hpp>
+#include <stddef.h>
+#include <list>
 #include <string>
 
+class QuickLZ;
+
 using namespace std;
+namespace fs = boost::filesystem;
 
 namespace Anakin {
+
+
+/**
+ * get a list of files from a dir
+ */
+list<fs::path> * get_file_list_from(const fs::path & dirpath);
+
+/**
+ * get a list of files from a dir
+ */
+list<fs::path> * get_file_list_from(const string & dirpath);
 
 /**
  * Retrive file content as a string

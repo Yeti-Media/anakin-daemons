@@ -24,6 +24,7 @@ public:
 
 	void addItem(string command, double time);
 	string compute();
+	string computeOnly(const string & command);
 private:
 	map<string, StatisticData> items;
 	static boost::mutex& GetMutex() {
