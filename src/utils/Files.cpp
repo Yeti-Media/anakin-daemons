@@ -5,14 +5,42 @@
  *      Author: Franco Pellegrini
  */
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+#include <stddef.h>
 #include <utils/Files.hpp>
+#include <utils/QuickLZ.hpp>
 #include <cerrno>
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <string>
 
 using namespace Anakin;
 using namespace std;
+namespace fs = boost::filesystem;
+
+list<fs::path> * Anakin::get_file_list_from(const string & dirpath) {
+	fs::path someDir(dirpath);
+	return get_file_list_from(someDir);
+}
+
+list<fs::path> * Anakin::get_file_list_from(const fs::path & dirpath) {
+	fs::directory_iterator end_iter;
+
+	list<fs::path> * result_set = new list<fs::path>();
+
+	if (fs::exists(dirpath) && fs::is_directory(dirpath)) {
+		for (fs::directory_iterator dir_iter(dirpath); dir_iter != end_iter;
+				++dir_iter) {
+			if (fs::is_regular_file(dir_iter->status())) {
+				result_set->push_back(*dir_iter);
+			}
+		}
+	}
+	return result_set;
+}
 
 string * Anakin::get_file_contents(const string & filename) {
 	ifstream in(filename, ios::in | ios::binary);

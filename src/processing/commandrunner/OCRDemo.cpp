@@ -8,11 +8,15 @@
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <output/communicationFormatter/ICommunicationFormatter.hpp>
 #include <output/DataOutput.hpp>
+#include <output/JSON.h>
+#include <output/JSONValue.h>
 #include <processing/commandrunner/OCRDemo.hpp>
 #include <processing/Flags.hpp>
 #include <processing/ocr/OCRDetector.hpp>
 #include <sys/types.h>
+#include <utils/Constants.hpp>
 #include <utils/help/HelpOCRDemo.hpp>
+#include <sstream>
 
 namespace Anakin {
 
@@ -38,6 +42,7 @@ void OCRDemo::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
 
 	flags->setOverridingFlag("ocrDemo");
 	flags->setOverridingFlag("ocrAdvDemo");
+	flags->setOptionalFlag(Constants::PARAM_REQID);
 
 	//OCR flags
 	flags->setOptionalFlag("ocr");
@@ -64,7 +69,7 @@ void OCRDemo::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
 }
 
 void OCRDemo::validateRequest(vector<string> *input) {
-
+	reqID = "";
 	if (flags->validateInput(input)) {
 		vector<string>* values = NULL;
 
@@ -75,6 +80,16 @@ void OCRDemo::validateRequest(vector<string> *input) {
 		if (flags->flagFound("ocrAdvDemo")) {
 			run_ocr_adv_demo = true;
 			return;
+		}
+		if (flags->flagFound(Constants::PARAM_REQID)) {
+			values = flags->getFlagValues(Constants::PARAM_REQID);
+			if (values->size() != 1) {
+				lastError = "flag " + Constants::PARAM_REQID
+						+ " expects only one value";
+				inputError = true;
+				return;
+			}
+			reqID = values->at(0);
 		}
 		if (flags->flagFound("ocr")) {
 			values = flags->getFlagValues("ocr");

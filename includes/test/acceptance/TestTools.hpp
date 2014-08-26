@@ -8,6 +8,8 @@
 #ifndef TESTTOOLS_HPP_
 #define TESTTOOLS_HPP_
 
+#include <CompileConfigurations.hpp>
+
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <boost/chrono/duration.hpp>
@@ -56,6 +58,11 @@ void printTestMsj(string msj, uint testRepetition);
 void printStatistics(StatisticsCollector* collector);
 
 /**
+ *  Print final statistics for a single command
+ */
+void printStatistics(StatisticsCollector* collector, const string & command);
+
+/**
  * kill the process with pid = childPIDtoKill, and pid>0
  */
 void killThread(pthread_t * threadToKill);
@@ -69,8 +76,9 @@ string pathToAnakinPath(fs::path path);
  * Execute a system call to a specific program. If vforkExit is true, _exit() will be
  * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
  * the child PID will be killed by a signal before exit;
+ * Return elapsed time in miliseconds (if vervose only)
  */
-void command(StatisticsCollector* collector, bool verbose, string command,
+double command(StatisticsCollector* collector, bool verbose, string command,
 		bool showLogMsjIfFail = false);
 
 /**

@@ -5,6 +5,8 @@
  *      Author: Franco Pellegrini
  */
 
+#include <CompileConfigurations.hpp>
+
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <test/acceptance/TestTools.hpp>
@@ -85,6 +87,16 @@ void printStatistics(StatisticsCollector* collector) {
 /**
  *  Print final statistics
  */
+void printStatistics(StatisticsCollector* collector, const string & command) {
+	cout << endl << "===============================================\n"
+			<< "************  Benchmark Results  **************\n"
+			<< "===============================================\n"
+			<< collector->computeOnly(command);
+}
+
+/**
+ *  Print final statistics
+ */
 void printTestMsj(string msj, uint testRepetition) {
 	cout << endl
 			<< "======================================================================"
@@ -112,8 +124,9 @@ string pathToAnakinPath(fs::path path) {
  * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
  * the child PID will be killed by a signal before exit;
  */
-void command(StatisticsCollector* collector, bool verbose, string command,
+double command(StatisticsCollector* collector, bool verbose, string command,
 		bool showLogMsjIfFail) {
+	double elpasedTime = 0;
 	if (verbose) {
 		cout
 				<< "______________________________________________________________________"
@@ -130,15 +143,16 @@ void command(StatisticsCollector* collector, bool verbose, string command,
 	} else {
 		if (verbose) {
 			auto delay = chrono::high_resolution_clock::now() - begin;
-			double ms = (double) std::chrono::duration_cast<
+			elpasedTime = (double) std::chrono::duration_cast<
 					std::chrono::milliseconds>(delay).count();
 
-			cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
+			cout << endl << "* Elapsed Time: " << elpasedTime << " ms." << endl;
 			if (collector != NULL) {
-				collector->addItem(command, ms);
+				collector->addItem(command, elpasedTime);
 			}
 		}
 	}
+	return elpasedTime;
 }
 
 /**
@@ -190,6 +204,14 @@ void testingDirCheck(int argc, const char * argv[]) {
 	fs::path simpleTest = testDir / "examples" / "simpleTest";
 	validateDir(simpleTest / "input-logos",
 			"Extractor input logos (for examples)");
+
+	fs::path OCRDemoBenchmark = testDir / "examples" / "ocr";
+	validateDir(OCRDemoBenchmark / "dataset_images",
+			"OCR Image dataset");
+	validateDir(OCRDemoBenchmark / "text_localization",
+			"OCR Image dataset text localization");
+	validateDir(OCRDemoBenchmark / "word_recognition",
+			"OCR Image dataset word recognition");
 
 	//--------------------------------------------------------------
 	//  Files validation

@@ -42,6 +42,16 @@ string StatisticsCollector::compute() {
 	return output.str();
 }
 
+string StatisticsCollector::computeOnly(const string & command) {
+	boost::mutex::scoped_lock l(StatisticsCollector::GetMutex());
+	std::stringstream output;
+	StatisticData data = items.at(command);
+	output << "Worst " << data.worstTime << " ms. | Best " << data.bestTime
+			<< " ms. | Avg " << data.getAvgTime() << " ms. | Executed "
+			<< data.samples << " times | Command: " << command << '\n';
+	return output.str();
+}
+
 StatisticsCollector::~StatisticsCollector() {
 	// TODO Auto-generated destructor stub
 }
