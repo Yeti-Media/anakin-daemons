@@ -27,15 +27,18 @@ using namespace Anakin;
 
 namespace Testing {
 
-BOOST_AUTO_TEST_SUITE(StringUtilsTests)
+BOOST_AUTO_TEST_SUITE(StringUtilsSuite)
 
 BOOST_AUTO_TEST_CASE(Levenshtein_distance) {
-	string s1 = "Hola como estas ";
-	string s2 = "Hola como estas";
-	int diff = stringutils::levenshteinDistance(s1, s2);
-
-	BOOST_MESSAGE("diff = " + to_string(diff));
-	BOOST_CHECK(diff == 0);
+	BOOST_CHECK(
+			stringutils::levenshteinDistance("Hola como estas",
+					"Hola como estas") == 0);
+	BOOST_CHECK(
+			stringutils::levenshteinDistance("Hola- como estas",
+					"Hola como estas") == 1);
+	BOOST_CHECK(
+			stringutils::levenshteinDistance("Hola estas", "Hola como estas?")
+					== 6);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

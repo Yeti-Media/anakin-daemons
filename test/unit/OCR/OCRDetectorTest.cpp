@@ -27,89 +27,89 @@ using namespace Anakin;
 
 namespace Testing {
 
-	/**
-	 * Used for test case common initialization (Test directory).
-	 */
-	struct PathFixtureOCRDetectorTest {
+/**
+ * Used for test case common initialization (Test directory).
+ */
+struct PathFixtureOCRDetectorTest {
 
-		boost::filesystem::path testDir;
+	boost::filesystem::path testDir;
 
-		PathFixtureOCRDetectorTest() {
-			BOOST_TEST_MESSAGE("setup fixture");
+	PathFixtureOCRDetectorTest() {
+		BOOST_TEST_MESSAGE("setup fixture");
 
-			int argc = boost::unit_test::framework::master_test_suite().argc;
-			char** argv = boost::unit_test::framework::master_test_suite().argv;
+		int argc = boost::unit_test::framework::master_test_suite().argc;
+		char** argv = boost::unit_test::framework::master_test_suite().argv;
 
-			if (argc < 2) {
-				BOOST_FAIL("First param must be a testing directory.\n");
-			}
-
-			string dir;
-			//BOOST bug fixing about space and dirs
-			for (int i = 1; i < argc; i++) {
-				dir.append(argv[i]);
-				if (i < argc - 1) {
-					dir.append(" ");
-				}
-			}
-
-			testDir = dir;
-			BOOST_REQUIRE_MESSAGE(fs::is_directory(testDir),
-					"Test directory " << testDir << " not found");
-		}
-		~PathFixtureOCRDetectorTest() {
-			BOOST_TEST_MESSAGE("teardown fixture");
+		if (argc < 2) {
+			BOOST_FAIL("First param must be a testing directory.\n");
 		}
 
-	};
+		string dir;
+		//BOOST bug fixing about space and dirs
+		for (int i = 1; i < argc; i++) {
+			dir.append(argv[i]);
+			if (i < argc - 1) {
+				dir.append(" ");
+			}
+		}
+
+		testDir = dir;
+		BOOST_REQUIRE_MESSAGE(fs::is_directory(testDir),
+				"Test directory " << testDir << " not found");
+	}
+	~PathFixtureOCRDetectorTest() {
+		BOOST_TEST_MESSAGE("teardown fixture");
+	}
+
+};
 
 //____________________________________________________________________________//
 
-	BOOST_FIXTURE_TEST_SUITE( OCRDetectorSuit, PathFixtureOCRDetectorTest)
+BOOST_FIXTURE_TEST_SUITE( OCRDetectorSuite, PathFixtureOCRDetectorTest)
 
-	BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
+BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 
-		boost::filesystem::path img_3 = testDir / "examples" / "ocr"
-		/ "dataset_images" / "img_3.png";
+	boost::filesystem::path img_3 = testDir / "examples" / "ocr"
+			/ "dataset_images" / "img_3.png";
 
-		if (!fs::exists(img_3)) {
-			BOOST_FAIL("Image: \"" + img_3.string() + "\" does not exists");
+	if (!fs::exists(img_3)) {
+		BOOST_FAIL("Image: \"" + img_3.string() + "\" does not exists");
+	}
+
+	string lastError;
+	OCRDetector ocrDetector(img_3.string());
+	vector<string>* results = ocrDetector.detect(lastError);
+
+	if (results == NULL) {
+		BOOST_FAIL("OCR fail: " + lastError);
+	}
+
+	if (results->empty()) {
+		BOOST_FAIL("No results found");
+	}
+
+	bool specialFound = false;
+	bool specialTShirt = false;
+	for (vector<string>::iterator word = results->begin();
+			word != results->end(); ++word) {
+		//Analyzing output
+		if (word->find("Special") != string::npos) {
+			specialFound = true;
 		}
-
-		string lastError;
-		OCRDetector ocrDetector(img_3.string());
-		vector<string>* results = ocrDetector.detect(lastError);
-
-		if (results == NULL) {
-			BOOST_FAIL("OCR fail: " + lastError);
-		}
-
-		if (results->empty()) {
-			BOOST_FAIL("No results found");
-		}
-
-		bool specialFound = false;
-		bool specialTShirt = false;
-		for (vector<string>::iterator word = results->begin();
-				word != results->end(); ++word) {
-			//Analyzing output
-			if (word->find("Special") != string::npos) {
-				specialFound = true;
-			}
-			if (word->find("T-Shirt") != string::npos) {
-				specialTShirt = true;
-			}
-		}
-
-		if (!specialFound) {
-			BOOST_FAIL("Word \"Special\" not found");
-		}
-		if (!specialTShirt) {
-			BOOST_FAIL("Word \"T-Shirt\" not found");
+		if (word->find("T-Shirt") != string::npos) {
+			specialTShirt = true;
 		}
 	}
 
-	BOOST_AUTO_TEST_SUITE_END()
+	if (!specialFound) {
+		BOOST_FAIL("Word \"Special\" not found");
+	}
+	if (!specialTShirt) {
+		BOOST_FAIL("Word \"T-Shirt\" not found");
+	}
+}
+
+BOOST_AUTO_TEST_SUITE_END()
 
 //____________________________________________________________________________//
 

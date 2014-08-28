@@ -59,7 +59,7 @@ void splitTokens(const string& str, vector<string>& outputVector) {
  */
 void exitWithError() {
 	cerr << "\n===============================================\n"
-			<< "Acceptance test result: FAIL" << endl;
+	<< "Acceptance test result: FAIL" << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -79,9 +79,9 @@ void exitWithSucces() {
  */
 void printStatistics(StatisticsCollector* collector) {
 	cout << endl << "===============================================\n"
-			<< "************  Benchmark Results  **************\n"
-			<< "===============================================\n"
-			<< collector->compute();
+	<< "************  Benchmark Results  **************\n"
+	<< "===============================================\n"
+	<< collector->compute();
 }
 
 /**
@@ -89,9 +89,9 @@ void printStatistics(StatisticsCollector* collector) {
  */
 void printStatistics(StatisticsCollector* collector, const string & command) {
 	cout << endl << "===============================================\n"
-			<< "************  Benchmark Results  **************\n"
-			<< "===============================================\n"
-			<< collector->computeOnly(command);
+	<< "************  Benchmark Results  **************\n"
+	<< "===============================================\n"
+	<< collector->computeOnly(command);
 }
 
 /**
@@ -99,11 +99,11 @@ void printStatistics(StatisticsCollector* collector, const string & command) {
  */
 void printTestMsj(string msj, uint testRepetition) {
 	cout << endl
-			<< "======================================================================"
-			<< endl << "***** Testing: " << msj << endl
-			<< "***** Repetition number " << testRepetition << endl
-			<< "======================================================================"
-			<< endl;
+	<< "======================================================================"
+	<< endl << "***** Testing: " << msj << endl
+	<< "***** Repetition number " << testRepetition << endl
+	<< "======================================================================"
+	<< endl;
 }
 
 /**
@@ -129,9 +129,9 @@ double command(StatisticsCollector* collector, bool verbose, string command,
 	double elpasedTime = 0;
 	if (verbose) {
 		cout
-				<< "______________________________________________________________________"
-				<< endl << "* Command \"" << command << "\" executed" << endl
-				<< "* Output:" << endl << endl;
+		<< "______________________________________________________________________"
+		<< endl << "* Command \"" << command << "\" executed" << endl
+		<< "* Output:" << endl << endl;
 	}
 	auto begin = chrono::high_resolution_clock::now();
 	if (system(command.c_str()) != 0) {
@@ -144,7 +144,7 @@ double command(StatisticsCollector* collector, bool verbose, string command,
 		if (verbose) {
 			auto delay = chrono::high_resolution_clock::now() - begin;
 			elpasedTime = (double) std::chrono::duration_cast<
-					std::chrono::milliseconds>(delay).count();
+			std::chrono::milliseconds>(delay).count();
 
 			cout << endl << "* Elapsed Time: " << elpasedTime << " ms." << endl;
 			if (collector != NULL) {
@@ -227,8 +227,8 @@ void testingDirCheck(int argc, const char * argv[]) {
 	std::size_t found = scriptContent->find("DROP DATABASE IF EXISTS");
 	if (found != std::string::npos) {
 		cerr
-				<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
-				<< sqlScriptPath << endl;
+		<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
+		<< sqlScriptPath << endl;
 		exitWithError();
 	}
 
@@ -264,9 +264,9 @@ void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 		StatisticsCollector* collector) {
 	command(collector, true,
 			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
-					+ " 2> "
-					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
+			+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
+			+ " 2> "
+			+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
 			true);
 	pthread_join(*thread, NULL);
 	delete thread;
@@ -274,10 +274,10 @@ void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 
 void printStep(string test, int number) {
 	cout << endl
-			<< "----------------------------------------------------------------------"
-			<< endl << "* Testing: " << test << " - Step " << number << endl
-			<< "----------------------------------------------------------------------"
-			<< endl;
+	<< "----------------------------------------------------------------------"
+	<< endl << "* Testing: " << test << " - Step " << number << endl
+	<< "----------------------------------------------------------------------"
+	<< endl;
 }
 
 #endif  /*COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING*/

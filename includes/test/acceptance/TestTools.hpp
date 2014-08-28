@@ -122,10 +122,10 @@ template<class SpecificSimpleProgram>
 void runProgram(StatisticsCollector* collector, string currentCommand) {
 	Program* program = new SpecificSimpleProgram();
 	cout
-			<< "______________________________________________________________________"
-			<< endl << "* Program: " << program->getProgramName() << endl
-			<< "* Command \"" << currentCommand << "\" executed" << endl
-			<< "* Output:" << endl << endl;
+	<< "______________________________________________________________________"
+	<< endl << "* Program: " << program->getProgramName() << endl
+	<< "* Command \"" << currentCommand << "\" executed" << endl
+	<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
@@ -134,7 +134,7 @@ void runProgram(StatisticsCollector* collector, string currentCommand) {
 	if (collector != NULL) {
 		auto delay = chrono::high_resolution_clock::now() - begin;
 		double ms = (double) std::chrono::duration_cast<
-				std::chrono::milliseconds>(delay).count();
+		std::chrono::milliseconds>(delay).count();
 
 		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
 		collector->addItem(program->getProgramName() + " " + currentCommand,
@@ -150,7 +150,7 @@ struct DaemonArgs {
 	Program* program;
 	vector<string> * input;
 	DaemonArgs(Program* program, vector<string> * input) :
-			program(program), input(input) {
+	program(program), input(input) {
 	}
 	~DaemonArgs() {
 		delete program;
@@ -168,10 +168,10 @@ pthread_t * runDaemonProgram(string currentCommand) {
 	SpecificDaemon commandRunner;
 	Program* program = new Daemon<SpecificDaemon>();
 	cout
-			<< "______________________________________________________________________"
-			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
-			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
-			<< "* Output:" << endl << endl;
+	<< "______________________________________________________________________"
+	<< endl << "* Daemon Program: " << commandRunner.getProgramName()
+	<< endl << "* Command \"" << currentCommand << "\" executed" << endl
+	<< "* Output:" << endl << endl;
 	vector<string> * input = new vector<string>(0);
 	splitTokens(currentCommand, *input);
 

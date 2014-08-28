@@ -67,7 +67,7 @@ struct PathFixture {
 
 //____________________________________________________________________________//
 
-BOOST_FIXTURE_TEST_SUITE( logging , PathFixture)
+BOOST_FIXTURE_TEST_SUITE( LoggingSuite , PathFixture)
 
 BOOST_FIXTURE_TEST_CASE( file_output, PathFixture ) {
 

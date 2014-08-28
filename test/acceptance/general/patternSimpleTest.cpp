@@ -88,7 +88,7 @@ void patternSimpleTest(int argc, const char * argv[],
 		//run SQL script into database.
 		command(NULL, false,
 				"psql -U " + userDB + " -d " + database + " -q -f "
-						+ pathToAnakinPath(sqlScriptPath));
+				+ pathToAnakinPath(sqlScriptPath));
 
 		//dir cleanups
 		dirCleanup(outputLogos);
@@ -108,21 +108,21 @@ void patternSimpleTest(int argc, const char * argv[],
 
 		runProgram<PatternExtractor>(collector,
 				"-oLogFile " + pathToAnakinPath(logsExtractor)
-						+ " -matching -iFolder " + pathToAnakinPath(inputLogos)
-						+ " -oPath " + pathToAnakinPath(outputLogos)
-						+ " -lod -xml");
+				+ " -matching -iFolder " + pathToAnakinPath(inputLogos)
+				+ " -oPath " + pathToAnakinPath(outputLogos)
+				+ " -lod -xml");
 
 		runProgram<PatternExtractor>(collector,
 				"-oLogFile " + pathToAnakinPath(logsExtractor)
-						+ " -matching -iFile " + pathToAnakinPath(severalJPG)
-						+ " -oPath " + pathToAnakinPath(outputs)
-						+ " -lod -xml");
+				+ " -matching -iFile " + pathToAnakinPath(severalJPG)
+				+ " -oPath " + pathToAnakinPath(outputs)
+				+ " -lod -xml");
 
 		runProgram<PatternExtractor>(collector,
 				"-oLogFile " + pathToAnakinPath(logsExtractor)
-						+ " -matching -iFile " + pathToAnakinPath(dpizzaPNG)
-						+ " -oPath " + pathToAnakinPath(outputs)
-						+ " -lod -xml");
+				+ " -matching -iFile " + pathToAnakinPath(dpizzaPNG)
+				+ " -oPath " + pathToAnakinPath(outputs)
+				+ " -lod -xml");
 
 		//--------------------------------------------------------------
 		//  Step 2 - DBconnector Basic Test
@@ -131,16 +131,16 @@ void patternSimpleTest(int argc, const char * argv[],
 
 		runProgram<PatternDBConnector>(collector,
 				"-oLogFile " + pathToAnakinPath(logsDbConnector)
-						+ " -scenes -path " + pathToAnakinPath(severalXML));
+				+ " -scenes -path " + pathToAnakinPath(severalXML));
 
 		runProgram<PatternDBConnector>(collector,
 				"-oLogFile " + pathToAnakinPath(logsDbConnector)
-						+ " -scenes -path " + pathToAnakinPath(dpizzaXML));
+				+ " -scenes -path " + pathToAnakinPath(dpizzaXML));
 
 		runProgram<PatternDBConnector>(collector,
 				"-oLogFile " + pathToAnakinPath(logsDbConnector)
-						+ " -user 1 -path " + pathToAnakinPath(outputLogos)
-						+ " -patterns");
+				+ " -user 1 -path " + pathToAnakinPath(outputLogos)
+				+ " -patterns");
 
 		//--------------------------------------------------------------
 		//  Step 3 - Trainer Basic Test
@@ -148,15 +148,15 @@ void patternSimpleTest(int argc, const char * argv[],
 		printStep(testName, 3);
 		runProgram<PatternTrainer>(collector,
 				"-oLogFile " + pathToAnakinPath(logsTrainer)
-						+ " -user 1 -saveToFile "
-						+ pathToAnakinPath(trainerOutput));
+				+ " -user 1 -saveToFile "
+				+ pathToAnakinPath(trainerOutput));
 		//--------------------------------------------------------------
 		//  Step 4 - DBconnector Basic Test (continue)
 		//--------------------------------------------------------------
 		printStep(testName, 4);
 		runProgram<PatternDBConnector>(collector,
 				"-oLogFile " + pathToAnakinPath(logsDbConnector) + " -index "
-						+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns");
+				+ pathToAnakinPath(trainerOutput) + " 1 -savePatterns");
 
 		//--------------------------------------------------------------
 		//  Step 5 - PatternMatching Basic Test
@@ -166,7 +166,7 @@ void patternSimpleTest(int argc, const char * argv[],
 		pthread_t * thread = NULL;
 		thread = runDaemonProgram<PatternMatcher>(
 				"-oLogFile " + pathToAnakinPath(logsAnakin)
-						+ " -iHTTP 8080 -oHTTP -verbose");
+				+ " -iHTTP 8080 -oHTTP -verbose");
 
 		//check if the server start
 		bool serverStarted = false;
@@ -183,8 +183,8 @@ void patternSimpleTest(int argc, const char * argv[],
 
 			command(collector, true,
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-							+ pathToAnakinPath(lastStdout) + " 2> "
-							+ pathToAnakinPath(lastStderr), true);
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 			cout << "* Request number " << query << endl;
 
 			//Analyzing output
@@ -192,30 +192,30 @@ void patternSimpleTest(int argc, const char * argv[],
 			string * capture = get_file_contents(lastStdout.string());
 			if (capture->find(pattern) == string::npos) {
 				cerr
-						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << *capture << endl << endl
-						<< "and should replied something that start with:"
-						<< endl << endl << pattern << endl;
+				<< "PatternMatching subprogram wrong output. Anakin replied:"
+				<< endl << endl << *capture << endl << endl
+				<< "and should replied something that start with:"
+				<< endl << endl << pattern << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
 
 			pattern =
-					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
+			"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
 			if (capture->find(pattern) == string::npos) {
 				// compare with a similar pattern.
 				pattern =
-						"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":228.708847045898,\"y\":151.395462036133},\"label\":\"9\"}]}]}";
+				"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":228.708847045898,\"y\":151.395462036133},\"label\":\"9\"}]}]}";
 				if (capture->find(pattern) == string::npos) {
 					// compare with a similar pattern.
 					pattern =
-							"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.288116455078,\"y\":151.411666870117},\"label\":\"9\"}]}]}";
+					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.288116455078,\"y\":151.411666870117},\"label\":\"9\"}]}]}";
 					if (capture->find(pattern) == string::npos) {
 						cerr
-								<< "PatternMatching subprogram wrong output. Anakin replied:"
-								<< endl << endl << *capture << endl << endl
-								<< "and should replied something that end with:"
-								<< endl << endl << pattern << endl;
+						<< "PatternMatching subprogram wrong output. Anakin replied:"
+						<< endl << endl << *capture << endl << endl
+						<< "and should replied something that end with:"
+						<< endl << endl << pattern << endl;
 						stopAnakinHTTP(thread, logsDir, NULL);
 						exitWithError();
 					}
@@ -228,8 +228,8 @@ void patternSimpleTest(int argc, const char * argv[],
 			//Trying other query
 			command(collector, true,
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":2}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-							+ pathToAnakinPath(lastStdout) + " 2> "
-							+ pathToAnakinPath(lastStderr), true);
+					+ pathToAnakinPath(lastStdout) + " 2> "
+					+ pathToAnakinPath(lastStderr), true);
 			cout << "* Request number " << query << endl;
 
 			//Analyzing output
@@ -237,22 +237,22 @@ void patternSimpleTest(int argc, const char * argv[],
 			string * capture2 = get_file_contents(lastStdout.string());
 			if (capture2->find(pattern2) == string::npos) {
 				cerr
-						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << *capture2 << endl << endl
-						<< "and should replied something that start with:"
-						<< endl << endl << pattern2 << endl;
+				<< "PatternMatching subprogram wrong output. Anakin replied:"
+				<< endl << endl << *capture2 << endl << endl
+				<< "and should replied something that start with:"
+				<< endl << endl << pattern2 << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
 
 			pattern2 =
-					"\",\"values\":[{\"label\":\"2\",\"values\":[{\"center\":{\"x\":133.31559753418,\"y\":146.899322509766},\"label\":\"7\"}]}]}";
+			"\",\"values\":[{\"label\":\"2\",\"values\":[{\"center\":{\"x\":133.31559753418,\"y\":146.899322509766},\"label\":\"7\"}]}]}";
 			if (capture2->find(pattern2) == string::npos) {
 				cerr
-						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << *capture2 << endl << endl
-						<< "and should replied something that end with:" << endl
-						<< endl << pattern2 << endl;
+				<< "PatternMatching subprogram wrong output. Anakin replied:"
+				<< endl << endl << *capture2 << endl << endl
+				<< "and should replied something that end with:" << endl
+				<< endl << pattern2 << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
@@ -262,12 +262,12 @@ void patternSimpleTest(int argc, const char * argv[],
 
 		//Closing remaining connections
 		cout << endl
-				<< "******* Closing remaining connections (ignore warning) *********"
-				<< endl;
+		<< "******* Closing remaining connections (ignore warning) *********"
+		<< endl;
 		command(NULL, false,
 				"psql -U " + userDB + " -d " + database + " -q -n -c "
-						+ "\"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'"
-						+ database + "\' AND pid <> pg_backend_pid();\"");
+				+ "\"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'"
+				+ database + "\' AND pid <> pg_backend_pid();\"");
 
 	} // testRepetition cicle
 }

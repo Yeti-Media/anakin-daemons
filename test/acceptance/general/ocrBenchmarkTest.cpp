@@ -78,7 +78,7 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCRDemo>(
 			"-oLogFile " + pathToAnakinPath(logsOCR_Demo)
-					+ " -iHTTP 8080 -oHTTP -verbose");
+			+ " -iHTTP 8080 -oHTTP -verbose");
 
 	//check if the server start
 	bool serverStarted = false;
@@ -98,22 +98,22 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 		for (list<fs::path>::iterator file = filesToTest->begin();
 				file != filesToTest->end(); ++file) {
 			string cmd =
-					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"ocr\", \"ocr\":\""
-							+ (*file).string()
-							+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
+			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"ocr\", \"ocr\":\""
+			+ (*file).string()
+			+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
 			fs::path outputFileName = outputs
-					/ (*file).filename().replace_extension(".txt");
+			/ (*file).filename().replace_extension(".txt");
 			collector->addItem("OCR",
 					command(collector, true,
 							cmd + pathToAnakinPath(outputFileName) + " 2> "
-									+ pathToAnakinPath(lastStderr), true));
+							+ pathToAnakinPath(lastStderr), true));
 
 			//Analyzing output
 			string pattern2 = "\"error_type\"";
 			string * capture2 = get_file_contents(outputFileName.string());
 			if (capture2->find(pattern2) != string::npos) {
 				cerr << "OCR replied with an error:" << endl << endl
-						<< *capture2 << endl << endl;
+				<< *capture2 << endl << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
