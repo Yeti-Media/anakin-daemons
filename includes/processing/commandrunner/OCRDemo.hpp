@@ -34,19 +34,12 @@ public:
 	string getProgramName();
 private:
 	I_CommunicationFormatter* cf;
-	bool run_ocr_demo = false;
-	bool run_ocr_adv_demo = false;
 	bool run_ocr_detect = false;
-	vector<pair<cv::Point*, cv::Point*>> ocrRois;
-	float histSafeOffset = 0;
-	bool show = false;
-	int clearEvery = 0;
-	char mode = 0;
 	string lang = "eng";
 	string datapath = "";
 	string scenesDir = "landscapes/forest";
 	int ocrMode = 0;
-	wstring* resultAsJSONValue(vector<string>* ocrRecognizedText);//move this to communicationFormatter
+	wstring* resultAsJSONValue(vector<string>* ocrRecognizedText); //move this to communicationFormatter
 };
 
 }

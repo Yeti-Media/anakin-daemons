@@ -229,7 +229,7 @@ vector<vector<string>*>* Server<SpecificCommandRunner>::getInputs(
 template<class SpecificCommandRunner>
 vector<string>* Server<SpecificCommandRunner>::rawToInput(string rawInput) {
 	vector<string> *input = new vector<string>(0);
-	stringutils::tokenizeWordsIgnoringQuoted(rawInput,*input);
+	stringutils::tokenizeWordsIgnoringQuoted(rawInput, *input);
 	return input;
 }
 

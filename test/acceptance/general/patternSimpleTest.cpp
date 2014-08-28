@@ -25,7 +25,8 @@
  * This is a very simple test used as an example, and for quickly test all the
  * programs and subprograms from Anakin.
  */
-void patternSimpleTest(int argc, const char * argv[], StatisticsCollector* collector) {
+void patternSimpleTest(int argc, const char * argv[],
+		StatisticsCollector* collector) {
 
 	//--------------------------------------------------------------
 	//  Test Setup

@@ -168,7 +168,6 @@ wstring* CommunicationFormatterJSON::format(vector<string>* text) {
 		//wstringstream ws;
 		string s = text->at(v);
 		wstring wsTmp(s.begin(), s.end());
-		wcout << "wsTmp: " << wsTmp << endl;
 		JSONObject jText;
 		//ws << text->at(v).c_str();
 		jText[L"text"] = new JSONValue(wsTmp); //(ws.str());
@@ -196,7 +195,7 @@ string* CommunicationFormatterJSON::formatRequest(const char * data) {
 		std::string saction(waction.begin(), waction.end());
 //			saction.append(" ");
 //			request->append("-");
-		request->append("\""+saction+"\"");
+		request->append("\"" + saction + "\"");
 	}
 	if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
 		request->append("-" + Constants::PARAM_IDXS + " ");
