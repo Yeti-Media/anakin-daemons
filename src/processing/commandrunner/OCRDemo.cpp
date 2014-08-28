@@ -46,24 +46,13 @@ void OCRDemo::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
 
 	//OCR flags
 	flags->setOptionalFlag("ocr");
-	flags->setOptionalFlag("rois");
 	flags->setOptionalFlag("reqID");
-	flags->setDependence("rois", "ocr");
-	flags->setOptionalFlag("clearEvery");
-	flags->setDependence("clearEvery", "ocr");
 	flags->setOptionalFlag("lang");
 	flags->setOptionalFlag("datapath");
 	flags->setOptionalFlag("mode");
 	flags->setDependence("lang", "ocr");
 	flags->setDependence("datapath", "ocr");
 	flags->setDependence("mode", "ocr");
-
-	flags->setNoValuesFlag("show");
-	vector<string>* showLooseDeps = new vector<string>(0);
-	showLooseDeps->push_back("landscape");
-	showLooseDeps->push_back("ocr");
-	showLooseDeps->push_back("face");
-	flags->setLooseDependencies("show", showLooseDeps);
 
 	flags->setVerbose(true);
 }
@@ -73,14 +62,6 @@ void OCRDemo::validateRequest(vector<string> *input) {
 	if (flags->validateInput(input)) {
 		vector<string>* values = NULL;
 
-		if (flags->flagFound("ocrDemo")) {
-			run_ocr_demo = true;
-			return;
-		}
-		if (flags->flagFound("ocrAdvDemo")) {
-			run_ocr_adv_demo = true;
-			return;
-		}
 		if (flags->flagFound(Constants::PARAM_REQID)) {
 			values = flags->getFlagValues(Constants::PARAM_REQID);
 			if (values->size() != 1) {
@@ -93,12 +74,6 @@ void OCRDemo::validateRequest(vector<string> *input) {
 		}
 		if (flags->flagFound("ocr")) {
 			values = flags->getFlagValues("ocr");
-//			for (vector<string>::iterator flag = values->begin();
-//					flag != values->end(); ++flag) {
-//				cout << "** PARSED FLAGS" << endl;
-//				cout << *flag << endl;
-//				cout << "** END PARSED FLAGS" << endl;
-//			}
 			if (values->size() != 1) {
 				lastError = "flag ocr expects only one value";
 				inputError = true;
@@ -116,47 +91,12 @@ void OCRDemo::validateRequest(vector<string> *input) {
 			}
 			reqID = values->at(0);
 		}
-		if (flags->flagFound("rois")) {
-			values = flags->getFlagValues("rois");
-			if (values->size() > 0 && values->size() % 4 == 0) {
-				for (uint v = 0; v < values->size(); v += 4) {
-					int p1x = stof(values->at(v));
-					int p1y = stof(values->at(v + 1));
-					int p2x = stof(values->at(v + 2));
-					int p2y = stof(values->at(v + 3));
-					cv::Point* p1 = new cv::Point(p1x, p1y);
-					cv::Point* p2 = new cv::Point(p2x, p2y);
-					std::pair<cv::Point*, cv::Point*> roi(p1, p2);
-					ocrRois.push_back(roi);
-				}
-				histSafeOffset = stof(values->at(0));
-			} else {
-				lastError = "flag rois expects only one value";
-				inputError = true;
-				return;
-			}
-		}
-
-		if (flags->flagFound("show")) {
-			show = true;
-		}
-
-		if (flags->flagFound("clearEvery")) {
-			values = flags->getFlagValues("clearEvery");
-			if (values->size() == 1) {
-				clearEvery = stoi(values->at(0));
-			} else {
-				lastError = "flag clearEvery expects only one value";
-				inputError = true;
-				return;
-			}
-		}
 
 		if (flags->flagFound("mode")) {
 			values = flags->getFlagValues("mode");
 			if (values->size() == 1) {
-				mode = stoi(values->at(0));
-				if (mode < 0 || mode > 3) {
+				ocrMode = stoi(values->at(0));
+				if (ocrMode < 0 || ocrMode > 3) {
 					lastError = "param mode use values from 0 to 3";
 					inputError = true;
 					return;
@@ -207,27 +147,21 @@ void OCRDemo::run() {
 	}
 	int ireqID = stoi(reqID);
 
-	if (run_ocr_demo) {
-		OCRDetector ocrDetector("eng", "ocrTest.png");
-		ocrDetector.basic_demo();
-		return;
-	}
-
-	if (run_ocr_adv_demo) {
-		OCRDetector ocrDetector("eng", "ocrTest.png");
-		ocrDetector.demo();
-		return;
-	}
-
+	string lastError;
 	datapath = "/usr/share/tesseract-ocr/";
-	OCRDetector ocrDetector(scenesDir, datapath, lang,
-			ocrMode);
-	vector<string>* results = ocrDetector.detect(&ocrRois, show, clearEvery);
+	OCRDetector ocrDetector(scenesDir, datapath, lang, ocrMode);
+	vector<string>* results = ocrDetector.detect(lastError);
 	vector<wstring*> jsonresults;
 
+	if (results == NULL) {
+		this->out->error(
+				this->cf->outputError(
+						I_CommunicationFormatter::CF_ERROR_TYPE_ERROR,
+						lastError, "CommandRunner::run"));
+		return;
+	}
 
 	jsonresults.push_back(this->cf->format(results));
-	wcout << "resultado ocr" << *jsonresults.at(0) << endl;
 
 	this->out->output(
 			this->cf->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,

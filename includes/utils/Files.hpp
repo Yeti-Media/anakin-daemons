@@ -20,7 +20,6 @@ namespace fs = boost::filesystem;
 
 namespace Anakin {
 
-
 /**
  * get a list of files from a dir
  */

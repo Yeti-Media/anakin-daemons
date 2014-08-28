@@ -206,8 +206,7 @@ void testingDirCheck(int argc, const char * argv[]) {
 			"Extractor input logos (for examples)");
 
 	fs::path OCRDemoBenchmark = testDir / "examples" / "ocr";
-	validateDir(OCRDemoBenchmark / "dataset_images",
-			"OCR Image dataset");
+	validateDir(OCRDemoBenchmark / "dataset_images", "OCR Image dataset");
 	validateDir(OCRDemoBenchmark / "text_localization",
 			"OCR Image dataset text localization");
 	validateDir(OCRDemoBenchmark / "word_recognition",

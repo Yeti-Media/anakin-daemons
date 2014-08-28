@@ -12,16 +12,11 @@ using namespace std;
 
 namespace Anakin {
 
-class OCRDetector{
+class OCRDetector {
 public:
 	OCRDetector(string imgPath, string datapath = "/usr/share/tesseract-ocr/",
 			string lang = "eng", int mode = 0);
-	int demo();
-	int basic_demo();
-	vector<string>* detect(vector<pair<cv::Point*, cv::Point*>>* rectangles,
-			bool show = false, int clearCount = 0);
-	void clean();
-	void clear();
+	vector<string>* detect(string & lastError);
 protected:
 private:
 	bool init(bool loadImg = true);
@@ -34,4 +29,4 @@ private:
 
 }
 
-#endif // OCRDETECTOR_HPP
+#endif // OCRDETECTOR_HPP
