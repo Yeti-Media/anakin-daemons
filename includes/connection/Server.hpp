@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utils/StringUtils.hpp>
 
 namespace fs = boost::filesystem;
 using namespace std;
@@ -228,12 +229,7 @@ vector<vector<string>*>* Server<SpecificCommandRunner>::getInputs(
 template<class SpecificCommandRunner>
 vector<string>* Server<SpecificCommandRunner>::rawToInput(string rawInput) {
 	vector<string> *input = new vector<string>(0);
-	stringstream ss_input(rawInput);
-	while (ss_input.good()) {
-		string value;
-		ss_input >> value;
-		input->push_back(value);
-	}
+	stringutils::tokenizeWordsIgnoringQuoted(rawInput,*input);
 	return input;
 }
 

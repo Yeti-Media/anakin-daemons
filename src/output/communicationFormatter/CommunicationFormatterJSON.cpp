@@ -160,7 +160,7 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	return new wstring(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterJSON::format(vector<string>* text){
+wstring* CommunicationFormatterJSON::format(vector<string>* text) {
 
 	JSONObject root;
 	JSONArray texts;
@@ -171,7 +171,7 @@ wstring* CommunicationFormatterJSON::format(vector<string>* text){
 		wcout << "wsTmp: " << wsTmp << endl;
 		JSONObject jText;
 		//ws << text->at(v).c_str();
-		jText[L"text"] = new JSONValue(wsTmp);//(ws.str());
+		jText[L"text"] = new JSONValue(wsTmp); //(ws.str());
 		texts.push_back(new JSONValue(jText));
 	}
 
@@ -192,11 +192,11 @@ string* CommunicationFormatterJSON::formatRequest(const char * data) {
 		request->append(saction);
 	}
 	if (req->HasChild(L"ocr")) {
-			std::wstring waction = req->Child(L"ocr")->AsString();
-			std::string saction(waction.begin(), waction.end());
+		std::wstring waction = req->Child(L"ocr")->AsString();
+		std::string saction(waction.begin(), waction.end());
 //			saction.append(" ");
 //			request->append("-");
-			request->append(saction);
+		request->append("\""+saction+"\"");
 	}
 	if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
 		request->append("-" + Constants::PARAM_IDXS + " ");

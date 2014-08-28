@@ -93,6 +93,12 @@ void OCRDemo::validateRequest(vector<string> *input) {
 		}
 		if (flags->flagFound("ocr")) {
 			values = flags->getFlagValues("ocr");
+//			for (vector<string>::iterator flag = values->begin();
+//					flag != values->end(); ++flag) {
+//				cout << "** PARSED FLAGS" << endl;
+//				cout << *flag << endl;
+//				cout << "** END PARSED FLAGS" << endl;
+//			}
 			if (values->size() != 1) {
 				lastError = "flag ocr expects only one value";
 				inputError = true;

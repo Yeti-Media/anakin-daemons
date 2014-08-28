@@ -158,8 +158,8 @@ void patternBenchmarkTest(int argc, const char * argv[],
 		bool serverStarted = false;
 		while (!serverStarted) {
 			sleep(2);
-			std::string * capture = get_file_contents(logsAnakin.c_str());
-			if (capture->find("* Server started *") != std::string::npos) {
+			string * capture = get_file_contents(logsAnakin.c_str());
+			if (capture->find("* Server started *") != string::npos) {
 				serverStarted = true;
 			}
 		}
@@ -174,8 +174,8 @@ void patternBenchmarkTest(int argc, const char * argv[],
 			cout << "* Request number " << query << endl;
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
-			std::string * capture = get_file_contents(lastStdout.c_str());
-			if (capture->find(pattern) == std::string::npos) {
+			string * capture = get_file_contents(lastStdout.c_str());
+			if (capture->find(pattern) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << *capture << endl << endl
@@ -186,7 +186,7 @@ void patternBenchmarkTest(int argc, const char * argv[],
 			}
 			pattern =
 					"\",\"values\":[{\"center\":{\"x\":202.592300415039,\"y\":361.972229003906},\"label\":\"3\"}]}]}";
-			if (capture->find(pattern) == std::string::npos) {
+			if (capture->find(pattern) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << *capture << endl << endl

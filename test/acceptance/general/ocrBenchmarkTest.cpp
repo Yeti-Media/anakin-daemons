@@ -56,6 +56,10 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 	if (!fs::is_directory(logsDir)) {
 		fs::create_directories(logsDir);
 	}
+	if (!fs::is_directory(outputs)) {
+		fs::create_directories(outputs);
+	}
+
 	fs::path logsOCR_Demo = logsDir / "OCR_Demo_log.txt";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
@@ -80,8 +84,8 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 	bool serverStarted = false;
 	while (!serverStarted) {
 		sleep(2);
-		std::string * capture = get_file_contents(logsOCR_Demo.c_str());
-		if (capture->find("* Server started *") != std::string::npos) {
+		string * capture = get_file_contents(logsOCR_Demo.c_str());
+		if (capture->find("* Server started *") != string::npos) {
 			serverStarted = true;
 		}
 	}
@@ -89,16 +93,31 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 	list<fs::path> * filesToTest = get_file_list_from(dataset);
 
 	//repeated "query" times, to obtain solid benchmarks
-	for (int testRepetition = 1; testRepetition <= maxTestRepetition; testRepetition++) {
-		for (std::list<fs::path>::iterator file = filesToTest->begin();
+	for (int testRepetition = 1; testRepetition <= maxTestRepetition;
+			testRepetition++) {
+		for (list<fs::path>::iterator file = filesToTest->begin();
 				file != filesToTest->end(); ++file) {
 			string cmd =
 					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"ocr\", \"ocr\":\""
 							+ (*file).string()
 							+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
-			collector->addItem("OCR",command(collector, true,
-					cmd + pathToAnakinPath(lastStdout) + " 2> "
-							+ pathToAnakinPath(lastStderr), true));
+			fs::path outputFileName = outputs
+					/ (*file).filename().replace_extension(".txt");
+			collector->addItem("OCR",
+					command(collector, true,
+							cmd + pathToAnakinPath(outputFileName) + " 2> "
+									+ pathToAnakinPath(lastStderr), true));
+
+			//Analyzing output
+			string pattern2 = "\"error_type\"";
+			string * capture2 = get_file_contents(outputFileName.string());
+			if (capture2->find(pattern2) != string::npos) {
+				cerr << "OCR replied with an error:" << endl << endl
+						<< *capture2 << endl << endl;
+				stopAnakinHTTP(thread, logsDir, NULL);
+				exitWithError();
+			}
+
 			cout << "* Repetition number " << testRepetition << endl;
 		}
 

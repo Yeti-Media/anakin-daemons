@@ -171,8 +171,8 @@ void patternSimpleTest(int argc, const char * argv[], StatisticsCollector* colle
 		bool serverStarted = false;
 		while (!serverStarted) {
 			sleep(2);
-			std::string * capture = get_file_contents(logsAnakin.c_str());
-			if (capture->find("* Server started *") != std::string::npos) {
+			string * capture = get_file_contents(logsAnakin.c_str());
+			if (capture->find("* Server started *") != string::npos) {
 				serverStarted = true;
 			}
 		}
@@ -188,8 +188,8 @@ void patternSimpleTest(int argc, const char * argv[], StatisticsCollector* colle
 
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
-			std::string * capture = get_file_contents(lastStdout.string());
-			if (capture->find(pattern) == std::string::npos) {
+			string * capture = get_file_contents(lastStdout.string());
+			if (capture->find(pattern) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << *capture << endl << endl
@@ -201,15 +201,15 @@ void patternSimpleTest(int argc, const char * argv[], StatisticsCollector* colle
 
 			pattern =
 					"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
-			if (capture->find(pattern) == std::string::npos) {
+			if (capture->find(pattern) == string::npos) {
 				// compare with a similar pattern.
 				pattern =
 						"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":228.708847045898,\"y\":151.395462036133},\"label\":\"9\"}]}]}";
-				if (capture->find(pattern) == std::string::npos) {
+				if (capture->find(pattern) == string::npos) {
 					// compare with a similar pattern.
 					pattern =
 							"\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.288116455078,\"y\":151.411666870117},\"label\":\"9\"}]}]}";
-					if (capture->find(pattern) == std::string::npos) {
+					if (capture->find(pattern) == string::npos) {
 						cerr
 								<< "PatternMatching subprogram wrong output. Anakin replied:"
 								<< endl << endl << *capture << endl << endl
@@ -233,8 +233,8 @@ void patternSimpleTest(int argc, const char * argv[], StatisticsCollector* colle
 
 			//Analyzing output
 			string pattern2 = "{\"category\":\"PATTERN\",\"requestID\":\"";
-			std::string * capture2 = get_file_contents(lastStdout.string());
-			if (capture2->find(pattern2) == std::string::npos) {
+			string * capture2 = get_file_contents(lastStdout.string());
+			if (capture2->find(pattern2) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << *capture2 << endl << endl
@@ -246,7 +246,7 @@ void patternSimpleTest(int argc, const char * argv[], StatisticsCollector* colle
 
 			pattern2 =
 					"\",\"values\":[{\"label\":\"2\",\"values\":[{\"center\":{\"x\":133.31559753418,\"y\":146.899322509766},\"label\":\"7\"}]}]}";
-			if (capture2->find(pattern2) == std::string::npos) {
+			if (capture2->find(pattern2) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
 						<< endl << endl << *capture2 << endl << endl
