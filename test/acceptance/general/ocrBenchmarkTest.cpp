@@ -39,7 +39,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 		fs::create_directories(ramDir);
 	}
 
-	int maxTestRepetition = 10;
+	int maxTestRepetition = 1;
 
 	// INPUTS
 	fs::path testDir = argv[1];
@@ -81,7 +81,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCRDemo>(
 			"-oLogFile " + pathToAnakinPath(logsOCR_Demo)
-			+ " -iHTTP 8080 -oHTTP -verbose");
+			+ " -iHTTP 8080 -oHTTP -threads 8 -verbose");
 
 	//check if the server start
 	bool serverStarted = false;
@@ -106,9 +106,11 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 			+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
 			fs::path outputFileName = outputs
 			/ (*file).filename().replace_extension(".txt");
+			fs::path outputFileNameCurl = outputs
+			/ (*file).filename().replace_extension(".curl.txt");
 			command(collector, true,
 							cmd + pathToAnakinPath(outputFileName) + " 2> "
-							+ pathToAnakinPath(lastStderr), "OCR", true);
+							+ pathToAnakinPath(outputFileNameCurl), "OCR", true);
 
 			//Analyzing output
 			string pattern2 = "\"error_type\"";

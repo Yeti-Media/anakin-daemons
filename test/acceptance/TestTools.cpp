@@ -136,11 +136,10 @@ double command(StatisticsCollector* collector, bool verbose,
 		}
 		exitWithError();
 	} else {
+		auto delay = chrono::high_resolution_clock::now() - begin;
+		elpasedTime = (double) std::chrono::duration_cast<
+				std::chrono::milliseconds>(delay).count();
 		if (verbose) {
-			auto delay = chrono::high_resolution_clock::now() - begin;
-			elpasedTime = (double) std::chrono::duration_cast<
-					std::chrono::milliseconds>(delay).count();
-
 			cout << endl << "* Elapsed Time: " << elpasedTime << " ms." << endl;
 			if (collector != NULL) {
 				collector->addItem(command, group, elpasedTime);
