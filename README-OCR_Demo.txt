@@ -28,18 +28,11 @@ Summary:
 OCR demo to test.
 Usage:
 
-  ./OCRDemo -ocr <path to image> [-show | -rois <p1x p1y p2x p2y>+ | -mode <0-3> | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*> | -clearEvery <times>]
-  ./OCRDemo -ocrDemo (basic demo)
-  ./OCRDemo -ocrAdvDemo (advanced demo)
+  ./OCRDemo -ocr <path to image> [-mode <0-3> | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]
   * NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])
 
 Flags:
 
--show : this enables UI output
-   * when doing ocr detection this will show the input image and a green rectangle for each rectangle passed as argument
-   * when doing landscape detection this will show the histogram constructed from the patterns images with min, max and avg values
-   * when doing face detection this will show main and details features detected
--rois <p1x p1y p2x p2y>+ : will define rectangles in which ocr recognition will be executed
 -mode <0-3> :  sets which engine to use
    OEM_TESSERACT_ONLY(0)          : Run Tesseract only - fastest
    OEM_CUBE_ONLY(1)               : Run Cube only - better accuracy, but slower
@@ -53,5 +46,4 @@ Flags:
                                     default OEM_TESSERACT_ONLY.
 -datapath <path> : the location of tessdata folder containing the trained data files
 -lang <[~]<lang_value>[+[~]<lang_value>]*> : sets the languages to use, ~ is used to override the loading of a language
--clearEvery <times> : will clear tesseract memory every times recognitions
 

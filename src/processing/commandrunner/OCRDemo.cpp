@@ -158,6 +158,7 @@ void OCRDemo::run() {
 				this->cf->outputError(
 						I_CommunicationFormatter::CF_ERROR_TYPE_ERROR,
 						lastError, "CommandRunner::run"));
+		delete results;
 		return;
 	}
 
@@ -166,6 +167,7 @@ void OCRDemo::run() {
 	this->out->output(
 			this->cf->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,
 					jsonresults), ireqID);
+	delete results;
 }
 
 } /* namespace Anakin */

@@ -13,15 +13,11 @@
 #include <test/acceptance/TestDefinitions.hpp>
 
 int main(int argc, const char * argv[]) {
-	StatisticsCollector collector;
 	testingDirCheck(argc, argv);
 
-	//patternSimpleTest(argc, argv, &collector);
-	//patternBenchmarkTest(argc, argv, &collector);
-	//printStatistics(&collector);
-
-	ocrBenchmarkTest(argc, argv, &collector);
-	printStatistics(&collector, "OCR");
+	//patternSimpleTest(argc, argv);
+	//patternBenchmarkTest(argc, argv);
+	ocrBenchmarkTest(argc, argv);
 
 	exitWithSucces();
 }

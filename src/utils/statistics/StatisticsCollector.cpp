@@ -16,8 +16,10 @@ StatisticsCollector::StatisticsCollector() {
 
 }
 
-void StatisticsCollector::addItem(string command, double time) {
+void StatisticsCollector::addItem(string command, string group, double time) {
 	boost::mutex::scoped_lock l(StatisticsCollector::GetMutex());
+
+	//the command
 	map<string, StatisticData>::iterator it = items.find(command);
 	if (it != items.end()) {
 		//element found;
@@ -26,11 +28,24 @@ void StatisticsCollector::addItem(string command, double time) {
 		//element NOT found;
 		items.insert(make_pair(command, StatisticData(time)));
 	}
+
+	//the group
+	it = groups.find(group);
+	if (it != groups.end()) {
+		//element found;
+		it->second.addTime(time);
+	} else {
+		//element NOT found;
+		groups.insert(make_pair(group, StatisticData(time)));
+	}
 }
 
 string StatisticsCollector::compute() {
 	boost::mutex::scoped_lock l(StatisticsCollector::GetMutex());
 	std::stringstream output;
+	output << "==================================" << '\n';
+	output << "|       Command Results          |" << '\n';
+	output << "==================================" << '\n';
 	for (map<string, StatisticData>::iterator it = items.begin();
 			it != items.end(); ++it) {
 		output << "Worst " << it->second.worstTime << " ms. | Best "
@@ -39,18 +54,21 @@ string StatisticsCollector::compute() {
 				<< it->second.samples << " times | Command: " << it->first
 				<< '\n';
 	}
+	output << '\n';
+	output << "==================================" << '\n';
+	output << "|        Groups Results          |" << '\n';
+	output << "==================================" << '\n';
+	for (map<string, StatisticData>::iterator it = groups.begin();
+			it != groups.end(); ++it) {
+		output << "Worst " << it->second.worstTime << " ms. | Best "
+				<< it->second.bestTime << " ms. | Avg "
+				<< it->second.getAvgTime() << " ms. | Executed "
+				<< it->second.samples << " times | Group: " << it->first
+				<< '\n';
+	}
 	return output.str();
 }
 
-string StatisticsCollector::computeOnly(const string & command) {
-	boost::mutex::scoped_lock l(StatisticsCollector::GetMutex());
-	std::stringstream output;
-	StatisticData data = items.at(command);
-	output << "Worst " << data.worstTime << " ms. | Best " << data.bestTime
-			<< " ms. | Avg " << data.getAvgTime() << " ms. | Executed "
-			<< data.samples << " times | Command: " << command << '\n';
-	return output.str();
-}
 
 StatisticsCollector::~StatisticsCollector() {
 	// TODO Auto-generated destructor stub

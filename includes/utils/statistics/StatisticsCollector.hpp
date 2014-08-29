@@ -22,11 +22,11 @@ public:
 	StatisticsCollector();
 	virtual ~StatisticsCollector();
 
-	void addItem(string command, double time);
+	void addItem(string command, string group, double time);
 	string compute();
-	string computeOnly(const string & command);
 private:
 	map<string, StatisticData> items;
+	map<string, StatisticData> groups;
 	static boost::mutex& GetMutex() {
 		static boost::mutex mutex;
 		return mutex;

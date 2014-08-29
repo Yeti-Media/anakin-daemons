@@ -10,6 +10,7 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <test/acceptance/TestTools.hpp>
+#include <utils/Files.hpp>
 
 using namespace std;
 using namespace Anakin;
@@ -77,21 +78,15 @@ void exitWithSucces() {
 /**
  *  Print final statistics
  */
-void printStatistics(StatisticsCollector* collector) {
+void printStatistics(StatisticsCollector* collector, const string & file) {
 	cout << endl << "===============================================\n"
-			<< "************  Benchmark Results  **************\n"
-			<< "===============================================\n"
-			<< collector->compute();
-}
+			<< "- Benchmark Results printed on file: " << file << endl;
+	write_to_file(collector->compute(), file);
 
-/**
- *  Print final statistics
- */
-void printStatistics(StatisticsCollector* collector, const string & command) {
-	cout << endl << "===============================================\n"
-			<< "************  Benchmark Results  **************\n"
-			<< "===============================================\n"
-			<< collector->computeOnly(command);
+//	cout << endl << "===============================================\n"
+//	<< "************  Benchmark Results  **************\n"
+//	<< "===============================================\n"
+//	<< collector->compute();
 }
 
 /**
@@ -124,8 +119,8 @@ string pathToAnakinPath(fs::path path) {
  * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
  * the child PID will be killed by a signal before exit;
  */
-double command(StatisticsCollector* collector, bool verbose, string command,
-		bool showLogMsjIfFail) {
+double command(StatisticsCollector* collector, bool verbose,
+		const string & command, const string & group, bool showLogMsjIfFail) {
 	double elpasedTime = 0;
 	if (verbose) {
 		cout
@@ -141,14 +136,13 @@ double command(StatisticsCollector* collector, bool verbose, string command,
 		}
 		exitWithError();
 	} else {
+		auto delay = chrono::high_resolution_clock::now() - begin;
+		elpasedTime = (double) std::chrono::duration_cast<
+				std::chrono::milliseconds>(delay).count();
 		if (verbose) {
-			auto delay = chrono::high_resolution_clock::now() - begin;
-			elpasedTime = (double) std::chrono::duration_cast<
-					std::chrono::milliseconds>(delay).count();
-
 			cout << endl << "* Elapsed Time: " << elpasedTime << " ms." << endl;
 			if (collector != NULL) {
-				collector->addItem(command, elpasedTime);
+				collector->addItem(command, group, elpasedTime);
 			}
 		}
 	}
@@ -170,7 +164,7 @@ void validateDir(fs::path path, string msj) {
  */
 void dirCleanup(fs::path path) {
 	string pattern = "\"" + path.string() + "/\"*";
-	command(NULL, false, "rm -r -f " + pattern);
+	command(NULL, false, "rm -r -f " + pattern, "cleanup");
 }
 
 /**
@@ -267,7 +261,7 @@ void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
 					+ " 2> "
 					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
-			true);
+			"cleanup", true);
 	pthread_join(*thread, NULL);
 	delete thread;
 }

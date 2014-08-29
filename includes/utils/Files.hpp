@@ -38,7 +38,7 @@ string * get_file_contents(const string & filename);
 /**
  * write a string content into a File
  */
-void write_to_file(const string * data, const string & filename);
+void write_to_file(const string & data, const string & filename);
 
 /**
  * write char* content into a File
