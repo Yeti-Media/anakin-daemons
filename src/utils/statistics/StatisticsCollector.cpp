@@ -54,6 +54,7 @@ string StatisticsCollector::compute() {
 				<< it->second.samples << " times | Command: " << it->first
 				<< '\n';
 	}
+	output << '\n';
 	output << "==================================" << '\n';
 	output << "|        Groups Results          |" << '\n';
 	output << "==================================" << '\n';
@@ -62,7 +63,7 @@ string StatisticsCollector::compute() {
 		output << "Worst " << it->second.worstTime << " ms. | Best "
 				<< it->second.bestTime << " ms. | Avg "
 				<< it->second.getAvgTime() << " ms. | Executed "
-				<< it->second.samples << " times | Command: " << it->first
+				<< it->second.samples << " times | Group: " << it->first
 				<< '\n';
 	}
 	return output.str();

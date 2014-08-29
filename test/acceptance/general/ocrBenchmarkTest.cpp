@@ -39,7 +39,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 		fs::create_directories(ramDir);
 	}
 
-	int maxTestRepetition = 1;
+	int maxTestRepetition = 10;
 
 	// INPUTS
 	fs::path testDir = argv[1];
