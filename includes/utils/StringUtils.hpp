@@ -34,7 +34,9 @@ static inline vector<string> & tokenizeWordsIgnoringQuoted(const string &s,
 
 	so_tokenizer tok(s, escaped_list_separator<char>('\\', ' ', '\"'));
 	for (so_tokenizer::iterator beg = tok.begin(); beg != tok.end(); ++beg) {
-		elems.push_back(*beg);
+		if (!(*beg).empty()) {
+			elems.push_back(*beg);
+		}
 	}
 	return elems;
 }

@@ -56,10 +56,10 @@ string * Anakin::get_file_contents(const string & filename) {
 	throw(errno);
 }
 
-void Anakin::write_to_file(const string * data, const string & filename) {
+void Anakin::write_to_file(const string & data, const string & filename) {
 	ofstream os(filename.c_str(), ofstream::out | ofstream::binary);
 	//cout << data << endl << "length " << length <<endl << "archivo " << filename << endl;
-	os << *data;
+	os << data;
 	os.close();
 }
 

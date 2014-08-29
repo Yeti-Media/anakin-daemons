@@ -10,6 +10,7 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <test/acceptance/TestTools.hpp>
+#include <utils/Files.hpp>
 
 using namespace std;
 using namespace Anakin;
@@ -59,7 +60,7 @@ void splitTokens(const string& str, vector<string>& outputVector) {
  */
 void exitWithError() {
 	cerr << "\n===============================================\n"
-	<< "Acceptance test result: FAIL" << endl;
+			<< "Acceptance test result: FAIL" << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -77,21 +78,15 @@ void exitWithSucces() {
 /**
  *  Print final statistics
  */
-void printStatistics(StatisticsCollector* collector) {
+void printStatistics(StatisticsCollector* collector, const string & file) {
 	cout << endl << "===============================================\n"
-	<< "************  Benchmark Results  **************\n"
-	<< "===============================================\n"
-	<< collector->compute();
-}
+			<< "- Benchmark Results printed on file: " << file << endl;
+	write_to_file(collector->compute(), file);
 
-/**
- *  Print final statistics
- */
-void printStatistics(StatisticsCollector* collector, const string & command) {
-	cout << endl << "===============================================\n"
-	<< "************  Benchmark Results  **************\n"
-	<< "===============================================\n"
-	<< collector->computeOnly(command);
+//	cout << endl << "===============================================\n"
+//	<< "************  Benchmark Results  **************\n"
+//	<< "===============================================\n"
+//	<< collector->compute();
 }
 
 /**
@@ -99,11 +94,11 @@ void printStatistics(StatisticsCollector* collector, const string & command) {
  */
 void printTestMsj(string msj, uint testRepetition) {
 	cout << endl
-	<< "======================================================================"
-	<< endl << "***** Testing: " << msj << endl
-	<< "***** Repetition number " << testRepetition << endl
-	<< "======================================================================"
-	<< endl;
+			<< "======================================================================"
+			<< endl << "***** Testing: " << msj << endl
+			<< "***** Repetition number " << testRepetition << endl
+			<< "======================================================================"
+			<< endl;
 }
 
 /**
@@ -124,14 +119,14 @@ string pathToAnakinPath(fs::path path) {
  * used (suitable for fork()) instead of exit(). If childPIDtoKill > 0
  * the child PID will be killed by a signal before exit;
  */
-double command(StatisticsCollector* collector, bool verbose, string command,
-		bool showLogMsjIfFail) {
+double command(StatisticsCollector* collector, bool verbose,
+		const string & command, const string & group, bool showLogMsjIfFail) {
 	double elpasedTime = 0;
 	if (verbose) {
 		cout
-		<< "______________________________________________________________________"
-		<< endl << "* Command \"" << command << "\" executed" << endl
-		<< "* Output:" << endl << endl;
+				<< "______________________________________________________________________"
+				<< endl << "* Command \"" << command << "\" executed" << endl
+				<< "* Output:" << endl << endl;
 	}
 	auto begin = chrono::high_resolution_clock::now();
 	if (system(command.c_str()) != 0) {
@@ -144,11 +139,11 @@ double command(StatisticsCollector* collector, bool verbose, string command,
 		if (verbose) {
 			auto delay = chrono::high_resolution_clock::now() - begin;
 			elpasedTime = (double) std::chrono::duration_cast<
-			std::chrono::milliseconds>(delay).count();
+					std::chrono::milliseconds>(delay).count();
 
 			cout << endl << "* Elapsed Time: " << elpasedTime << " ms." << endl;
 			if (collector != NULL) {
-				collector->addItem(command, elpasedTime);
+				collector->addItem(command, group, elpasedTime);
 			}
 		}
 	}
@@ -170,7 +165,7 @@ void validateDir(fs::path path, string msj) {
  */
 void dirCleanup(fs::path path) {
 	string pattern = "\"" + path.string() + "/\"*";
-	command(NULL, false, "rm -r -f " + pattern);
+	command(NULL, false, "rm -r -f " + pattern, "cleanup");
 }
 
 /**
@@ -227,8 +222,8 @@ void testingDirCheck(int argc, const char * argv[]) {
 	std::size_t found = scriptContent->find("DROP DATABASE IF EXISTS");
 	if (found != std::string::npos) {
 		cerr
-		<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
-		<< sqlScriptPath << endl;
+				<< "Remove \"DROP DATABASE IF EXISTS ...\" and \"CREATE DATABASE ...\" from "
+				<< sqlScriptPath << endl;
 		exitWithError();
 	}
 
@@ -264,20 +259,20 @@ void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 		StatisticsCollector* collector) {
 	command(collector, true,
 			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-			+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
-			+ " 2> "
-			+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
-			true);
+					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
+					+ " 2> "
+					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
+			"cleanup", true);
 	pthread_join(*thread, NULL);
 	delete thread;
 }
 
 void printStep(string test, int number) {
 	cout << endl
-	<< "----------------------------------------------------------------------"
-	<< endl << "* Testing: " << test << " - Step " << number << endl
-	<< "----------------------------------------------------------------------"
-	<< endl;
+			<< "----------------------------------------------------------------------"
+			<< endl << "* Testing: " << test << " - Step " << number << endl
+			<< "----------------------------------------------------------------------"
+			<< endl;
 }
 
 #endif  /*COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING*/

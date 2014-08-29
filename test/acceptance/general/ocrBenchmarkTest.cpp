@@ -22,19 +22,19 @@
 #include <string>
 
 namespace fs = boost::filesystem;
+using namespace Anakin;
 
 /**
  * This test are designed to OCR performance test.
  */
-void ocrBenchmarkTest(int argc, const char * argv[],
-		StatisticsCollector* collector) {
+void ocrBenchmarkTest(int argc, const char * argv[]) {
 
 	//--------------------------------------------------------------
 	//  Test Setup
 	//--------------------------------------------------------------
 	string testName = "OCR_Benchmark";
 
-	fs::path ramDir("/tmp/ram/Anakin/test/" + testName);
+	fs::path ramDir("/tmp/ram/Anakin/AcceptanceTests/" + testName);
 	if (!fs::is_directory(ramDir)) {
 		fs::create_directories(ramDir);
 	}
@@ -63,12 +63,15 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 	fs::path logsOCR_Demo = logsDir / "OCR_Demo_log.txt";
 	fs::path lastStderr = logsDir / "lastStderr.txt";
 	fs::path lastStdout = logsDir / "lastStdout.txt";
+	fs::path benchmarkResults = ramDir / "benchmarkResults.txt";
 
 	printTestMsj(testName, 0);
 
 	//dir cleanups
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
+
+	StatisticsCollector * collector = new StatisticsCollector();
 
 	//--------------------------------------------------------------
 	//  Step 1 - OCR demo startup and test
@@ -103,10 +106,9 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 			+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
 			fs::path outputFileName = outputs
 			/ (*file).filename().replace_extension(".txt");
-			collector->addItem("OCR",
-					command(collector, true,
+			command(collector, true,
 							cmd + pathToAnakinPath(outputFileName) + " 2> "
-							+ pathToAnakinPath(lastStderr), true));
+							+ pathToAnakinPath(lastStderr), "OCR", true);
 
 			//Analyzing output
 			string pattern2 = "\"error_type\"";
@@ -123,6 +125,10 @@ void ocrBenchmarkTest(int argc, const char * argv[],
 
 	}
 	stopAnakinHTTP(thread, logsDir, collector);
+
+	printStatistics(collector, benchmarkResults.string());
+
+	delete collector;
 }
 
 #endif  /*COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING*/

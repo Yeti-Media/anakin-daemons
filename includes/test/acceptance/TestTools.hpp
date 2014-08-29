@@ -55,12 +55,7 @@ void printTestMsj(string msj, uint testRepetition);
 /**
  *  Print final statistics
  */
-void printStatistics(StatisticsCollector* collector);
-
-/**
- *  Print final statistics for a single command
- */
-void printStatistics(StatisticsCollector* collector, const string & command);
+void printStatistics(StatisticsCollector* collector, const string & file);
 
 /**
  * kill the process with pid = childPIDtoKill, and pid>0
@@ -78,8 +73,9 @@ string pathToAnakinPath(fs::path path);
  * the child PID will be killed by a signal before exit;
  * Return elapsed time in miliseconds (if vervose only)
  */
-double command(StatisticsCollector* collector, bool verbose, string command,
-		bool showLogMsjIfFail = false);
+double command(StatisticsCollector* collector, bool verbose,
+		const string & command, const string & group, bool showLogMsjIfFail =
+				false);
 
 /**
  * Validate a directory existence.
@@ -119,13 +115,14 @@ void printStep(string test, int number);
  * Run a simple program with the given commands
  */
 template<class SpecificSimpleProgram>
-void runProgram(StatisticsCollector* collector, string currentCommand) {
+void runProgram(StatisticsCollector* collector, const string & currentCommand,
+		const string & group) {
 	Program* program = new SpecificSimpleProgram();
 	cout
-	<< "______________________________________________________________________"
-	<< endl << "* Program: " << program->getProgramName() << endl
-	<< "* Command \"" << currentCommand << "\" executed" << endl
-	<< "* Output:" << endl << endl;
+			<< "______________________________________________________________________"
+			<< endl << "* Program: " << program->getProgramName() << endl
+			<< "* Command \"" << currentCommand << "\" executed" << endl
+			<< "* Output:" << endl << endl;
 	vector<string> input(0);
 	splitTokens(currentCommand, input);
 
@@ -134,11 +131,11 @@ void runProgram(StatisticsCollector* collector, string currentCommand) {
 	if (collector != NULL) {
 		auto delay = chrono::high_resolution_clock::now() - begin;
 		double ms = (double) std::chrono::duration_cast<
-		std::chrono::milliseconds>(delay).count();
+				std::chrono::milliseconds>(delay).count();
 
 		cout << endl << "* Elapsed Time: " << ms << " ms." << endl;
 		collector->addItem(program->getProgramName() + " " + currentCommand,
-				ms);
+				group, ms);
 	}
 	delete program;
 	if (signal == EXIT_FAILURE) {
@@ -150,7 +147,7 @@ struct DaemonArgs {
 	Program* program;
 	vector<string> * input;
 	DaemonArgs(Program* program, vector<string> * input) :
-	program(program), input(input) {
+			program(program), input(input) {
 	}
 	~DaemonArgs() {
 		delete program;
@@ -168,10 +165,10 @@ pthread_t * runDaemonProgram(string currentCommand) {
 	SpecificDaemon commandRunner;
 	Program* program = new Daemon<SpecificDaemon>();
 	cout
-	<< "______________________________________________________________________"
-	<< endl << "* Daemon Program: " << commandRunner.getProgramName()
-	<< endl << "* Command \"" << currentCommand << "\" executed" << endl
-	<< "* Output:" << endl << endl;
+			<< "______________________________________________________________________"
+			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
+			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
+			<< "* Output:" << endl << endl;
 	vector<string> * input = new vector<string>(0);
 	splitTokens(currentCommand, *input);
 
