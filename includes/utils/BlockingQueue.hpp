@@ -8,9 +8,10 @@
 #ifndef BLOCKINGQUEUE_H_
 #define BLOCKINGQUEUE_H_
 
-#include <mutex>
+#include <sys/types.h>
 #include <condition_variable>
 #include <deque>
+#include <mutex>
 
 namespace Anakin {
 
@@ -22,6 +23,8 @@ public:
 
 	void push(T const& value);
 	T pop();
+	bool empty();
+	uint size();
 private:
 	std::mutex d_mutex;
 	std::condition_variable d_condition;
@@ -38,10 +41,8 @@ BlockingQueue<T>::~BlockingQueue() {
 
 template<typename T>
 void BlockingQueue<T>::push(T const& value) {
-	{
-		std::unique_lock<std::mutex> lock(this->d_mutex);
-		d_queue.push_front(value);
-	}
+	std::unique_lock<std::mutex> lock(this->d_mutex);
+	d_queue.push_front(value);
 	this->d_condition.notify_one();
 }
 
@@ -52,6 +53,16 @@ T BlockingQueue<T>::pop() {
 	T rc(std::move(this->d_queue.back()));
 	this->d_queue.pop_back();
 	return rc;
+}
+
+template<typename T>
+bool BlockingQueue<T>::empty() {
+	return this->d_queue.empty();
+}
+
+template<typename T>
+uint BlockingQueue<T>::size() {
+	return this->d_queue.size();
 }
 
 } /* namespace Anakin */

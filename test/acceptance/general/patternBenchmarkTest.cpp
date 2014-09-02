@@ -169,22 +169,20 @@ void patternBenchmarkTest(int argc, const char * argv[]) {
 			}
 		}
 
+		string JSONcmd = "{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}";
+
 		//repeated "query" times, to obtain solid benchmarks
 		for (int query = 1; query <= 10; query++) {
+			string results;
+			runCURL_JSON(collector,JSONcmd,"PatternMatcher|Curl|matching",results);
 
-			command(collector, true,
-					"time curl -X POST -H \"Content-Type: application/json\" -d '{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-							+ pathToAnakinPath(lastStdout) + " 2> "
-							+ pathToAnakinPath(lastStderr),
-							"PatternMatcher|Curl|matching", true);
 			cout << "* Request number " << query << endl;
 			//Analyzing output
 			string pattern = "{\"category\":\"PATTERN\",\"requestID\":\"";
-			string * capture = get_file_contents(lastStdout.c_str());
-			if (capture->find(pattern) == string::npos) {
+			if (results.find(pattern) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << *capture << endl << endl
+						<< endl << endl << results << endl << endl
 						<< "and should replied something that start with:"
 						<< endl << endl << pattern << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
@@ -192,16 +190,15 @@ void patternBenchmarkTest(int argc, const char * argv[]) {
 			}
 			pattern =
 					"\",\"values\":[{\"center\":{\"x\":202.592300415039,\"y\":361.972229003906},\"label\":\"3\"}]}]}";
-			if (capture->find(pattern) == string::npos) {
+			if (results.find(pattern) == string::npos) {
 				cerr
 						<< "PatternMatching subprogram wrong output. Anakin replied:"
-						<< endl << endl << *capture << endl << endl
+						<< endl << endl << results << endl << endl
 						<< "and should replied something that end with:" << endl
 						<< endl << pattern << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
-			delete capture;
 		}
 		stopAnakinHTTP(thread, logsDir, collector);
 

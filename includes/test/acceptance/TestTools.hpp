@@ -12,6 +12,8 @@
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
+#include <curl/curl.h>
+#include <curl/easy.h>
 #include <boost/chrono/duration.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -27,15 +29,59 @@
 #include <string>
 #include <vector>
 #include <pthread.h>
+#include <utils/StringUtils.hpp>
+
 
 using namespace std;
 using namespace Anakin;
 namespace fs = boost::filesystem;
 
-/**
- * Separate a string into tokens, ignoring quoted phrases.
- */
-void splitTokens(const string& str, vector<string>& outputVector);
+struct curl_slist;
+
+static inline size_t WriteCallback(void *contents, size_t size, size_t nmemb,
+		void *userp) {
+	((std::string*) userp)->append((char*) contents, size * nmemb);
+	return size * nmemb;
+}
+
+static inline double cURL_JSON(const string & url, const string & data,
+		string & output, string & error) {
+	CURL *curl;
+	CURLcode res;
+	double time = 0;
+
+	struct curl_slist *headers = NULL; // init to NULL is important
+
+	headers = curl_slist_append(headers, "Accept: application/json");
+	headers = curl_slist_append(headers, "Content-Type: application/json");
+	headers = curl_slist_append(headers, "charsets: utf-8");
+
+	curl = curl_easy_init();
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &output);
+
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length());
+		curl_easy_setopt(curl, CURLOPT_POST, 1);
+
+		res = curl_easy_perform(curl);
+
+		if (CURLE_OK == res) {
+			res = curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &time);
+			if (CURLE_OK == res) {
+				time = time * 1000;
+			}
+		} else {
+			error = string(curl_easy_strerror(res));
+		}
+	}
+	curl_easy_cleanup(curl);
+	return time;
+}
+
 
 /**
  * used to fail the test
@@ -111,6 +157,9 @@ void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 
 void printStep(string test, int number);
 
+void runCURL_JSON(StatisticsCollector* collector, const string & JSONcommand,
+		const string & group, string & results);
+
 /**
  * Run a simple program with the given commands
  */
@@ -124,7 +173,7 @@ void runProgram(StatisticsCollector* collector, const string & currentCommand,
 			<< "* Command \"" << currentCommand << "\" executed" << endl
 			<< "* Output:" << endl << endl;
 	vector<string> input(0);
-	splitTokens(currentCommand, input);
+	stringutils::tokenizeWordsIgnoringQuoted(currentCommand, input);
 
 	auto begin = chrono::high_resolution_clock::now();
 	int signal = program->start(&input);
@@ -170,8 +219,7 @@ pthread_t * runDaemonProgram(string currentCommand) {
 			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
 			<< "* Output:" << endl << endl;
 	vector<string> * input = new vector<string>(0);
-	splitTokens(currentCommand, *input);
-
+	stringutils::tokenizeWordsIgnoringQuoted(currentCommand, *input);
 	pthread_t * thread = new pthread_t();
 
 	DaemonArgs* dargs = new DaemonArgs(program, input);

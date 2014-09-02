@@ -4,6 +4,7 @@
 #include <output/workers/DataOutputWorkerHTTPSocket.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <assert.h>
 
 using namespace Anakin;
 using namespace std;
@@ -50,36 +51,25 @@ void* DataOutput::startWorker(void *ptr) {
 }
 
 DataOutput::~DataOutput() {
+	//FIXME delete all workingQueue content
 	delete workingQueue;
 }
-//void DataOutput::output(string data, int reqID) {
-//	lock_guard<mutex> lck(mutex1);
-//	Msj* msj = new Msj(data, E_DataOutputMsjType::common, reqID);
-//	workingQueue->push(msj);
-//}
 
 void DataOutput::output(wstring* data, int reqID) {
-	lock_guard<mutex> lck(mutex2);
+	lock_guard<mutex> lck(outputMutex);
 	Msj* msj = new Msj(string(data->begin(), data->end()),
 			E_DataOutputMsjType::common, reqID);
 	workingQueue->push(msj);
+	//assert(workingQueue->size() <= 0);
 	delete data;
-	//output(s, reqID);
 }
 
-//void DataOutput::error(string data) {
-//	lock_guard<mutex> lck(mutex1);
-//	Msj* msj = new Msj(data, E_DataOutputMsjType::error);
-//	workingQueue->push(msj);
-//}
-
 void DataOutput::error(wstring* data) {
-	lock_guard<mutex> lck(mutex2);
+	lock_guard<mutex> lck(outputMutex);
 	Msj* msj = new Msj(string(data->begin(), data->end()),
 			E_DataOutputMsjType::error);
 	workingQueue->push(msj);
 	delete data;
-	//error(s);
 }
 
 void DataOutput::close() {

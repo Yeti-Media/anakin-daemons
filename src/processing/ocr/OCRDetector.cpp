@@ -75,5 +75,6 @@ vector<string>* OCRDetector::detect(string & lastError) {
 	api->Clear();
 	api->End();
 	delete api;
+	//sleep(2);
 	return result;
 }

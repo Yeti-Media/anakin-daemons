@@ -16,6 +16,26 @@ using namespace std;
 using namespace Anakin;
 namespace fs = boost::filesystem;
 
+void runCURL_JSON(StatisticsCollector* collector, const string & JSONcommand,
+		const string & group, string & results) {
+	cout
+			<< "______________________________________________________________________"
+			<< endl << "* Program: cURL with JSON" << endl << "* JSON Command: "
+			<< JSONcommand << endl << "* Output:" << endl << endl;
+	string url = "http://127.0.0.1:8080/";
+	string error;
+	double time;
+	if (collector != NULL) {
+		time = cURL_JSON(url, JSONcommand, results, error);
+		cout << results << endl << "* Elapsed Time: " << time << " ms." << endl;
+		collector->addItem(JSONcommand, group, time);
+	}
+	if (!error.empty()) {
+		cerr << "cURL fail reason: " << error << endl;
+		exitWithError();
+	}
+}
+
 void * startDaemon(void *ptr) {
 	DaemonArgs* dargs = (DaemonArgs*) ptr;
 	int signal = dargs->program->start(dargs->input);
@@ -26,41 +46,11 @@ void * startDaemon(void *ptr) {
 }
 
 /**
- * Separate a string into tokens, ignoring quoted phrases.
- */
-void splitTokens(const string& str, vector<string>& outputVector) {
-	outputVector.clear();
-	string lastToken;
-	for (size_t i = 0; i < str.length(); i++) {
-
-		char c = str[i];
-		if (c == ' ') {
-			if (!lastToken.empty()) {
-				outputVector.push_back(lastToken);
-				lastToken.clear();
-			}
-		} else if (c == '\"') {
-			i++;
-			while (str[i] != '\"' && i < str.length()) {
-				lastToken.push_back(str[i]);
-				i++;
-			}
-		} else {
-			lastToken.push_back(c);
-		}
-	}
-	if (!lastToken.empty()) {
-		outputVector.push_back(lastToken);
-		lastToken.clear();
-	}
-}
-
-/**
  * used to fail the test
  */
 void exitWithError() {
 	cerr << "\n===============================================\n"
-			<< "Acceptance test result: FAIL" << endl;
+			<< "* Acceptance test result: FAIL" << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -68,10 +58,8 @@ void exitWithError() {
  * used to succeed the test
  */
 void exitWithSucces() {
-#ifdef TESTING_DEBUGMODE
-	cout << "\n===============================================\n";
-#endif
-	cout << "Acceptance test result: SUCCESS" << endl;
+	cout << "\n===============================================\n"
+			<< "* Acceptance test result: SUCCESS" << endl;
 	exit(EXIT_SUCCESS);
 }
 
@@ -79,8 +67,8 @@ void exitWithSucces() {
  *  Print final statistics
  */
 void printStatistics(StatisticsCollector* collector, const string & file) {
-	cout << endl << "===============================================\n"
-			<< "- Benchmark Results printed on file: " << file << endl;
+	cout << endl << "======================================================================\n"
+			<< "* Benchmark Results printed on file: " << file << endl;
 	write_to_file(collector->compute(), file);
 
 //	cout << endl << "===============================================\n"
@@ -256,12 +244,9 @@ void setTestingEnvironmentVariables(string host, string database, string user,
 
 void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 		StatisticsCollector* collector) {
-	command(collector, true,
-			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"stop\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > "
-					+ pathToAnakinPath((logsDir / "stopAnakinStdoutHTTP"))
-					+ " 2> "
-					+ pathToAnakinPath((logsDir / "stopAnakinStderrHTTP")),
-			"cleanup", true);
+	string results;
+	string JSONcmd = "{\"action\":\"stop\"}";
+	runCURL_JSON(collector,JSONcmd,"ServerStop",results);
 	pthread_join(*thread, NULL);
 	delete thread;
 }
