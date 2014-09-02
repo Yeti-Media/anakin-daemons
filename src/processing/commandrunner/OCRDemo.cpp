@@ -82,15 +82,6 @@ void OCRDemo::validateRequest(vector<string> *input) {
 			scenesDir = values->at(0);
 			run_ocr_detect = true;
 		}
-		if (flags->flagFound("reqID")) {
-			values = flags->getFlagValues("reqID");
-			if (values->size() != 1) {
-				lastError = "flag reqID expects only one value";
-				inputError = true;
-				return;
-			}
-			reqID = values->at(0);
-		}
 
 		if (flags->flagFound("mode")) {
 			values = flags->getFlagValues("mode");

@@ -193,8 +193,6 @@ string* CommunicationFormatterJSON::formatRequest(const char * data) {
 	if (req->HasChild(L"ocr")) {
 		std::wstring waction = req->Child(L"ocr")->AsString();
 		std::string saction(waction.begin(), waction.end());
-//			saction.append(" ");
-//			request->append("-");
 		request->append("\"" + saction + "\"");
 	}
 	if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {

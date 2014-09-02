@@ -8,10 +8,12 @@
 #include <mongoose.h>
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <output/communicationFormatter/ICommunicationFormatter.hpp>
+#include <limits.h>
 
 using namespace Anakin;
+using namespace std;
 
-HTTPListener* HTTPListener::getInstance(std::string port,
+HTTPListener* HTTPListener::getInstance(string port,
 		tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
 		BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue,
 		int threads) {
@@ -30,9 +32,9 @@ HTTPListener* HTTPListener::getInstance(std::string port,
 
 void HTTPListener::start() {
 	HTTPListener::running = true;
-	std::cout << "Starting on port : "
+	cout << "Starting on port : "
 			<< mg_get_option(HTTPListener::server, "listening_port")
-			<< std::endl;
+			<< endl;
 	while (HTTPListener::running) {
 		if (HTTPListener::running)
 			mg_poll_server(HTTPListener::server, 300);
@@ -42,13 +44,13 @@ void HTTPListener::start() {
 
 //PROTECTED
 
-HTTPListener::HTTPListener(std::string port,
+HTTPListener::HTTPListener(string port,
 		tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue,
 		BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue,
 		int threads) {
 	HTTPListener::server = mg_create_server(NULL, ev_handler);
 	mg_set_option(HTTPListener::server, "listening_port", port.c_str());
-	std::string sthreads = std::to_string(threads);
+	string sthreads = to_string(threads);
 	mg_set_option(HTTPListener::server, "num_threads", sthreads.c_str());
 	HTTPListener::readingQueue = readingQueue;
 	HTTPListener::writtingQueue = writtingQueue;
@@ -60,12 +62,12 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 
 	if (ev == MG_REQUEST) {
 		//the event is a request (POST, GET for example)
-		std::string method = conn->request_method; //method: POST, GET
-		std::string action = conn->uri; //the URL in a GET or the action of a POST
-		std::string body(conn->content, conn->content_len); //request's body
-		std::string request;
+		string method = conn->request_method; //method: POST, GET
+		string action = conn->uri; //the URL in a GET or the action of a POST
+		string body(conn->content, conn->content_len); //request's body
+		string request;
 		int reqID;
-		if (body.find("\"action\":\"stop\"") != std::string::npos) {
+		if (body.find("\"action\":\"stop\"") != string::npos) {
 			//the request is a stop message
 			HTTPListener::running = false; //will stop the HTTP server
 			request = body;
@@ -75,8 +77,16 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 			I_CommunicationFormatter * cf = new CommunicationFormatterJSON();
 			//FIXME Renzo how to delete the result of cf->formatRequest(body.c_str())
 			request = *cf->formatRequest(body.c_str());
-			reqID = generateRandomID(); //generate a random request ID
-			std::string sreqID = std::to_string(reqID);
+
+			//generate a request ID
+			if (HTTPListener::lastID==INT_MAX) {
+				HTTPListener::lastID = 0;
+			}
+			HTTPListener::lastID++;
+			reqID = HTTPListener::lastID;
+			//generation end
+
+			string sreqID = to_string(reqID);
 			request += " -" + Constants::PARAM_REQID + " " + sreqID; //add a -reqID id to the request
 			delete cf;
 		}
@@ -93,8 +103,8 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 		if (!HTTPListener::running) {
 			//if the message received was a stop message
 			//then we generate a response that will just return "stop received"
-			std::string r_action = "";
-			std::string r_body = "stop received";
+			string r_action = "";
+			string r_body = "stop received";
 			rd = new HTTPSocket::MessageData(r_action.c_str(), r_body.c_str(),
 					HTTPSocket::RESPONSE, 200);
 			HTTPListener::writtingQueue->put(reqID, rd);
@@ -104,15 +114,15 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 		rd = HTTPListener::writtingQueue->get(reqID);
 		//FIXME memory leak at rd and md??
 		mg_send_status(conn, rd->status);
-		std::string cc_header = "Connection";
-		std::string cc_value = "close";
+		string cc_header = "Connection";
+		string cc_value = "close";
 		mg_send_header(conn, cc_header.c_str(), cc_value.c_str());
-//        std::string cl_header = "Content-Lenght";
-//        std::string cl_value = std::to_string(rd->body.size());
+//        string cl_header = "Content-Lenght";
+//        string cl_value = to_string(rd->body.size());
 //        mg_send_header(conn, cl_header.c_str(), cl_value.c_str());
-		std::string responseData = rd->body + "\r\n";
+		string responseData = rd->body + "\r\n";
 		mg_send_data(conn, responseData.c_str(), rd->body.size());
-		std::string stopMsg = "0\r\n\r\n";
+		string stopMsg = "0\r\n\r\n";
 		mg_send_data(conn, stopMsg.c_str(), 0);
 		result = MG_CLOSE; //MG_CLOSE will close the connection after the response is sent
 	} else if (ev == MG_AUTH) {
@@ -124,24 +134,11 @@ int HTTPListener::ev_handler(struct mg_connection *conn, enum mg_event ev) {
 }
 
 HTTPListener* HTTPListener::instance = NULL;
-std::string HTTPListener::port = "";
+string HTTPListener::port = "";
 bool HTTPListener::running = false;
 struct mg_server * HTTPListener::server;
 tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* HTTPListener::readingQueue;
 BlockingMap<int, HTTPSocket::MessageData*>* HTTPListener::writtingQueue;
+int HTTPListener::lastID = 0;
+
 //CommunicationFormatterJSON HTTPListener::cf;
-
-//PRIVATE
-
-int HTTPListener::generateRandomID() {
-	int r1 = rand() % 10;
-	int r2 = rand() % 10;
-	int r3 = rand() % 10;
-	int r4 = rand() % 10;
-	int r5 = rand() % 10;
-	int r6 = rand() % 10;
-	int randomValue = r1 + (r2 * 10) + (r3 * 100) + (r4 * 1000) + (r5 * 10000)
-			+ (r6 * 100000);
-	//std::cout << "randomValue: " << randomValue << std::endl;
-	return randomValue;
-}

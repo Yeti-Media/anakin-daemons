@@ -64,8 +64,7 @@ private:
 	/**
 	 * used for block the concurrent access to DataOutput methods
 	 */
-	mutex mutex1;
-	mutex mutex2;
+	mutex outputMutex;
 
 	/**
 	 * used for msj storage and future delivering (so a working thread can be

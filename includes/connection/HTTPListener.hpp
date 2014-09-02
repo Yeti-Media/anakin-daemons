@@ -58,10 +58,8 @@ protected:
 	static struct mg_server *server;
 	static tbb::concurrent_bounded_queue<HTTPSocket::MessageData*>* readingQueue;
 	static BlockingMap<int, HTTPSocket::MessageData*>* writtingQueue;
+	static int lastID;
 	//static I_CommunicationFormatter cf;
-private:
-	static int generateRandomID();
-
 };
 
 }

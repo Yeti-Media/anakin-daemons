@@ -39,7 +39,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 		fs::create_directories(ramDir);
 	}
 
-	int maxTestRepetition = 1;
+	int maxTestRepetition = 10;
 
 	// INPUTS
 	fs::path testDir = argv[1];
@@ -81,7 +81,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCRDemo>(
 			"-oLogFile " + pathToAnakinPath(logsOCR_Demo)
-			+ " -iHTTP 8080 -oHTTP -threads 8 -verbose");
+					+ " -iHTTP 8080 -oHTTP -threads 8 -verbose");
 
 	//check if the server start
 	bool serverStarted = false;
@@ -100,24 +100,16 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 			testRepetition++) {
 		for (list<fs::path>::iterator file = filesToTest->begin();
 				file != filesToTest->end(); ++file) {
-			string cmd =
-			"time curl -X POST -H \"Content-Type: application/json\" -d '{\"action\":\"ocr\", \"ocr\":\""
-			+ (*file).string()
-			+ "\"}' --connect-timeout 10  -lv http://127.0.0.1:8080/ > ";
-			fs::path outputFileName = outputs
-			/ (*file).filename().replace_extension(".txt");
-			fs::path outputFileNameCurl = outputs
-			/ (*file).filename().replace_extension(".curl.txt");
-			command(collector, true,
-							cmd + pathToAnakinPath(outputFileName) + " 2> "
-							+ pathToAnakinPath(outputFileNameCurl), "OCR", true);
+			string results;
+			string JSONcmd = "{\"action\":\"ocr\", \"ocr\":\""
+					+ (*file).string() + "\"}";
+			runCURL_JSON(collector,JSONcmd,"OCR",results);
 
 			//Analyzing output
 			string pattern2 = "\"error_type\"";
-			string * capture2 = get_file_contents(outputFileName.string());
-			if (capture2->find(pattern2) != string::npos) {
+			if (results.find(pattern2) != string::npos) {
 				cerr << "OCR replied with an error:" << endl << endl
-				<< *capture2 << endl << endl;
+						<< results << endl << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
