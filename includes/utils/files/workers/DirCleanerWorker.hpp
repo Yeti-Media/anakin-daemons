@@ -17,9 +17,7 @@ namespace fs = boost::filesystem;
 namespace Anakin {
 
 /**
- * This class is executed in another thread, and will dispatch the data stored
- * in the concurrent queue.
- * processOutput must be implemented in a concrete class.
+ * This class try to delete files located on BlockingQueue<fs::path*>* workingQueue
  */
 class DirCleanerWorker {
 public:

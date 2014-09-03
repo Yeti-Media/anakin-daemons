@@ -1,7 +1,7 @@
 /*
  * DirCleanerWorker.cpp
  *
- *  Created on: 29/05/2014
+ *  Created on: 03/09/2014
  *      Author: Franco Pellegrini
  */
 
