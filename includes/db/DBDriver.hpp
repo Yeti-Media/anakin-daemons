@@ -7,7 +7,7 @@
 #include "db/DBHistogram.hpp"
 #include <opencv2/opencv.hpp>
 #include "data/ImageInfo.hpp"
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <string>
 
 using namespace std;

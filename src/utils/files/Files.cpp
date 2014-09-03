@@ -9,8 +9,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <stddef.h>
-#include <utils/Files.hpp>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/Files.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <cerrno>
 #include <fstream>
 #include <iostream>

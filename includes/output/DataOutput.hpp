@@ -7,21 +7,17 @@
 #include <utils/BlockingQueue.hpp>
 #include <mutex>
 #include <string>
-
-namespace Anakin {
-class HTTPSocket;
-} /* namespace Anakin */
-
+#include <connection/HTTPSocket.hpp>
 using namespace std;
 
 namespace Anakin {
 
 /**
- * This class is used to output anakin results/messages
+ * This class is used to output Anakin results/messages
  * The client of this class doesn't know how the messages are outputted.
  *
  * This Data Output system create a thread that store the data to be
- * delivered, one by one. This is usefull when the output system choosed is
+ * delivered, one by one. This is useful when the choosed output system is
  * slower than the threads that deliver concurrent data to some destination,
  * using the same channel/socket.
  */

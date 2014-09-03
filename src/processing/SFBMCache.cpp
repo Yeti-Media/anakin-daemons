@@ -1,7 +1,7 @@
 #include <boost/foreach.hpp>
 #include <processing/SFBMCache.hpp>
 #include <sys/time.h>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <ctime>
 #include <iostream>
 #include <limits>

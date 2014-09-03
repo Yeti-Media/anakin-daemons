@@ -5,7 +5,7 @@
 #include <db/DBDriver.hpp>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 using namespace std;
 namespace Anakin {

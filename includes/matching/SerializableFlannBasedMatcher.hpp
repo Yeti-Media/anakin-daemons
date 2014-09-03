@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 using namespace std;
 

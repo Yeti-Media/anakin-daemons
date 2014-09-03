@@ -22,7 +22,7 @@
 #include <iostream>
 #include <string>
 #include <regex>
-#include <utils/Files.hpp>
+#include <utils/files/Files.hpp>
 
 namespace fs = boost::filesystem;
 using namespace Anakin;
@@ -37,7 +37,7 @@ struct PathFixture {
 	boost::filesystem::path testDir;
 
 	PathFixture() {
-		BOOST_TEST_MESSAGE("setup fixture");
+		BOOST_TEST_MESSAGE("fixture setup");
 
 		int argc = boost::unit_test::framework::master_test_suite().argc;
 		char** argv = boost::unit_test::framework::master_test_suite().argv;

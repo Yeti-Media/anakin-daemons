@@ -11,7 +11,7 @@
 #include <test/utils/TextLocator.hpp>
 #include <utils/StringUtils.hpp>
 #include <fstream>
-#include <utils/Files.hpp>
+#include <utils/files/Files.hpp>
 #include <iostream>
 #include <list>
 #include <cassert>

@@ -11,7 +11,7 @@
 #include <processing/Program.hpp>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 namespace Anakin {
 

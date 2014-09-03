@@ -9,7 +9,7 @@
 #include "utils/XMLoader.hpp"
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
-#include <utils/Files.hpp>
+#include <utils/files/Files.hpp>
 
 using namespace Anakin;
 using namespace std;

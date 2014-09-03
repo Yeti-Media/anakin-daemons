@@ -2,7 +2,7 @@
  * DataOutputWorkerHTTPSocket.hpp
  *
  *  Created on: 03/06/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
 #ifndef DATAOUTPUTWORKERHTTPSOCKET_HPP_

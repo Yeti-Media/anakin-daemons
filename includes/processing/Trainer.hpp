@@ -6,7 +6,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 using namespace std;
 

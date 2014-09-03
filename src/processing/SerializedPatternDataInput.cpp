@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <boost/filesystem.hpp>
-#include <utils/Files.hpp>
+#include <utils/files/Files.hpp>
 
 namespace fs = boost::filesystem;
 
