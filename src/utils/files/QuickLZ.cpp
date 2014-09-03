@@ -6,7 +6,7 @@
  */
 
 #include <stdlib.h>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <cstring>
 
 QuickLZ::QuickLZ() {

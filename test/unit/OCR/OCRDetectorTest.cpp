@@ -19,7 +19,7 @@
 #include <boost/filesystem/path.hpp>
 #include <iostream>
 #include <string>
-#include <utils/Files.hpp>
+#include <utils/files/Files.hpp>
 #include <processing/ocr/OCRDetector.hpp>
 
 namespace fs = boost::filesystem;
@@ -35,7 +35,7 @@ struct PathFixtureOCRDetectorTest {
 	boost::filesystem::path testDir;
 
 	PathFixtureOCRDetectorTest() {
-		BOOST_TEST_MESSAGE("setup fixture");
+		BOOST_TEST_MESSAGE("fixture setup");
 
 		int argc = boost::unit_test::framework::master_test_suite().argc;
 		char** argv = boost::unit_test::framework::master_test_suite().argv;

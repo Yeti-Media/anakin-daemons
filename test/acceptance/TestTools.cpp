@@ -10,7 +10,6 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <test/acceptance/TestTools.hpp>
-#include <utils/Files.hpp>
 
 using namespace std;
 using namespace Anakin;

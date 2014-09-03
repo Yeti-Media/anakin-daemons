@@ -13,18 +13,25 @@
 #include <utils/help/Help.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <assert.h>
 
 namespace fs = boost::filesystem;
 
 namespace Anakin {
 
-Program::Program() {
+Program::Program(string programName) {
 	verbose = false;
-	fs::path temp("/tmp/ram/Anakin/" + getProgramName());
+	setProgramName(programName);
+}
+
+void Program::setProgramName(const string & name) {
+	assert(!name.empty());
+	fs::path temp("/tmp/ram/Anakin/" + name + "_tmpDir");
 	if (!fs::is_directory(temp)) {
 		fs::create_directories(temp);
 	}
-	tempDir = temp.string();
+	tempDir = temp.string() + "/";
+	this->programName = name;
 }
 
 Program::~Program() {
@@ -122,7 +129,7 @@ string Program::getFullTextHelp() {
  * inheritance placeholder
  */
 string Program::getProgramName() {
-	return "";
+	return programName;
 }
 
 }

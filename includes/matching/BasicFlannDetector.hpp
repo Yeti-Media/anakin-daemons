@@ -5,7 +5,7 @@
 #include "matching/SerializableFlannBasedMatcher.hpp"
 #include "matching/Match.hpp"
 #include "processing/SFBMCache.hpp"
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 namespace Anakin {
 

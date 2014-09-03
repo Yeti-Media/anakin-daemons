@@ -20,7 +20,6 @@ public:
 	FaceDBConnector();
 	virtual ~FaceDBConnector();
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	int run(vector<string> *input);

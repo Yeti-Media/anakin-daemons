@@ -2,7 +2,7 @@
  * DataOutputWorkerConsole.hpp
  *
  *  Created on: 03/06/2014
- *      Author: franco
+ *      Author: Franco Pellegrini
  */
 
 #ifndef DATAOUTPUTWORKERCONSOLE_HPP_

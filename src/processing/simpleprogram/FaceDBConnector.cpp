@@ -10,7 +10,8 @@
 
 namespace Anakin {
 
-FaceDBConnector::FaceDBConnector() {
+FaceDBConnector::FaceDBConnector() :
+		Program("FaceDBConnector") {
 	// TODO Auto-generated constructor stub
 
 }
@@ -21,10 +22,6 @@ FaceDBConnector::~FaceDBConnector() {
 
 Help* FaceDBConnector::getHelp() {
 	return new HelpFaceDBConnector();
-}
-
-string FaceDBConnector::getProgramName() {
-	return "FaceDBConnector";
 }
 
 void FaceDBConnector::initProgramFlags() {

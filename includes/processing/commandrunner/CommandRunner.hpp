@@ -41,7 +41,7 @@ public:
 	 * Constructor (does steps 1, 2, 3)
 
 	 */
-	CommandRunner();
+	CommandRunner(string programName);
 
 	/**
 	 * Setup the flags, the output and the cache (if used).
@@ -67,7 +67,9 @@ public:
 	/**
 	 * Return the name of the program.
 	 */
-	virtual string getProgramName() = 0;
+	string getProgramName();
+
+	void setProgramName(const string & name);
 
 	virtual ~CommandRunner();
 
@@ -87,6 +89,8 @@ protected:
 	Flags* flags;
 	SFBMCache* cache;
 	string tempDir;
+private:
+	string programName;
 };
 
 } /* namespace Anakin */

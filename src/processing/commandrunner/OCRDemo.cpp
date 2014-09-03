@@ -21,16 +21,12 @@
 namespace Anakin {
 
 OCRDemo::OCRDemo() :
-		CommandRunner() {
+		CommandRunner("OCR_Demo") {
 	this->cf = new CommunicationFormatterJSON();
 }
 
 OCRDemo::~OCRDemo() {
 	delete cf;
-}
-
-string OCRDemo::getProgramName() {
-	return "OCR_Demo";
 }
 
 Help* OCRDemo::getHelp() {

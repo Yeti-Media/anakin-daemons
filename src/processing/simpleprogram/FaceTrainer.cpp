@@ -10,7 +10,8 @@
 
 namespace Anakin {
 
-FaceTrainer::FaceTrainer() {
+FaceTrainer::FaceTrainer() :
+		Program("FaceTrainer") {
 	// TODO Auto-generated constructor stub
 
 }
@@ -21,10 +22,6 @@ FaceTrainer::~FaceTrainer() {
 
 Help* FaceTrainer::getHelp() {
 	return new HelpFaceTrainer();
-}
-
-string FaceTrainer::getProgramName() {
-	return "FaceTrainer";
 }
 
 void FaceTrainer::initProgramFlags() {

@@ -13,6 +13,8 @@
 #include <deque>
 #include <mutex>
 
+using namespace std;
+
 namespace Anakin {
 
 template<typename T>
@@ -25,10 +27,16 @@ public:
 	T pop();
 	bool empty();
 	uint size();
+
+	/**
+	 * get the internal representation to clean it up before deletion.
+	 * DO NOT USE THIS FOR ANOTHER PURPOSES.
+	 */
+	deque<T> getQueue();
 private:
-	std::mutex d_mutex;
-	std::condition_variable d_condition;
-	std::deque<T> d_queue;
+	mutex d_mutex;
+	condition_variable d_condition;
+	deque<T> d_queue;
 };
 
 template<typename T>
@@ -41,16 +49,16 @@ BlockingQueue<T>::~BlockingQueue() {
 
 template<typename T>
 void BlockingQueue<T>::push(T const& value) {
-	std::unique_lock<std::mutex> lock(this->d_mutex);
+	unique_lock<mutex> lock(this->d_mutex);
 	d_queue.push_front(value);
 	this->d_condition.notify_one();
 }
 
 template<typename T>
 T BlockingQueue<T>::pop() {
-	std::unique_lock<std::mutex> lock(this->d_mutex);
+	unique_lock<mutex> lock(this->d_mutex);
 	this->d_condition.wait(lock, [=] {return !this->d_queue.empty();});
-	T rc(std::move(this->d_queue.back()));
+	T rc(move(this->d_queue.back()));
 	this->d_queue.pop_back();
 	return rc;
 }
@@ -63,6 +71,11 @@ bool BlockingQueue<T>::empty() {
 template<typename T>
 uint BlockingQueue<T>::size() {
 	return this->d_queue.size();
+}
+
+template<typename T>
+deque<T> BlockingQueue<T>::getQueue() {
+	return this->d_queue;
 }
 
 } /* namespace Anakin */

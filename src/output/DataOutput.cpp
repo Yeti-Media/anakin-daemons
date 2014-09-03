@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <assert.h>
+#include <utils/ClearVector.hpp>
 
 using namespace Anakin;
 using namespace std;
@@ -48,10 +49,11 @@ void* DataOutput::startWorker(void *ptr) {
 		exit(EXIT_FAILURE);
 	}
 	worker->start();
+	delete worker;
 }
 
 DataOutput::~DataOutput() {
-	//FIXME delete all workingQueue content
+	close();
 	delete workingQueue;
 }
 

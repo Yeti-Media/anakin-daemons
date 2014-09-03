@@ -10,16 +10,22 @@ using namespace cv;
 
 namespace fs = boost::filesystem;
 
-CommandRunner::CommandRunner() {
+CommandRunner::CommandRunner(string programName) {
 	this->flags = NULL;
 	this->out = NULL;
 	this->sceneID = -1;
 	this->cache = NULL;
-	fs::path temp("/tmp/ram/Anakin/" + getProgramName());
+	setProgramName(programName);
+}
+
+void CommandRunner::setProgramName(const string & name) {
+	assert(!name.empty());
+	fs::path temp("/tmp/ram/Anakin/" + name + "_tmpDir");
 	if (!fs::is_directory(temp)) {
 		fs::create_directories(temp);
 	}
-	tempDir = temp.string();
+	tempDir = temp.string() + "/";
+	this->programName = name;
 }
 
 /**
@@ -42,7 +48,7 @@ Help* CommandRunner::getHelp() {
  * Placeholder for inheritance.
  */
 string CommandRunner::getProgramName() {
-	return "";
+	return programName;
 }
 
 /**

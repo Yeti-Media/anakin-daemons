@@ -10,7 +10,8 @@
 
 namespace Anakin {
 
-FaceExtractor::FaceExtractor() {
+FaceExtractor::FaceExtractor() :
+		Program("FaceExtractor") {
 	// TODO Auto-generated constructor stub
 
 }
@@ -21,10 +22,6 @@ FaceExtractor::~FaceExtractor() {
 
 Help* FaceExtractor::getHelp() {
 	return new HelpFaceExtractor();
-}
-
-string FaceExtractor::getProgramName() {
-	return "FaceExtractor";
 }
 
 void FaceExtractor::initProgramFlags() {

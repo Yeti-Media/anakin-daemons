@@ -43,7 +43,7 @@ namespace Anakin {
  */
 class Program {
 public:
-	Program();
+	Program(string programName);
 	virtual ~Program();
 
 	/**
@@ -59,7 +59,9 @@ public:
 	/**
 	 * Get a full text program name
 	 */
-	virtual string getProgramName() = 0;
+	string getProgramName();
+
+	void setProgramName(const string & name);
 protected:
 
 	/**
@@ -81,6 +83,8 @@ protected:
 	bool verbose;
 	string logFile;
 	string tempDir;
+private:
+	string programName;
 };
 
 } /* namespace Anakin */

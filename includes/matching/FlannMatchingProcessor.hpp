@@ -5,7 +5,7 @@
 #include "data/RichImg.hpp"
 #include <output/communicationFormatter/ICommunicationFormatterMatching.hpp>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 namespace Anakin {
 

@@ -7,7 +7,7 @@
 #include <processing/Trainer.hpp>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 namespace Anakin {
 

@@ -14,13 +14,14 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
 
 namespace Anakin {
 
 MatcherCacheTest::MatcherCacheTest() :
-		Program() {
+		Program("MatcherCacheTest") {
 }
 
 MatcherCacheTest::~MatcherCacheTest() {
@@ -30,16 +31,13 @@ Help* MatcherCacheTest::getHelp() {
 	return new HelpMatcherCacheTest();
 }
 
-string MatcherCacheTest::getProgramName() {
-	return "MatcherCacheTest";
-}
-
 void MatcherCacheTest::initProgramFlags() {
 
 }
 
 int MatcherCacheTest::run(vector<string> *input) {
-	DBDriver dbdriver;
+	TempDirCleaner tempDirCleaner(0);
+	DBDriver dbdriver(&tempDirCleaner);
 	QuickLZ* quickLZstate = new QuickLZ();
 	if (!dbdriver.connect("", "", "", "", "")) {
 		cerr << dbdriver.getMessage() << endl;
@@ -48,7 +46,7 @@ int MatcherCacheTest::run(vector<string> *input) {
 	cout << dbdriver.getMessage() << endl;
 	CacheConfig cacheConfig;
 	cacheConfig.cacheLoadingTimeWeight = 9;
-	SFBMCache cache(&dbdriver, &cacheConfig, "/tmp/");
+	SFBMCache cache(&dbdriver, cacheConfig, "/tmp/ram/", &tempDirCleaner);
 	SerializableFlannBasedMatcher* sfbm;
 	vector<int> patternsID;
 	patternsID.push_back(5);

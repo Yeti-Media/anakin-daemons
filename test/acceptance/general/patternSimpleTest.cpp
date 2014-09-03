@@ -16,7 +16,6 @@
 #include <processing/simpleprogram/PatternExtractor.hpp>
 #include <processing/simpleprogram/PatternTrainer.hpp>
 #include <unistd.h>
-#include <utils/Files.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>

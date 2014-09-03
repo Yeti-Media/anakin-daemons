@@ -9,28 +9,30 @@
 #include "utils/XMLoader.hpp"
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>
-#include <utils/Files.hpp>
+#include <utils/files/Files.hpp>
 
 using namespace Anakin;
 using namespace std;
 
-DBDriver::DBDriver() {
+DBDriver::DBDriver(TempDirCleaner * tempDirCleaner) {
 	this->conn = NULL;
 	this->dbdriverLog.clear();
+	this->tempCleaner = tempDirCleaner;
 }
 
 DBDriver::~DBDriver() {
 	if (this->conn != NULL) {
 		PQfinish(conn);
 	}
+	//do not delete tempDirCleaner
 }
 
 bool DBDriver::connect() {
 	return DBDriver::connect("", "", "", "", "");
 }
 
-bool DBDriver::connect(string pghost, string pgport, string dbName,
-		string login, string pwd) {
+bool DBDriver::connect(const string & pghost, const string & pgport, const string & dbName,
+		const string & login, const string & pwd) {
 	conn = PQsetdbLogin(pghost.c_str(), pgport.c_str(), NULL, NULL,
 			dbName.c_str(), login.c_str(), pwd.c_str());
 
@@ -776,6 +778,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error,
 			string completePath = tmpDir + file;
 			string * uncompressedData = new string();
 			decompress_from_file(completePath, quickLZstate, uncompressedData);
+			tempCleaner->deleteFile(fs::path(completePath));
 			DBPattern* pscene = new DBPattern(false, uncompressedData);
 			pscene->changeID(sceneID);
 			ImageInfo* s = XMLoader::dbpatternToImageInfo(pscene);
@@ -900,6 +903,8 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
 	if (loadFileFromDB(stoi(file_sid), file, tmpDir)) {
 		string completePath = tmpDir + file;
 		decompress_from_file(completePath, quickLZstate, data);
+		tempCleaner->deleteFile(fs::path(completePath));
+		//TODO BORRAR!
 	} else {
 		return false;
 	}
@@ -1110,6 +1115,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 					string * uncompressedData = new string();
 					decompress_from_file(tmpDir + file, quickLZstate,
 							uncompressedData);
+					tempCleaner->deleteFile(fs::path(tmpDir + file));
 					horl->setColorData(uncompressedData);
 				} else {
 					return false;
@@ -1121,6 +1127,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 					string * uncompressedData = new string();
 					decompress_from_file(tmpDir + file, quickLZstate,
 							uncompressedData);
+					tempCleaner->deleteFile(fs::path(tmpDir + file));
 					horl->setGrayData(uncompressedData);
 				} else {
 					return false;
@@ -1132,6 +1139,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 					string * uncompressedData = new string();
 					decompress_from_file(tmpDir + file, quickLZstate,
 							uncompressedData);
+					tempCleaner->deleteFile(fs::path(tmpDir + file));
 					horl->setHSVData(uncompressedData);
 				} else {
 					return false;

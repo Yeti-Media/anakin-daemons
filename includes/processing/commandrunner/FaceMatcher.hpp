@@ -26,7 +26,6 @@ public:
 	void run();
 
 	Help* getHelp();
-	string getProgramName();
 };
 
 } /* namespace Anakin */

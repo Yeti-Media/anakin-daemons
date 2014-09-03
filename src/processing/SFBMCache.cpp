@@ -1,7 +1,7 @@
 #include <boost/foreach.hpp>
 #include <processing/SFBMCache.hpp>
 #include <sys/time.h>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <ctime>
 #include <iostream>
 #include <limits>
@@ -10,27 +10,29 @@
 
 using namespace Anakin;
 
-SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
-		const string & tmpDir) {
+SFBMCache::SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
+		const string & tmpDir, TempDirCleaner * tempDirCleaner) {
 	this->dbdriver = dbdriver;
 	this->tmpDir = tmpDir;
 	this->cfc = new CommunicationFormatterCacheJSON();
+	this->tempDirCleaner = tempDirCleaner;
+
 	//MATCHES CACHE
-	this->cacheMaxSize = cacheConfig->cacheSize;
+	this->cacheMaxSize = cacheConfig.cacheSize;
 	this->cacheSize = 0;
-	this->loadingTimeWeight = cacheConfig->cacheLoadingTimeWeight;
-	this->life = cacheConfig->cacheLife;
+	this->loadingTimeWeight = cacheConfig.cacheLoadingTimeWeight;
+	this->life = cacheConfig.cacheLife;
 	this->hits = 0;
 	this->misses = 0;
 	this->requests = 0;
-	this->discardLessValuable = !cacheConfig->cacheNoDiscardLessValuable;
+	this->discardLessValuable = !cacheConfig.cacheNoDiscardLessValuable;
 	this->cache = new map<int, SerializableFlannBasedMatcher*>();
 	this->matchersLife = new map<int, int>();
 	this->loadingCount = new map<int, int>();
 
 	//SCENES CACHE
-	this->slife = cacheConfig->cacheScenesLife;
-	this->scenesCacheMaxSize = cacheConfig->cacheScenesSize;
+	this->slife = cacheConfig.cacheScenesLife;
+	this->scenesCacheMaxSize = cacheConfig.cacheScenesSize;
 	this->scenesCacheSize = 0;
 	this->sceneHits = 0;
 	this->sceneMisses = 0;
@@ -40,6 +42,12 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
 
 	//PATTERNS CACHE
 	this->pcache = new map<int, map<int, ImageInfo*>*>();
+}
+
+SFBMCache::~SFBMCache() {
+	delete cfc;
+	//do not delete delete tempDirCleaner;
+	//dbdriver must be deleted by the method who instantiate this class.
 }
 
 SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,
@@ -351,7 +359,7 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
 	}
 	string sid = to_string(smatcher_id);
 	SerializableFlannBasedMatcher* matcher = new SerializableFlannBasedMatcher(
-			quickLZstate, sid, this->tmpDir);
+			quickLZstate, sid, this->tmpDir, tempDirCleaner);
 	clock_t t_2 = clock();
 	float tt = ((float) (t_2 - t_1)) / CLOCKS_PER_SEC;
 	*loadingTime = tt;

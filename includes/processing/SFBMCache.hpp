@@ -70,8 +70,10 @@ public:
 	 *
 	 * dbdriver              : used to make requests to the db
 	 */
-	SFBMCache(DBDriver* dbdriver, CacheConfig * cacheConfig,
-			const string & tmpDir);
+	SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
+			const string & tmpDir, TempDirCleaner * tempDirCleaner);
+
+	virtual ~SFBMCache();
 	/**
 	 * load a matcher
 	 *
@@ -147,6 +149,8 @@ public:
 	wstring* getLastOperationResult(bool * error = NULL);
 protected:
 private:
+
+	TempDirCleaner* tempDirCleaner;
 
 	//FIELDS
 	DBDriver* dbdriver;

@@ -26,7 +26,7 @@ using namespace std;
 namespace Anakin {
 
 PatternDBConnector::PatternDBConnector() :
-		Program() {
+		Program("PatternDBConnector") {
 	quickLZState = new QuickLZ();
 }
 
@@ -36,10 +36,6 @@ PatternDBConnector::~PatternDBConnector() {
 
 Help* PatternDBConnector::getHelp() {
 	return new HelpPatternDBConnector();
-}
-
-string PatternDBConnector::getProgramName() {
-	return "PatternDBConnector";
 }
 
 void PatternDBConnector::initProgramFlags() {
@@ -177,7 +173,7 @@ int PatternDBConnector::run(vector<string> *input) {
 		return EXIT_FAILURE;
 	}
 
-	DBDriver* driver = new DBDriver();
+	DBDriver* driver = new DBDriver(0);
 	driver->connect("", "", "", "", "");
 	cout << driver->getMessage() << endl;
 	LOG_F("Info")<< driver->getMessage();

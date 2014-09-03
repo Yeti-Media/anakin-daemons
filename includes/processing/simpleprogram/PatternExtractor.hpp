@@ -11,7 +11,7 @@
 #include <processing/Program.hpp>
 #include <utils/help/Help.hpp>
 #include <string>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <vector>
 
 namespace Anakin {
@@ -21,7 +21,6 @@ public:
 	PatternExtractor();
 	virtual ~PatternExtractor();
 	Help* getHelp();
-	string getProgramName();
 
 	const static char PATTERNS = 1;
 	const static char HISTOGRAMS = 1;

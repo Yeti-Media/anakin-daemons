@@ -7,8 +7,9 @@
 #include "db/DBHistogram.hpp"
 #include <opencv2/opencv.hpp>
 #include "data/ImageInfo.hpp"
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <string>
+#include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
 
@@ -32,8 +33,10 @@ class DBDriver {
 public:
 	/**
 	 * Constructor
+	 *
+	 * TempDirCleaner tempDirCleaner: used to delete temporary files
 	 */
-	DBDriver();
+	DBDriver( TempDirCleaner * tempDirCleaner);
 
 	/**
 	 * Destructor
@@ -44,8 +47,8 @@ public:
 	 * connects to the db
 	 */
 	bool connect();
-	bool connect(string pghost, string pgport, string dbName, string login,
-			string pwd);
+	bool connect(const string & pghost, const string & pgport,
+			const string & dbName, const string & login, const string & pwd);
 	/**
 	 * disconnects from the db
 	 */
@@ -282,7 +285,7 @@ public:
 
 protected:
 private:
-
+	TempDirCleaner * tempCleaner;
 	/**
 	 * replace all "find" string to "replacement" in "str"
 	 */

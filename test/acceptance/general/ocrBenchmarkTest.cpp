@@ -16,7 +16,6 @@
 #include <test/acceptance/TestDefinitions.hpp>
 #include <boost/filesystem/path.hpp>
 #include <unistd.h>
-#include <utils/Files.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>

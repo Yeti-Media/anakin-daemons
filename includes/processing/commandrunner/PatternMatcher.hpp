@@ -13,7 +13,7 @@
 #include <vector>
 #include <utils/help/Help.hpp>
 #include <processing/Flags.hpp>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 #include <output/communicationFormatter/ICommunicationFormatterMatching.hpp>
 
 namespace Anakin {
@@ -34,7 +34,6 @@ public:
 	void run();
 
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	E_PatternMatchingAction action = NONE;

@@ -11,7 +11,7 @@
 #include <processing/Program.hpp>
 #include <string>
 #include <vector>
-#include <utils/QuickLZ.hpp>
+#include <utils/files/QuickLZ.hpp>
 
 namespace Anakin {
 
@@ -20,7 +20,6 @@ public:
 	PatternTrainer();
 	virtual ~PatternTrainer();
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	int run(vector<string> *input);
