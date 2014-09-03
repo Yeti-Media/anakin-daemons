@@ -11,6 +11,7 @@
 #include <connection/RequestServer.hpp>
 #include <string>
 #include <vector>
+#include <utils/files/TempDirCleaner.hpp>
 
 namespace Anakin {
 
@@ -31,7 +32,8 @@ public:
 	RequestServer(const CacheConfig & cacheConfig, char mode,
 			const string & pghost, const string & pgport, const string & dbName,
 			const string & login, const string & pwd, unsigned int httpPort,
-			int cap, int threads, bool verbose, const string & tempDir);
+			int cap, int threads, bool verbose, const string & tempDir,
+			TempDirCleaner * tempDirCleaner);
 
 	virtual ~RequestServer();
 protected:
@@ -91,9 +93,9 @@ RequestServer<SpecificCommandRunner>::RequestServer(
 		const CacheConfig & cacheConfig, char mode, const string & pghost,
 		const string & pgport, const string & dbName, const string & login,
 		const string & pwd, unsigned int httpPort, int cap, int threads,
-		bool verbose, const string & tempDir) :
+		bool verbose, const string & tempDir, TempDirCleaner * tempDirCleaner) :
 		Server<SpecificCommandRunner>(cacheConfig, mode, pghost, pgport, dbName,
-				login, pwd, httpPort, verbose, tempDir) {
+				login, pwd, httpPort, verbose, tempDir, tempDirCleaner) {
 	this->threads = threads;
 	this->workerThreads = new std::vector<pthread_t>(threads);
 	this->qcap = cap;

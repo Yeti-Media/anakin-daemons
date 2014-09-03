@@ -17,7 +17,12 @@ namespace Anakin {
 DirCleanerWorker::DirCleanerWorker(BlockingQueue<fs::path*>* workingQueue,
 		uint delayedSeconds) :
 		fileQueue(workingQueue), delayedSeconds(delayedSeconds) {
-	waitingEnabled = true;
+
+	if (delayedSeconds == 0) {
+		waitingEnabled = false;
+	} else {
+		waitingEnabled = true;
+	}
 }
 
 DirCleanerWorker::~DirCleanerWorker() {

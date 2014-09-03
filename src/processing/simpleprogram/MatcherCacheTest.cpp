@@ -36,7 +36,8 @@ void MatcherCacheTest::initProgramFlags() {
 }
 
 int MatcherCacheTest::run(vector<string> *input) {
-	DBDriver dbdriver;
+	TempDirCleaner tempDirCleaner(0);
+	DBDriver dbdriver(&tempDirCleaner);
 	QuickLZ* quickLZstate = new QuickLZ();
 	if (!dbdriver.connect("", "", "", "", "")) {
 		cerr << dbdriver.getMessage() << endl;
@@ -45,7 +46,7 @@ int MatcherCacheTest::run(vector<string> *input) {
 	cout << dbdriver.getMessage() << endl;
 	CacheConfig cacheConfig;
 	cacheConfig.cacheLoadingTimeWeight = 9;
-	SFBMCache cache(&dbdriver, cacheConfig, "/tmp/ram/");
+	SFBMCache cache(&dbdriver, cacheConfig, "/tmp/ram/", &tempDirCleaner);
 	SerializableFlannBasedMatcher* sfbm;
 	vector<int> patternsID;
 	patternsID.push_back(5);

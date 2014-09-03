@@ -11,11 +11,11 @@
 using namespace Anakin;
 
 SFBMCache::SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
-		const string & tmpDir) {
+		const string & tmpDir, TempDirCleaner * tempDirCleaner) {
 	this->dbdriver = dbdriver;
 	this->tmpDir = tmpDir;
 	this->cfc = new CommunicationFormatterCacheJSON();
-	this->tempDirCleaner = new TempDirCleaner(1);
+	this->tempDirCleaner = tempDirCleaner;
 
 	//MATCHES CACHE
 	this->cacheMaxSize = cacheConfig.cacheSize;
@@ -45,8 +45,8 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
 }
 
 SFBMCache::~SFBMCache() {
-	delete tempDirCleaner;
 	delete cfc;
+	//do not delete delete tempDirCleaner;
 	//dbdriver must be deleted by the method who instantiate this class.
 }
 

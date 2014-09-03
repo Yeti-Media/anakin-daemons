@@ -9,6 +9,7 @@
 #include "data/ImageInfo.hpp"
 #include <utils/files/QuickLZ.hpp>
 #include <string>
+#include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
 
@@ -35,7 +36,7 @@ public:
 	 *
 	 * TempDirCleaner tempDirCleaner: used to delete temporary files
 	 */
-	DBDriver();
+	DBDriver( TempDirCleaner * tempDirCleaner);
 
 	/**
 	 * Destructor
@@ -284,7 +285,7 @@ public:
 
 protected:
 private:
-
+	TempDirCleaner * tempCleaner;
 	/**
 	 * replace all "find" string to "replacement" in "str"
 	 */

@@ -173,7 +173,7 @@ int PatternDBConnector::run(vector<string> *input) {
 		return EXIT_FAILURE;
 	}
 
-	DBDriver* driver = new DBDriver();
+	DBDriver* driver = new DBDriver(0);
 	driver->connect("", "", "", "", "");
 	cout << driver->getMessage() << endl;
 	LOG_F("Info")<< driver->getMessage();

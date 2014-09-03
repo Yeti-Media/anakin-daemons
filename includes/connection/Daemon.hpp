@@ -22,6 +22,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
 
@@ -307,10 +308,13 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 
 	HTTPSocket* httpSocket;
 
+	//delay file deletion for 0 second
+	TempDirCleaner tempDirCleaner(0);
+
 	Server<SpecificCommandRunner>* server = new RequestServer<
 			SpecificCommandRunner>(cacheConfig, iMode,
 			pghost, pgport, dbName, login, pwd, httpPort, queueCapacity,
-			threads, verbose,this->tempDir);
+			threads, verbose,this->tempDir, &tempDirCleaner);
 
 	DataOutput* output;
 	if (oMode & Server<SpecificCommandRunner>::CONSOLE) {

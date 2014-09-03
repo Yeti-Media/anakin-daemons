@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <utils/StringUtils.hpp>
+#include <utils/files/TempDirCleaner.hpp>
 
 namespace fs = boost::filesystem;
 using namespace std;
@@ -30,10 +31,10 @@ public:
 	 * verbose : if the server will output information to console or not
 	 * mode : how to listen to requests (CONSOLE, TCP, UDP, DTCP, HTTP)
 	 */
-	Server(const CacheConfig & cacheConfig,
-			char mode, const string & pghost, const string & pgport,
-			const string & dbName, const string & login, const string & pwd,
-			unsigned int httpPort, bool verbose, const string & tempDir);
+	Server(const CacheConfig & cacheConfig, char mode, const string & pghost,
+			const string & pgport, const string & dbName, const string & login,
+			const string & pwd, unsigned int httpPort, bool verbose,
+			const string & tempDir, TempDirCleaner * tempDirCleaner);
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * output : this is used to output the processing results
@@ -111,15 +112,16 @@ private:
 };
 
 template<class SpecificCommandRunner>
-Server<SpecificCommandRunner>::Server(
-		const CacheConfig & cacheConfig, char mode, const string & pghost,
-		const string & pgport, const string & dbName, const string & login,
-		const string & pwd, unsigned int httpPort, bool verbose, const string & tempDir) {
+Server<SpecificCommandRunner>::Server(const CacheConfig & cacheConfig,
+		char mode, const string & pghost, const string & pgport,
+		const string & dbName, const string & login, const string & pwd,
+		unsigned int httpPort, bool verbose, const string & tempDir,
+		TempDirCleaner * tempDirCleaner) {
 	this->output = NULL;
 	this->cache = NULL;
 	this->port = httpPort;
 	this->mode = mode;
-	this->dbdriver = new DBDriver();
+	this->dbdriver = new DBDriver(tempDirCleaner);
 
 	if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
 		this->initialization = true;
@@ -133,7 +135,8 @@ Server<SpecificCommandRunner>::Server(
 		exit(EXIT_FAILURE);
 	}
 	if (this->initialization) {
-		this->cache = new SFBMCache(this->dbdriver, cacheConfig, tempDir);
+		this->cache = new SFBMCache(this->dbdriver, cacheConfig, tempDir,
+				tempDirCleaner);
 		this->cacheInitializationError = false;
 		wstring cacheError = *this->cache->getLastOperationResult(
 				&this->cacheInitializationError);

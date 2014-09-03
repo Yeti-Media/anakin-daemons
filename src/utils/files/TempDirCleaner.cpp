@@ -33,12 +33,10 @@ TempDirCleaner::~TempDirCleaner() {
 }
 
 void TempDirCleaner::deleteFile(const fs::path & file) {
-	lock_guard<mutex> lck(fileMutex);
 	workingQueue->push(new fs::path(file));
 }
 
 void TempDirCleaner::close() {
-	//worker->setWaiting(false);
 	workingQueue->push(NULL);
 	pthread_join(this->workerThread, NULL);
 }

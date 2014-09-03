@@ -12,8 +12,6 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <utils/BlockingQueue.hpp>
-#include <mutex>
-
 
 namespace fs = boost::filesystem;
 
@@ -46,11 +44,6 @@ public:
 	 */
 	void close();
 private:
-
-	/**
-	 * used for block the concurrent access to DataOutput methods
-	 */
-	mutex fileMutex;
 
 	/**
 	 * used for msj storage and future delivering (so a working thread can be

@@ -71,7 +71,7 @@ public:
 	 * dbdriver              : used to make requests to the db
 	 */
 	SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
-			const string & tmpDir);
+			const string & tmpDir, TempDirCleaner * tempDirCleaner);
 
 	virtual ~SFBMCache();
 	/**

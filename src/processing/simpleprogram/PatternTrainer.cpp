@@ -91,7 +91,7 @@ int PatternTrainer::run(vector<string> *input) {
 		}
 	}
 
-	TempDirCleaner tempDirCleaner(1);
+	TempDirCleaner tempDirCleaner(0);
 
 	//TRAINING
 	const Ptr<flann::IndexParams>& indexParams = new flann::KDTreeIndexParams(
@@ -105,10 +105,10 @@ int PatternTrainer::run(vector<string> *input) {
 	SerializedPatternDataInput* sinput;
 	if (user) {
 		sinput = new SerializedPatternDataInput(userID, "", "", "", "", "",
-				this->tempDir);
+				this->tempDir, &tempDirCleaner);
 	} else {
 		sinput = new SerializedPatternDataInput(patternsId, "", "", "", "", "",
-				this->tempDir);
+				this->tempDir, &tempDirCleaner);
 	}
 	PatternLoader* loader = new PatternLoader(sinput, patterns);
 	loader->load(quickLZstate);
