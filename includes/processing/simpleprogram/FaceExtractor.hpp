@@ -19,7 +19,6 @@ public:
 	FaceExtractor();
 	virtual ~FaceExtractor();
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	int run(vector<string> *input);

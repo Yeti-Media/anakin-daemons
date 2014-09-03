@@ -23,7 +23,7 @@
 namespace Anakin {
 
 PatternExtractor::PatternExtractor() :
-		Program() {
+		Program("PatternExtractor") {
 	quickLZState = new QuickLZ();
 }
 
@@ -33,10 +33,6 @@ PatternExtractor::~PatternExtractor() {
 
 Help* PatternExtractor::getHelp() {
 	return new HelpPatternExtractor();
-}
-
-string PatternExtractor::getProgramName() {
-	return "PatternExtractor";
 }
 
 void PatternExtractor::initProgramFlags() {

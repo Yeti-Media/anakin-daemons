@@ -10,7 +10,8 @@
 
 namespace Anakin {
 
-FaceMatcher::FaceMatcher() {
+FaceMatcher::FaceMatcher() :
+		CommandRunner("FaceMatcher") {
 }
 
 FaceMatcher::~FaceMatcher() {
@@ -30,9 +31,6 @@ void FaceMatcher::run() {
 
 Help* FaceMatcher::getHelp() {
 	return new HelpFaceMatcher();
-}
-string FaceMatcher::getProgramName() {
-	return "FaceMatcher";
 }
 
 } /* namespace Anakin */

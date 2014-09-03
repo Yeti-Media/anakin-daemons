@@ -31,7 +31,6 @@ public:
 	void run();
 
 	Help* getHelp();
-	string getProgramName();
 private:
 	I_CommunicationFormatter* cf;
 	bool run_ocr_detect = false;

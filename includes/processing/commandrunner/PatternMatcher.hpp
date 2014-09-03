@@ -34,7 +34,6 @@ public:
 	void run();
 
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	E_PatternMatchingAction action = NONE;

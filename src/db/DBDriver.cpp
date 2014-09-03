@@ -29,8 +29,8 @@ bool DBDriver::connect() {
 	return DBDriver::connect("", "", "", "", "");
 }
 
-bool DBDriver::connect(string pghost, string pgport, string dbName,
-		string login, string pwd) {
+bool DBDriver::connect(const string & pghost, const string & pgport, const string & dbName,
+		const string & login, const string & pwd) {
 	conn = PQsetdbLogin(pghost.c_str(), pgport.c_str(), NULL, NULL,
 			dbName.c_str(), login.c_str(), pwd.c_str());
 
@@ -900,6 +900,7 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
 	if (loadFileFromDB(stoi(file_sid), file, tmpDir)) {
 		string completePath = tmpDir + file;
 		decompress_from_file(completePath, quickLZstate, data);
+		//TODO BORRAR!
 	} else {
 		return false;
 	}

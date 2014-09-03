@@ -26,7 +26,7 @@ using namespace std;
 namespace Anakin {
 
 PatternDBConnector::PatternDBConnector() :
-		Program() {
+		Program("PatternDBConnector") {
 	quickLZState = new QuickLZ();
 }
 
@@ -36,10 +36,6 @@ PatternDBConnector::~PatternDBConnector() {
 
 Help* PatternDBConnector::getHelp() {
 	return new HelpPatternDBConnector();
-}
-
-string PatternDBConnector::getProgramName() {
-	return "PatternDBConnector";
 }
 
 void PatternDBConnector::initProgramFlags() {

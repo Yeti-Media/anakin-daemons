@@ -11,30 +11,29 @@ using namespace cv;
 using namespace std;
 
 SerializableFlannBasedMatcher::~SerializableFlannBasedMatcher() {
-
+	//tempDirCleaner should be deleted at the caller method
 }
 
 SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 		const Ptr<flann::IndexParams>& indexParams,
-		const Ptr<flann::SearchParams>& searchParams) :
-		FlannBasedMatcher(indexParams, searchParams) {
-	this->loadedFromFile = false;
+		const Ptr<flann::SearchParams>& searchParams,
+		TempDirCleaner * tempDirCleaner) :
+		FlannBasedMatcher(indexParams, searchParams), tempDirCleaner(
+				tempDirCleaner), loadedFromFile(false) {
 }
 
 SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
-		QuickLZ* quickLZstate, string filename, const string & tmpDir) {
-	this->filename = filename;
+		QuickLZ* quickLZstate, string filename, const string & tmpDir,
+		TempDirCleaner * tempDirCleaner) :
+		filename(filename), tempDirCleaner(tempDirCleaner) {
 	string * xmlData = new string();
 	decompress_from_file(tmpDir + filename + ".xml", quickLZstate, xmlData);
 	decompress_file(tmpDir + filename + ".if", quickLZstate);
 	this->load(*xmlData, tmpDir);
 	delete xmlData;
-//	if (removeFileAfterLoad) {
-//		string indexFile = filename + ".if";
-//		string matcherFile = filename + ".xml";
-//		remove(indexFile.c_str());
-//		remove(matcherFile.c_str());
-//	}
+
+	tempDirCleaner->deleteFile(fs::path(tmpDir + filename + ".xml"));
+	tempDirCleaner->deleteFile(fs::path(tmpDir + filename + ".if"));
 }
 
 void SerializableFlannBasedMatcher::save(QuickLZ* quickLZstate, string filename,
@@ -150,79 +149,3 @@ void SerializableFlannBasedMatcher::loadIndex(cv::Mat * data,
 	flannIndex = new cv::flann::Index(*data, *params);
 	delete params; //FIXME can cause problems
 }
-//
-//void SerializableFlannBasedMatcher::compress(QuickLZ* quickLZstate,
-//		bool removeOriginal) {
-//	string uncompressedIndexFileName = this->filename + ".if";
-//	string uncompressedMatcherFileName = this->filename + ".xml";
-//	string compressedIndexFileName =
-//			removeOriginal ?
-//					uncompressedIndexFileName : this->filename + ".cif";
-//	string compressedMatcherFileName =
-//			removeOriginal ?
-//					uncompressedMatcherFileName : this->filename + ".cxml";
-//	string * uindexData = get_file_contents(uncompressedIndexFileName);
-//	string * umatcherData = get_file_contents(uncompressedMatcherFileName);
-////	if (removeOriginal) {
-////		remove(uncompressedIndexFileName.c_str());
-////		remove(uncompressedMatcherFileName.c_str());
-////	}
-//	size_t ir;
-//	size_t mr;
-//	//clock_t t_1 = clock();
-//
-//	char * compressedIndexData = quickLZstate->compressText(uindexData, &ir);
-//	char * compressedMatcherData = quickLZstate->compressText(umatcherData,
-//			&mr);
-//
-//	//clock_t t_2 = clock();
-//	//float tt = ((float)(t_2 - t_1))/CLOCKS_PER_SEC;
-//	//cout << "compressing time: " << tt << endl;
-//	write_to_file(compressedIndexData, compressedIndexFileName, ir);
-//	write_to_file(compressedMatcherData, compressedMatcherFileName, mr);
-//	delete uindexData;
-//	delete umatcherData;
-//	delete compressedIndexData;
-//	delete compressedMatcherData;
-//}
-//
-//void SerializableFlannBasedMatcher::decompress(QuickLZ* quickLZstate,
-//		bool useOriginalNames, string & xmlData, const string & tmpDir) {
-//	//bool decompressMatcherToFile = xmlData == NULL;
-//	string uncompressedIndexFileName = tmpDir + "/" + this->filename
-//			+ (useOriginalNames ? ".if" : ".uif");
-//	string uncompressedMatcherFileName = tmpDir + "/" + this->filename
-//			+ (useOriginalNames ? ".xml" : ".uxml");
-//	string compressedIndexFileName = tmpDir + "/" + this->filename
-//			+ (useOriginalNames ? ".if" : ".cif");
-//	string compressedMatcherFileName = tmpDir + "/" + this->filename
-//			+ (useOriginalNames ? ".xml" : ".cxml");
-//
-//	string * cindexData = get_file_contents(compressedIndexFileName);
-//	string * cmatcherData = get_file_contents(compressedMatcherFileName);
-////
-////	if (useOriginalNames) {
-////		remove(compressedIndexFileName.c_str());
-////		remove(compressedMatcherFileName.c_str());
-////	}
-//	//clock_t t_1 = clock();
-//	size_t ir;
-//	size_t mr;
-//	char * ucompressedIndexData = quickLZstate->decompressText(cindexData, &ir);
-//	char * ucompressedMatcherData = quickLZstate->decompressText(cmatcherData,
-//			&mr);
-//
-//	xmlData = string(ucompressedMatcherData, mr);
-//	//indexData = new string(ucompressedIndexData, ir);
-//
-////	//clock_t t_2 = clock();
-////	//float tt = ((float)(t_2 - t_1))/CLOCKS_PER_SEC;
-////	//cout << "decompressing time: " << tt << endl;
-//	write_to_file(ucompressedIndexData, uncompressedIndexFileName, ir);
-//
-//	delete cindexData;
-//	delete cmatcherData;
-//	delete ucompressedIndexData;
-//	delete ucompressedMatcherData;
-//}
-

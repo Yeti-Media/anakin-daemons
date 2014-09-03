@@ -20,7 +20,6 @@ public:
 	PatternTrainer();
 	virtual ~PatternTrainer();
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	int run(vector<string> *input);

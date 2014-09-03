@@ -21,7 +21,6 @@ public:
 	PatternExtractor();
 	virtual ~PatternExtractor();
 	Help* getHelp();
-	string getProgramName();
 
 	const static char PATTERNS = 1;
 	const static char HISTOGRAMS = 1;

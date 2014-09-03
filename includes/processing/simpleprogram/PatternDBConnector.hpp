@@ -20,7 +20,6 @@ public:
 	PatternDBConnector();
 	virtual ~PatternDBConnector();
 	Help* getHelp();
-	string getProgramName();
 
 protected:
 	int run(vector<string> *input);

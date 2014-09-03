@@ -38,7 +38,6 @@ public:
 	Daemon();
 	virtual ~Daemon();
 
-	string getProgramName();
 	Help* getHelp();
 
 protected:
@@ -47,9 +46,9 @@ protected:
 };
 
 template<class SpecificCommandRunner>
-Daemon<SpecificCommandRunner>::Daemon() {
-	// TODO Auto-generated constructor stub
-
+Daemon<SpecificCommandRunner>::Daemon() : Program("Daemon") {
+	SpecificCommandRunner commandRunner;
+	this->setProgramName(commandRunner.getProgramName());
 }
 
 template<class SpecificCommandRunner>
@@ -115,11 +114,6 @@ void Daemon<SpecificCommandRunner>::initProgramFlags() {
 	programFlags.setVerbose(true);
 }
 
-template<class SpecificCommandRunner>
-string Daemon<SpecificCommandRunner>::getProgramName() {
-	SpecificCommandRunner commandRunner;
-	return commandRunner.getProgramName();
-}
 
 template<class SpecificCommandRunner>
 Help* Daemon<SpecificCommandRunner>::getHelp() {
@@ -147,7 +141,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	unsigned int queueCapacity = 10;
 
 	CacheConfig cacheConfig;
-	CacheConfig * pCacheConfig = &cacheConfig;
 
 	//______________________________________________________________________//
 	//                         FLAGS PARSING                                //
@@ -315,9 +308,9 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	HTTPSocket* httpSocket;
 
 	Server<SpecificCommandRunner>* server = new RequestServer<
-			SpecificCommandRunner>(this->getProgramName(), pCacheConfig, iMode,
+			SpecificCommandRunner>(cacheConfig, iMode,
 			pghost, pgport, dbName, login, pwd, httpPort, queueCapacity,
-			threads, verbose);
+			threads, verbose,this->tempDir);
 
 	DataOutput* output;
 	if (oMode & Server<SpecificCommandRunner>::CONSOLE) {

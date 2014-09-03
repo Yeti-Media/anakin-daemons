@@ -32,6 +32,8 @@ class DBDriver {
 public:
 	/**
 	 * Constructor
+	 *
+	 * TempDirCleaner tempDirCleaner: used to delete temporary files
 	 */
 	DBDriver();
 
@@ -44,8 +46,8 @@ public:
 	 * connects to the db
 	 */
 	bool connect();
-	bool connect(string pghost, string pgport, string dbName, string login,
-			string pwd);
+	bool connect(const string & pghost, const string & pgport,
+			const string & dbName, const string & login, const string & pwd);
 	/**
 	 * disconnects from the db
 	 */

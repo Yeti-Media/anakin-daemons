@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <iostream>               // for cout
 #include <utils/ClearVector.hpp>
+#include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
 using namespace cv;
@@ -26,7 +27,7 @@ using namespace cv;
 namespace Anakin {
 
 PatternTrainer::PatternTrainer() :
-		Program() {
+		Program("PatternTrainer") {
 	quickLZstate = new QuickLZ();
 }
 
@@ -36,10 +37,6 @@ PatternTrainer::~PatternTrainer() {
 
 Help* PatternTrainer::getHelp() {
 	return new HelpPatternTrainer();
-}
-
-string PatternTrainer::getProgramName() {
-	return "PatternTrainer";
 }
 
 void PatternTrainer::initProgramFlags() {
@@ -94,12 +91,15 @@ int PatternTrainer::run(vector<string> *input) {
 		}
 	}
 
+	TempDirCleaner tempDirCleaner(1);
+
 	//TRAINING
 	const Ptr<flann::IndexParams>& indexParams = new flann::KDTreeIndexParams(
 			4);
 	const Ptr<flann::SearchParams>& searchParams = new flann::SearchParams();
 	cv::Ptr<cv::DescriptorMatcher> matcher = cv::Ptr<FlannBasedMatcher>(
-			new SerializableFlannBasedMatcher(indexParams, searchParams));
+			new SerializableFlannBasedMatcher(indexParams, searchParams,
+					&tempDirCleaner));
 	matcher->clear();
 	vector<RichImg*> patterns;
 	SerializedPatternDataInput* sinput;

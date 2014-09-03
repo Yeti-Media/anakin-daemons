@@ -31,7 +31,7 @@ void patternSimpleTest(int argc, const char * argv[]) {
 	//--------------------------------------------------------------
 
 	string testName = "Pattern_Simple";
-	uint maxTestRepetition = 10;
+	uint maxTestRepetition = 1;
 
 	string database = "AnakinAcceptanceTesting";
 	string userDB = "postgres";
