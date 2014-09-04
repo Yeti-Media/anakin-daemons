@@ -102,6 +102,7 @@ void HistogramsIO::save(string filename, Histogram* histogram,
 						color ? I_CommunicationFormatter::e_color::CF_COLOR : (
 								hsv ? I_CommunicationFormatter::e_color::CF_HSV : I_CommunicationFormatter::e_color::CF_GRAY));
 		wcout << out << endl;
+		delete cf;
 	}
 }
 

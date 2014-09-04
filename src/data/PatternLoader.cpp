@@ -86,6 +86,7 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 					<< cf->format(I_CommunicationFormatter::e_mode::CF_PATTERNS,
 							data, I_CommunicationFormatter::e_color::CF_NONE)
 					<< std::endl;
+			delete cf;
 		}
 		if (filesToLoad > 0) {
 			this->patterns->at(idx) = richImage;

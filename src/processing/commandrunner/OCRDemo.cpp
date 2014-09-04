@@ -17,6 +17,7 @@
 #include <utils/Constants.hpp>
 #include <utils/help/HelpOCRDemo.hpp>
 #include <sstream>
+#include <utils/ClearVector.hpp>
 
 namespace Anakin {
 
@@ -114,7 +115,10 @@ void OCRDemo::validateRequest(vector<string> *input) {
 				inputError = true;
 				return;
 			}
+		} else {
+			datapath = "/usr/share/tesseract-ocr/";
 		}
+
 		// DO NOT DELETE VALUES! there are alias to flags content!
 		//delete values;
 	} else {
@@ -135,7 +139,7 @@ void OCRDemo::run() {
 	int ireqID = stoi(reqID);
 
 	string lastError;
-	datapath = "/usr/share/tesseract-ocr/";
+
 	OCRDetector ocrDetector(scenesDir, datapath, lang, ocrMode);
 	vector<string>* results = ocrDetector.detect(lastError);
 	vector<wstring*> jsonresults;
@@ -154,6 +158,8 @@ void OCRDemo::run() {
 	this->out->output(
 			this->cf->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,
 					jsonresults), ireqID);
+
+	for_each( jsonresults.begin(), jsonresults.end(), delete_pointer_element<wstring*>());
 	delete results;
 }
 
