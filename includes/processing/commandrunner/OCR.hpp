@@ -1,28 +1,28 @@
 /*
- * OCRDemo.hpp
+ * OCR.hpp
  *
  *  Created on: 18/8/2014
  *      Author: Franco Pellegrini
  */
 
-#ifndef OCRDEMO_HPP_
-#define OCRDEMO_HPP_
+#ifndef OCR_HPP_
+#define OCR_HPP_
 
-#include <opencv2/core/core.hpp>
 #include <processing/commandrunner/CommandRunner.hpp>
+#include <tesseract/publictypes.h>
 #include <string>
-#include <utility>
 #include <vector>
+
 
 using namespace std;
 using namespace cv;
 
 namespace Anakin {
 
-class OCRDemo: public CommandRunner {
+class OCR: public CommandRunner {
 public:
-	OCRDemo();
-	virtual ~OCRDemo();
+	OCR();
+	virtual ~OCR();
 
 	void validateRequest(vector<string> *input);
 
@@ -31,17 +31,20 @@ public:
 	void run();
 
 	Help* getHelp();
+
+	vector<string>* detect(string & lastError);
 private:
 	I_CommunicationFormatter* cf;
-	bool run_ocr_detect = false;
+	bool showWords = false;
 	string lang = "eng";
 	string datapath = "";
 	string scenesDir = "landscapes/forest";
-	int ocrMode = 0;
+	tesseract::OcrEngineMode mode  = tesseract::OEM_TESSERACT_ONLY;
 	wstring* resultAsJSONValue(vector<string>* ocrRecognizedText); //move this to communicationFormatter
+
 };
 
 }
 /* namespace Anakin */
 
-#endif /* OCRDEMO_HPP_ */
+#endif /* OCR_HPP_ */

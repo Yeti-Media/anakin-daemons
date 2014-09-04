@@ -86,7 +86,26 @@ TextLocator::TextLocator(const fs::path dirToParse) {
 }
 
 const list<LocatedWord> & TextLocator::getLocations(const fs::path & file) {
+	//TODO retn NULL if no file?
 	return locationMapping[file];
+}
+
+string * TextLocator::getLectureFrom(const fs::path & file) {
+
+	if (locationMapping.find(file) == locationMapping.end()) {
+		return NULL;
+	}
+	list<LocatedWord> words = locationMapping[file];
+	string * text = new string();
+	for (list<LocatedWord>::iterator word = words.begin(); word != words.end();
+			++word) {
+		text->append((*word).word);
+		text->append(" ");
+	}
+	if (!text->empty() && !words.empty())
+		text->pop_back();
+
+	return text;
 }
 
 TextLocator::~TextLocator() {

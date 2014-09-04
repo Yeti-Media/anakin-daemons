@@ -10,7 +10,7 @@
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
 #include <boost/filesystem/operations.hpp>
-#include <processing/commandrunner/OCRDemo.hpp>
+#include <processing/commandrunner/OCR.hpp>
 #include <pthread.h>
 #include <test/acceptance/TestTools.hpp>
 #include <test/acceptance/TestDefinitions.hpp>
@@ -78,7 +78,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	printStep(testName, 1);
 
 	pthread_t * thread = NULL;
-	thread = runDaemonProgram<OCRDemo>(
+	thread = runDaemonProgram<OCR>(
 			"-oLogFile " + pathToAnakinPath(logsOCR_Demo)
 					+ " -iHTTP 8080 -oHTTP -threads 8 -verbose");
 

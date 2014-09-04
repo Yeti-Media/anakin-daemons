@@ -29,7 +29,18 @@ class TextLocator {
 public:
 	TextLocator(const fs::path dirToParse);
 	virtual ~TextLocator();
+
+	/**
+	 * get the list of word locations from a file
+	 */
 	const list<LocatedWord> & getLocations(const fs::path & file);
+
+	/**
+	 * Get the text in a readable way instead of words. It will fuse all the
+	 * words in a single text.
+	 * If there is no file, NULL is returned.
+	 */
+	string * getLectureFrom(const fs::path & file);
 
 private:
 	fs::path parsedDir;

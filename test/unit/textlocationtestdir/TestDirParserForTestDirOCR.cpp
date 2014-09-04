@@ -79,8 +79,8 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCR ) {
 	TextLocator locator(filesToImport);
 
 	//------------- FIRST TEST --------------------
-	boost::filesystem::path testFile1 = filesToImport / "gt_img_362.txt";
-	list<LocatedWord> locations = locator.getLocations(testFile1);
+	boost::filesystem::path testFile = filesToImport / "gt_img_362.txt";
+	list<LocatedWord> locations = locator.getLocations(testFile);
 	bool testResultOK = false;
 
 	for (list<LocatedWord>::iterator actualWord = locations.begin();
@@ -99,8 +99,8 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCR ) {
 	}
 
 	//------------- SECOND TEST --------------------
-	testFile1 = filesToImport / "gt_img_403.txt";
-	locations = locator.getLocations(testFile1);
+	testFile = filesToImport / "gt_img_403.txt";
+	locations = locator.getLocations(testFile);
 	testResultOK = false;
 
 	for (list<LocatedWord>::iterator actualWord = locations.begin();
@@ -117,6 +117,19 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCR ) {
 	if (!testResultOK) {
 		BOOST_FAIL("Second test failed");
 	}
+
+	//------------- LECTURE TEST --------------------
+	testFile = filesToImport / "gt_img_47.txt";
+	locations = locator.getLocations(testFile);
+	testResultOK = false;
+
+	string * lectureText = locator.getLectureFrom(testFile);
+	string real = "KIDS: LEARN ENGLISH ONLINE Games, stories, and more...";
+
+	if (lectureText->compare(real)!=0) {
+		BOOST_FAIL("Lecture test failed");
+	}
+	delete lectureText;
 }
 
 BOOST_AUTO_TEST_SUITE_END()
