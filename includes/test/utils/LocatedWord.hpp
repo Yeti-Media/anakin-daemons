@@ -26,6 +26,7 @@ public:
 	string x2;
 	string y2;
 	string word;
+
 };
 
 } /* namespace Anakin */

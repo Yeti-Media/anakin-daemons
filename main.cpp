@@ -57,7 +57,7 @@ using namespace Anakin;
 // *** OCR ****
 
 #if COMPILE_MODULE == OCRDEMO || COMPILE_MODULE == ALLMODULES
-#include <processing/commandrunner/OCRDemo.hpp>
+#include <processing/commandrunner/OCR.hpp>
 #endif
 
 // *** TESTS ***

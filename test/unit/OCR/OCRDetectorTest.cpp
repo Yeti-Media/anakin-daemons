@@ -20,7 +20,7 @@
 #include <iostream>
 #include <string>
 #include <utils/files/Files.hpp>
-#include <processing/ocr/OCRDetector.hpp>
+#include <processing/commandrunner/OCR.hpp>
 
 namespace fs = boost::filesystem;
 using namespace Anakin;
@@ -77,8 +77,18 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 	}
 
 	string lastError;
-	OCRDetector ocrDetector(img_3.string());
-	vector<string>* results = ocrDetector.detect(lastError);
+
+	DataOutput* output = new DataOutput();
+
+	OCR* ocr = new OCR();
+	ocr->initializeCommandRunner(output, NULL);
+
+	vector<string> * inputs = new vector<string>();
+	inputs->push_back("-ocr");
+	inputs->push_back(img_3.string());
+
+	ocr->validateRequest(inputs);
+	vector<string>* results = ocr->detect(lastError);
 
 	if (results == NULL) {
 		BOOST_FAIL("OCR fail: " + lastError);
