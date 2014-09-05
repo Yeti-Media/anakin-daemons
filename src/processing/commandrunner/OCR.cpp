@@ -15,7 +15,7 @@
 #include <processing/Flags.hpp>
 #include <sys/types.h>
 #include <utils/Constants.hpp>
-#include <utils/help/HelpOCRDemo.hpp>
+#include <utils/help/HelpOCR.hpp>
 #include <sstream>
 #include <utils/ClearVector.hpp>
 
@@ -31,7 +31,7 @@ OCR::~OCR() {
 }
 
 Help* OCR::getHelp() {
-	return new HelpOCRDemo();
+	return new HelpOCR();
 }
 
 void OCR::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {

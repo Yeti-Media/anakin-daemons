@@ -28,7 +28,7 @@ Summary:
 OCR demo to test.
 Usage:
 
-  ./OCRDemo -ocr <path to image> [-mode <0-3> | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]
+  ./OCRDemo -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]
   * NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])
 
 Flags:
@@ -44,6 +44,7 @@ Flags:
                                     command-line configs, or if not specified
                                     in any of the above should be set to the
                                     default OEM_TESSERACT_ONLY.
--datapath <path> : the location of tessdata folder containing the trained data files
+-words                            : return the list of recognized words and their boundary box.
+-datapath <path>                  : the location of tessdata folder containing the trained data files
 -lang <[~]<lang_value>[+[~]<lang_value>]*> : sets the languages to use, ~ is used to override the loading of a language
 
