@@ -9,9 +9,12 @@
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
+#include <test/utils/TextLocator.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <processing/commandrunner/OCR.hpp>
 #include <pthread.h>
+#include <output/JSON.h>
+#include <output/JSONValue.h>
 #include <test/acceptance/TestTools.hpp>
 #include <test/acceptance/TestDefinitions.hpp>
 #include <boost/filesystem/path.hpp>
@@ -76,6 +79,14 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	//  Step 1 - OCR demo startup and test
 	//--------------------------------------------------------------
 	printStep(testName, 1);
+	cout << "Parsing text localization files...";
+	TextLocator locator(testLocalization);
+	cout << " OK" << endl;
+
+	//--------------------------------------------------------------
+	//  Step 2 - OCR demo startup and test
+	//--------------------------------------------------------------
+	printStep(testName, 2);
 
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCR>(
@@ -99,18 +110,61 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 			testRepetition++) {
 		for (list<fs::path>::iterator file = filesToTest->begin();
 				file != filesToTest->end(); ++file) {
+
+			//-------------------------------------------------------------
+			// Obtaining OCR results
+			//-------------------------------------------------------------
+
 			string results;
 			string JSONcmd = "{\"action\":\"ocr\", \"ocr\":\""
 					+ (*file).string() + "\"}";
-			runCURL_JSON(collector,JSONcmd,"OCR",results);
+			runCURL_JSON(collector, JSONcmd, "OCR", results);
 
 			//Analyzing output
 			string pattern2 = "\"error_type\"";
 			if (results.find(pattern2) != string::npos) {
-				cerr << "OCR replied with an error:" << endl << endl
-						<< results << endl << endl;
+				cerr << "OCR replied with an error:" << endl << endl << results
+						<< endl << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
+			}
+
+			//-------------------------------------------------------------
+			// Comparing OCR results with real text on the image
+			//-------------------------------------------------------------
+			string filename = "gt_"
+					+ (*file).filename().replace_extension(".txt").string();
+			fs::path pathToLocationFile = testLocalization / filename;
+			string * realText = locator.getLectureFrom(pathToLocationFile);
+
+			if (realText == NULL) {
+				cerr << "can't find the file with text locations:" << endl
+						<< endl << pathToLocationFile.string() << endl << endl;
+				stopAnakinHTTP(thread, logsDir, NULL);
+				exitWithError();
+			} else {
+
+				cout << "-----------------------" << endl
+						<< "Comaring original text: " << endl << (*realText)
+						<< endl << "**** vs ****" << endl << results << endl;
+
+				JSONValue* jsonResult = JSON::Parse(results.c_str());
+				if (jsonResult == NULL) {
+					cerr << endl << "can't parse to JSON:" << endl << results
+							<< endl << endl;
+					stopAnakinHTTP(thread, logsDir, NULL);
+					exitWithError();
+				}
+				if (jsonResult->HasChild(L"values")) {
+					cout << "json values" << endl;
+					wcout << jsonResult->Child(L"values")->AsString() << endl;
+				} else {
+					wcerr << L"can't find values in JSON:" << endl << endl
+							<< jsonResult->Stringify() << endl << endl;
+					stopAnakinHTTP(thread, logsDir, NULL);
+					exitWithError();
+				}
+				delete jsonResult;
 			}
 
 			cout << "* Repetition number " << testRepetition << endl;
