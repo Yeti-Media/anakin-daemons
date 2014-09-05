@@ -40,7 +40,6 @@ private:
 	string datapath = "";
 	string scenesDir = "landscapes/forest";
 	tesseract::OcrEngineMode mode  = tesseract::OEM_TESSERACT_ONLY;
-	wstring* resultAsJSONValue(vector<string>* ocrRecognizedText); //move this to communicationFormatter
 
 };
 

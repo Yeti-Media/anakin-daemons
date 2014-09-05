@@ -119,7 +119,7 @@ int main(int argc, const char * argv[]) {
 	// *** OCR ****
 
 #if COMPILE_MODULE == OCRDEMO
-	Program* program = new Daemon<OCRDemo>();
+	Program* program = new Daemon<OCR>();
 #endif
 
 	// common startup

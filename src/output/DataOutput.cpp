@@ -6,6 +6,7 @@
 #include <iostream>
 #include <assert.h>
 #include <utils/ClearVector.hpp>
+#include <boost/locale.hpp>
 
 using namespace Anakin;
 using namespace std;
@@ -59,7 +60,7 @@ DataOutput::~DataOutput() {
 
 void DataOutput::output(wstring* data, int reqID) {
 	lock_guard<mutex> lck(outputMutex);
-	Msj* msj = new Msj(string(data->begin(), data->end()),
+	Msj* msj = new Msj(boost::locale::conv::utf_to_utf<char>(*data),
 			E_DataOutputMsjType::common, reqID);
 	workingQueue->push(msj);
 	//assert(workingQueue->size() <= 0);
@@ -68,7 +69,7 @@ void DataOutput::output(wstring* data, int reqID) {
 
 void DataOutput::error(wstring* data) {
 	lock_guard<mutex> lck(outputMutex);
-	Msj* msj = new Msj(string(data->begin(), data->end()),
+	Msj* msj = new Msj(boost::locale::conv::utf_to_utf<char>(*data),
 			E_DataOutputMsjType::error);
 	workingQueue->push(msj);
 	delete data;

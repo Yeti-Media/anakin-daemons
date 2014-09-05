@@ -6,6 +6,7 @@
  */
 
 #include <output/communicationFormatter/CommunicationFormatterMatchingJSON.hpp>
+#include <boost/locale.hpp>
 
 namespace Anakin {
 
@@ -40,9 +41,8 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
 
 	// Adding a string
 	root[L"center"] = new JSONValue(jcenter);
-	wstringstream ws;
-	ws << label.c_str();
-	root[L"label"] = new JSONValue(ws.str());
+	root[L"label"] = new JSONValue(
+			boost::locale::conv::utf_to_utf<wchar_t>(label));
 
 #if !LIGTH_RESULTS
 	for (uint k = 0; k < matchedKeypoints.size(); k++) {
@@ -73,9 +73,8 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(const string & label,
 	 */
 
 	JSONObject root;
-	wstringstream ws;
-	ws << label.c_str();
-	root[L"label"] = new JSONValue(ws.str());
+	root[L"label"] = new JSONValue(
+			boost::locale::conv::utf_to_utf<wchar_t>(label));
 	JSONArray valuesJSON;
 
 	for (uint v = 0; v < values.size(); v++) {
