@@ -7,10 +7,8 @@
 
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <utils/Constants.hpp>
-#include <stdio.h>
-#include <locale>
-//#include <codecvt>
 #include <string>
+#include <boost/locale.hpp>
 
 using namespace std;
 using namespace cv;
@@ -32,9 +30,8 @@ wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
 	 */
 
 	JSONObject root;
-	wstringstream ws;
-	ws << requestID.c_str();
-	root[L"requestID"] = new JSONValue(ws.str());
+	root[L"requestID"] = new JSONValue(
+			boost::locale::conv::utf_to_utf<wchar_t>(requestID));
 	switch (category) {
 	case CF_PATTERN_MATCHING: {
 		root[L"category"] = new JSONValue(L"PATTERN");
@@ -90,10 +87,6 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 	 */
 
 	JSONObject root;
-	wstringstream wmessage;
-	wmessage << message.c_str();
-	wstringstream worigin;
-	worigin << origin.c_str();
 	std::wstring werror_type;
 	switch (errorType) {
 	case CF_ERROR_TYPE_WARNING: {
@@ -110,8 +103,10 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 	}
 	}
 	root[L"error_type"] = new JSONValue(werror_type);
-	root[L"message"] = new JSONValue(wmessage.str());
-	root[L"origin"] = new JSONValue(worigin.str());
+	root[L"message"] = new JSONValue(
+			boost::locale::conv::utf_to_utf<wchar_t>(message));
+	root[L"origin"] = new JSONValue(
+			boost::locale::conv::utf_to_utf<wchar_t>(origin));
 	return new wstring(JSONValue(root).Stringify());
 }
 
@@ -153,9 +148,8 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	}
 
 	root[L"dataType"] = new JSONValue(L"YML");
-	wstringstream ws;
-	ws << data.c_str();
-	root[L"data"] = new JSONValue(ws.str());
+	root[L"data"] = new JSONValue(
+			boost::locale::conv::utf_to_utf<wchar_t>(data));
 
 	return new wstring(JSONValue(root).Stringify());
 }
@@ -165,12 +159,9 @@ wstring* CommunicationFormatterJSON::format(vector<string>* text) {
 	JSONObject root;
 	JSONArray texts;
 	for (uint v = 0; v < text->size(); v++) {
-		//wstringstream ws;
-		string s = text->at(v);
-		wstring wsTmp(s.begin(), s.end());
 		JSONObject jText;
-		//ws << text->at(v).c_str();
-		jText[L"text"] = new JSONValue(wsTmp); //(ws.str());
+		jText[L"text"] = new JSONValue(
+				boost::locale::conv::utf_to_utf<wchar_t>(text->at(v)));
 		texts.push_back(new JSONValue(jText));
 	}
 
