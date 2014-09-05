@@ -24,9 +24,10 @@ void runCURL_JSON(StatisticsCollector* collector, const string & JSONcommand,
 	string url = "http://127.0.0.1:8080/";
 	string error;
 	double time;
+
+	time = cURL_JSON(url, JSONcommand, results, error);
+	cout << results << endl << "* Elapsed Time: " << time << " ms." << endl;
 	if (collector != NULL) {
-		time = cURL_JSON(url, JSONcommand, results, error);
-		cout << results << endl << "* Elapsed Time: " << time << " ms." << endl;
 		collector->addItem(JSONcommand, group, time);
 	}
 	if (!error.empty()) {
@@ -66,7 +67,8 @@ void exitWithSucces() {
  *  Print final statistics
  */
 void printStatistics(StatisticsCollector* collector, const string & file) {
-	cout << endl << "======================================================================\n"
+	cout << endl
+			<< "======================================================================\n"
 			<< "* Benchmark Results printed on file: " << file << endl;
 	write_to_file(collector->compute(), file);
 
@@ -245,7 +247,7 @@ void stopAnakinHTTP(pthread_t * thread, fs::path logsDir,
 		StatisticsCollector* collector) {
 	string results;
 	string JSONcmd = "{\"action\":\"stop\"}";
-	runCURL_JSON(collector,JSONcmd,"ServerStop",results);
+	runCURL_JSON(collector, JSONcmd, "ServerStop", results);
 	pthread_join(*thread, NULL);
 	delete thread;
 }

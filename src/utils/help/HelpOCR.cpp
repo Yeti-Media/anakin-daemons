@@ -1,19 +1,19 @@
 /*
- * HelpOCRDemo.cpp
+ * HelpOCR.cpp
  *
  *  Created on: 18/8/2014
  *      Author: Franco Pellegrini
  */
 
-#include <utils/help/HelpOCRDemo.hpp>
+#include <utils/help/HelpOCR.hpp>
 
 namespace Anakin {
 
-HelpOCRDemo::HelpOCRDemo() {
+HelpOCR::HelpOCR() {
 
 	intro = "OCR demo to test.";
 	usage =
-			"  ./OCRDemo -ocr <path to image> [-mode <0-3> | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]\n"
+			"  ./OCRDemo -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]\n"
 					"  * NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])\n";
 	flags =
 			"-mode <0-3> :  sets which engine to use\n"
@@ -27,15 +27,16 @@ HelpOCRDemo::HelpOCRDemo() {
 					"                                    command-line configs, or if not specified\n"
 					"                                    in any of the above should be set to the\n"
 					"                                    default OEM_TESSERACT_ONLY.\n"
-					"-datapath <path> : the location of tessdata folder containing the trained data files\n"
+					"-words                            : return the list of recognized words and their boundary box.\n"
+					"-datapath <path>                  : the location of tessdata folder containing the trained data files\n"
 					"-lang <[~]<lang_value>[+[~]<lang_value>]*> : sets the languages to use, ~ is used to override the loading of a language\n";
 }
 
-HelpOCRDemo::~HelpOCRDemo() {
+HelpOCR::~HelpOCR() {
 	// TODO Auto-generated destructor stub
 }
 
-bool HelpOCRDemo::showDaemonHelp() {
+bool HelpOCR::showDaemonHelp() {
 	return true;
 }
 

@@ -9,9 +9,14 @@
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 
+#include <test/utils/TextLocator.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <processing/commandrunner/OCR.hpp>
+#include <iostream>
+#include <fstream>
 #include <pthread.h>
+#include <output/JSON.h>
+#include <output/JSONValue.h>
 #include <test/acceptance/TestTools.hpp>
 #include <test/acceptance/TestDefinitions.hpp>
 #include <boost/filesystem/path.hpp>
@@ -38,7 +43,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 		fs::create_directories(ramDir);
 	}
 
-	int maxTestRepetition = 10;
+	int maxTestRepetition = 1;
 
 	// INPUTS
 	fs::path testDir = argv[1];
@@ -60,9 +65,8 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	}
 
 	fs::path logsOCR_Demo = logsDir / "OCR_Demo_log.txt";
-	fs::path lastStderr = logsDir / "lastStderr.txt";
-	fs::path lastStdout = logsDir / "lastStdout.txt";
 	fs::path benchmarkResults = ramDir / "benchmarkResults.txt";
+	fs::path precisionResults = ramDir / "precisionResults.txt";
 
 	printTestMsj(testName, 0);
 
@@ -70,12 +74,29 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	dirCleanup(logsDir);
 	dirCleanup(outputs);
 
+	ofstream oFileStreamPrecisionResults;
+
+	oFileStreamPrecisionResults.open(precisionResults.string(),
+			ios::out);
+	if (!oFileStreamPrecisionResults.is_open()) {
+		cerr << "File can't be opened: " << precisionResults.string() << endl;
+		exitWithError();
+	}
+
 	StatisticsCollector * collector = new StatisticsCollector();
 
 	//--------------------------------------------------------------
 	//  Step 1 - OCR demo startup and test
 	//--------------------------------------------------------------
 	printStep(testName, 1);
+	cout << "Parsing text localization files...";
+	TextLocator locator(testLocalization);
+	cout << " OK" << endl;
+
+	//--------------------------------------------------------------
+	//  Step 2 - OCR demo startup and test
+	//--------------------------------------------------------------
+	printStep(testName, 2);
 
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCR>(
@@ -94,30 +115,117 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 
 	list<fs::path> * filesToTest = get_file_list_from(dataset);
 
+	double totalError = 0;
 	//repeated "query" times, to obtain solid benchmarks
 	for (int testRepetition = 1; testRepetition <= maxTestRepetition;
 			testRepetition++) {
 		for (list<fs::path>::iterator file = filesToTest->begin();
 				file != filesToTest->end(); ++file) {
+
+			//-------------------------------------------------------------
+			// Obtaining OCR results
+			//-------------------------------------------------------------
+
 			string results;
 			string JSONcmd = "{\"action\":\"ocr\", \"ocr\":\""
 					+ (*file).string() + "\"}";
-			runCURL_JSON(collector,JSONcmd,"OCR",results);
+			runCURL_JSON(collector, JSONcmd, "OCR", results);
 
 			//Analyzing output
 			string pattern2 = "\"error_type\"";
 			if (results.find(pattern2) != string::npos) {
-				cerr << "OCR replied with an error:" << endl << endl
-						<< results << endl << endl;
+				cerr << "OCR replied with an error:" << endl << endl << results
+						<< endl << endl;
 				stopAnakinHTTP(thread, logsDir, NULL);
 				exitWithError();
 			}
 
+			if (testRepetition == 1) {
+				//-------------------------------------------------------------
+				// Comparing OCR results with real text on the image
+				//-------------------------------------------------------------
+				string filename = "gt_"
+						+ (*file).filename().replace_extension(".txt").string();
+				fs::path pathToLocationFile = testLocalization / filename;
+				string * realText = locator.getLectureFrom(pathToLocationFile);
+
+				if (realText == NULL) {
+					cerr << "can't find the file with text locations:" << endl
+							<< endl << pathToLocationFile.string() << endl
+							<< endl;
+					stopAnakinHTTP(thread, logsDir, NULL);
+					exitWithError();
+				} else {
+
+					oFileStreamPrecisionResults
+							<< "______________________________________________________________________"
+							<< endl << "* File: " << (*file).string() << endl
+							<< "Comparing original text: " << endl
+							<< (*realText) << endl << "**** vs ****" << endl;
+
+					//-------------------------------------------------------------
+					// JSON parsing (extracting the OCR text result value only)
+					//-------------------------------------------------------------
+					uint pos = results.find(":[{\"text\":\"");
+					if (pos == results.npos) {
+						cerr << endl
+								<< "can't parse JSON, missing \" :[{\"text\":\" \" on:"
+								<< endl << results << endl << endl;
+						stopAnakinHTTP(thread, logsDir, NULL);
+						exitWithError();
+					}
+					pos = results.find(":", pos + 2);
+					if (pos == results.npos) {
+						cerr << endl
+								<< "can't parse JSON, missing \":\" on \" :[{\"text\":\" \" in:"
+								<< endl << results << endl << endl;
+						stopAnakinHTTP(thread, logsDir, NULL);
+						exitWithError();
+					}
+					pos += 2; //final position of the first letter on the text value
+
+					uint textSize = results.find("\"}]}]}", pos);
+					if (textSize == results.npos) {
+						cerr << endl
+								<< "can't parse JSON, missing \" \"}]}]} \" in:"
+								<< endl << results << endl << endl;
+						stopAnakinHTTP(thread, logsDir, NULL);
+						exitWithError();
+					}
+
+					textSize -= pos; //final size of the text to extract
+
+					string OCRtext = results.substr(pos, textSize);
+					oFileStreamPrecisionResults << OCRtext << endl;
+					int distance = stringutils::levenshteinDistance(*realText,
+							OCRtext);
+
+					oFileStreamPrecisionResults << "* Levenshtein Distance = "
+							<< distance << endl;
+					double error = (distance * 100) / (*realText).size();
+					oFileStreamPrecisionResults << "* Error = " << error << "%"
+							<< endl;
+					totalError += error;
+				}
+				oFileStreamPrecisionResults.flush();
+			} //if (testRepetition == 1)
 			cout << "* Repetition number " << testRepetition << endl;
 		}
-
 	}
 	stopAnakinHTTP(thread, logsDir, collector);
+
+	//Total error calculations
+	totalError = totalError / filesToTest->size();
+	oFileStreamPrecisionResults << endl
+			<< "======================================================================\n"
+			<< "* Total error (avg) = " << totalError << "%" << endl;
+	oFileStreamPrecisionResults.flush();
+
+	cout << endl
+			<< "======================================================================\n"
+			<< "* Total error (avg) = " << totalError << "%" << endl
+			<< "* Precision detailed results printed on file: "
+			<< precisionResults.string() << endl;
 
 	printStatistics(collector, benchmarkResults.string());
 

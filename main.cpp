@@ -191,7 +191,7 @@ int main(int argc, const char * argv[]) {
 	exportHelp<FaceExtractor>(&path);
 	exportHelp<FaceTrainer>(&path);
 
-	exportHelp<Daemon<OCRDemo>>(&path);
+	exportHelp<Daemon<OCR>>(&path);
 
 	cout << "Success" << endl;
 
