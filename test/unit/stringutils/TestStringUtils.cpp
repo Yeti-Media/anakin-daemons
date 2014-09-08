@@ -37,8 +37,16 @@ BOOST_AUTO_TEST_CASE(Levenshtein_distance) {
 			stringutils::levenshteinDistance("Hola- como estas",
 					"Hola como estas") == 1);
 	BOOST_CHECK(
-			stringutils::levenshteinDistance("Hola estas", "Hola como estas?")
+			stringutils::levenshteinDistance(L"Hola estas", L"Hola como estas?")
 					== 6);
+
+	BOOST_CHECK(
+			stringutils::levenshteinDistance("chat", "chat ‘")
+					== 2);
+
+	BOOST_CHECK(
+			stringutils::levenshteinDistance(L"chat", L"chat ‘")
+					== 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
