@@ -8,14 +8,19 @@
 #ifndef STRINGUTILS_HPP_
 #define STRINGUTILS_HPP_
 
-#include <algorithm>
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/locale/encoding_utf.hpp>
+#include <boost/token_functions.hpp>
+#include <boost/tokenizer.hpp>
 #include <sstream>
+#include <sys/types.h>
+#include <algorithm>
+#include <cctype>
 #include <functional>
 #include <iostream>
 #include <iterator>
 #include <string>
 #include <vector>
-#include <boost/tokenizer.hpp>
 
 using namespace std;
 using boost::tokenizer;
@@ -108,7 +113,7 @@ static inline string &trim(string &s) {
  * or substitutions) required to change one word into the other.
  * http://en.wikipedia.org/wiki/Levenshtein_distance
  */
-static inline int levenshteinDistance(const string &s, const string &t) {
+static inline int levenshteinDistance(const wstring &s, const wstring &t) {
 	// degenerate cases
 	if (s.compare(t) == 0)
 		return 0;
@@ -149,6 +154,11 @@ static inline int levenshteinDistance(const string &s, const string &t) {
 	}
 
 	return v1[t.size()];
+}
+
+static inline int levenshteinDistance(const string &s, const string &t) {
+	return levenshteinDistance(boost::locale::conv::utf_to_utf<wchar_t>(s),
+			boost::locale::conv::utf_to_utf<wchar_t>(t));
 }
 
 } //namespace StringUtils
