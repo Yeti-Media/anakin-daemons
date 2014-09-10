@@ -8,7 +8,7 @@ using namespace cv;
 using namespace std;
 
 BasicFlannDetector::BasicFlannDetector(
-		cv::Ptr<SerializableFlannBasedMatcher> detector, SFBMCache* cache,
+		SerializableFlannBasedMatcher * detector, SFBMCache* cache,
 		float minRatio, int min_matches_allowed) {
 	this->detector = detector;
 	this->minRatio = minRatio;
@@ -140,7 +140,7 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 			center.x /= matchedKeypoints->size();
 			center.y /= matchedKeypoints->size();
 
-			Mat H = findHomography(obj_points, scene_points, CV_RANSAC);
+			Mat H = findHomography(obj_points, scene_points, FM_RANSAC);
 			Match* pmatch = new Match(scene, pattern, pattern_matches, H,
 					center, *matchedKeypoints);
 			result->push_back(*pmatch);

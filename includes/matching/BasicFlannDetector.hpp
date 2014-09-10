@@ -23,7 +23,7 @@ public:
 	 *               this sets the minimum value of the distance ratio between the the best match and the better one
 	 * min_matches_allowed   :   the minimum matches to consider a pattern as found
 	 */
-	BasicFlannDetector(cv::Ptr<SerializableFlannBasedMatcher> detector,
+	BasicFlannDetector(SerializableFlannBasedMatcher * detector,
 			SFBMCache* cache, float minRatio = 1.f / 1.5f,
 			int min_matches_allowed = 8);
 	/**
@@ -46,7 +46,7 @@ protected:
 private:
 	float minRatio;
 	int min_matches_allowed;
-	cv::Ptr<SerializableFlannBasedMatcher> detector;
+	SerializableFlannBasedMatcher * detector;
 	SFBMCache* cache;
 
 };

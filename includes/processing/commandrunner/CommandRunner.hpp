@@ -1,15 +1,15 @@
 #ifndef COMMANDRUNNER_HPP
 #define COMMANDRUNNER_HPP
 
-#include <opencv2/opencv.hpp>
-#include "boost/filesystem.hpp"
+#include <vector>
+#include <opencv2/core.hpp>
+#include <boost/filesystem.hpp>
 #include <string>
 #include <iostream>               // for std::cout
-#include "opencv2/core/core.hpp"
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/nonfree/nonfree.hpp"
+#include "opencv2/xfeatures2d.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/calib3d.hpp"
 
 #include "matching/BasicFlannDetector.hpp"
 #include "output/DataOutput.hpp"

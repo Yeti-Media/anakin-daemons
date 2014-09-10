@@ -87,7 +87,7 @@ bool SerializableFlannBasedMatcher::empty() const {
 void SerializableFlannBasedMatcher::train(vector<cv::Mat> * descriptors) {
 	mergedDescriptors.set(*descriptors);
 	//FIXME can cause memory leaks
-	flannIndex = new flann::Index(mergedDescriptors.getDescriptors(),
+	flannIndex = makePtr<flann::Index>(mergedDescriptors.getDescriptors(),
 			*indexParams);
 }
 
@@ -146,6 +146,6 @@ void SerializableFlannBasedMatcher::loadIndex(cv::Mat * data,
 	cv::flann::IndexParams* params = new cv::flann::SavedIndexParams(
 			tmpFile.c_str());
 	//FIXME can cause memory leaks
-	flannIndex = new cv::flann::Index(*data, *params);
+	flannIndex = makePtr<cv::flann::Index>(*data, *params);
 	delete params; //FIXME can cause problems
 }
