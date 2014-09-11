@@ -16,11 +16,11 @@ void BasicFlannTrainer::train_and_save(QuickLZ* quickLZstate) {
 		RichImg* p = this->patterns->at(i);
 		pdescriptors->at(i) = p->getDescriptors()->clone();
 	}
-	this->detector.dynamicCast<SerializableFlannBasedMatcher>()->train(
+	this->detector.staticCast<SerializableFlannBasedMatcher>()->train(
 			pdescriptors);
 	//this->detector->add(pdescriptors);
 	//this->detector->train();
-	this->detector.dynamicCast<SerializableFlannBasedMatcher>()->save(
+	this->detector.staticCast<SerializableFlannBasedMatcher>()->save(
 			quickLZstate, this->outputFolder + this->fileName);
 	delete pdescriptors;
 }

@@ -7,22 +7,21 @@ using namespace Anakin;
 using namespace cv;
 using namespace std;
 
-BasicFlannDetector::BasicFlannDetector(
-		SerializableFlannBasedMatcher * detector, SFBMCache* cache,
-		float minRatio, int min_matches_allowed) {
+BasicFlannDetector::BasicFlannDetector(SerializableFlannBasedMatcher * detector,
+		SFBMCache* cache, float minRatio, int min_matches_allowed) {
 	this->detector = detector;
 	this->minRatio = minRatio;
 	this->min_matches_allowed = min_matches_allowed;
 	this->cache = cache;
 }
 
-std::vector<Match>* BasicFlannDetector::findPatterns(QuickLZ* quickLZstate,
+std::vector<Match*>* BasicFlannDetector::findPatterns(QuickLZ* quickLZstate,
 		RichImg* scene, bool * error) {
 	return findPatterns_usingTraining(quickLZstate, scene, error);
 }
 
 void BasicFlannDetector::changeMatcher(
-		cv::Ptr<SerializableFlannBasedMatcher> matcher) {
+		SerializableFlannBasedMatcher * matcher) {
 	this->detector = matcher;
 }
 
@@ -36,8 +35,7 @@ void BasicFlannDetector::getMatches(const cv::Mat& queryDescriptors,
 	if (queryDescriptors.type() != CV_32F) {
 		queryDescriptors.convertTo(queryDescriptors, CV_32F);
 	}
-	((cv::Ptr<SerializableFlannBasedMatcher>) this->detector)->knnMatch(
-			queryDescriptors, m_knnMatches, 2);
+	this->detector->knnMatch(queryDescriptors, m_knnMatches, 2);
 	for (size_t i = 0; i < m_knnMatches.size(); i++) {
 		if (m_knnMatches[i].empty())
 			continue;
@@ -49,7 +47,7 @@ void BasicFlannDetector::getMatches(const cv::Mat& queryDescriptors,
 	}
 }
 
-bool BasicFlannDetector::keyExist(map<int, vector<DMatch>*>* m, int key) {
+bool BasicFlannDetector::keyExist(map<int, cv::Ptr<vector<DMatch>>>* m, int key) {
 	if (m->find(key) == m->end()) {
 		return false;
 	} else {
@@ -57,7 +55,7 @@ bool BasicFlannDetector::keyExist(map<int, vector<DMatch>*>* m, int key) {
 	}
 }
 
-void BasicFlannDetector::getKeys(map<int, vector<DMatch>*>* m,
+void BasicFlannDetector::getKeys(map<int, cv::Ptr<vector<DMatch>>>* m,
 		vector<int>* keys) {
 	pair<int, vector<DMatch>*> me; // what a map<int, int> is made of
 	BOOST_FOREACH(me, *m){
@@ -65,30 +63,31 @@ void BasicFlannDetector::getKeys(map<int, vector<DMatch>*>* m,
 }
 }
 
-vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
+vector<Anakin::Match*>* BasicFlannDetector::findPatterns_usingTraining(
 		QuickLZ* quickLZstate, Anakin::RichImg* scene, bool * error) {
 	//internal function, do not init *error=false
-	vector<Match>* result = new std::vector<Match>();
-	vector<DMatch>* good_matches = new vector<DMatch>(0);
+	vector<Match*>* result = new std::vector<Match*>();
+	vector<DMatch>* good_matches = new vector<DMatch>();
 	getMatches(*scene->getDescriptors(), *good_matches);
-	map<int, vector<DMatch>*>* patternsMatched =
-			new map<int, vector<DMatch>*>();
+	map<int, cv::Ptr<vector<DMatch>>>* patternsMatched =
+	new map<int, Ptr<vector<DMatch>>>();
 	for (uint m = 0; m < good_matches->size(); m++) {
 		DMatch match = good_matches->at(m);
-		vector<DMatch>* pmatches;
+		cv::Ptr<vector<DMatch>> pmatches;
 		if (keyExist(patternsMatched, match.imgIdx)) {
 			pmatches = patternsMatched->find(match.imgIdx)->second;
 		} else {
-			pmatches = new vector<DMatch>(0);
+			pmatches = cv::makePtr<vector<DMatch>>();
 			(*patternsMatched)[match.imgIdx] = pmatches;
 		}
 		pmatches->push_back(match);
 	}
-	vector<int>* matchedImgsIdx = new vector<int>(0);
+	delete good_matches;
+	vector<int>* matchedImgsIdx = new vector<int>();
 	getKeys(patternsMatched, matchedImgsIdx);
 	for (uint pm = 0; pm < matchedImgsIdx->size(); pm++) {
 		int currentKey = matchedImgsIdx->at(pm);
-		vector<DMatch>* pattern_matches;
+		Ptr<vector<DMatch>> pattern_matches;
 		if (keyExist(patternsMatched, currentKey)) {
 			pattern_matches = patternsMatched->find(currentKey)->second;
 		} else {
@@ -116,35 +115,40 @@ vector<Anakin::Match>* BasicFlannDetector::findPatterns_usingTraining(
 				//scene_points.push_back( scene->getKeypoints()[ (*pattern_matches)[i].trainIdx ].pt );
 				obj_points.push_back(
 						pattern->getKeypoints()->at(
-								(*pattern_matches)[i].trainIdx).pt);
+								pattern_matches.get()->at(i).trainIdx).pt);
 				scene_points.push_back(
 						scene->getKeypoints()->at(
-								(*pattern_matches)[i].queryIdx).pt);
+								pattern_matches.get()->at(i).queryIdx).pt);
 			}
 
-			std::vector<cv::KeyPoint>* matchedKeypoints = new std::vector<
-					cv::KeyPoint>(0);
+			std::vector<cv::KeyPoint> matchedKeypoints;
 			for (uint m = 0; m < pattern_matches->size(); m++) {
-				DMatch cmatch = (*pattern_matches)[m];
+				DMatch cmatch = pattern_matches.get()->at(m);
 				//matchedKeypoints->push_back(scene->getKeypoints()[cmatch.trainIdx]);
-				matchedKeypoints->push_back(
+				matchedKeypoints.push_back(
 						scene->getKeypoints()->at(cmatch.queryIdx));
 			}
 
 			cv::Point2f center(0, 0);
-			for (size_t i = 0; i < matchedKeypoints->size(); i++) {
-				cv::KeyPoint currentPoint = (*matchedKeypoints)[i];
+			for (size_t i = 0; i < matchedKeypoints.size(); i++) {
+				cv::KeyPoint currentPoint = matchedKeypoints[i];
 				center.x += currentPoint.pt.x;
 				center.y += currentPoint.pt.y;
 			}
-			center.x /= matchedKeypoints->size();
-			center.y /= matchedKeypoints->size();
+			center.x /= matchedKeypoints.size();
+			center.y /= matchedKeypoints.size();
 
 			Mat H = findHomography(obj_points, scene_points, FM_RANSAC);
-			Match* pmatch = new Match(scene, pattern, pattern_matches, H,
-					center, *matchedKeypoints);
-			result->push_back(*pmatch);
+			result->push_back(
+					new Match(scene, pattern, pattern_matches, H, center,
+							matchedKeypoints));
 		}
 	}
+
+	//cleanup
+
+	delete patternsMatched;
+	delete matchedImgsIdx;
+
 	return result;
 }
