@@ -15,9 +15,9 @@ namespace Anakin {
 
 class HistogramComparator {
 public:
-	HistogramComparator(std::vector<Anakin::RichImg*> patterns,
-			HistogramsIO* io);
-	void makeAndSaveLandscape(char mode, std::string label, bool saveToFile =
+	HistogramComparator(const vector<Ptr<RichImg>> & patterns,
+			const Ptr<HistogramsIO> & io);
+	void makeAndSaveLandscape(char mode, string label, bool saveToFile =
 			true);
 	void makeAndSaveHistograms(char mode, bool saveToFile = true);
 	virtual ~HistogramComparator();
@@ -32,19 +32,18 @@ public:
 	const static char XML = 64;
 protected:
 private:
-	void cleanupHistogramVector(vector<Histogram*>* hVector);
-	void pmakeAndSaveLandscape(char mode, std::string label, bool saveToFile =
-			true);
+	void pmakeAndSaveLandscape(char mode, string label, bool saveToFile =
+	true);
 	void update_minMax(Mat & minMaxHist, const Ptr<vector<Mat>> & hists,
-			std::vector<int>* bins, std::vector<int> maxValues, int channels,
-			bool firstPass);
-	void update_average(Mat & minMaxHist, const Ptr<vector<int>> &  bins,
-			int channels, int count);
-	Histogram* createColorHistogram(Anakin::Img* img);
-	Histogram* createGrayHistogram(Anakin::Img* img);
-	Histogram* createHSVHistogram(Anakin::Img* img);
-	std::vector<Anakin::RichImg*> patterns;
-	HistogramsIO* io;
+	const Ptr<vector<int>> & bins, const vector<int> & maxValues, int channels,
+	bool firstPass);
+	void update_average(Mat & minMaxHist, const Ptr<vector<int>> & bins,
+	int channels, int count);
+	Ptr<HistogramsIO> createColorHistogram(const Ptr<Img> & img);
+	Ptr<HistogramsIO> createGrayHistogram(const Ptr<Img> & img);
+	Ptr<HistogramsIO> createHSVHistogram(const Ptr<Img> & img);
+	vector<Ptr<RichImg>> patterns;
+	Ptr<HistogramsIO> io;
 };
 
 }

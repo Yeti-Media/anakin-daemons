@@ -10,24 +10,14 @@ using namespace Anakin;
 using namespace std;
 using namespace cv;
 
-HistogramsIO::HistogramsIO(string baseFolder) {
+HistogramsIO::HistogramsIO(const string & baseFolder) {
 	this->baseFolder = baseFolder;
-	this->colorHistograms = new vector<Histogram*>(0);
-	this->grayHistograms = new vector<Histogram*>(0);
-	this->hsvHistograms = new vector<Histogram*>(0);
+	this->colorHistograms = makePtr<Ptr<Histogram>>();
+	this->grayHistograms = makePtr<Ptr<Histogram>>();
+	this->hsvHistograms = makePtr<Ptr<Histogram>>();
 }
 
 HistogramsIO::~HistogramsIO() {
-	cleanupHistogramVector(this->colorHistograms);
-	cleanupHistogramVector(this->grayHistograms);
-	cleanupHistogramVector(this->hsvHistograms);
-}
-
-void HistogramsIO::cleanupHistogramVector(vector<Histogram*>* hVector) {
-	for (uint p = 0; p < hVector->size(); p++) {
-		delete hVector->at(p);
-	}
-	delete hVector;
 }
 
 void HistogramsIO::load(const char mode) {
@@ -43,42 +33,42 @@ void HistogramsIO::load(const char mode) {
 	}
 }
 
-void HistogramsIO::save(vector<Histogram*>* input, const char mode,
-		bool saveToFile) {
+void HistogramsIO::save(const Ptr<vector<Ptr<Histogram>>>&input, const char mode,
+bool saveToFile) {
 	string subfolder = mode & LANDSCAPE ? "landscape/" : "pattern/";
 	string subSubFolder =
-			mode & COLOR ? "color/" : ((mode & GRAY) ? "gray/" : "hsv/");
+	mode & COLOR ? "color/" : ((mode & GRAY) ? "gray/" : "hsv/");
 	string extension = mode & YAML ? ".yml" : ".xml";
 	for (uint i = 0; i < input->size(); i++) {
-		Histogram* current = input->at(i);
+		Ptr<Histogram> current = input->at(i);
 		string filename =
-				saveToFile ?
-						(this->baseFolder + subfolder + subSubFolder
-								+ current->getLabel() + extension) :
-						("output" + extension);
+		saveToFile ?
+		(this->baseFolder + subfolder + subSubFolder
+		+ current->getLabel() + extension) :
+		("output" + extension);
 		save(filename, current, saveToFile);
 	}
 }
 
-vector<Histogram*>* HistogramsIO::getColorHistograms() {
+Ptr<vector<Ptr<Histogram>>> HistogramsIO::getColorHistograms() {
 	return this->colorHistograms;
 }
 
-vector<Histogram*>* HistogramsIO::getGrayHistograms() {
+Ptr<vector<Ptr<Histogram>>> HistogramsIO::getGrayHistograms() {
 	return this->grayHistograms;
 }
 
-vector<Histogram*>* HistogramsIO::getHSVHistograms() {
+Ptr<vector<Ptr<Histogram>>> HistogramsIO::getHSVHistograms() {
 	return this->hsvHistograms;
 }
 
 //PRIVATE
 
-void HistogramsIO::load(string baseFolder, vector<Histogram*>* output) {
+void HistogramsIO::load(const string & baseFolder, Ptr<vector<Ptr<Histogram>>>& output) {
 	loadData(output, baseFolder);
 }
 
-void HistogramsIO::save(string filename, Histogram* histogram,
+void HistogramsIO::save(const string & filename, const Ptr<Histogram> histogram,
 		bool saveToFile) {
 	FileStorage fs(filename,
 			saveToFile ?
@@ -106,30 +96,28 @@ void HistogramsIO::save(string filename, Histogram* histogram,
 	}
 }
 
-void HistogramsIO::read(const cv::FileNode& node, Histogram& x,
-		const Histogram& default_value) {
-	if (node.empty())
-		x = default_value;
-	else
-		x.read(node);
+void HistogramsIO::read(const FileNode & node, Ptr<Histogram> & x) {
+	if (!node.empty())
+		x->read(node);
 }
 
-void HistogramsIO::write(FileStorage& fs, const string&, const Histogram& x) {
+void HistogramsIO::write(FileStorage & fs, const string & t,
+		const Histogram & x) {
 	x.write(fs);
 }
 
-void HistogramsIO::loadData(vector<Histogram*>* data, string folder) {
+void HistogramsIO::loadData(Ptr<vector<Ptr<Histogram>>>& data, const string &folder) {
 	data->clear();
 	if (fs::exists(folder)) {
 		fs::directory_iterator end_itr; // default construction yields past-the-end
 		for (fs::directory_iterator itr(folder); itr != end_itr; ++itr) {
 
 			if (!fs::is_directory(itr->status())) {
-				Histogram *ii = new Histogram();
+				Ptr<Histogram> ii = makePtr<Histogram>();
 				cv::FileStorage fstorage(itr->path().c_str(),
 						cv::FileStorage::READ);
 				cv::FileNode n = fstorage.root();
-				read(n, *ii);
+				read(n, ii);
 				fstorage.release();
 				data->push_back(ii);
 			}
