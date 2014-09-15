@@ -6,7 +6,7 @@
 using namespace std;
 using namespace Anakin;
 
-Trainer::Trainer(cv::Ptr<cv::DescriptorMatcher> detector,
+Trainer::Trainer(cv::Ptr<cv::FlannBasedMatcher> detector,
 		vector<RichImg*>& patterns, string outputFolder, string fileName) {
 	this->detector = detector;
 	this->patterns = &patterns;

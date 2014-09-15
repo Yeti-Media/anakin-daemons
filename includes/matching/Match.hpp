@@ -4,6 +4,8 @@
 #include "data/RichImg.hpp"
 #include <opencv2/opencv.hpp>
 
+using namespace std;
+
 namespace Anakin {
 
 /**
@@ -15,14 +17,15 @@ public:
 	 * Initializer
 	 * param: RichImg : the scene where a pattern was found
 	 * param: RichImg : the pattern found in the scene
-	 * param: std::vector<cv::DMatch>& : the matches between the scene and a pattern
+	 * param: vector<cv::DMatch>& : the matches between the scene and a pattern
 	 * param: cv::Mat : homography between the scene and a pattern
 	 * param: cv::Point2f center : the center of the match
-	 * param: std::vector<cv::KeyPoint> matchedKeypoints : the keypoints in the scene that matched with the pattern
+	 * param: vector<cv::KeyPoint> matchedKeypoints : the keypoints in the scene that matched with the pattern
 	 */
 	Match(Anakin::RichImg* scene, Anakin::RichImg* pattern,
-			std::vector<cv::DMatch>* matches, cv::Mat& homography,
-			cv::Point2f center, std::vector<cv::KeyPoint> matchedKeypoints);
+			cv::Ptr<vector<cv::DMatch>> matches, cv::Mat& homography,
+			cv::Point2f center, const vector<cv::KeyPoint> & matchedKeypoints);
+	virtual ~Match();
 
 	/**
 	 * return: scene image : const RichAnakinImg&
@@ -35,9 +38,9 @@ public:
 	Anakin::RichImg* getPattern();
 
 	/**
-	 * return: matches between scene and pattern : const std::vector<cv::DMatch>&
+	 * return: matches between scene and pattern : const vector<cv::DMatch>&
 	 */
-	std::vector<cv::DMatch>* getMatches();
+	cv::Ptr<vector<cv::DMatch>> getMatches();
 
 	/**
 	 * return: homography between scene and pattern : const cv::Mat&
@@ -52,15 +55,15 @@ public:
 	/**
 	 * return the keypoints in the scene that matched with the pattern
 	 */
-	std::vector<cv::KeyPoint> getMatchedKeypoints();
+	vector<cv::KeyPoint> getMatchedKeypoints();
 
 protected:
 private:
 	Anakin::RichImg* scene;
 	Anakin::RichImg* pattern;
-	std::vector<cv::DMatch>* matches;
+	cv::Ptr<vector<cv::DMatch>> matches;
 	cv::Point2f center;
-	std::vector<cv::KeyPoint> matchedKeypoints;
+	vector<cv::KeyPoint> matchedKeypoints;
 	cv::Mat homography;
 
 };

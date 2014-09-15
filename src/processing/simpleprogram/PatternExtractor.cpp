@@ -11,14 +11,23 @@
 #include <data/PatternLoader.hpp>
 #include <data/RichImg.hpp>
 #include <data/SingleImageDataInput.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/nonfree/features2d.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/features2d.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+
 #include <processing/Flags.hpp>
 #include <processing/simpleprogram/PatternExtractor.hpp>
+#include <utils/ClearVector.hpp>
 #include <utils/help/HelpPatternExtractor.hpp>
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>               // for cout
-#include <utils/ClearVector.hpp>
+
+using namespace cv;
+using namespace cv::xfeatures2d;
+using namespace std;
 
 namespace Anakin {
 
@@ -98,8 +107,8 @@ int PatternExtractor::run(vector<string> *input) {
 	bool useInputPathAsDir = false;
 	char mode = 0;
 	char inputMode = 0;
-	std::string label = "";
-	std::string inputDir = "";
+	string label = "";
+	string inputDir = "";
 	string outputDir = "";
 	bool saveToFile = true;
 	bool useYaml = true;
@@ -176,10 +185,10 @@ int PatternExtractor::run(vector<string> *input) {
 		loadOnDemand = true;
 	}
 
-	cv::Ptr<cv::FeatureDetector> fdetector;
-	cv::Ptr<cv::DescriptorExtractor> dextractor;
+	Ptr<FeatureDetector> fdetector;
+	Ptr<DescriptorExtractor> dextractor;
 
-	std::vector<RichImg*> patterns;
+	vector<RichImg*> patterns;
 	DataInput* patternsDataInput = NULL;
 	PatternLoader* patternsLoader = NULL;
 
@@ -190,15 +199,15 @@ int PatternExtractor::run(vector<string> *input) {
 	}
 
 	if (inputMode & PATTERNS) {
-		fdetector = new cv::SurfFeatureDetector(400);
-		dextractor = new cv::SurfDescriptorExtractor();
+		fdetector = makePtr<SurfFeatureDetector>(400);
+		dextractor = makePtr<SurfDescriptorExtractor>();
 		patternsLoader = new PatternLoader(patternsDataInput, patterns,
 				fdetector, dextractor);
 		char mode = useYaml ? PatternLoader::YAML : PatternLoader::XML;
 		patternsLoader->load_and_save(outputDir, saveToFile, mode);
 
 		delete patternsLoader;
-		std::for_each(patterns.begin(), patterns.end(),
+		for_each(patterns.begin(), patterns.end(),
 				delete_pointer_element<RichImg*>());
 		delete patternsDataInput;
 		return EXIT_SUCCESS;
@@ -222,7 +231,7 @@ int PatternExtractor::run(vector<string> *input) {
 	}
 
 	delete patternsLoader;
-	std::for_each(patterns.begin(), patterns.end(),
+	for_each(patterns.begin(), patterns.end(),
 			delete_pointer_element<RichImg*>());
 	delete patternsDataInput;
 	return EXIT_SUCCESS;

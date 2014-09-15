@@ -164,7 +164,7 @@ Histogram* HistogramComparator::createHSVHistogram(Img* img) {
 	/// Histograms
 	MatND hist;
 	Mat imgMat;
-	cvtColor(img->getImage(), imgMat, CV_BGR2HSV);
+	cvtColor(img->getImage(), imgMat, COLOR_BGR2HSV);
 
 	/// Calculate the histograms for the grayscale images
 	calcHist(&imgMat, 1, channels, Mat(), hist, 2, histSize, ranges, uniform,
@@ -219,7 +219,7 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 		} else if (mode & HistogramComparator::GRAY) {
 			src = current->getGrayImg();
 		} else {
-			cvtColor(current->getImage(), src, CV_BGR2HSV);
+			cvtColor(current->getImage(), src, COLOR_BGR2HSV);
 		}
 		split(src, layers);
 		for (int c = 0; c < channels; c++) {

@@ -2,8 +2,8 @@
 #include <boost/filesystem/path.hpp>
 #include <processing/commandrunner/CommandRunner.hpp>
 #include <sys/types.h>
+#include <cassert>
 #include <map>
-#include <vector>
 
 using namespace Anakin;
 using namespace cv;

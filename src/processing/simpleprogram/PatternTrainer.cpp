@@ -4,11 +4,10 @@
  *  Created on: 06/06/2014
  *      Author: Franco Pellegrini
  */
-
+#include <opencv2/core.hpp>
 #include <data/PatternLoader.hpp>
 #include <data/RichImg.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
-#include <opencv2/core/core.hpp>
 #include <opencv2/core/operations.hpp>
 #include <opencv2/flann/miniflann.hpp>
 #include <processing/BasicFlannTrainer.hpp>
@@ -94,12 +93,10 @@ int PatternTrainer::run(vector<string> *input) {
 	TempDirCleaner tempDirCleaner(0);
 
 	//TRAINING
-	const Ptr<flann::IndexParams>& indexParams = new flann::KDTreeIndexParams(
-			4);
-	const Ptr<flann::SearchParams>& searchParams = new flann::SearchParams();
-	cv::Ptr<cv::DescriptorMatcher> matcher = cv::Ptr<FlannBasedMatcher>(
-			new SerializableFlannBasedMatcher(indexParams, searchParams,
-					&tempDirCleaner));
+	Ptr<flann::IndexParams> indexParams = makePtr<flann::KDTreeIndexParams>(4);
+	Ptr<flann::SearchParams> searchParams = makePtr<flann::SearchParams>();
+	Ptr<SerializableFlannBasedMatcher> matcher = makePtr<SerializableFlannBasedMatcher>(
+			indexParams, searchParams, &tempDirCleaner);
 	matcher->clear();
 	vector<RichImg*> patterns;
 	SerializedPatternDataInput* sinput;

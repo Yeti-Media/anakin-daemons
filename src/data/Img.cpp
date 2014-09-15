@@ -30,9 +30,9 @@ Img::Img(Img& other) :
 
 void Img::transformToGray(const Mat& image, Mat& gray) {
 	if (image.channels() == 3)
-		cvtColor(image, gray, CV_BGR2GRAY);
+		cvtColor(image, gray, COLOR_BGR2GRAY);
 	else if (image.channels() == 4)
-		cvtColor(image, gray, CV_BGRA2GRAY);
+		cvtColor(image, gray, COLOR_BGRA2GRAY);
 	else if (image.channels() == 1)
 		gray = image.clone();
 }

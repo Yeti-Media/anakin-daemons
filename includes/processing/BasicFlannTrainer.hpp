@@ -1,21 +1,24 @@
 #ifndef BASICFLANNTRAINER_HPP
 #define BASICFLANNTRAINER_HPP
 
-#include <data/RichImg.hpp>
+#include <opencv2/core.hpp>
 #include <matching/SerializableFlannBasedMatcher.hpp>
-#include <opencv2/core/core.hpp>
+#include <data/RichImg.hpp>
+#include <vector>
 #include <processing/Trainer.hpp>
 #include <string>
-#include <vector>
 #include <utils/files/QuickLZ.hpp>
+
+using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
 class BasicFlannTrainer: public Trainer {
 public:
-	BasicFlannTrainer(cv::Ptr<SerializableFlannBasedMatcher> detector,
-			std::vector<Anakin::RichImg*>& patterns, std::string outputFolder,
-			std::string fileName);
+	BasicFlannTrainer(Ptr<SerializableFlannBasedMatcher> detector,
+			vector<Anakin::RichImg*>& patterns, string outputFolder,
+			string fileName);
 	void train_and_save(QuickLZ* quickLZstate);
 	virtual ~BasicFlannTrainer();
 };

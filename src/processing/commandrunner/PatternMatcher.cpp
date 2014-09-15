@@ -334,7 +334,7 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult());
 				return;
 			}
-			//FIXME memory leaks!!???
+			//FIXME memory leaks!!??? matcher!!!
 			this->detector = new BasicFlannDetector(matcher, this->cache,
 					this->mr, this->mma);
 			this->processor = new FlannMatchingProcessor(this->detector);

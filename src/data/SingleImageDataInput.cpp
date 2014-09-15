@@ -1,5 +1,6 @@
 #include "data/SingleImageDataInput.hpp"
 #include <opencv2/opencv.hpp>
+#include <opencv2/imgcodecs.hpp>
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 #include <logging/Log.hpp>
 #include <logging/OutputPolicyFile.hpp>

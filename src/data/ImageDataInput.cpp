@@ -1,4 +1,5 @@
 #include "data/ImageDataInput.hpp"
+#include <opencv2/imgcodecs.hpp>
 #include "boost/filesystem.hpp"   // includes all needed Boost.Filesystem declarations
 namespace fs = boost::filesystem;
 #include <algorithm>
@@ -7,6 +8,7 @@ namespace fs = boost::filesystem;
 
 using namespace Anakin;
 using namespace std;
+using namespace cv;
 
 ImageDataInput::ImageDataInput(string imagesFolder, bool loadOnDemand) {
 	this->imagesFolder = imagesFolder;
