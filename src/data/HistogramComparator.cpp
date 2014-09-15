@@ -61,9 +61,9 @@ void HistogramComparator::cleanupHistogramVector(vector<Histogram*>* hVector) {
 	delete hVector;
 }
 
-void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists,
-		vector<int>* bins, vector<int> maxValues, int channels,
-		bool firstPass) {
+void HistogramComparator::update_minMax(Mat & minMaxHist,
+		const Ptr<vector<Mat>> & hists, vector<int>* bins,
+		vector<int> maxValues, int channels, bool firstPass) {
 	for (int c = 0; c < channels; c++) {
 		int currentBins = bins->at(c);
 		//int currentMaxValue = maxValues[c];
@@ -87,8 +87,8 @@ void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists,
 	}
 }
 
-void HistogramComparator::update_average(Mat minMaxHist, vector<int>* bins,
-		int channels, int count) {
+void HistogramComparator::update_average(Mat & minMaxHist,
+		const Ptr<vector<int>> & bins, int channels, int count) {
 	for (int c = 0; c < channels; c++) {
 		int currentBins = bins->at(c);
 		for (int i = 0; i < currentBins; i++) {
@@ -116,7 +116,7 @@ Histogram* HistogramComparator::createColorHistogram(Img* img) {
 	/// Calculate the histograms for the BGR images
 	calcHist(&imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform,
 			false);
-	vector<int>* bins = new vector<int>(1, 256);
+	Ptr<vector<int>> bins = makePtr<vector<int>>(1, 256);
 	Histogram* histogram = new Histogram(hist, bins, 3, img->getLabel(), false,
 			false);
 	return histogram;
@@ -141,7 +141,7 @@ Histogram* HistogramComparator::createGrayHistogram(Img* img) {
 	/// Calculate the histograms for the grayscale images
 	calcHist(&imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform,
 			false);
-	vector<int>* bins = new vector<int>(1, 256);
+	Ptr<vector<int>> bins = makePtr<vector<int>>(1, 256);
 	Histogram* histogram = new Histogram(hist, bins, 1, img->getLabel(), false,
 			false);
 	return histogram;
@@ -170,7 +170,7 @@ Histogram* HistogramComparator::createHSVHistogram(Img* img) {
 	calcHist(&imgMat, 1, channels, Mat(), hist, 2, histSize, ranges, uniform,
 			false);
 	//---------------CHECK THIS-------------//normalize( hist, hist, 0, 1, NORM_MINMAX, -1, Mat() );
-	vector<int>* bins = new vector<int>(0);
+	Ptr<vector<int>> bins = makePtr<vector<int>>();
 	bins->push_back(50);
 	bins->push_back(32);
 	Histogram* histogram = new Histogram(hist, bins, 2, img->getLabel(), false,
@@ -186,7 +186,7 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 					2 : (mode & HistogramComparator::COLOR ? 3 : 1);
 	Mat minMaxHist = Mat::zeros(size, channels * 3, CV_32SC1);
 	Img* current;
-	vector<int>* bins = new vector<int>(0);
+	Ptr<vector<int>> bins = makePtr<vector<int>>();
 	vector<int> maxValues;
 	if (mode & HistogramComparator::COLOR) {
 		bins->push_back(256);
@@ -204,7 +204,7 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 		bins->push_back(256);
 		maxValues.push_back(256);
 	}
-	vector<Mat>* hists = new vector<Mat>(0);
+	Ptr<vector<Mat>> hists = makePtr<vector<Mat>>();
 	bool firstPass = true;
 	Histogram* result = new Histogram(minMaxHist, bins, channels, label, true,
 			true);

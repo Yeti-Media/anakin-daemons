@@ -10,6 +10,7 @@
 #include <vector>
 
 using namespace std;
+using namespace cv;
 namespace Anakin {
 
 class HistogramComparator {
@@ -34,10 +35,10 @@ private:
 	void cleanupHistogramVector(vector<Histogram*>* hVector);
 	void pmakeAndSaveLandscape(char mode, std::string label, bool saveToFile =
 			true);
-	void update_minMax(cv::Mat minMaxHist, std::vector<cv::Mat>* hists,
+	void update_minMax(Mat & minMaxHist, const Ptr<vector<Mat>> & hists,
 			std::vector<int>* bins, std::vector<int> maxValues, int channels,
 			bool firstPass);
-	void update_average(cv::Mat minMaxHist, std::vector<int>* bins,
+	void update_average(Mat & minMaxHist, const Ptr<vector<int>> &  bins,
 			int channels, int count);
 	Histogram* createColorHistogram(Anakin::Img* img);
 	Histogram* createGrayHistogram(Anakin::Img* img);
