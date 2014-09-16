@@ -3,6 +3,9 @@
 
 #include <opencv2/opencv.hpp>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -14,8 +17,8 @@ public:
 	/**
 	 * Constructor, takes a label, keypoints and descriptors of an image
 	 */
-	ImageInfo(std::string label, std::vector<cv::KeyPoint> * keypoints,
-			cv::Mat * descriptors);
+	ImageInfo(const string & label, const Ptr<vector<KeyPoint>> & keypoints,
+			const Ptr<Mat> & descriptors);
 	/**
 	 * Empty constructor, used when des-serializing an serialized ImageInfo object
 	 */
@@ -23,19 +26,19 @@ public:
 	/**
 	 * sets the label
 	 */
-	void setLabel(std::string l);
+	void setLabel(string l);
 	/**
 	 * gets the label
 	 */
-	std::string getLabel();
+	string getLabel();
 	/**
 	 * gets the keypoints
 	 */
-	std::vector<cv::KeyPoint> * getKeypoints();
+	Ptr<vector<KeyPoint>> getKeypoints();
 	/**
 	 * gets the descriptors
 	 */
-	cv::Mat * getDescriptors();
+	Ptr<Mat> getDescriptors();
 	/**
 	 * destructor
 	 */
@@ -45,18 +48,18 @@ public:
 	 * the FileStorage object must be already constructed
 	 * in this object the data output is defined (write to a string or a file)
 	 */
-	void write(cv::FileStorage& fs) const; //Write serialization for this class
+	void write(FileStorage& fs) const; //Write serialization for this class
 	/**
 	 * function to des-serialize an object
 	 * the FileNode object comes from a FileStorage
 	 * that specifies the data input (string, file)
 	 */
-	void read(const cv::FileNode& node);    //Read serialization for this class
+	void read(const FileNode& node);    //Read serialization for this class
 protected:
 private:
-	std::string label;
-	std::vector<cv::KeyPoint> * keypoints;
-	cv::Mat * descriptors;
+	string label;
+	Ptr<vector<KeyPoint>> keypoints;
+	Ptr<Mat> descriptors;
 };
 
 }

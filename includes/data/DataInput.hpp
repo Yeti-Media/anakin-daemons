@@ -14,7 +14,7 @@ public:
 	 * param: output : where the new image will be stored : AnakinImg&
 	 * return: true if there was a new image to output : bool
 	 */
-	virtual bool nextInput(Anakin::Img** output) = 0;
+	virtual bool nextInput(Ptr<Anakin::Img> & output) = 0;
 	virtual void reload() = 0;
 	virtual ~DataInput() {
 	}

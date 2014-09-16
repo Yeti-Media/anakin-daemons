@@ -63,7 +63,7 @@ SerializedPatternDataInput::~SerializedPatternDataInput() {
 }
 
 bool SerializedPatternDataInput::nextInput(QuickLZ* quickLZstate,
-		ImageInfo** output) {
+		Ptr<ImageInfo> & output) {
 	if (this->current < 0) {
 		if (!this->loaded) {
 			for_each(cache->begin(), cache->end(),
@@ -80,7 +80,7 @@ bool SerializedPatternDataInput::nextInput(QuickLZ* quickLZstate,
 	if (this->current == this->cache->size()) {
 		return false;
 	} else {
-		*output = this->cache->at(this->current);
+		output = this->cache->at(this->current);
 		this->current++;
 		return true;
 	}

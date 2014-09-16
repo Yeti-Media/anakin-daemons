@@ -32,15 +32,15 @@ void HistogramComparator::makeAndSaveHistograms(char mode, bool saveToFile) {
 	for (uint p = 0; p < this->patterns.size(); p++) {
 		Ptr<Img> pattern = this->patterns.at(p)->getImage();
 		if (mode & this->COLOR) {
-			Ptr<Histogram> hist = createColorHistogram(pattern);
+			Ptr<Histogram> hist = createColorHistogram(pattern).constCast<Histogram>();
 			colorHistograms->push_back(hist);
 		}
 		if (mode & this->GRAY) {
-			Ptr<Histogram> hist = createGrayHistogram(pattern);
+			Ptr<Histogram> hist = createGrayHistogram(pattern).constCast<Histogram>();
 			grayHistograms->push_back(hist);
 		}
 		if (mode & this->HSV) {
-			Ptr<Histogram> hist = createHSVHistogram(pattern);
+			Ptr<Histogram> hist = createHSVHistogram(pattern).constCast<Histogram>();
 			hsvHistograms->push_back(hist);
 		}
 	}
@@ -100,11 +100,11 @@ Ptr<HistogramsIO> HistogramComparator::createColorHistogram(
 
 	/// Histograms
 	MatND hist;
-	Mat imgMat = img->getImage();
+	Ptr<Mat> imgMat = img->getImage();
 
 	/// Calculate the histograms for the BGR images
-	calcHist(&imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform,
-			false);
+	calcHist(&(*imgMat), 1, channels, Mat(), hist, 1, &histSize, ranges,
+			uniform, false);
 	Ptr<vector<int>> bins = makePtr<vector<int>>(1, 256);
 	return makePtr<Histogram>(hist, bins, 3, img->getLabel(), false, false);
 }
@@ -124,11 +124,11 @@ Ptr<HistogramsIO> HistogramComparator::createGrayHistogram(
 
 	/// Histograms
 	MatND hist;
-	Mat imgMat = img->getGrayImg();
+	Ptr<Mat> imgMat = img->getGrayImg();
 
 	/// Calculate the histograms for the grayscale images
-	calcHist(&imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform,
-			false);
+	calcHist(&(*imgMat), 1, channels, Mat(), hist, 1, &histSize, ranges,
+			uniform, false);
 	Ptr<vector<int>> bins = makePtr<vector<int>>(1, 256);
 	return makePtr<Histogram>(hist, bins, 1, img->getLabel(), false, false);
 }
@@ -151,7 +151,7 @@ Ptr<HistogramsIO> HistogramComparator::createHSVHistogram(
 	/// Histograms
 	MatND hist;
 	Mat imgMat;
-	cvtColor(img->getImage(), imgMat, COLOR_BGR2HSV);
+	cvtColor(*img->getImage(), imgMat, COLOR_BGR2HSV);
 
 	/// Calculate the histograms for the grayscale images
 	calcHist(&imgMat, 1, channels, Mat(), hist, 2, histSize, ranges, uniform,
@@ -198,15 +198,15 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 		current = this->patterns.at(p)->getImage();
 		hists->clear();
 		vector<Mat> layers;
-		Mat src;
+		Ptr<Mat> src = makePtr<Mat>();
 		if (mode & HistogramComparator::COLOR) {
 			src = current->getImage();
 		} else if (mode & HistogramComparator::GRAY) {
 			src = current->getGrayImg();
 		} else {
-			cvtColor(current->getImage(), src, COLOR_BGR2HSV);
+			cvtColor(*current->getImage(), *src, COLOR_BGR2HSV);
 		}
-		split(src, layers);
+		split(*src, layers);
 		for (int c = 0; c < channels; c++) {
 			Mat hist;
 			float range[] = { 0, maxValues[c] };

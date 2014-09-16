@@ -22,7 +22,7 @@ public:
 			const char *pwd, const string & tmpDir,
 			TempDirCleaner * tempDirCleaner);
 	virtual ~SerializedPatternDataInput();
-	bool nextInput(QuickLZ* quickLZstate, ImageInfo** output);
+	bool nextInput(QuickLZ* quickLZstate, Ptr<ImageInfo> & output);
 	void reload();
 protected:
 private:

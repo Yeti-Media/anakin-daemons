@@ -13,44 +13,45 @@ string Img::getFilename(const string& str) {
 	return name;
 }
 
-Img::Img(Mat& img, string label, bool clone) {
+Img::Img(const Ptr<Mat> & img, const string & label, bool clone) {
 	if (clone) {
-		this->image = img.clone();
+		this->image = makePtr<Mat>(img->clone());
 	} else {
 		this->image = img;
 	}
 	this->label = getFilename(label);
-	this->imageSize = Size(image.cols, image.rows);
+	this->imageSize = Size(image->cols, image->rows);
 	transformToGray(this->image, this->grayImg);
 }
 
-Img::Img(Img& other) :
-		Img(other.image, other.label, true) {
+Img::Img(const Ptr<Img> & other) :
+		Img(other->image, other->label, true) {
 }
 
-void Img::transformToGray(const Mat& image, Mat& gray) {
-	if (image.channels() == 3)
-		cvtColor(image, gray, COLOR_BGR2GRAY);
-	else if (image.channels() == 4)
-		cvtColor(image, gray, COLOR_BGRA2GRAY);
-	else if (image.channels() == 1)
-		gray = image.clone();
+void Img::transformToGray(const Ptr<Mat> & image, Ptr<Mat> & gray) {
+	if (image->channels() == 3)
+		//FIXME memory leaks on *grey?
+		cvtColor(*image, *gray, COLOR_BGR2GRAY);
+	else if (image->channels() == 4)
+		cvtColor(*image, *gray, COLOR_BGRA2GRAY);
+	else if (image->channels() == 1)
+		gray = makePtr<Mat>(image->clone());
 }
 
-Mat Img::getImage() {
+Ptr<Mat> Img::getImage() {
 	return this->image;
 }
 
-Mat Img::safeGetImage() {
-	return this->image.clone();
+Ptr<Mat> Img::safeGetImage() {
+	return makePtr<Mat>(image->clone());
 }
 
-Mat Img::getGrayImg() {
+Ptr<Mat> Img::getGrayImg() {
 	return this->grayImg;
 }
 
-Mat Img::safeGetGrayImg() {
-	return this->grayImg.clone();
+Ptr<Mat> Img::safeGetGrayImg() {
+	return makePtr<Mat>(grayImg->clone());
 }
 
 Size Img::getSize() {
@@ -58,7 +59,7 @@ Size Img::getSize() {
 }
 
 int Img::getType() {
-	return this->image.type();
+	return this->image->type();
 }
 
 string Img::getLabel() {
