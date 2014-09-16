@@ -6,6 +6,7 @@
 #include <vector>
 
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
@@ -28,20 +29,20 @@ public:
 	~DBUser();
 	int getID() const;
 
-	std::vector<DBPattern*>* getPatterns() const;
-	void addPattern(DBPattern* p);
+	Ptr<vector<Ptr<DBPattern>>> getPatterns() const;
+	void addPattern(const Ptr<DBPattern> & p);
 
-	std::vector<DBHistogram*>* getHistograms() const;
-	void addHistogram(DBHistogram* h);
+	Ptr<vector<Ptr<DBHistogram>>> getHistograms() const;
+	void addHistogram(const Ptr<DBHistogram> & h);
 
-	std::vector<DBHistogram*>* getLandscapes() const;
-	void addLandscape(DBHistogram* l);
+	Ptr<vector<Ptr<DBHistogram>>> getLandscapes() const;
+	void addLandscape(const Ptr<DBHistogram> & l);
 protected:
 private:
 	int id;
-	std::vector<DBPattern*>* patterns;
-	std::vector<DBHistogram*>* histograms;
-	std::vector<DBHistogram*>* landscapes;
+	Ptr<vector<Ptr<DBPattern>>> patterns;
+	Ptr<vector<Ptr<DBHistogram>>> histograms;
+	Ptr<vector<Ptr<DBHistogram>>> landscapes;
 };
 }
 ;

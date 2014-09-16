@@ -4,6 +4,8 @@
 #include <string>
 
 using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -35,14 +37,14 @@ public:
 	 */
 	DBHistogram(bool asFile, bool isLandscape);
 	virtual ~DBHistogram();
-	void setColorData(string * data);
-	void setGrayData(string * data);
-	void setHSVData(string * data);
+	void setColorData(const Ptr<string> & data);
+	void setGrayData(const Ptr<string> & data);
+	void setHSVData(const Ptr<string> & data);
 	int getID();
 	int getUserID();
-	string * getColorData() const;
-	string * getGrayData() const;
-	string * getHSVData() const;
+	Ptr<string> getColorData() const;
+	Ptr<string> getGrayData() const;
+	Ptr<string> getHSVData() const;
 	char getMode() const;
 	void changeID(int id);
 	void changeUID(int user_id);
@@ -52,9 +54,9 @@ private:
 	bool asFile;
 	int id;
 	int userID;
-	string * colorData = new string();
-	string * grayData = new string();
-	string * hsvData = new string(); //TODO memory leak here
+	Ptr<string> colorData = makePtr<string>();
+	Ptr<string> grayData = makePtr<string>();
+	Ptr<string> hsvData = makePtr<string>();
 	char mode;
 };
 }

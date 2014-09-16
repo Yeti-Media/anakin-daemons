@@ -2,32 +2,31 @@
 
 using namespace std;
 using namespace Anakin;
+using namespace cv;
 
-DBPattern::DBPattern(int id, int userID, bool asFile, string * data) {
+DBPattern::DBPattern(int id, int userID, bool asFile,
+		const Ptr<string> & data) {
 	this->id = id;
 	this->userID = userID;
 	this->asFile = asFile;
-	delete this->data;
 	this->data = data;
 }
 
-DBPattern::DBPattern(bool asFile, string * data) {
+DBPattern::DBPattern(bool asFile, const Ptr<string> & data) {
 	this->id = 0; //can couse problems
 	this->userID = 0;
 	this->asFile = asFile;
-	delete this->data;
 	this->data = data;
 }
 
 DBPattern::~DBPattern() {
-	delete data;
 }
 
 bool DBPattern::hasFileData() {
 	return asFile;
 }
 
-string * DBPattern::getData() const {
+Ptr<string> DBPattern::getData() const {
 	return this->data;
 }
 

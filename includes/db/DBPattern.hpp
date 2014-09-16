@@ -4,6 +4,7 @@
 #include <string>
 
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
@@ -22,28 +23,28 @@ public:
 	 * asFile : if true, it store a path to a file with the data (in data)
 	 * data : the data associated with this pattern
 	 */
-	DBPattern(int id, int userID, bool asFile, string * data);
+	DBPattern(int id, int userID, bool asFile, const Ptr<string> &  data);
 
 	/**
 	 * Constructor (only for scenarios)
 	 * asFile : if true, it store a path to a file with the data (in data)
 	 * data : the data associated with this pattern
 	 */
-	DBPattern(bool asFile, string * data); //USE ONLY FOR SCENARIOS
+	DBPattern(bool asFile, const Ptr<string> & data); //USE ONLY FOR SCENARIOS
 
 	virtual ~DBPattern();
 	int getID();
 	int getUserID();
 	void changeID(int id);
 	void changeUID(int user_id);
-	string * getData() const;
+	Ptr<string> getData() const;
 	bool hasFileData();
 protected:
 private:
 	int id;
 	int userID;
 	bool asFile;
-	string * data = new string();
+	Ptr<string> data = makePtr<string>();
 };
 }
 ;
