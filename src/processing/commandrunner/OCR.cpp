@@ -224,7 +224,7 @@ void OCR::run() {
 	Ptr<vector<string>> results = detect(lastError);
 	Ptr<vector<Ptr<wstring>>> jsonresults = makePtr<vector<Ptr<wstring>>>();
 
-	if (results == NULL) {
+	if (results.get() == NULL) {
 		this->out->error(
 				this->cf->outputError(
 						I_CommunicationFormatter::CF_ERROR_TYPE_ERROR,

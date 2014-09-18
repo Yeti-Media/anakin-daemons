@@ -53,7 +53,7 @@ int Program::start(const Ptr<vector<string>> & input) {
 	//______________________________________________________________________//
 
 	if (programFlags.validateInput(input)) {
-		vector<string>* values = NULL;
+		Ptr<vector<string>> values;
 
 		if (programFlags.flagFound("help")) {
 			cout << this->getFullTextHelp();

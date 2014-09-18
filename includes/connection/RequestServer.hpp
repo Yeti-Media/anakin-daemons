@@ -149,6 +149,8 @@ void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	commandRunner->initializeCommandRunner(wargs->output, wargs->cache);
 	Worker* worker = new Worker(wargs->id, wargs->workingQueue, commandRunner);
 	worker->start();
+	delete worker;
+	delete wargs;
 }
 
 template<class SpecificCommandRunner>

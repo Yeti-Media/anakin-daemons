@@ -52,6 +52,7 @@ void* DataOutput::startWorker(void *ptr) {
 	}
 	worker->start();
 	delete worker;
+	delete wargs;
 }
 
 DataOutput::~DataOutput() {

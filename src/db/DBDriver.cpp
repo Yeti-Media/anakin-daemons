@@ -1110,7 +1110,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool & error, bool load,
 			return false;
 		}
 		if (load) {
-			if (result != NULL) {
+			if (result.get() != NULL) {
 				Ptr<DBHistogram> horl = makePtr<DBHistogram>(false, id,
 						(mode & Constants::LANDSCAPE));
 
