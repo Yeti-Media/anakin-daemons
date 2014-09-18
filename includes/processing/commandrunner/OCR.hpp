@@ -24,15 +24,16 @@ public:
 	OCR();
 	virtual ~OCR();
 
-	void validateRequest(vector<string> *input);
+	void validateRequest(const Ptr<vector<string>> & input);
 
-	void initializeCommandRunner(DataOutput* out, SFBMCache* cache);
+	void initializeCommandRunner(const Ptr<DataOutput> & out,
+			const Ptr<SFBMCache> & cache);
 
 	void run();
 
 	Help* getHelp();
 
-	vector<string>* detect(string & lastError);
+	Ptr<vector<string>> detect(string & lastError);
 private:
 	I_CommunicationFormatter* cf;
 	bool showWords = false;

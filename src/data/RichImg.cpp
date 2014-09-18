@@ -15,7 +15,7 @@ RichImg::RichImg(const Ptr<Img> & img, const Ptr<FeatureDetector>& detector,
 
 RichImg::RichImg(const Ptr<ImageInfo> & imgInfo) {
 	Ptr<Mat> img = makePtr<Mat>();
-	this->aimg = new Img(img, imgInfo->getLabel());
+	this->aimg = makePtr<Img>(img, imgInfo->getLabel());
 	this->keypoints = imgInfo->getKeypoints();
 	this->descriptors = imgInfo->getDescriptors();
 	this->constructedWithImageInfo = true;
@@ -30,13 +30,13 @@ RichImg::RichImg(const Ptr<RichImg> & other) {
 		this->keypoints = other->keypoints;
 		this->descriptors = other->descriptors;
 	} else {
-		this->aimg = new Img(other->aimg); //TODO check if this line must be the first
+		this->aimg = makePtr<Img>(other->aimg); //TODO check if this line must be the first
 		this->detector = other->detector;
 		this->extractor = other->extractor;
 	}
 }
 
-Ptr<RichImg> RichImg::makeNew(const Ptr<RichImg> & img) {
+Ptr<RichImg> RichImg::makeNew(const Ptr<Img> & img) {
 	return makePtr<RichImg>(img, this->detector, this->extractor);
 }
 
@@ -47,7 +47,7 @@ Ptr<vector<KeyPoint>> RichImg::getKeypoints() {
 	return this->getFreshKeypoints();
 }
 
-void RichImg::recalculateFeatures(vector<int> mask) {
+void RichImg::recalculateFeatures(const vector<int> &  mask) {
 	if (this->constructedWithImageInfo)
 		return;
 	//TODO optimize... KeyPoint or pointer KeyPoint?

@@ -5,7 +5,7 @@ using namespace Anakin;
 using namespace cv;
 using namespace std;
 
-HistogramComparator::HistogramComparator(const vector<Ptr<RichImg>> & patterns,
+HistogramComparator::HistogramComparator(const Ptr<vector<Ptr<RichImg>>> & patterns,
 		const Ptr<HistogramsIO> & io) {
 	this->io = io;
 	this->patterns = patterns;
@@ -29,8 +29,8 @@ void HistogramComparator::makeAndSaveHistograms(char mode, bool saveToFile) {
 	Ptr<vector<Ptr<Histogram>>> colorHistograms = makePtr<vector<Ptr<Histogram>>>();
 	Ptr<vector<Ptr<Histogram>>> grayHistograms = makePtr<vector<Ptr<Histogram>>>();
 	Ptr<vector<Ptr<Histogram>>> hsvHistograms = makePtr<vector<Ptr<Histogram>>>();
-	for (uint p = 0; p < this->patterns.size(); p++) {
-		Ptr<Img> pattern = this->patterns.at(p)->getImage();
+	for (uint p = 0; p < this->patterns->size(); p++) {
+		Ptr<Img> pattern = this->patterns->at(p)->getImage();
 		if (mode & this->COLOR) {
 			Ptr<Histogram> hist = createColorHistogram(pattern).constCast<Histogram>();
 			colorHistograms->push_back(hist);
@@ -86,7 +86,7 @@ void HistogramComparator::update_average(Mat & minMaxHist,
 	}
 }
 
-Ptr<HistogramsIO> HistogramComparator::createColorHistogram(
+Ptr<Histogram> HistogramComparator::createColorHistogram(
 		const Ptr<Img> & img) {
 	int histSize = 256;
 	/// Set the ranges ( for B,G,R) )
@@ -109,7 +109,7 @@ Ptr<HistogramsIO> HistogramComparator::createColorHistogram(
 	return makePtr<Histogram>(hist, bins, 3, img->getLabel(), false, false);
 }
 
-Ptr<HistogramsIO> HistogramComparator::createGrayHistogram(
+Ptr<Histogram> HistogramComparator::createGrayHistogram(
 		const Ptr<Img> & img) {
 	int histSize = 256;
 
@@ -133,7 +133,7 @@ Ptr<HistogramsIO> HistogramComparator::createGrayHistogram(
 	return makePtr<Histogram>(hist, bins, 1, img->getLabel(), false, false);
 }
 
-Ptr<HistogramsIO> HistogramComparator::createHSVHistogram(
+Ptr<Histogram> HistogramComparator::createHSVHistogram(
 		const Ptr<Img> & img) {
 	int h_bins = 50;
 	int s_bins = 32;
@@ -194,8 +194,8 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 	Ptr<Histogram> result = makePtr<Histogram>(minMaxHist, bins, channels,
 			label, true, true);
 	int count = 0;
-	for (uint p = 0; p < this->patterns.size(); p++) {
-		current = this->patterns.at(p)->getImage();
+	for (uint p = 0; p < this->patterns->size(); p++) {
+		current = this->patterns->at(p)->getImage();
 		hists->clear();
 		vector<Mat> layers;
 		Ptr<Mat> src = makePtr<Mat>();

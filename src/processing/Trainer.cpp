@@ -6,10 +6,11 @@
 using namespace std;
 using namespace Anakin;
 
-Trainer::Trainer(cv::Ptr<cv::FlannBasedMatcher> detector,
-		vector<RichImg*>& patterns, string outputFolder, string fileName) {
+Trainer::Trainer(const Ptr<FlannBasedMatcher> & detector,
+		const Ptr<vector<Ptr<RichImg>>>& patterns,
+const string & outputFolder, const string & fileName) {
 	this->detector = detector;
-	this->patterns = &patterns;
+	this->patterns = patterns;
 	this->outputFolder = outputFolder;
 	this->fileName = fileName;
 }

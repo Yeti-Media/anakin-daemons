@@ -17,8 +17,9 @@ using namespace Anakin;
 CommunicationFormatterJSON::CommunicationFormatterJSON() {
 }
 
-wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
-		e_category category, const vector<wstring *> & values) {
+Ptr<wstring> CommunicationFormatterJSON::outputResponse(
+		const string & requestID, e_category category,
+		const vector<Ptr<wstring>> & values) {
 
 	/*  Result as wstring representing a JSONObject
 
@@ -70,11 +71,11 @@ wstring* CommunicationFormatterJSON::outputResponse(const string & requestID,
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 
 }
 
-wstring* CommunicationFormatterJSON::outputError(e_error errorType,
+Ptr<wstring> CommunicationFormatterJSON::outputError(e_error errorType,
 		const string & message, const string & origin) {
 
 	/*  Result as wstring representing a JSONObject
@@ -87,7 +88,7 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 	 */
 
 	JSONObject root;
-	std::wstring werror_type;
+	wstring werror_type;
 	switch (errorType) {
 	case CF_ERROR_TYPE_WARNING: {
 		werror_type = L"WARNING";
@@ -107,16 +108,16 @@ wstring* CommunicationFormatterJSON::outputError(e_error errorType,
 			boost::locale::conv::utf_to_utf<wchar_t>(message));
 	root[L"origin"] = new JSONValue(
 			boost::locale::conv::utf_to_utf<wchar_t>(origin));
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterJSON::format(const char * data) {
+Ptr<wstring> CommunicationFormatterJSON::format(const char * data) {
 
-	return new wstring((JSON::Parse(data))->Stringify());
+	return makePtr<wstring>((JSON::Parse(data))->Stringify());
 }
 
-wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
-		e_color colors) {
+Ptr<wstring> CommunicationFormatterJSON::format(e_mode mode,
+		const string & data, e_color colors) {
 	/*  Result as wstring representing a JSONObject
 
 	 root    -> type ("pattern" | "histogram" | "landscape")
@@ -151,10 +152,11 @@ wstring* CommunicationFormatterJSON::format(e_mode mode, string data,
 	root[L"data"] = new JSONValue(
 			boost::locale::conv::utf_to_utf<wchar_t>(data));
 
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterJSON::format(vector<string>* text) {
+Ptr<wstring> CommunicationFormatterJSON::format(
+		const Ptr<vector<string>> & text) {
 
 	JSONObject root;
 	JSONArray texts;
@@ -167,23 +169,23 @@ wstring* CommunicationFormatterJSON::format(vector<string>* text) {
 
 	root[L"values"] = new JSONValue(texts);
 
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
-string* CommunicationFormatterJSON::formatRequest(const char * data) {
+Ptr<string> CommunicationFormatterJSON::formatRequest(const char * data) {
 
 	JSONValue* req = JSON::Parse(data);
-	std::string* request = new string();
+	Ptr<string> request = makePtr<string>();
 	if (req->HasChild(L"action")) {
-		std::wstring waction = req->Child(L"action")->AsString();
-		std::string saction(waction.begin(), waction.end());
+		wstring waction = req->Child(L"action")->AsString();
+		string saction(waction.begin(), waction.end());
 		saction.append(" ");
 		request->append("-");
 		request->append(saction);
 	}
 	if (req->HasChild(L"ocr")) {
-		std::wstring waction = req->Child(L"ocr")->AsString();
-		std::string saction(waction.begin(), waction.end());
+		wstring waction = req->Child(L"ocr")->AsString();
+		string saction(waction.begin(), waction.end());
 		request->append("\"" + saction + "\"");
 	}
 	if (req->HasChild(Constants::WPARAM_IDXS.c_str())) {
@@ -192,15 +194,15 @@ string* CommunicationFormatterJSON::formatRequest(const char * data) {
 				req->Child(Constants::WPARAM_IDXS.c_str())->AsArray();
 		for (unsigned int i = 0; i < indexes.size(); i++) {
 			JSONValue* v = indexes.at(i);
-			std::string sv = std::to_string((int) v->AsNumber());
+			string sv = to_string((int) v->AsNumber());
 			sv.append(" ");
 			request->append(sv);
 		}
 	}
 	if (req->HasChild(Constants::WPARAM_SCENEID.c_str())) {
 		request->append("-" + Constants::PARAM_SCENEID + " ");
-		std::string scenario =
-				std::to_string(
+		string scenario =
+				to_string(
 						(int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
 		scenario.append(" ");
 		request->append(scenario);
@@ -211,8 +213,8 @@ string* CommunicationFormatterJSON::formatRequest(const char * data) {
 		if (optionalFlags.find(Constants::WPARAM_MIN_RATIO.c_str())
 				!= optionalFlags.end()) {
 			request->append("-" + Constants::PARAM_MIN_RATIO + " ");
-			std::string mr =
-					std::to_string(
+			string mr =
+					to_string(
 							(float) optionalFlags.find(
 									Constants::WPARAM_MIN_RATIO.c_str())->second->AsNumber());
 			mr.append(" ");
@@ -221,14 +223,15 @@ string* CommunicationFormatterJSON::formatRequest(const char * data) {
 		if (optionalFlags.find(Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())
 				!= optionalFlags.end()) {
 			request->append("-" + Constants::PARAM_MIN_MATCHES_ALLOWED + " ");
-			std::string mma =
-					std::to_string(
+			string mma =
+					to_string(
 							(int) optionalFlags.find(
 									Constants::WPARAM_MIN_MATCHES_ALLOWED.c_str())->second->AsNumber());
 			mma.append(" ");
 			request->append(mma);
 		}
 	}
+	delete req; //TODO review problems with this
 	return request;
 }
 

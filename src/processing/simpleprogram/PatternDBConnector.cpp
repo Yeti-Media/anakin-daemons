@@ -13,7 +13,6 @@
 #include <processing/Flags.hpp>
 #include <processing/simpleprogram/PatternDBConnector.hpp>
 #include <sys/types.h>
-#include <utils/ClearVector.hpp>
 #include <utils/Constants.hpp>
 #include <utils/help/HelpPatternDBConnector.hpp>
 #include <utils/XMLoader.hpp>
@@ -48,13 +47,13 @@ void PatternDBConnector::initProgramFlags() {
 	this->programFlags.setOptionalFlag("index");
 	this->programFlags.setNoValuesFlag("savePatterns");
 
-	vector<string> pathLooseDeps(0);
-	pathLooseDeps.push_back("patterns");
-	pathLooseDeps.push_back("histograms");
-	pathLooseDeps.push_back("landscapes");
-	pathLooseDeps.push_back("savePatterns");
-	pathLooseDeps.push_back("scenes");
-	this->programFlags.setLooseDependencies("path", &pathLooseDeps);
+	Ptr<vector<string>> pathLooseDeps = makePtr<vector<string>>();
+	pathLooseDeps->push_back("patterns");
+	pathLooseDeps->push_back("histograms");
+	pathLooseDeps->push_back("landscapes");
+	pathLooseDeps->push_back("savePatterns");
+	pathLooseDeps->push_back("scenes");
+	this->programFlags.setLooseDependencies("path", pathLooseDeps);
 	this->programFlags.setIncompatibility("index", "path");
 	this->programFlags.setIncompatibility("patterns", "histograms");
 	this->programFlags.setIncompatibility("patterns", "landscapes");
@@ -67,14 +66,15 @@ void PatternDBConnector::initProgramFlags() {
 	this->programFlags.setIncompatibility("index", "landscapes");
 	this->programFlags.setIncompatibility("index", "scenes");
 	this->programFlags.setNoValuesFlag("load");
-	vector<string> loadLooseDeps(0);
-	loadLooseDeps.push_back("user");
-	loadLooseDeps.push_back("index");
-	loadLooseDeps.push_back("patterns");
-	loadLooseDeps.push_back("histograms");
-	loadLooseDeps.push_back("landscapes");
-	loadLooseDeps.push_back("scenes");
-	this->programFlags.setLooseDependencies("load", &loadLooseDeps);
+
+	Ptr<vector<string>> loadLooseDeps = makePtr<vector<string>>();
+	loadLooseDeps->push_back("user");
+	loadLooseDeps->push_back("index");
+	loadLooseDeps->push_back("patterns");
+	loadLooseDeps->push_back("histograms");
+	loadLooseDeps->push_back("landscapes");
+	loadLooseDeps->push_back("scenes");
+	this->programFlags.setLooseDependencies("load", loadLooseDeps);
 	this->programFlags.setIncompatibility("load", "path");
 	this->programFlags.setDependence("savePatterns", "index");
 	this->programFlags.setIncompatibility("savePatterns", "load");
@@ -83,7 +83,7 @@ void PatternDBConnector::initProgramFlags() {
 	this->programFlags.setDependence("sceneID", "scenes");
 }
 
-int PatternDBConnector::run(vector<string> *input) {
+int PatternDBConnector::run(const Ptr<vector<string>> & input) {
 	string path;
 	bool saveObjects = false;
 	int userID;
@@ -95,7 +95,7 @@ int PatternDBConnector::run(vector<string> *input) {
 	int sceneID = -1;
 	bool loadingScenes = false;
 
-	vector<string>* values = NULL;
+	Ptr<vector<string>> values;
 
 	if (this->programFlags.flagFound("user")) {
 		saveUser = true;
@@ -173,20 +173,21 @@ int PatternDBConnector::run(vector<string> *input) {
 		return EXIT_FAILURE;
 	}
 
-	DBDriver* driver = new DBDriver(0);
+	TempDirCleaner tempDirCleaner(0);
+	Ptr<DBDriver> driver = makePtr<DBDriver>(&tempDirCleaner);
 	driver->connect("", "", "", "", "");
 	cout << driver->getMessage() << endl;
 	LOG_F("Info")<< driver->getMessage();
 
-	DBUser* user = NULL;
+	Ptr<DBUser> user;
 	if (load) {
 		if (objectsAs != Constants::INDEX && objectsAs != Constants::SCENE)
-			user = new DBUser(userID);
+			user = makePtr<DBUser>(userID);
 		bool error = false;
 		switch (objectsAs) {
 		case Constants::PATTERN: {
 			vector<int> pattern_ids = driver->getUserPatterns(user->getID(),
-					&error);
+					error);
 			if (error) {
 				cerr << driver->getMessage() << endl;
 				LOG_F("ERROR")<< driver->getMessage();
@@ -194,15 +195,13 @@ int PatternDBConnector::run(vector<string> *input) {
 			}
 			for (uint i = 0; i < pattern_ids.size(); i++) {
 				bool patternError = false;
-				DBPattern* pattern;
-				if (!driver->retrievePattern(pattern_ids.at(i), &patternError,
-						true, &pattern, this->tempDir, this->quickLZState)) {
+				Ptr<DBPattern> pattern;
+				if (!driver->retrievePattern(pattern_ids.at(i), patternError,
+						true, pattern, this->tempDir, this->quickLZState)) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
 					return EXIT_FAILURE;
 				}
-				delete pattern;
-				//cout << "loaded pattern with label : " << pattern->getLabel() << " and id : " << pattern->getID() << endl;
 			}
 			cout << "user " << user->getID() << " have " << pattern_ids.size()
 					<< " patterns" << endl;
@@ -212,7 +211,7 @@ int PatternDBConnector::run(vector<string> *input) {
 		}
 		case Constants::HISTOGRAM: {
 			vector<int> histogram_ids = driver->getUserHistograms(user->getID(),
-					&error);
+					error);
 			if (error) {
 				cerr << driver->getMessage() << endl;
 				LOG_F("ERROR")<< driver->getMessage();
@@ -220,9 +219,9 @@ int PatternDBConnector::run(vector<string> *input) {
 			}
 			for (uint i = 0; i < histogram_ids.size(); i++) {
 				bool histogramError = false;
-				DBHistogram* histogram;
+				Ptr<DBHistogram> histogram;
 				if (!driver->retrieveHistogram(histogram_ids.at(i),
-						&histogramError, true, &histogram, this->tempDir,
+						histogramError, true, histogram, this->tempDir,
 						this->quickLZState)) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
@@ -230,13 +229,12 @@ int PatternDBConnector::run(vector<string> *input) {
 				}
 				cout << "loaded histogram : " << histogram->getID() << endl;
 				LOG_F("Info")<< "loaded histogram : " << histogram->getID();
-				delete histogram;
 			}
 			break;
 		}
 		case Constants::LANDSCAPE: {
 			vector<int> landscape_ids = driver->getUserLandscapes(user->getID(),
-					&error);
+					error);
 			if (error) {
 				cerr << driver->getMessage() << endl;
 				LOG_F("ERROR")<< driver->getMessage();
@@ -244,9 +242,9 @@ int PatternDBConnector::run(vector<string> *input) {
 			}
 			for (uint i = 0; i < landscape_ids.size(); i++) {
 				bool histogramError = false;
-				DBHistogram* landscape;
+				Ptr<DBHistogram> landscape;
 				if (!driver->retrieveLandscape(landscape_ids.at(i),
-						&histogramError, true, &landscape, this->tempDir,
+						histogramError, true, landscape, this->tempDir,
 						this->quickLZState)) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
@@ -254,14 +252,13 @@ int PatternDBConnector::run(vector<string> *input) {
 				}
 				cout << "loaded landscape : " << landscape->getID() << endl;
 				LOG_F("Info")<<"loaded landscape : " << landscape->getID();
-				delete landscape;
 			}
 			break;
 		}
 		case Constants::INDEX: {
 			int trainerID = stoi(smatcher_id);
 			bool SFBMError = false;
-			if (driver->retrieveSFBM(trainerID, &SFBMError, this->tempDir)) {
+			if (driver->retrieveSFBM(trainerID, SFBMError, this->tempDir)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -272,10 +269,10 @@ int PatternDBConnector::run(vector<string> *input) {
 			break;
 		}
 		case Constants::SCENE: {
-			ImageInfo* scene;
+			Ptr<ImageInfo> scene;
 			bool sceneError = false;
-			if (driver->retrieveScene(&scene, sceneID, &sceneError,
-					this->tempDir, this->quickLZState)) {
+			if (driver->retrieveScene(scene, sceneID, sceneError, this->tempDir,
+					this->quickLZState)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -283,28 +280,22 @@ int PatternDBConnector::run(vector<string> *input) {
 				LOG_F("ERROR") << driver->getMessage();
 				return EXIT_FAILURE;
 			}
-			delete scene;
 			break;
 		}
-		}
-		//FIXME refactor this exit and the other
-		delete driver;
-		if (user != NULL) {
-			delete user;
 		}
 		return EXIT_SUCCESS;
 	}
 	if (saveUser) {
-		user = new DBUser(userID);
+		user = makePtr<DBUser>(userID);
 	}
 	if (saveObjects) {
-		XMLoader* loader = NULL;
+		Ptr<XMLoader> loader;
 
 		if (objectsAs != Constants::INDEX)
-			loader = new XMLoader(path);
+			loader = makePtr<XMLoader>(path);
 		switch (objectsAs) {
 		case Constants::PATTERN: {
-			vector<DBPattern*>* patterns = loader->loadAsPattern(true);
+			Ptr<vector<Ptr<DBPattern>>> patterns = loader->loadAsPattern(true);
 			if (saveUser) {
 				for (uint p = 0; p < patterns->size(); p++) {
 					user->addPattern(patterns->at(p));
@@ -319,13 +310,11 @@ int PatternDBConnector::run(vector<string> *input) {
 					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
-				for_each( patterns->begin(), patterns->end(), delete_pointer_element<DBPattern*>());
 			}
-			delete patterns;
 			break;
 		}
 		case Constants::HISTOGRAM: {
-			vector<DBHistogram*>* histograms = loader->loadAsHistogram(true);
+			Ptr<vector<Ptr<DBHistogram>>> histograms = loader->loadAsHistogram(true);
 			if (saveUser) {
 				for (uint p = 0; p < histograms->size(); p++) {
 					user->addHistogram(histograms->at(p));
@@ -340,13 +329,11 @@ int PatternDBConnector::run(vector<string> *input) {
 					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
-				for_each( histograms->begin(), histograms->end(), delete_pointer_element<DBHistogram*>());
 			}
-			delete histograms;
 			break;
 		}
 		case Constants::LANDSCAPE: {
-			vector<DBHistogram*>* landscapes = loader->loadAsLandscape(true);
+			Ptr<vector<Ptr<DBHistogram>>> landscapes = loader->loadAsLandscape(true);
 			if (saveUser) {
 				for (uint p = 0; p < landscapes->size(); p++) {
 					user->addLandscape(landscapes->at(p));
@@ -361,15 +348,13 @@ int PatternDBConnector::run(vector<string> *input) {
 					cout << driver->getMessage() << endl;
 					LOG_F("Info") << driver->getMessage();
 				}
-				for_each( landscapes->begin(), landscapes->end(), delete_pointer_element<DBHistogram*>());
 			}
-			delete landscapes;
 			break;
 		}
 		case Constants::INDEX: {
 			int trainer_id;
-			if (driver->storeSFBM(smatcher_id, &trainer_id, userID,
-					this->tempDir, this->quickLZState, true)) {
+			if (driver->storeSFBM(smatcher_id, trainer_id, userID,
+							this->tempDir, this->quickLZState, true)) {
 				cout << driver->getMessage() << endl;
 				LOG_F("Info")<< driver->getMessage();
 			} else {
@@ -379,7 +364,7 @@ int PatternDBConnector::run(vector<string> *input) {
 			}
 			if (savePatterns) {
 				bool error;
-				vector<int> patterns = driver->getUserPatterns(userID, &error);
+				vector<int> patterns = driver->getUserPatterns(userID, error);
 				if (error) {
 					cerr << driver->getMessage() << endl;
 					LOG_F("ERROR")<< driver->getMessage();
@@ -387,7 +372,7 @@ int PatternDBConnector::run(vector<string> *input) {
 				}
 				for (uint p = 0; p < patterns.size(); p++) {
 					if (driver->storeNthPattern(trainer_id, p,
-							patterns.at(p))) {
+									patterns.at(p))) {
 						cout << driver->getMessage() << endl;
 						LOG_F("Info")<< driver->getMessage();
 					} else {
@@ -399,9 +384,9 @@ int PatternDBConnector::run(vector<string> *input) {
 			break;
 		}
 		case Constants::SCENE: {
-			vector<DBPattern*>* patterns = loader->loadAsPattern(true);
+			Ptr<vector<Ptr<DBPattern>>> patterns = loader->loadAsPattern(true);
 			for (uint s = 0; s < patterns->size(); s++) {
-				DBPattern* sceneAsDBPattern = patterns->at(s);
+				Ptr<DBPattern> sceneAsDBPattern = patterns->at(s);
 				if (driver->storeScene(sceneAsDBPattern, this->quickLZState)) {
 					cout << driver->getMessage() << endl;
 					LOG_F("Info")<< driver->getMessage();
@@ -411,27 +396,16 @@ int PatternDBConnector::run(vector<string> *input) {
 					return EXIT_FAILURE;
 				}
 			}
-			for_each(patterns->begin(), patterns->end(),
-					delete_pointer_element<DBPattern*>());
-			delete patterns;
 			break;
 		}
-		}
-
-		if (loader != NULL) {
-			delete loader;
-		}
-	} else {
-		driver->saveUser(user);
-		cout << driver->getMessage() << endl;
-		LOG_F("Info")<<driver->getMessage();
 	}
 
-	delete driver;
+} else {
+	driver->saveUser(user);
+	cout << driver->getMessage() << endl;
+	LOG_F("Info")<<driver->getMessage();
+}
 
-	if (user != NULL) {
-		delete user;
-	}
 	return EXIT_SUCCESS;
 }
 

@@ -32,7 +32,7 @@ bool ImageDataInput::nextInput(Ptr<Anakin::Img> & output) {
 //            cout << "\n1k files loaded, total loaded files : " << loadedFiles << endl;
 //        }
 		if (nextFile(nextMat, label)) {
-			output = makePtr<Img>(nextMat, label);
+			output = makePtr<Img>(nextMat, *label.get());
 			loadedFiles += 1;
 			return true;
 		}
@@ -42,7 +42,7 @@ bool ImageDataInput::nextInput(Ptr<Anakin::Img> & output) {
 			label = this->labels.back();
 			this->images.pop_back();
 			this->labels.pop_back();
-			output = makePtr<Img>(nextMat, label);
+			output = makePtr<Img>(nextMat, *label.get());
 			return true;
 		}
 	}

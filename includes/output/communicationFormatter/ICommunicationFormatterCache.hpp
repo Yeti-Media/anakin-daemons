@@ -8,9 +8,11 @@
 #ifndef ICOMMUNICATIONFORMATTERCACHE_HPP_
 #define ICOMMUNICATIONFORMATTERCACHE_HPP_
 
+#include <opencv2/core/core.hpp>
 #include <output/communicationFormatter/ICommunicationFormatter.hpp>
 
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
@@ -22,11 +24,11 @@ public:
 	 * classes when you implement an interface. Please don't use this implementation, you must provide your
 	 * own implementation inside a child class
 	 *
-	 * returns a wstring* representing the actual CommunicationFormatter of changes made after adding a trainer to the cache
+	 * returns a Ptr<wstring> representing the actual CommunicationFormatter of changes made after adding a trainer to the cache
 	 */
-	virtual wstring* trainerAdd(int smatcher_id_added, int cacheFreeSpace,
+	virtual Ptr<wstring> trainerAdd(int smatcher_id_added, int cacheFreeSpace,
 			int smatcher_id_removed) {
-		return NULL;
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -35,10 +37,10 @@ public:
 	 * classes when you implement an interface. Please don't use this implementation, you must provide your
 	 * own implementation inside a child class
 	 *
-	 * returns a wstring* representing the actual CommunicationFormatter of changes made after deleting a trainer from the cache
+	 * returns a Ptr<wstring> representing the actual CommunicationFormatter of changes made after deleting a trainer from the cache
 	 */
-	virtual wstring* trainerDel(int smatcher_id_deleted, int cacheFreeSpace) {
-		return NULL;
+	virtual Ptr<wstring> trainerDel(int smatcher_id_deleted, int cacheFreeSpace) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -47,10 +49,10 @@ public:
 	 * classes when you implement an interface. Please don't use this implementation, you must provide your
 	 * own implementation inside a child class
 	 *
-	 * returns a wstring* representing the actual CommunicationFormatter of changes made after updating a trainer on the cache
+	 * returns a Ptr<wstring> representing the actual CommunicationFormatter of changes made after updating a trainer on the cache
 	 */
-	virtual wstring* trainerUPD(int smatcher_id_updated) {
-		return NULL;
+	virtual Ptr<wstring> trainerUPD(int smatcher_id_updated) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -59,11 +61,11 @@ public:
 	 * classes when you implement an interface. Please don't use this implementation, you must provide your
 	 * own implementation inside a child class
 	 *
-	 * returns a wstring* representing the actual CommunicationFormatter of the cache status
+	 * returns a Ptr<wstring> representing the actual CommunicationFormatter of the cache status
 	 */
-	virtual wstring* cacheStatus(vector<int> smatchers_in_cache,
+	virtual Ptr<wstring> cacheStatus(const Ptr<vector<int>> & smatchers_in_cache,
 			int cacheFreeSpace) {
-		return NULL;
+		return Ptr<wstring>();
 	}
 	; // = 0;
 

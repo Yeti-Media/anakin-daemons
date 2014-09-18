@@ -11,7 +11,7 @@
 using namespace Anakin;
 using namespace std;
 
-DataOutput::DataOutput(HTTPSocket* httpSocket) {
+DataOutput::DataOutput(const Ptr<HTTPSocket> & httpSocket) {
 	workingQueue = new BlockingQueue<Msj*>();
 	WorkerArgs* wargs = new WorkerArgs(E_DataOutputType::http, httpSocket,
 			workingQueue);
@@ -20,7 +20,8 @@ DataOutput::DataOutput(HTTPSocket* httpSocket) {
 
 DataOutput::DataOutput() {
 	workingQueue = new BlockingQueue<Msj*>();
-	WorkerArgs* wargs = new WorkerArgs(E_DataOutputType::console, NULL,
+	Ptr<HTTPSocket> nullHTTPSocket;
+	WorkerArgs* wargs = new WorkerArgs(E_DataOutputType::console, nullHTTPSocket,
 			workingQueue);
 	pthread_create(&this->workerThread, NULL, startWorker, (void *) wargs);
 }
@@ -58,7 +59,7 @@ DataOutput::~DataOutput() {
 	delete workingQueue;
 }
 
-void DataOutput::output(wstring* data, int reqID) {
+void DataOutput::output(const Ptr<wstring> &data, int reqID) {
 	lock_guard<mutex> lck(outputMutex);
 	Msj* msj = new Msj(boost::locale::conv::utf_to_utf<char>(*data),
 			E_DataOutputMsjType::common, reqID);
@@ -67,7 +68,7 @@ void DataOutput::output(wstring* data, int reqID) {
 	delete data;
 }
 
-void DataOutput::error(wstring* data) {
+void DataOutput::error(const Ptr<wstring> & data) {
 	lock_guard<mutex> lck(outputMutex);
 	Msj* msj = new Msj(boost::locale::conv::utf_to_utf<char>(*data),
 			E_DataOutputMsjType::error);

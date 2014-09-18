@@ -8,6 +8,8 @@
 #include <utils/files/QuickLZ.hpp>
 
 using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -24,31 +26,34 @@ public:
 	 *               this sets the minimum value of the distance ratio between the the best match and the better one
 	 * min_matches_allowed   :   the minimum matches to consider a pattern as found
 	 */
-	BasicFlannDetector(SerializableFlannBasedMatcher * detector,
-			SFBMCache* cache, float minRatio = 1.f / 1.5f,
+	BasicFlannDetector(Ptr<SerializableFlannBasedMatcher> detector,
+			Ptr<SFBMCache> cache, float minRatio = 1.f / 1.5f,
 			int min_matches_allowed = 8);
+
+	virtual ~BasicFlannDetector();
+
 	/**
 	 * find patterns in a scene and returns a vector with every match obtained
 	 */
-	vector<Match*>* findPatterns(QuickLZ* quickLZstate, RichImg* scene,
-			bool * error);
+	Ptr<vector<Ptr<Match>>> findPatterns(QuickLZ* quickLZstate, Ptr<RichImg> scene,
+			bool & error);
 	/**
 	 * change the SFBM to use
 	 */
-	void changeMatcher(SerializableFlannBasedMatcher * matcher);
+	void changeMatcher(Ptr<SerializableFlannBasedMatcher> matcher);
 protected:
-	void getMatches(const cv::Mat& queryDescriptors,
-			vector<cv::DMatch>& matches);
-	bool keyExist(map<int, cv::Ptr<vector<cv::DMatch>>>* m, int key);
-	void getKeys(map<int, cv::Ptr<vector<cv::DMatch>>>* m,
-			vector<int>* keys);
-	vector<Match*>* findPatterns_usingTraining(QuickLZ* quickLZstate,
-			RichImg* scene, bool * error);
+	void getMatches(const Mat& queryDescriptors,
+			vector<DMatch>& matches);
+	bool keyExist(const Ptr<map<int, Ptr<vector<DMatch>>>> & m, int key);
+	void getKeys(const Ptr<map<int, Ptr<vector<DMatch>>>> & m,
+			Ptr<vector<int>> & keys);
+	Ptr<vector<Ptr<Match>>> findPatterns_usingTraining(QuickLZ* quickLZstate,
+			Ptr<RichImg> scene, bool & error);
 private:
 	float minRatio;
 	int min_matches_allowed;
-	SerializableFlannBasedMatcher * detector;
-	SFBMCache* cache;
+	Ptr<SerializableFlannBasedMatcher> detector;
+	Ptr<SFBMCache> cache;
 
 };
 

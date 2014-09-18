@@ -21,7 +21,7 @@ public:
 	virtual ~MatcherCacheTest();
 	Help* getHelp();
 protected:
-	int run(vector<string> *input);
+	int run(const Ptr<vector<string>> & input);
 	void initProgramFlags();
 };
 

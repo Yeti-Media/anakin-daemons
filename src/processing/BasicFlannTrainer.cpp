@@ -11,24 +11,21 @@ using namespace std;
 using namespace cv;
 
 void BasicFlannTrainer::train_and_save(QuickLZ* quickLZstate) {
-	vector<Mat> * pdescriptors = new vector<Mat>(this->patterns->size());
+	vector<Mat> pdescriptors(this->patterns->size());
 	for (uint i = 0; i < this->patterns->size(); i++) {
-		RichImg* p = this->patterns->at(i);
-		pdescriptors->at(i) = p->getDescriptors()->clone();
+		Ptr<RichImg> p = this->patterns->at(i);
+		pdescriptors.at(i) = p->getDescriptors()->clone();
 	}
 	this->detector.staticCast<SerializableFlannBasedMatcher>()->train(
 			pdescriptors);
-	//this->detector->add(pdescriptors);
-	//this->detector->train();
 	this->detector.staticCast<SerializableFlannBasedMatcher>()->save(
-			quickLZstate, this->outputFolder + this->fileName);
-	delete pdescriptors;
+			quickLZstate, this->outputFolder + this->fileName, Ptr<string>());
 }
 
-BasicFlannTrainer::BasicFlannTrainer(
-		Ptr<SerializableFlannBasedMatcher> detector,
-		vector<Anakin::RichImg*>& patterns, string outputFolder,
-		string fileName) :
+BasicFlannTrainer::BasicFlannTrainer(const Ptr<FlannBasedMatcher> & detector,
+		const Ptr<vector<Ptr<RichImg>>>& patterns,
+		const string & outputFolder,
+		const string & fileName) :
 		Trainer(detector, patterns, outputFolder, fileName) {
 }
 

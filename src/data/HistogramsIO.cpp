@@ -12,9 +12,9 @@ using namespace cv;
 
 HistogramsIO::HistogramsIO(const string & baseFolder) {
 	this->baseFolder = baseFolder;
-	this->colorHistograms = makePtr<Ptr<Histogram>>();
-	this->grayHistograms = makePtr<Ptr<Histogram>>();
-	this->hsvHistograms = makePtr<Ptr<Histogram>>();
+	this->colorHistograms = makePtr<vector<Ptr<Histogram>>>();
+	this->grayHistograms = makePtr<vector<Ptr<Histogram>>>();
+	this->hsvHistograms = makePtr<vector<Ptr<Histogram>>>();
 }
 
 HistogramsIO::~HistogramsIO() {

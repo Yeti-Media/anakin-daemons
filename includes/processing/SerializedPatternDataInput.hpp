@@ -9,37 +9,38 @@
 #include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 class SerializedPatternDataInput {
 public:
-	SerializedPatternDataInput(string userID, const char *pghost,
+	SerializedPatternDataInput(const string & userID, const char *pghost,
 			const char *pgport, const char *dbName, const char *login,
 			const char *pwd, const string & tmpDir,
 			TempDirCleaner * tempDirCleaner);
-	SerializedPatternDataInput(vector<int>* patternsToFind, const char *pghost,
-			const char *pgport, const char *dbName, const char *login,
-			const char *pwd, const string & tmpDir,
+	SerializedPatternDataInput(const Ptr<vector<int>> & patternsToFind,
+			const char *pghost, const char *pgport, const char *dbName,
+			const char *login, const char *pwd, const string & tmpDir,
 			TempDirCleaner * tempDirCleaner);
 	virtual ~SerializedPatternDataInput();
 	bool nextInput(QuickLZ* quickLZstate, Ptr<ImageInfo> & output);
 	void reload();
 protected:
 private:
-	vector<ImageInfo*>* cache;
+	Ptr<vector<Ptr<ImageInfo>>> cache;
 	bool loaded;
 	int current;
-	void loadData(vector<ImageInfo*>* data, string * rawData);
+	void loadData(Ptr<vector<Ptr<ImageInfo>>> & data, const Ptr<string> & rawData);
 	bool initAndConnectDriver(const char *pghost, const char *pgport,
 			const char *dbName, const char *login, const char *pwd,
 			TempDirCleaner * tempDirCleaner);
 	void reportDBDriverError();
-	bool loadDataFromDB(vector<ImageInfo*>* data, QuickLZ* quickLZstate);
-	static void read(const cv::FileNode& node, ImageInfo& x,
-			const ImageInfo& default_value = ImageInfo());
+	bool loadDataFromDB(Ptr<vector<Ptr<ImageInfo>>> & data, QuickLZ* quickLZstate);
+	static void read(const cv::FileNode& node, Ptr<ImageInfo> & x);
 	string userID;
-	DBDriver* driver = NULL;
-	vector<int>* patternsToFind;
+	Ptr<DBDriver> driver;
+	Ptr<vector<int>> patternsToFind;
 	string tmpDir;
 };
 }

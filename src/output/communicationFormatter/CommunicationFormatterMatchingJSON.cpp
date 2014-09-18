@@ -13,7 +13,7 @@ namespace Anakin {
 CommunicationFormatterMatchingJSON::CommunicationFormatterMatchingJSON() {
 }
 
-wstring* CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
+Ptr<wstring> CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
 		const string & label, const vector<KeyPoint> & matchedKeypoints) {
 	/*   Result as wstring representing a  JSONObject
 
@@ -60,11 +60,11 @@ wstring* CommunicationFormatterMatchingJSON::outputMatch(const Point2f & center,
 	root[L"keypoints"] = new JSONValue(keypoints);
 #endif //LIGTH_RESULTS
 
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterMatchingJSON::outputMatches(const string & label,
-		const vector<wstring *> & values) {
+Ptr<wstring> CommunicationFormatterMatchingJSON::outputMatches(const string & label,
+		const vector<Ptr<wstring>> & values) {
 	/*   Result as wstring representing a JSONObject
 
 	 root    -> scene label (string)
@@ -85,7 +85,7 @@ wstring* CommunicationFormatterMatchingJSON::outputMatches(const string & label,
 
 	root[L"values"] = new JSONValue(valuesJSON);
 
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
 CommunicationFormatterMatchingJSON::~CommunicationFormatterMatchingJSON() {

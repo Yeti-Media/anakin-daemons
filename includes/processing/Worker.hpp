@@ -8,6 +8,9 @@
 
 #include <tbb/concurrent_queue.h>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -21,8 +24,7 @@ public:
 	 * id            : worker's id
 	 * workingQueue  : requests queue
 	 */
-	Worker(int id,
-			tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue,
+	Worker(int id, tbb::concurrent_bounded_queue<Ptr<vector<string>>>*workingQueue,
 			CommandRunner* command);
 	/**
 	 * starts the worker listening cicle
@@ -31,7 +33,7 @@ public:
 protected:
 private:
 	int id;
-	tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
+	tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue;
 	CommandRunner* runner;
 };
 }

@@ -50,18 +50,12 @@ void PatternLoader::write(FileStorage& fs, const string&, const ImageInfo& x) {
 void PatternLoader::load_and_save(const string & outputfolder, bool saveToFile,
 		char mode) {
 	Ptr<Img> image;
-//int processedFiles = 0;
 	int filesToLoad = this->input->imagesToLoad();
-//cout << "images to process : " << filesToLoad << endl;
 	if (filesToLoad > 0) {
 		this->patterns->resize(filesToLoad);
-		//FIXME memory leak? verify all this->patterns ussage!
 	}
 	int idx = 0;
 	while (this->input->nextInput(image)) {
-//        if (processedFiles > 0 && (processedFiles % 1000 == 0)) {
-//            cout << "1k files processed, total processed files : " << processedFiles << endl;
-//        }
 		Ptr<RichImg> richImage = makePtr<RichImg>(image, this->detector,
 				this->extractor);
 		Ptr<ImageInfo> ii = richImage->getImageInfo();
@@ -92,9 +86,7 @@ void PatternLoader::load_and_save(const string & outputfolder, bool saveToFile,
 		} else {
 			this->patterns->push_back(richImage);
 		}
-//processedFiles += 1;
 	}
-//cout << "total processed files : " << processedFiles << endl;
 }
 
 PatternLoader::~PatternLoader() {

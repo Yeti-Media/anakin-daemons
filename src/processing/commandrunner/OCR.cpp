@@ -34,7 +34,8 @@ Help* OCR::getHelp() {
 	return new HelpOCR();
 }
 
-void OCR::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
+void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
+		const Ptr<SFBMCache> & cache) {
 	CommandRunner::initializeCommandRunner(out, cache);
 
 	flags->setOverridingFlag("ocrDemo");
@@ -56,10 +57,10 @@ void OCR::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
 	flags->setVerbose(true);
 }
 
-void OCR::validateRequest(vector<string> *input) {
+void OCR::validateRequest(const Ptr<vector<string>> & input) {
 	reqID = "";
 	if (flags->validateInput(input)) {
-		vector<string>* values = NULL;
+		Ptr<vector<string>> values;
 
 		if (flags->flagFound(Constants::PARAM_REQID)) {
 			values = flags->getFlagValues(Constants::PARAM_REQID);
@@ -154,26 +155,26 @@ void OCR::validateRequest(vector<string> *input) {
 	}
 }
 
-vector<string>* OCR::detect(string & lastError) {
+Ptr<vector<string>> OCR::detect(string & lastError) {
 	//TODO change location??
 	tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
 
 	if (api->Init(this->datapath.c_str(), this->lang.c_str(), this->mode)) {
 		lastError = "Could not initialize tesseract";
-		return NULL;
+		return Ptr<vector<string>>();
 	}
 
 	cv::Mat img = cv::imread(scenesDir);
 
 	if (!img.data) {
 		lastError = "Error loading image";
-		return NULL;
+		return Ptr<vector<string>>();
 	}
 
 	api->SetImage((uchar*) img.data, img.size().width, img.size().height,
 			img.channels(), img.step1());
 	api->Recognize(0);
-	vector<string>* result = new vector<string>();
+	Ptr<vector<string>> result = makePtr<vector<string>>();
 
 	tesseract::ResultIterator* ri = api->GetIterator();
 	tesseract::PageIteratorLevel level = tesseract::RIL_WORD;
@@ -220,15 +221,14 @@ void OCR::run() {
 
 	string lastError;
 
-	vector<string>* results = detect(lastError);
-	vector<wstring*> jsonresults;
+	Ptr<vector<string>> results = detect(lastError);
+	vector<Ptr<wstring>> jsonresults;
 
 	if (results == NULL) {
 		this->out->error(
 				this->cf->outputError(
 						I_CommunicationFormatter::CF_ERROR_TYPE_ERROR,
 						lastError, "CommandRunner::run"));
-		delete results;
 		return;
 	}
 
@@ -237,10 +237,6 @@ void OCR::run() {
 	this->out->output(
 			this->cf->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,
 					jsonresults), ireqID);
-
-	for_each(jsonresults.begin(), jsonresults.end(),
-			delete_pointer_element<wstring*>());
-	delete results;
 }
 
 } /* namespace Anakin */

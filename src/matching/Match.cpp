@@ -1,10 +1,12 @@
 #include "matching/Match.hpp"
 
 using namespace Anakin;
+using namespace std;
+using namespace cv;
 
-Match::Match(RichImg* scene, RichImg* pattern, cv::Ptr<vector<cv::DMatch>> matches,
-		cv::Mat& homography, cv::Point2f center,
-		const vector<cv::KeyPoint> & matchedKeypoints) {
+Match::Match(const Ptr<RichImg> & scene, const Ptr<RichImg> & pattern,
+		const Ptr<vector<DMatch>> & matches, const Mat& homography,
+		const Point2f & center, const vector<KeyPoint> & matchedKeypoints) {
 
 	this->scene = scene;
 	this->pattern = pattern;
@@ -16,31 +18,28 @@ Match::Match(RichImg* scene, RichImg* pattern, cv::Ptr<vector<cv::DMatch>> match
 }
 
 Match::~Match() {
-	delete pattern;
 }
 
-//FIXME cLEANUP???
-
-RichImg* Match::getScene() {
+Ptr<RichImg> Match::getScene() {
 	return this->scene;
 }
 
-RichImg* Match::getPattern() {
+Ptr<RichImg> Match::getPattern() {
 	return this->pattern;
 }
 
-cv::Ptr<vector<cv::DMatch>> Match::getMatches() {
+Ptr<vector<DMatch>> Match::getMatches() {
 	return this->matches;
 }
 
-cv::Mat& Match::getHomography() {
+Mat& Match::getHomography() {
 	return this->homography;
 }
 
-cv::Point2f Match::getCenter() {
+Point2f Match::getCenter() {
 	return this->center;
 }
 
-vector<cv::KeyPoint> Match::getMatchedKeypoints() {
+vector<KeyPoint> Match::getMatchedKeypoints() {
 	return this->matchedKeypoints;
 }

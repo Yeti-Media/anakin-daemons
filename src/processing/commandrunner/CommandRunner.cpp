@@ -10,11 +10,8 @@ using namespace cv;
 
 namespace fs = boost::filesystem;
 
-CommandRunner::CommandRunner(string programName) {
-	this->flags = NULL;
-	this->out = NULL;
+CommandRunner::CommandRunner(const string &  programName) {
 	this->sceneID = -1;
-	this->cache = NULL;
 	setProgramName(programName);
 }
 
@@ -31,8 +28,8 @@ void CommandRunner::setProgramName(const string & name) {
 /**
  * Should initializate all used variables
  */
-void CommandRunner::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
-	this->flags = new Flags();
+void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out, const Ptr<SFBMCache> & cache) {
+	this->flags = makePtr<Flags>();
 	this->out = out;
 	this->cache = cache;
 }
@@ -54,7 +51,7 @@ string CommandRunner::getProgramName() {
 /**
  * Placeholder for inheritance.
  */
-void CommandRunner::validateRequest(std::vector<std::string> *input) {
+void CommandRunner::validateRequest(const Ptr<vector<string>> & input) {
 
 }
 
@@ -72,12 +69,12 @@ CommandRunner::~CommandRunner() {
 
 //PRIVATE
 
-bool CommandRunner::checkDuplicatedIndexes(std::vector<std::string> indexes,
-		std::string * duplicated) {
-	std::map<std::string, int> visited;
+bool CommandRunner::checkDuplicatedIndexes(const vector<string> & indexes,
+		string & duplicated) {
+	map<string, int> visited;
 	for (uint i = 0; i < indexes.size(); i++) {
 		if (visited.find(indexes.at(i)) != visited.end()) {
-			*duplicated = indexes.at(i);
+			duplicated = indexes.at(i);
 			return false;
 		}
 		visited[indexes.at(i)] = 0;

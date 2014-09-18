@@ -1,6 +1,7 @@
 #ifndef DBPATTERN_HPP
 #define DBPATTERN_HPP
 
+#include <opencv2/opencv.hpp>
 #include <string>
 
 using namespace std;

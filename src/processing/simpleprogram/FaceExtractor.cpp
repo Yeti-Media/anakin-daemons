@@ -28,7 +28,7 @@ void FaceExtractor::initProgramFlags() {
 
 }
 
-int FaceExtractor::run(vector<string> *input) {
+int FaceExtractor::run(const Ptr<vector<string>> & input) {
 	return EXIT_SUCCESS;
 }
 

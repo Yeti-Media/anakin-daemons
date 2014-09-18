@@ -13,6 +13,9 @@
 #include "output/JSONValue.h"
 #include <opencv2/opencv.hpp>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 class CommunicationFormatterJSON: virtual public I_CommunicationFormatter {
@@ -21,36 +24,36 @@ public:
 	CommunicationFormatterJSON();
 
 	/**
-	 * returns a wstring* representation of a JSONValue of a response
+	 * returns a Ptr<wstring> representation of a JSONValue of a response
 	 */
-	virtual wstring* outputResponse(const string & requestID,
-			e_category category, const vector<wstring *> & values);
+	virtual Ptr<wstring> outputResponse(const string & requestID,
+			e_category category, const vector<Ptr<wstring>> & values);
 
 	/**
-	 * returns a wstring* representation of a JSONValue of an error
+	 * returns a Ptr<wstring> representation of a JSONValue of an error
 	 */
-	virtual wstring* outputError(e_error errorType, const string & message,
+	virtual Ptr<wstring> outputError(e_error errorType, const string & message,
 			const string & origin);
 
 	/**
-	 * returns a wstring* representation of a JSONValue
+	 * returns a Ptr<wstring> representation of a JSONValue
 	 */
-	virtual wstring* format(const char * data);
+	virtual Ptr<wstring> format(const char * data);
 
 	/**
-	 * returns a wstring* representation of a JSONValue
+	 * returns a Ptr<wstring> representation of a JSONValue
 	 */
-	virtual wstring* format(e_mode mode, string data, e_color colors);
+	virtual Ptr<wstring> format(e_mode mode, const string & data, e_color colors);
 
 	/**
-	 * returns a wstring* representation of a JSONValue
+	 * returns a Ptr<wstring> representation of a JSONValue
 	 */
-	virtual wstring* format(vector<string>* text);
+	virtual Ptr<wstring> format(const Ptr<vector<string>> & text);
 
 	/**
 	 * returns a string* representation of a JSONValue of a request
 	 */
-	virtual string* formatRequest(const char * data);
+	virtual Ptr<string> formatRequest(const char * data);
 
 	~CommunicationFormatterJSON();
 };

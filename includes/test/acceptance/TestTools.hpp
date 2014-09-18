@@ -172,11 +172,11 @@ void runProgram(StatisticsCollector* collector, const string & currentCommand,
 			<< endl << "* Program: " << program->getProgramName() << endl
 			<< "* Command \"" << currentCommand << "\" executed" << endl
 			<< "* Output:" << endl << endl;
-	vector<string> input(0);
-	stringutils::tokenizeWordsIgnoringQuoted(currentCommand, input);
+	Ptr<vector<string>> input = makePtr<vector<string>>();
+	stringutils::tokenizeWordsIgnoringQuoted(currentCommand, *input);
 
 	auto begin = chrono::high_resolution_clock::now();
-	int signal = program->start(&input);
+	int signal = program->start(input);
 	if (collector != NULL) {
 		auto delay = chrono::high_resolution_clock::now() - begin;
 		double ms = (double) std::chrono::duration_cast<
@@ -193,14 +193,12 @@ void runProgram(StatisticsCollector* collector, const string & currentCommand,
 }
 
 struct DaemonArgs {
-	Program* program;
-	vector<string> * input;
-	DaemonArgs(Program* program, vector<string> * input) :
+	Ptr<Program> program;
+	Ptr<vector<string>> input;
+	DaemonArgs(Program* program, Ptr<vector<string>> input) :
 			program(program), input(input) {
 	}
 	~DaemonArgs() {
-		delete program;
-		delete input;
 	}
 };
 
@@ -218,7 +216,7 @@ pthread_t * runDaemonProgram(string currentCommand) {
 			<< endl << "* Daemon Program: " << commandRunner.getProgramName()
 			<< endl << "* Command \"" << currentCommand << "\" executed" << endl
 			<< "* Output:" << endl << endl;
-	vector<string> * input = new vector<string>(0);
+	Ptr<vector<string>> input = makePtr<vector<string>>();
 	stringutils::tokenizeWordsIgnoringQuoted(currentCommand, *input);
 	pthread_t * thread = new pthread_t();
 

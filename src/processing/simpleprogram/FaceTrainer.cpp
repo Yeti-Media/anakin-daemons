@@ -28,7 +28,7 @@ void FaceTrainer::initProgramFlags() {
 
 }
 
-int FaceTrainer::run(vector<string> *input) {
+int FaceTrainer::run(const Ptr<vector<string>> & input) {
 	return 0;
 }
 

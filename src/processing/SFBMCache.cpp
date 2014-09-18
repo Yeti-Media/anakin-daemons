@@ -9,9 +9,12 @@
 #include <output/communicationFormatter/CommunicationFormatterCacheJSON.hpp>
 
 using namespace Anakin;
+using namespace std;
+using namespace cv;
 
-SFBMCache::SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
-		const string & tmpDir, TempDirCleaner * tempDirCleaner) {
+SFBMCache::SFBMCache(const Ptr<DBDriver> & dbdriver,
+		const CacheConfig & cacheConfig, const string & tmpDir,
+		TempDirCleaner * tempDirCleaner) {
 	this->dbdriver = dbdriver;
 	this->tmpDir = tmpDir;
 	this->cfc = new CommunicationFormatterCacheJSON();
@@ -26,9 +29,9 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
 	this->misses = 0;
 	this->requests = 0;
 	this->discardLessValuable = !cacheConfig.cacheNoDiscardLessValuable;
-	this->cache = new map<int, SerializableFlannBasedMatcher*>();
-	this->matchersLife = new map<int, int>();
-	this->loadingCount = new map<int, int>();
+	this->cache = makePtr<map<int, Ptr<SerializableFlannBasedMatcher>>>();
+	this->matchersLife = makePtr<map<int, int>>();
+	this->loadingCount = makePtr<map<int, int>>();
 
 	//SCENES CACHE
 	this->slife = cacheConfig.cacheScenesLife;
@@ -37,25 +40,24 @@ SFBMCache::SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
 	this->sceneHits = 0;
 	this->sceneMisses = 0;
 	this->sceneRequests = 0;
-	this->scache = new map<int, ImageInfo*>();
-	this->scenesLife = new map<int, int>();
+	this->scache = makePtr<map<int, Ptr<ImageInfo>>>();
+	this->scenesLife = makePtr<map<int, int>>();
 
 	//PATTERNS CACHE
-	this->pcache = new map<int, map<int, ImageInfo*>*>();
+	this->pcache = makePtr<map<int, Ptr<map<int, Ptr<ImageInfo>>>>>();
 }
 
 SFBMCache::~SFBMCache() {
 	delete cfc;
 	//do not delete delete tempDirCleaner;
-	//dbdriver must be deleted by the method who instantiate this class.
 }
 
-SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,
-		int smatcher_id, bool * error) {
+Ptr<SerializableFlannBasedMatcher> SFBMCache::loadMatcher(QuickLZ* quickLZstate,
+		int smatcher_id, bool & error) {
 	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
-	//internal function, do not init *error=false
+	//internal function, do not init error=false
 	this->requests++;
-	SerializableFlannBasedMatcher* matcher;
+	Ptr<SerializableFlannBasedMatcher> matcher;
 	if (keyExist(this->matchersLife, smatcher_id)) {
 		this->hits++;
 		matcher = this->cache->find(smatcher_id)->second;
@@ -65,9 +67,9 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcher(QuickLZ* quickLZstate,
 	} else {
 		this->misses++;
 		float lt;
-		matcher = loadMatcherFromDB(quickLZstate, smatcher_id, &lt, error);
-		if (*error) {
-			return NULL;
+		matcher = loadMatcherFromDB(quickLZstate, smatcher_id, lt, error);
+		if (error) {
+			return Ptr<SerializableFlannBasedMatcher>();
 		}
 		int newMatcherLife = (int) lt * this->loadingTimeWeight;
 		int lowestMatcherLife =
@@ -105,28 +107,27 @@ void SFBMCache::unloadMatcher(int smatcher_id, bool keepPatterns) {
 }
 
 void SFBMCache::updateMatcher(QuickLZ* quickLZstate, int smatcher_id,
-		bool * error) {
+		bool & error) {
 	//VERY DUMB IMPLEMENTATION FOR THE MOMENT
-	//internal function, do not init *error=false
 	unloadMatcher(smatcher_id, true);
 	loadMatcher(quickLZstate, smatcher_id, error);
-	if (!*error)
+	if (!error)
 		this->operation = UPDATEOP;
 }
 
-wstring* SFBMCache::indexCacheStatus() {
-	std::vector<int>* values = new std::vector<int>(0);
+Ptr<wstring> SFBMCache::indexCacheStatus() {
+	Ptr<vector<int>> values = makePtr<std::vector<int>>();
 	getKeys(this->cache, values);
 	int freeCacheSpace = this->cacheMaxSize - this->cacheSize;
-	return this->cfc->cacheStatus(*values, freeCacheSpace);
+	return this->cfc->cacheStatus(values, freeCacheSpace);
 }
 
-ImageInfo* SFBMCache::loadScene(QuickLZ* quickLZstate, int sceneID,
-		bool * error) {
+Ptr<ImageInfo> SFBMCache::loadScene(QuickLZ* quickLZstate, int sceneID,
+		bool & error) {
 	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
-	//internal function, do not init *error=false
+	//internal function, do not init error=false
 	this->sceneRequests++;
-	ImageInfo* scene;
+	Ptr<ImageInfo> scene;
 	if (keyExist(this->scenesLife, sceneID)) {
 		this->sceneHits++;
 		scene = this->scache->find(sceneID)->second;
@@ -135,8 +136,8 @@ ImageInfo* SFBMCache::loadScene(QuickLZ* quickLZstate, int sceneID,
 	} else {
 		this->sceneMisses++;
 		scene = loadSceneFromDB(quickLZstate, sceneID, error);
-		if (*error) {
-			return NULL;
+		if (error) {
+			return Ptr<ImageInfo>();
 		}
 		storeScene(sceneID, scene);
 		tic(sceneID, false);
@@ -144,14 +145,14 @@ ImageInfo* SFBMCache::loadScene(QuickLZ* quickLZstate, int sceneID,
 	return scene;
 }
 
-ImageInfo* SFBMCache::loadPattern(QuickLZ* quickLZstate, int smatcherID,
-		int pidx, bool * error) {
+Ptr<ImageInfo> SFBMCache::loadPattern(QuickLZ* quickLZstate, int smatcherID,
+		int pidx, bool & error) {
 	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
-	//internal function, do not init *error=false
-	ImageInfo* pattern;
-	map<int, ImageInfo*>* smatcherPatterns;
+	//internal function, do not init error=false
+	Ptr<ImageInfo> pattern;
+	Ptr<map<int, Ptr<ImageInfo>>> smatcherPatterns;
 	if (this->pcache->find(smatcherID) == this->pcache->end()) {
-		smatcherPatterns = new map<int, ImageInfo*>();
+		smatcherPatterns = makePtr<map<int, Ptr<ImageInfo>>>();
 		(*this->pcache)[smatcherID] = smatcherPatterns;
 	} else {
 		smatcherPatterns = this->pcache->find(smatcherID)->second;
@@ -159,16 +160,14 @@ ImageInfo* SFBMCache::loadPattern(QuickLZ* quickLZstate, int smatcherID,
 	if (smatcherPatterns->find(pidx) == smatcherPatterns->end()) {
 		bool patternFound;
 		patternFound = this->dbdriver->retrieveNthPattern(smatcherID, pidx,
-				&pattern, error, this->tmpDir, quickLZstate);
+				pattern, error, this->tmpDir, quickLZstate);
 		if (!patternFound) {
 			this->operation = ERROR;
 			this->errorMessage = this->dbdriver->getMessage();
 			this->errorType =
-					*error ?
-							CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL :
-							CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
+					error ? CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL : CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
 			this->origin = "SFBMCache#loadPattern";
-			return NULL;
+			return Ptr<ImageInfo>();
 		}
 		(*smatcherPatterns)[pidx] = pattern;
 	}
@@ -203,18 +202,17 @@ float SFBMCache::getSceneCacheMissRatio() {
 void SFBMCache::printLoadCount() {
 	boost::mutex::scoped_lock l(SFBMCache::GetMutex());
 	int value;
-	vector<int>* values = new vector<int>(0);
+	Ptr<vector<int>> values = makePtr<std::vector<int>>();
 	getKeys(this->loadingCount, values);
 	BOOST_FOREACH(value, *values){
 	int loadCount = this->loadingCount->find(value)->second;
 	cout << value << " loaded " << loadCount << " times" << endl;
 }
-	delete values;
 }
 
-wstring* SFBMCache::getLastOperationResult(bool * error) {
-	//internal function, do not init *error=false
-	wstring* result = new wstring();
+Ptr<wstring> SFBMCache::getLastOperationResult(bool & error) {
+	//internal function, do not init error=false
+	Ptr<wstring> result = makePtr<wstring>();
 	switch (operation) {
 	case SFBMCache::INSERTOP: {
 		result = this->cfc->trainerAdd(lastInsertedIndex,
@@ -231,16 +229,13 @@ wstring* SFBMCache::getLastOperationResult(bool * error) {
 		break;
 	}
 	case SFBMCache::ERROR: {
-		*error = true;
+		error = true;
 		result = this->cfc->outputError(this->errorType, this->errorMessage,
 				this->origin);
 		break;
 	}
 	}
 	this->operation = 0;
-//	wstring* returnValue = new wstring();
-//	*returnValue = result.c_str();
-//	return returnValue;
 	return result;
 }
 
@@ -249,7 +244,7 @@ wstring* SFBMCache::getLastOperationResult(bool * error) {
 void SFBMCache::tic(int ignore, bool matchersCache) {
 	int currentMinLife = numeric_limits<int>::max();
 	int value;
-	vector<int>* values = new vector<int>(0);
+	Ptr<vector<int>> values = makePtr<std::vector<int>>();
 	if (matchersCache) {
 		getKeys(this->cache, values);
 	} else {
@@ -271,7 +266,6 @@ void SFBMCache::tic(int ignore, bool matchersCache) {
 		currentMinLife = currentLife;
 	}
 }
-	delete values;
 }
 
 void SFBMCache::freeCacheSlot(bool matchersCache) {
@@ -291,7 +285,7 @@ void SFBMCache::freeCacheSlot(bool matchersCache) {
 }
 
 void SFBMCache::storeMatcher(int smatcher_id,
-		SerializableFlannBasedMatcher* matcher) {
+		const Ptr<SerializableFlannBasedMatcher> & matcher) {
 	if (this->cacheSize == this->cacheMaxSize) {
 		freeCacheSlot();
 	}
@@ -300,7 +294,7 @@ void SFBMCache::storeMatcher(int smatcher_id,
 	this->cacheSize++;
 }
 
-void SFBMCache::storeScene(int sceneID, ImageInfo* scene) {
+void SFBMCache::storeScene(int sceneID, const Ptr<ImageInfo> & scene) {
 	if (this->scenesCacheSize == this->scenesCacheMaxSize) {
 		freeCacheSlot(false);
 	}
@@ -309,7 +303,7 @@ void SFBMCache::storeScene(int sceneID, ImageInfo* scene) {
 	this->scenesCacheSize++;
 }
 
-bool SFBMCache::keyExist(map<int, int>* m, int key) {
+bool SFBMCache::keyExist(const Ptr<map<int, int>> & m, int key) {
 	if (m->find(key) == m->end()) {
 		return false;
 	} else {
@@ -317,25 +311,26 @@ bool SFBMCache::keyExist(map<int, int>* m, int key) {
 	}
 }
 
-void SFBMCache::getKeys(map<int, SerializableFlannBasedMatcher*>* m,
-		vector<int>* keys) {
-	pair<int, SerializableFlannBasedMatcher*> me;
-	BOOST_FOREACH(me, *m){
-	keys->push_back(me.first);
-}
+void SFBMCache::getKeys(const Ptr<map<int, Ptr<SerializableFlannBasedMatcher>>>& m,
+const Ptr<vector<int>> & keys) {
+	pair<int, Ptr<SerializableFlannBasedMatcher>> me;
+	BOOST_FOREACH(me, *m) {
+		keys->push_back(me.first);
+	}
 }
 
-void SFBMCache::getKeys(map<int, int>* m, vector<int>* keys) {
+void SFBMCache::getKeys(const Ptr<map<int, int>> & m,
+		const Ptr<vector<int>> & keys) {
 	pair<int, int> me;
 	BOOST_FOREACH(me, *m){
 	keys->push_back(me.first);
 }
 }
 
-SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
-		QuickLZ* quickLZstate, int smatcher_id, float* loadingTime,
-		bool * error) {
-	//internal function, do not init *error=false
+Ptr<SerializableFlannBasedMatcher> SFBMCache::loadMatcherFromDB(
+		QuickLZ* quickLZstate, int smatcher_id, float & loadingTime,
+		bool & error) {
+	//internal function, do not init error=false
 	int loadCount = 0;
 	if (keyExist(this->loadingCount, smatcher_id)) {
 		loadCount = this->loadingCount->find(smatcher_id)->second;
@@ -350,40 +345,34 @@ SerializableFlannBasedMatcher* SFBMCache::loadMatcherFromDB(
 		this->operation = ERROR;
 		this->errorMessage = this->dbdriver->getMessage();
 		this->errorType =
-				*error ?
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL :
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
+				error ? CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL : CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
 		this->origin = "SFBMCache#loadMatcherFromDB";
-		*error |= !trainerFound;
-		return NULL;
+		error |= !trainerFound;
+		return Ptr<SerializableFlannBasedMatcher>();
 	}
 	string sid = to_string(smatcher_id);
-	SerializableFlannBasedMatcher* matcher = new SerializableFlannBasedMatcher(
-			quickLZstate, sid, this->tmpDir, tempDirCleaner);
+	Ptr<SerializableFlannBasedMatcher> matcher = makePtr<
+			SerializableFlannBasedMatcher>(quickLZstate, sid, this->tmpDir,
+			tempDirCleaner);
 	clock_t t_2 = clock();
-	float tt = ((float) (t_2 - t_1)) / CLOCKS_PER_SEC;
-	*loadingTime = tt;
+	loadingTime = ((float) (t_2 - t_1)) / CLOCKS_PER_SEC;
 	matcher->setID(sid);
 	return matcher;
 }
 
-ImageInfo* SFBMCache::loadSceneFromDB(QuickLZ* quickLZstate, int sceneID,
-		bool * error) {
-	ImageInfo* scene;
-	//internal function, do not init *error=false
-	bool sceneFound;
-	sceneFound = this->dbdriver->retrieveScene(&scene, sceneID, error,
+Ptr<ImageInfo> SFBMCache::loadSceneFromDB(QuickLZ* quickLZstate, int sceneID,
+		bool & error) {
+	Ptr<ImageInfo> scene;
+	bool sceneFound = this->dbdriver->retrieveScene(scene, sceneID, error,
 			this->tmpDir, quickLZstate);
 	if (!sceneFound) {
 		this->operation = ERROR;
 		this->errorMessage = this->dbdriver->getMessage();
 		this->errorType =
-				*error ?
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL :
-						CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
+				error ? CommunicationFormatterCacheJSON::CF_ERROR_TYPE_FATAL : CommunicationFormatterCacheJSON::CF_ERROR_TYPE_ERROR;
 		this->origin = "SFBMCache#loadSceneFromDB";
-		*error |= !sceneFound;
-		return NULL;
+		error |= !sceneFound;
+		return Ptr<ImageInfo>();
 	}
 	return scene;
 }
@@ -419,11 +408,10 @@ int SFBMCache::updateLife(int smatcher_id, int life, bool bounded,
 
 void SFBMCache::printLife() {
 	int value;
-	vector<int>* values = new vector<int>(0);
+	Ptr<vector<int>> values = makePtr<std::vector<int>>();
 	getKeys(this->cache, values);
 	BOOST_FOREACH(value, *values){
 	int currentLife = this->matchersLife->find(value)->second;
 	cout << value << " have " << currentLife << " life" << endl;
 }
-	delete values;
 }

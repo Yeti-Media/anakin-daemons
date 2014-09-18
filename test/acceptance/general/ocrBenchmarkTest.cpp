@@ -107,7 +107,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	bool serverStarted = false;
 	while (!serverStarted) {
 		sleep(2);
-		string * capture = get_file_contents(logsOCR_Demo.c_str());
+		Ptr<string> capture = get_file_contents(logsOCR_Demo.c_str());
 		if (capture->find("* Server started *") != string::npos) {
 			serverStarted = true;
 		}

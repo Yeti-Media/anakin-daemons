@@ -5,6 +5,7 @@
 #include <data/RichImg.hpp>
 #include <opencv2/core/core.hpp>
 #include "data/HistogramsIO.hpp"
+#include "data/Histogram.hpp"
 #include "data/Img.hpp"
 #include <string>
 #include <vector>
@@ -15,7 +16,7 @@ namespace Anakin {
 
 class HistogramComparator {
 public:
-	HistogramComparator(const vector<Ptr<RichImg>> & patterns,
+	HistogramComparator(const Ptr<vector<Ptr<RichImg>>> & patterns,
 			const Ptr<HistogramsIO> & io);
 	void makeAndSaveLandscape(char mode, string label, bool saveToFile =
 			true);
@@ -39,10 +40,10 @@ private:
 	bool firstPass);
 	void update_average(Mat & minMaxHist, const Ptr<vector<int>> & bins,
 	int channels, int count);
-	Ptr<HistogramsIO> createColorHistogram(const Ptr<Img> & img);
-	Ptr<HistogramsIO> createGrayHistogram(const Ptr<Img> & img);
-	Ptr<HistogramsIO> createHSVHistogram(const Ptr<Img> & img);
-	vector<Ptr<RichImg>> patterns;
+	Ptr<Histogram> createColorHistogram(const Ptr<Img> & img);
+	Ptr<Histogram> createGrayHistogram(const Ptr<Img> & img);
+	Ptr<Histogram> createHSVHistogram(const Ptr<Img> & img);
+	Ptr<vector<Ptr<RichImg>>> patterns;
 	Ptr<HistogramsIO> io;
 };
 

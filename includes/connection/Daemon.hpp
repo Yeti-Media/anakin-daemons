@@ -42,12 +42,13 @@ public:
 	Help* getHelp();
 
 protected:
-	int run(vector<string> *input);
+	int run(const Ptr<vector<string>> & input);
 	void initProgramFlags();
 };
 
 template<class SpecificCommandRunner>
-Daemon<SpecificCommandRunner>::Daemon() : Program("Daemon") {
+Daemon<SpecificCommandRunner>::Daemon() :
+		Program("Daemon") {
 	SpecificCommandRunner commandRunner;
 	this->setProgramName(commandRunner.getProgramName());
 }
@@ -115,7 +116,6 @@ void Daemon<SpecificCommandRunner>::initProgramFlags() {
 	programFlags.setVerbose(true);
 }
 
-
 template<class SpecificCommandRunner>
 Help* Daemon<SpecificCommandRunner>::getHelp() {
 	SpecificCommandRunner commandRunner;
@@ -123,7 +123,7 @@ Help* Daemon<SpecificCommandRunner>::getHelp() {
 }
 
 template<class SpecificCommandRunner>
-int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
+int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
 	cerr.tie(nullptr);
@@ -147,7 +147,7 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	//                         FLAGS PARSING                                //
 	//______________________________________________________________________//
 
-	vector<string>* values = NULL;
+	Ptr<vector<string>> values;
 
 	//POSTGRES config
 
@@ -306,22 +306,22 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 	//                         DAEMON INITIALIZATION                        //
 	//______________________________________________________________________//
 
-	HTTPSocket* httpSocket;
+	Ptr<HTTPSocket> httpSocket;
 
 	//delay file deletion for 0 second
 	TempDirCleaner tempDirCleaner(0);
 
 	Server<SpecificCommandRunner>* server = new RequestServer<
-			SpecificCommandRunner>(cacheConfig, iMode,
-			pghost, pgport, dbName, login, pwd, httpPort, queueCapacity,
-			threads, verbose,this->tempDir, &tempDirCleaner);
+			SpecificCommandRunner>(cacheConfig, iMode, pghost, pgport, dbName,
+			login, pwd, httpPort, queueCapacity, threads, verbose,
+			this->tempDir, &tempDirCleaner);
 
-	DataOutput* output;
+	Ptr<DataOutput> output;
 	if (oMode & Server<SpecificCommandRunner>::CONSOLE) {
-		output = new DataOutput();
+		output = makePtr<DataOutput>();
 	} else if (oMode & Server<SpecificCommandRunner>::HTTP) {
 		httpSocket = server->getHttpSocket();
-		output = new DataOutput(httpSocket);
+		output = makePtr<DataOutput>(httpSocket);
 	} else {
 		cerr << "unknown output mode \"" << oMode << "\"" << endl;
 		return EXIT_FAILURE;
@@ -329,7 +329,6 @@ int Daemon<SpecificCommandRunner>::run(vector<string> *input) {
 
 	server->start(output);
 
-	delete output;
 	delete server;
 	return EXIT_SUCCESS;
 }

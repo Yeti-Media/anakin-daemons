@@ -9,27 +9,29 @@
 #include <utils/files/QuickLZ.hpp>
 
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
 class Trainer {
 public:
 
-	Trainer(cv::Ptr<cv::FlannBasedMatcher> detector, vector<RichImg*>& patterns,
-			string outputFolder, string fileName);
+	Trainer(const Ptr<FlannBasedMatcher> & detector,
+			const Ptr<vector<Ptr<RichImg>>>&patterns,
+			const string & outputFolder, const string & fileName);
 
-	virtual void train_and_save(QuickLZ* quickLZstate) = 0;
-	virtual ~Trainer();
-protected:
-	cv::Ptr<cv::FlannBasedMatcher> detector;
-	vector<RichImg*>* patterns;
-	string outputFolder;
-	string fileName;
-private:
+			virtual void train_and_save(QuickLZ* quickLZstate) = 0;
+			virtual ~Trainer();
+		protected:
+			Ptr<FlannBasedMatcher> detector;
+			Ptr<vector<Ptr<RichImg>>> patterns;
+			string outputFolder;
+			string fileName;
+		private:
 
-};
+		};
 
-}
-;
+	}
+	;
 
 #endif // ANAKINTRAINER_HPP

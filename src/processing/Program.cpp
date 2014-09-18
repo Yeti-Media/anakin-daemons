@@ -19,7 +19,7 @@ namespace fs = boost::filesystem;
 
 namespace Anakin {
 
-Program::Program(string programName) {
+Program::Program(const string & programName) {
 	verbose = false;
 	setProgramName(programName);
 }
@@ -40,7 +40,7 @@ Program::~Program() {
 void Program::initProgramFlags() {
 }
 
-int Program::start(vector<string> *input) {
+int Program::start(const Ptr<vector<string>> & input) {
 
 	programFlags.setOverridingFlag("help");
 	programFlags.setNoValuesFlag("verbose");
@@ -106,7 +106,7 @@ int Program::start(vector<string> *input) {
 /**
  * inheritance placeholder
  */
-int Program::run(vector<string> *input) {
+int Program::run(const Ptr<vector<string>> & input) {
 	return 0;
 }
 

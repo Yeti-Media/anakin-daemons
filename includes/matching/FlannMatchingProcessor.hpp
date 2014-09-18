@@ -7,6 +7,9 @@
 #include <vector>
 #include <utils/files/QuickLZ.hpp>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -22,15 +25,17 @@ public:
 	 * detector  : the detector to be used in order to find matches
 	 * rw        : a ResultWriter used to translate the results obtained from the detector
 	 */
-	FlannMatchingProcessor(BasicFlannDetector* detector);
+	FlannMatchingProcessor(const Ptr<BasicFlannDetector> & detector);
+
+	virtual ~FlannMatchingProcessor();
 	/**
 	 *   Will run the detector with the scene and then translate the results
 	 */
-	std::vector<wstring*>* process(QuickLZ* quickLZstate, RichImg* scene,
-			bool * error);
+	Ptr<vector<Ptr<wstring>>> process(QuickLZ* quickLZstate, const Ptr<RichImg> & scene,
+			bool & error);
 protected:
 private:
-	BasicFlannDetector* detector;
+	Ptr<BasicFlannDetector> detector;
 	I_CommunicationFormatterMatching* cfm;
 };
 

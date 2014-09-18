@@ -147,7 +147,7 @@ public:
 	 * first, the basic info is saved
 	 * second, the data associated (descriptors and keypoints) is saved
 	 */
-	bool savePattern(const Ptr<DBPattern> & p, QuickLZ* quickLZstate);
+	bool savePattern(Ptr<DBPattern> & p, QuickLZ* quickLZstate);
 	/**
 	 * search a pattern in the db, this function can be used just to check if
 	 * a particular pattern exists or to load one
@@ -249,7 +249,7 @@ public:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool storeNthPattern(int smatcher_id, int pidx, const Ptr<DBPattern> & p,
+	bool storeNthPattern(int smatcher_id, int pidx, Ptr<DBPattern> & p,
 			QuickLZ* quickLZstate);
 	/**
 	 * load the pattern with trainer_id <smatcher_id> and position <pidx>
@@ -331,7 +331,7 @@ private:
 	 *
 	 * returns true if no error was found, false otherwise
 	 */
-	bool getPatternDescriptors(int id, Ptr<string> & data, bool & error,
+	bool getPatternDescriptors(int id, string & dataOutput, bool & error,
 			const string & tmpDir, QuickLZ* quickLZstate);
 	/**
 	 * saves a pattern with category <category_id> and owned by user <user_id>
@@ -432,14 +432,7 @@ private:
 	 */
 	bool loadFileFromDB(int fid, const string & filename,
 			const string & tmpDir);
-	/**
-	 * delete a file from disk
-	 *
-	 * filename : the file to delete
-	 *
-	 * returns true if no error was found, false otherwise
-	 */
-	bool deleteFile(const string & filename);
+
 	PGconn *conn;
 };
 }

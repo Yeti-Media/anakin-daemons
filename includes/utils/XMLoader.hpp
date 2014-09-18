@@ -7,25 +7,28 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 class XMLoader {
 public:
-	XMLoader(std::string path);
+	XMLoader(const string & path);
 
 	/**
 	 * files : if true, will create DBPatterns with file path instead of data
 	 */
-	std::vector<DBPattern*>* loadAsPattern(bool filePatterns);
-	std::vector<DBHistogram*>* loadAsHistogram(bool filePatterns);
-	std::vector<DBHistogram*>* loadAsLandscape(bool filePatterns);
-	static ImageInfo* dbpatternToImageInfo(DBPattern* dbp);
+	Ptr<vector<Ptr<DBPattern>>> loadAsPattern(bool filePatterns);
+	Ptr<vector<Ptr<DBHistogram>>> loadAsHistogram(bool filePatterns);
+	Ptr<vector<Ptr<DBHistogram>>> loadAsLandscape(bool filePatterns);
+	static Ptr<ImageInfo> dbpatternToImageInfo(const Ptr<DBPattern> & dbp);
 protected:
 private:
-	std::vector<std::string>* getFilePaths(char mode = 0, bool reload = false);
-	std::vector<DBHistogram*>* loadAsHORL(bool isLandscape, bool filePatterns);
-	bool hasEnding(std::string const &fullString, std::string const &ending);
-	std::string path;
+	Ptr<vector<string>> getFilePaths(char mode = 0, bool reload = false);
+	Ptr<vector<Ptr<DBHistogram>>> loadAsHORL(bool isLandscape, bool filePatterns);
+	bool hasEnding(string const &fullString, string const &ending);
+	string path;
 	bool inputAsFolder;
 };
 }

@@ -28,7 +28,7 @@ void FaceDBConnector::initProgramFlags() {
 
 }
 
-int FaceDBConnector::run(vector<string> *input) {
+int FaceDBConnector::run(const Ptr<vector<string>> & input) {
 	return 0;
 }
 

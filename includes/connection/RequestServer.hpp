@@ -40,7 +40,7 @@ protected:
 	/**
 	 * pushes the input to the blocking queue
 	 */
-	void execute(std::vector<std::string>* input);
+	void execute(const Ptr<vector<string>> & input);
 	/**
 	 * calls the function stopWorkers
 	 */
@@ -63,7 +63,7 @@ private:
 	/**
 	 * starts <threads> threads and calls startWorker for each one
 	 */
-	void startWorkers(DataOutput* output);
+	void startWorkers(const Ptr<DataOutput> & output);
 	/**
 	 * creates and start a Worker
 	 * ptr is a pointer to the worker's params
@@ -71,21 +71,21 @@ private:
 	static void * startWorker(void *ptr);
 	int threads;
 	int qcap;
-	tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
+	tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue;
 	/**
 	 * structure to pass arguments to a Worker
 	 */
 	struct WorkerArgs {
 		int id;
-		DataOutput* output;
-		SFBMCache* cache;
-		tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue;
-		WorkerArgs(int id, DataOutput* output, SFBMCache* cache,
-				tbb::concurrent_bounded_queue<std::vector<std::string>*>* workingQueue) :
-				id(id), output(output), cache(cache), workingQueue(workingQueue) {
+		Ptr<DataOutput> output;
+		Ptr<SFBMCache> cache;
+		tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue;
+		WorkerArgs(int id, const Ptr<DataOutput> & output, const Ptr<SFBMCache> & cache,
+				tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue) :
+		id(id), output(output), cache(cache), workingQueue(workingQueue) {
 		}
 	};
-	std::vector<pthread_t>* workerThreads;
+	vector<pthread_t> * workerThreads;
 };
 
 template<class SpecificCommandRunner>
@@ -97,10 +97,10 @@ RequestServer<SpecificCommandRunner>::RequestServer(
 		Server<SpecificCommandRunner>(cacheConfig, mode, pghost, pgport, dbName,
 				login, pwd, httpPort, verbose, tempDir, tempDirCleaner) {
 	this->threads = threads;
-	this->workerThreads = new std::vector<pthread_t>(threads);
+	this->workerThreads = new vector<pthread_t>(threads);
 	this->qcap = cap;
 	this->workingQueue = new tbb::concurrent_bounded_queue<
-			std::vector<std::string>*>();
+			Ptr<vector<string>>>();
 	this->workingQueue->set_capacity(cap);
 }
 
@@ -108,7 +108,7 @@ RequestServer<SpecificCommandRunner>::RequestServer(
 
 template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::execute(
-		std::vector<std::string>* input) {
+		const Ptr<vector<string>> & input) {
 	this->workingQueue->push(input);
 }
 
@@ -132,7 +132,8 @@ void RequestServer<SpecificCommandRunner>::endServer() {
 
 //PRIVATE
 template<class SpecificCommandRunner>
-void RequestServer<SpecificCommandRunner>::startWorkers(DataOutput* output) {
+void RequestServer<SpecificCommandRunner>::startWorkers(
+		const Ptr<DataOutput> & output) {
 	for (int w = 0; w < this->threads; w++) {
 		WorkerArgs* wargs = new WorkerArgs(w + 1, output, this->cache,
 				this->workingQueue);
@@ -153,7 +154,8 @@ void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::stopWorkers() {
 	for (int w = 0; w < this->threads; w++) {
-		this->workingQueue->push(NULL);
+		Ptr<vector<string>> nullPtr;
+		this->workingQueue->push(nullPtr);
 	}
 }
 
@@ -161,11 +163,8 @@ template<class SpecificCommandRunner>
 RequestServer<SpecificCommandRunner>::~RequestServer() {
 
 	while (!this->workingQueue->empty()) {
-		vector<string>* input;
+		Ptr<vector<string>> input;
 		this->workingQueue->pop(input);
-		if (input != NULL) {
-			delete input;
-		}
 	}
 	delete this->workingQueue;
 	delete this->workerThreads;

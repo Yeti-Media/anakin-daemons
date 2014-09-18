@@ -1,6 +1,7 @@
 #ifndef DBHISTOGRAM_HPP
 #define DBHISTOGRAM_HPP
 
+#include <opencv2/opencv.hpp>
 #include <string>
 
 using namespace std;
@@ -37,9 +38,9 @@ public:
 	 */
 	DBHistogram(bool asFile, bool isLandscape);
 	virtual ~DBHistogram();
-	void setColorData(const Ptr<string> & data);
-	void setGrayData(const Ptr<string> & data);
-	void setHSVData(const Ptr<string> & data);
+	void setColorData(const string & data);
+	void setGrayData(const string & data);
+	void setHSVData(const string & data);
 	int getID();
 	int getUserID();
 	Ptr<string> getColorData() const;

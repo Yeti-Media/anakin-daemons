@@ -16,8 +16,9 @@ namespace fs = boost::filesystem;
 
 using namespace Anakin;
 using namespace std;
+using namespace cv;
 
-SerializedPatternDataInput::SerializedPatternDataInput(string userID,
+SerializedPatternDataInput::SerializedPatternDataInput(const string & userID,
 		const char *pghost, const char *pgport, const char *dbName,
 		const char *login, const char *pwd, const string & tmpDir,
 		TempDirCleaner * tempDirCleaner) {
@@ -28,14 +29,14 @@ SerializedPatternDataInput::SerializedPatternDataInput(string userID,
 	}
 	this->tmpDir = tmpDir;
 	this->userID = userID;
-	this->cache = new vector<ImageInfo*>(0);
+	this->cache = makePtr<vector<Ptr<ImageInfo>>>();
 	this->loaded = false;
 	this->current = -1;
-	this->patternsToFind = NULL;
+	this->patternsToFind = Ptr<vector<int>>();
 }
 
 SerializedPatternDataInput::SerializedPatternDataInput(
-		vector<int>* patternsToFind, const char *pghost, const char *pgport,
+		const Ptr<vector<int>> & patternsToFind, const char *pghost, const char *pgport,
 		const char *dbName, const char *login, const char *pwd,
 		const string & tmpDir, TempDirCleaner * tempDirCleaner) {
 	if (!initAndConnectDriver(pghost, pgport, dbName, login, pwd,
@@ -45,20 +46,12 @@ SerializedPatternDataInput::SerializedPatternDataInput(
 	}
 	this->tmpDir = tmpDir;
 	this->patternsToFind = patternsToFind;
-	this->cache = new vector<ImageInfo*>(0);
+	this->cache = makePtr<vector<Ptr<ImageInfo>>>();
 	this->loaded = false;
 	this->current = -1;
 }
 
 SerializedPatternDataInput::~SerializedPatternDataInput() {
-	if (driver != NULL) {
-		delete driver;
-	}
-	if (this->cache != NULL) {
-		for_each(cache->begin(), cache->end(),
-				delete_pointer_element<ImageInfo*>());
-		delete cache;
-	}
 	//tempDirCleaner shod not be deleted
 }
 
@@ -66,8 +59,6 @@ bool SerializedPatternDataInput::nextInput(QuickLZ* quickLZstate,
 		Ptr<ImageInfo> & output) {
 	if (this->current < 0) {
 		if (!this->loaded) {
-			for_each(cache->begin(), cache->end(),
-					delete_pointer_element<ImageInfo*>());
 			this->cache->clear();
 			if (!loadDataFromDB(this->cache, quickLZstate)) {
 				reportDBDriverError();
@@ -92,32 +83,31 @@ void SerializedPatternDataInput::reload() {
 
 //PRIVATE
 
-void SerializedPatternDataInput::loadData(vector<ImageInfo*>* data,
-		string * rawData) {
+void SerializedPatternDataInput::loadData(Ptr<vector<Ptr<ImageInfo>>>& data,
+const Ptr<string> & rawData) {
 	//string xmlData = "<?xml version=\"1.0\"?>";
 	//xmlData.append(*rawData);
-	ImageInfo *ii = new ImageInfo();
+	Ptr<ImageInfo> ii = makePtr<ImageInfo>();
 	//write_to_file(rawData,"/tmp/ram/Anakin/lastXML.xml");
 	cv::FileStorage fstorage((*rawData).c_str(),
-			cv::FileStorage::READ | cv::FileStorage::MEMORY);
+	cv::FileStorage::READ | cv::FileStorage::MEMORY);
 	cv::FileNode n = fstorage.root();
-	read(n, *ii);
+	read(n, ii);
 	fstorage.release();
 	data->push_back(ii);
 }
 
-void SerializedPatternDataInput::read(const cv::FileNode& node, ImageInfo& x,
-		const ImageInfo& default_value) {
+void SerializedPatternDataInput::read(const cv::FileNode& node, Ptr<ImageInfo> & x) {
 	if (node.empty())
-		x = default_value;
+		x = makePtr<ImageInfo>();
 	else
-		x.read(node);
+		x->read(node);
 }
 
 bool SerializedPatternDataInput::initAndConnectDriver(const char *pghost,
 		const char *pgport, const char *dbName, const char *login,
 		const char *pwd, TempDirCleaner * tempDirCleaner) {
-	this->driver = new DBDriver(tempDirCleaner);
+	this->driver = makePtr<DBDriver>(tempDirCleaner);
 	return this->driver->connect(pghost, pgport, dbName, login, pwd);
 }
 
@@ -126,18 +116,18 @@ void SerializedPatternDataInput::reportDBDriverError() {
 	LOG_F("ERROR")<< this->driver->getMessage();
 }
 
-bool SerializedPatternDataInput::loadDataFromDB(vector<ImageInfo*>* data,
+bool SerializedPatternDataInput::loadDataFromDB(Ptr<vector<Ptr<ImageInfo>>> & data,
 		QuickLZ* quickLZstate) {
 	bool error = false;
 	vector<int> userPatterns;
 	if (!this->userID.empty()) {
 		int uid = stoi(this->userID);
-		userPatterns = this->driver->getUserPatterns(uid, &error);
+		userPatterns = this->driver->getUserPatterns(uid, error);
 		if (error) {
 			return false;
 		}
 	} else {
-		if (this->patternsToFind != NULL) {
+		if (this->patternsToFind.get() != NULL) {
 			for (unsigned int i = 0; i < this->patternsToFind->size(); i++) {
 				userPatterns.push_back((*patternsToFind)[i]);
 			}
@@ -148,9 +138,9 @@ bool SerializedPatternDataInput::loadDataFromDB(vector<ImageInfo*>* data,
 
 	for (uint up = 0; up < userPatterns.size(); up++) {
 		int pid = userPatterns.at(up);
-		DBPattern* dbp;
+		Ptr<DBPattern> dbp;
 		bool patternError = false;
-		if (!this->driver->retrievePattern(pid, &patternError, true, &dbp,
+		if (!this->driver->retrievePattern(pid, patternError, true, dbp,
 				this->tmpDir, quickLZstate)) {
 			return false;
 		}

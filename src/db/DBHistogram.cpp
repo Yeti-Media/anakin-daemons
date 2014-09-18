@@ -34,17 +34,17 @@ bool DBHistogram::hasFileData() {
 	return asFile;
 }
 
-void DBHistogram::setColorData(const Ptr<string> & data) {
-	this->colorData = data;
+void DBHistogram::setColorData(const string & data) {
+	this->colorData = makePtr<string>(data);
 	this->mode = this->mode | Constants::COLOR;
 }
-void DBHistogram::setGrayData(const Ptr<string> & data) {
-	this->grayData = data;
+void DBHistogram::setGrayData(const string & data) {
+	this->grayData = makePtr<string>(data);
 	this->mode = this->mode | Constants::GRAY;
 }
 
-void DBHistogram::setHSVData(const Ptr<string> & data) {
-	this->hsvData = data;
+void DBHistogram::setHSVData(const string & data) {
+	this->hsvData = makePtr<string>(data);
 	this->mode = this->mode | Constants::HSV;
 }
 

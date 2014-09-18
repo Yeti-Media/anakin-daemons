@@ -1,6 +1,7 @@
 #ifndef USER_HPP
 #define USER_HPP
 
+#include <opencv2/opencv.hpp>
 #include <db/DBHistogram.hpp>
 #include <db/DBPattern.hpp>
 #include <vector>

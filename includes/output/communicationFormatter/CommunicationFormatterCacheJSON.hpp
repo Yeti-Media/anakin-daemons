@@ -11,6 +11,9 @@
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <output/communicationFormatter/ICommunicationFormatterCache.hpp>
 
+using namespace cv;
+using namespace std;
+
 namespace Anakin {
 
 class CommunicationFormatterCacheJSON: public I_CommunicationFormatterCache,
@@ -25,25 +28,25 @@ public:
 	CommunicationFormatterCacheJSON();
 
 	/**
-	 * returns a wstring* representing a JSONValue of changes made after adding a trainer to the cache
+	 * returns a Ptr<wstring> representing a JSONValue of changes made after adding a trainer to the cache
 	 */
-	virtual wstring* trainerAdd(int smatcher_id_added, int cacheFreeSpace,
+	virtual Ptr<wstring> trainerAdd(int smatcher_id_added, int cacheFreeSpace,
 			int smatcher_id_removed);
 
 	/**
-	 * returns a wstring* representing a JSONValue of changes made after deleting a trainer from the cache
+	 * returns a Ptr<wstring> representing a JSONValue of changes made after deleting a trainer from the cache
 	 */
-	virtual wstring* trainerDel(int smatcher_id_deleted, int cacheFreeSpace);
+	virtual Ptr<wstring> trainerDel(int smatcher_id_deleted, int cacheFreeSpace);
 
 	/**
-	 * returns a wstring* representing a JSONValue of changes made after updating a trainer on the cache
+	 * returns a Ptr<wstring> representing a JSONValue of changes made after updating a trainer on the cache
 	 */
-	virtual wstring* trainerUPD(int smatcher_id_updated);
+	virtual Ptr<wstring> trainerUPD(int smatcher_id_updated);
 
 	/**
-	 * returns a wstring* representing a JSONValue of the cache status
+	 * returns a Ptr<wstring> representing a JSONValue of the cache status
 	 */
-	virtual wstring* cacheStatus(vector<int> smatchers_in_cache,
+	virtual Ptr<wstring> cacheStatus(const Ptr<vector<int>> &  smatchers_in_cache,
 			int cacheFreeSpace);
 
 	virtual ~CommunicationFormatterCacheJSON();

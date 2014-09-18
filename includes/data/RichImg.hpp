@@ -42,7 +42,7 @@ public:
 	 *   param: img : the Img object from which a the new RichImg will be constructed
 	 *   returns: a pointer to a new RichImg
 	 */
-	Ptr<RichImg> makeNew(const Ptr<RichImg> & img);
+	Ptr<RichImg> makeNew(const Ptr<Img> & img);
 
 	/**
 	 * result: the keypoints of the image asociated to this object : vector<KeyPoint>
@@ -55,7 +55,7 @@ public:
 	 *   -
 	 *   note: running getFreshKeypoints() or getFreshDescriptors() will ignore any previous call to this function
 	 */
-	void recalculateFeatures(vector<int> mask);
+	void recalculateFeatures(const vector<int> & mask);
 
 	/**
 	 * result: re-calculated image keypoints : vector<KeyPoint>
