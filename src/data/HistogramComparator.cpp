@@ -5,8 +5,8 @@ using namespace Anakin;
 using namespace cv;
 using namespace std;
 
-HistogramComparator::HistogramComparator(vector<RichImg*> patterns,
-		HistogramsIO* io) {
+HistogramComparator::HistogramComparator(const Ptr<vector<Ptr<RichImg>>> & patterns,
+		const Ptr<HistogramsIO> & io) {
 	this->io = io;
 	this->patterns = patterns;
 }
@@ -26,44 +26,32 @@ void HistogramComparator::makeAndSaveLandscape(char mode, std::string label,
 }
 
 void HistogramComparator::makeAndSaveHistograms(char mode, bool saveToFile) {
-	vector<Histogram*>* colorHistograms = new vector<Histogram*>(0);
-	vector<Histogram*>* grayHistograms = new vector<Histogram*>(0);
-	vector<Histogram*>* hsvHistograms = new vector<Histogram*>(0);
-	for (uint p = 0; p < this->patterns.size(); p++) {
-		Img* pattern = this->patterns.at(p)->getImage();
+	Ptr<vector<Ptr<Histogram>>> colorHistograms = makePtr<vector<Ptr<Histogram>>>();
+	Ptr<vector<Ptr<Histogram>>> grayHistograms = makePtr<vector<Ptr<Histogram>>>();
+	Ptr<vector<Ptr<Histogram>>> hsvHistograms = makePtr<vector<Ptr<Histogram>>>();
+	for (uint p = 0; p < this->patterns->size(); p++) {
+		Ptr<Img> pattern = this->patterns->at(p)->getImage();
 		if (mode & this->COLOR) {
-			Histogram* hist = createColorHistogram(pattern);
+			Ptr<Histogram> hist = createColorHistogram(pattern).constCast<Histogram>();
 			colorHistograms->push_back(hist);
 		}
 		if (mode & this->GRAY) {
-			Histogram* hist = createGrayHistogram(pattern);
+			Ptr<Histogram> hist = createGrayHistogram(pattern).constCast<Histogram>();
 			grayHistograms->push_back(hist);
 		}
 		if (mode & this->HSV) {
-			Histogram* hist = createHSVHistogram(pattern);
+			Ptr<Histogram> hist = createHSVHistogram(pattern).constCast<Histogram>();
 			hsvHistograms->push_back(hist);
 		}
 	}
 	this->io->save(colorHistograms, COLOR, saveToFile);
 	this->io->save(grayHistograms, GRAY, saveToFile);
 	this->io->save(hsvHistograms, HSV, saveToFile);
-
-	cleanupHistogramVector(colorHistograms);
-	cleanupHistogramVector(grayHistograms);
-	cleanupHistogramVector(hsvHistograms);
 }
 
-//PRIVATE
-void HistogramComparator::cleanupHistogramVector(vector<Histogram*>* hVector) {
-	for (uint p = 0; p < hVector->size(); p++) {
-		delete hVector->at(p);
-	}
-	delete hVector;
-}
-
-void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists,
-		vector<int>* bins, vector<int> maxValues, int channels,
-		bool firstPass) {
+void HistogramComparator::update_minMax(Mat & minMaxHist,
+		const Ptr<vector<Mat>> & hists, const Ptr<vector<int>> & bins,
+		const vector<int> & maxValues, int channels, bool firstPass) {
 	for (int c = 0; c < channels; c++) {
 		int currentBins = bins->at(c);
 		//int currentMaxValue = maxValues[c];
@@ -87,8 +75,8 @@ void HistogramComparator::update_minMax(Mat minMaxHist, vector<Mat>* hists,
 	}
 }
 
-void HistogramComparator::update_average(Mat minMaxHist, vector<int>* bins,
-		int channels, int count) {
+void HistogramComparator::update_average(Mat & minMaxHist,
+		const Ptr<vector<int>> & bins, int channels, int count) {
 	for (int c = 0; c < channels; c++) {
 		int currentBins = bins->at(c);
 		for (int i = 0; i < currentBins; i++) {
@@ -98,7 +86,8 @@ void HistogramComparator::update_average(Mat minMaxHist, vector<int>* bins,
 	}
 }
 
-Histogram* HistogramComparator::createColorHistogram(Img* img) {
+Ptr<Histogram> HistogramComparator::createColorHistogram(
+		const Ptr<Img> & img) {
 	int histSize = 256;
 	/// Set the ranges ( for B,G,R) )
 	float range[] = { 0, 255 };
@@ -111,18 +100,17 @@ Histogram* HistogramComparator::createColorHistogram(Img* img) {
 
 	/// Histograms
 	MatND hist;
-	Mat imgMat = img->getImage();
+	Ptr<Mat> imgMat = img->getImage();
 
 	/// Calculate the histograms for the BGR images
-	calcHist(&imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform,
-			false);
-	vector<int>* bins = new vector<int>(1, 256);
-	Histogram* histogram = new Histogram(hist, bins, 3, img->getLabel(), false,
-			false);
-	return histogram;
+	calcHist(&(*imgMat), 1, channels, Mat(), hist, 1, &histSize, ranges,
+			uniform, false);
+	Ptr<vector<int>> bins = makePtr<vector<int>>(1, 256);
+	return makePtr<Histogram>(hist, bins, 3, img->getLabel(), false, false);
 }
 
-Histogram* HistogramComparator::createGrayHistogram(Img* img) {
+Ptr<Histogram> HistogramComparator::createGrayHistogram(
+		const Ptr<Img> & img) {
 	int histSize = 256;
 
 	/// Set the ranges ( for greyscale) )
@@ -136,18 +124,17 @@ Histogram* HistogramComparator::createGrayHistogram(Img* img) {
 
 	/// Histograms
 	MatND hist;
-	Mat imgMat = img->getGrayImg();
+	Ptr<Mat> imgMat = img->getGrayImg();
 
 	/// Calculate the histograms for the grayscale images
-	calcHist(&imgMat, 1, channels, Mat(), hist, 1, &histSize, ranges, uniform,
-			false);
-	vector<int>* bins = new vector<int>(1, 256);
-	Histogram* histogram = new Histogram(hist, bins, 1, img->getLabel(), false,
-			false);
-	return histogram;
+	calcHist(&(*imgMat), 1, channels, Mat(), hist, 1, &histSize, ranges,
+			uniform, false);
+	Ptr<vector<int>> bins = makePtr<vector<int>>(1, 256);
+	return makePtr<Histogram>(hist, bins, 1, img->getLabel(), false, false);
 }
 
-Histogram* HistogramComparator::createHSVHistogram(Img* img) {
+Ptr<Histogram> HistogramComparator::createHSVHistogram(
+		const Ptr<Img> & img) {
 	int h_bins = 50;
 	int s_bins = 32;
 	int histSize[] = { h_bins, s_bins };
@@ -164,18 +151,16 @@ Histogram* HistogramComparator::createHSVHistogram(Img* img) {
 	/// Histograms
 	MatND hist;
 	Mat imgMat;
-	cvtColor(img->getImage(), imgMat, COLOR_BGR2HSV);
+	cvtColor(*img->getImage(), imgMat, COLOR_BGR2HSV);
 
 	/// Calculate the histograms for the grayscale images
 	calcHist(&imgMat, 1, channels, Mat(), hist, 2, histSize, ranges, uniform,
 			false);
 	//---------------CHECK THIS-------------//normalize( hist, hist, 0, 1, NORM_MINMAX, -1, Mat() );
-	vector<int>* bins = new vector<int>(0);
+	Ptr<vector<int>> bins = makePtr<vector<int>>();
 	bins->push_back(50);
 	bins->push_back(32);
-	Histogram* histogram = new Histogram(hist, bins, 2, img->getLabel(), false,
-			false);
-	return histogram;
+	return makePtr<Histogram>(hist, bins, 2, img->getLabel(), false, false);
 }
 
 void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
@@ -186,7 +171,7 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 					2 : (mode & HistogramComparator::COLOR ? 3 : 1);
 	Mat minMaxHist = Mat::zeros(size, channels * 3, CV_32SC1);
 	Img* current;
-	vector<int>* bins = new vector<int>(0);
+	Ptr<vector<int>> bins = makePtr<vector<int>>();
 	vector<int> maxValues;
 	if (mode & HistogramComparator::COLOR) {
 		bins->push_back(256);
@@ -204,24 +189,24 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 		bins->push_back(256);
 		maxValues.push_back(256);
 	}
-	vector<Mat>* hists = new vector<Mat>(0);
+	Ptr<vector<Mat>> hists = makePtr<vector<Mat>>();
 	bool firstPass = true;
-	Histogram* result = new Histogram(minMaxHist, bins, channels, label, true,
-			true);
+	Ptr<Histogram> result = makePtr<Histogram>(minMaxHist, bins, channels,
+			label, true, true);
 	int count = 0;
-	for (uint p = 0; p < this->patterns.size(); p++) {
-		current = this->patterns.at(p)->getImage();
+	for (uint p = 0; p < this->patterns->size(); p++) {
+		current = this->patterns->at(p)->getImage();
 		hists->clear();
 		vector<Mat> layers;
-		Mat src;
+		Ptr<Mat> src = makePtr<Mat>();
 		if (mode & HistogramComparator::COLOR) {
 			src = current->getImage();
 		} else if (mode & HistogramComparator::GRAY) {
 			src = current->getGrayImg();
 		} else {
-			cvtColor(current->getImage(), src, COLOR_BGR2HSV);
+			cvtColor(*current->getImage(), *src, COLOR_BGR2HSV);
 		}
-		split(src, layers);
+		split(*src, layers);
 		for (int c = 0; c < channels; c++) {
 			Mat hist;
 			float range[] = { 0, maxValues[c] };
@@ -244,10 +229,9 @@ void HistogramComparator::pmakeAndSaveLandscape(char mode, string label,
 	} else {
 		saveMode = saveMode | HistogramsIO::XML;
 	}
-	vector<Histogram*>* output = new vector<Histogram*>(0);
+	Ptr<vector<Ptr<Histogram>>> output = makePtr<vector<Ptr<Histogram>>> ();
 	output->push_back(result);
 	this->io->save(output, saveMode, saveToFile);
-	cleanupHistogramVector(output);
 }
 
 HistogramComparator::~HistogramComparator() {

@@ -8,6 +8,9 @@
 #include "processing/SerializedPatternDataInput.hpp"
 #include <utils/files/QuickLZ.hpp>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -20,36 +23,36 @@ public:
 	 * param: input : a DataInput that will provide the Img's to construct a vector of RichImg
 	 * param: patterns : a vector of RichImg in which patterns will be stored
 	 */
-	PatternLoader(DataInput* input, std::vector<RichImg*>& patterns,
-			cv::Ptr<cv::FeatureDetector>& detector,
-			cv::Ptr<cv::DescriptorExtractor>& extractor);
+	PatternLoader(const Ptr<DataInput> & input,
+			const Ptr<vector<Ptr<RichImg>>> & patterns,
+			const Ptr<FeatureDetector> & detector,
+			const Ptr<DescriptorExtractor> & extractor);
 
 	/**
 	 * Initializer:
 	 * param: input : a DataInput that will provide the Img's to construct a vector of RichImg
 	 * param: patterns : a vector of RichImg in which patterns will be stored
 	 */
-	PatternLoader(SerializedPatternDataInput* input,
-			std::vector<RichImg*>& patterns);
+	PatternLoader(const Ptr<SerializedPatternDataInput> & input,
+			const Ptr<vector<Ptr<RichImg>>> & patterns);
 	/**
 	 * Will load the patterns
 	 */
 	void load(QuickLZ* quickLZstate);
-	void load_and_save(std::string outputfolder, bool saveToFile = true,
+	void load_and_save(const string & outputfolder, bool saveToFile = true,
 			char mode = YAML);
 	virtual ~PatternLoader();
 	const static char YAML = 1;
 	const static char XML = 2;
 protected:
 private:
-	std::vector<RichImg*>* patterns;
-	DataInput* input;
-	SerializedPatternDataInput* sinput;
-	cv::Ptr<cv::FeatureDetector> detector;
-	cv::Ptr<cv::DescriptorExtractor> extractor;
+	Ptr<vector<Ptr<RichImg>>> patterns;
+	Ptr<DataInput> input;
+	Ptr<SerializedPatternDataInput> sinput;
+	Ptr<FeatureDetector> detector;
+	Ptr<DescriptorExtractor> extractor;
 	bool usingSerializedDataInput;
-	static void write(cv::FileStorage& fs, const std::string&,
-			const ImageInfo& x);
+	static void write(FileStorage& fs, const string&, const ImageInfo& x);
 };
 
 }

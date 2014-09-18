@@ -23,23 +23,22 @@ SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 }
 
 SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
-		QuickLZ* quickLZstate, string filename, const string & tmpDir,
+		QuickLZ* quickLZstate, const string & filename, const string & tmpDir,
 		TempDirCleaner * tempDirCleaner) :
 		filename(filename), tempDirCleaner(tempDirCleaner) {
-	string * xmlData = new string();
+	string xmlData;
 	decompress_from_file(tmpDir + filename + ".xml", quickLZstate, xmlData);
 	decompress_file(tmpDir + filename + ".if", quickLZstate);
-	this->load(*xmlData, tmpDir);
-	delete xmlData;
+	this->load(xmlData, tmpDir);
 
 	tempDirCleaner->deleteFile(fs::path(tmpDir + filename + ".xml"));
 	tempDirCleaner->deleteFile(fs::path(tmpDir + filename + ".if"));
 }
 
-void SerializableFlannBasedMatcher::save(QuickLZ* quickLZstate, string filename,
-		string * xmlData) {
+void SerializableFlannBasedMatcher::save(QuickLZ* quickLZstate,
+		const string & filename, const Ptr<string> & xmlData) {
 	this->filename = filename;
-	bool saveXMLtoFile = xmlData == NULL;
+	bool saveXMLtoFile = xmlData.get() == NULL; //TODO review this possible problem
 
 	string fbmData;
 	cv::FileStorage fs(fbmData,
@@ -84,14 +83,14 @@ bool SerializableFlannBasedMatcher::empty() const {
 	return trainDescCollection.empty();
 }
 
-void SerializableFlannBasedMatcher::train(vector<cv::Mat> * descriptors) {
-	mergedDescriptors.set(*descriptors);
+void SerializableFlannBasedMatcher::train(const vector<cv::Mat> & descriptors) {
+	mergedDescriptors.set(descriptors);
 	//FIXME can cause memory leaks
 	flannIndex = makePtr<flann::Index>(mergedDescriptors.getDescriptors(),
 			*indexParams);
 }
 
-void SerializableFlannBasedMatcher::setID(string id) {
+void SerializableFlannBasedMatcher::setID(const string & id) {
 	this->smatcher_id = id;
 }
 
@@ -127,7 +126,7 @@ void SerializableFlannBasedMatcher::load(const string& xmlData,
 	cv::Mat* mergedDescriptorsDescriptors = ((cv::Mat *) mdptr);
 	root["mergedDescriptorsDescriptors"] >> *mergedDescriptorsDescriptors;
 	addedDescCount = mergedDescriptorsDescriptors->rows;
-	loadIndex(mergedDescriptorsDescriptors, tmpDir);
+	loadIndex(*mergedDescriptorsDescriptors, tmpDir);
 	this->loadedFromFile = true;
 	//delete mergedDescriptorsDescriptors;
 }
@@ -140,12 +139,11 @@ void SerializableFlannBasedMatcher::saveIndexAndXML(QuickLZ* quickLZstate) {
 	compress_file(tmpFile, quickLZstate);
 }
 
-void SerializableFlannBasedMatcher::loadIndex(cv::Mat * data,
+void SerializableFlannBasedMatcher::loadIndex(const cv::Mat & data,
 		const string & tmpDir) {
 	string tmpFile = tmpDir + this->filename + ".if";
 	cv::flann::IndexParams* params = new cv::flann::SavedIndexParams(
 			tmpFile.c_str());
-	//FIXME can cause memory leaks
-	flannIndex = makePtr<cv::flann::Index>(*data, *params);
-	delete params; //FIXME can cause problems
+	flannIndex = makePtr<cv::flann::Index>(data, *params);
+	delete params;
 }

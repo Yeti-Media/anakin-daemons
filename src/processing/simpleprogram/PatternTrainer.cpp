@@ -44,15 +44,15 @@ void PatternTrainer::initProgramFlags() {
 	this->programFlags.setOptionalFlag("saveToFile");
 }
 
-int PatternTrainer::run(vector<string> *input) {
+int PatternTrainer::run(const Ptr<vector<string>> &input) {
 	string userID;
 	//char mode = 0;
 	string folder;
 	string fileName;
-	vector<int>* patternsId;
+	Ptr<vector<int>> patternsId;
 	bool user = false;
 
-	vector<string>* values = NULL;
+	Ptr<vector<string>> values;
 
 	if (this->programFlags.flagFound("user")) {
 		values = this->programFlags.getFlagValues("user");
@@ -67,7 +67,7 @@ int PatternTrainer::run(vector<string> *input) {
 	if (this->programFlags.flagFound("patternsId")) {
 		values = this->programFlags.getFlagValues("patternsId");
 		if (!values->empty()) {
-			patternsId = new vector<int>(0);
+			patternsId = makePtr<vector<int>>();
 			for (unsigned int i = 0; i < values->size(); i++) {
 				(*patternsId).push_back(stoi(values->at(i)));
 			}
@@ -95,32 +95,26 @@ int PatternTrainer::run(vector<string> *input) {
 	//TRAINING
 	Ptr<flann::IndexParams> indexParams = makePtr<flann::KDTreeIndexParams>(4);
 	Ptr<flann::SearchParams> searchParams = makePtr<flann::SearchParams>();
-	Ptr<SerializableFlannBasedMatcher> matcher = makePtr<SerializableFlannBasedMatcher>(
-			indexParams, searchParams, &tempDirCleaner);
+	Ptr<SerializableFlannBasedMatcher> matcher = makePtr<
+			SerializableFlannBasedMatcher>(indexParams, searchParams,
+			&tempDirCleaner);
 	matcher->clear();
-	vector<RichImg*> patterns;
-	SerializedPatternDataInput* sinput;
+	Ptr<vector<Ptr<RichImg>>> patterns = makePtr<vector<Ptr<RichImg>>>();
+	Ptr<SerializedPatternDataInput> sinput;
 	if (user) {
-		sinput = new SerializedPatternDataInput(userID, "", "", "", "", "",
+		sinput = makePtr<SerializedPatternDataInput>(userID, "", "", "", "", "",
 				this->tempDir, &tempDirCleaner);
 	} else {
-		sinput = new SerializedPatternDataInput(patternsId, "", "", "", "", "",
-				this->tempDir, &tempDirCleaner);
+		sinput = makePtr<SerializedPatternDataInput>(patternsId, "", "", "", "",
+				"", this->tempDir, &tempDirCleaner);
 	}
-	PatternLoader* loader = new PatternLoader(sinput, patterns);
+	Ptr<PatternLoader> loader = makePtr<PatternLoader>(sinput, patterns);
 	loader->load(quickLZstate);
 
-	Trainer* trainer = new BasicFlannTrainer(matcher, patterns, folder,
+	Ptr<Trainer> trainer = makePtr<BasicFlannTrainer>(matcher, patterns, folder,
 			fileName);
 	trainer->train_and_save(quickLZstate);
 
-	delete trainer;
-	delete loader;
-	delete sinput;
-	//delete patternsId;
-
-	std::for_each(patterns.begin(), patterns.end(),
-			delete_pointer_element<RichImg*>());
 	return EXIT_SUCCESS;
 }
 

@@ -16,9 +16,10 @@ namespace Anakin {
 
 class BasicFlannTrainer: public Trainer {
 public:
-	BasicFlannTrainer(Ptr<SerializableFlannBasedMatcher> detector,
-			vector<Anakin::RichImg*>& patterns, string outputFolder,
-			string fileName);
+	BasicFlannTrainer(const Ptr<FlannBasedMatcher> & detector,
+			const Ptr<vector<Ptr<RichImg>>>& patterns,
+			const string & outputFolder,
+			const string & fileName);
 	void train_and_save(QuickLZ* quickLZstate);
 	virtual ~BasicFlannTrainer();
 };

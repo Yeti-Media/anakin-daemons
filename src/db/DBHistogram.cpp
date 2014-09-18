@@ -4,6 +4,7 @@
 using namespace Anakin;
 
 using namespace std;
+using namespace cv;
 
 DBHistogram::DBHistogram(bool asFile, int id, int userID, bool isLandscape) {
 	this->asFile = asFile;
@@ -27,53 +28,47 @@ DBHistogram::DBHistogram(bool asFile, bool isLandscape) {
 }
 
 DBHistogram::~DBHistogram() {
-	delete colorData;
-	delete grayData;
-	delete hsvData;
 }
 
 bool DBHistogram::hasFileData() {
 	return asFile;
 }
 
-void DBHistogram::setColorData(std::string * data) {
-	delete this->colorData;
-	this->colorData = data;
+void DBHistogram::setColorData(const string & data) {
+	this->colorData = makePtr<string>(data);
 	this->mode = this->mode | Constants::COLOR;
 }
-void DBHistogram::setGrayData(std::string * data) {
-	delete this->grayData;
-	this->grayData = data;
+void DBHistogram::setGrayData(const string & data) {
+	this->grayData = makePtr<string>(data);
 	this->mode = this->mode | Constants::GRAY;
 }
 
-void DBHistogram::setHSVData(std::string * data) {
-	delete this->hsvData;
-	this->hsvData = data;
+void DBHistogram::setHSVData(const string & data) {
+	this->hsvData = makePtr<string>(data);
 	this->mode = this->mode | Constants::HSV;
 }
 
-std::string * DBHistogram::getColorData() const {
+Ptr<string> DBHistogram::getColorData() const {
 	if (this->mode & Constants::COLOR) {
 		return this->colorData;
 	} else {
-		return new string("NULL");
+		return makePtr<string>("NULL");
 	}
 }
 
-std::string * DBHistogram::getGrayData() const {
+Ptr<string> DBHistogram::getGrayData() const {
 	if (this->mode & Constants::GRAY) {
 		return this->grayData;
 	} else {
-		return new string("NULL");
+		return makePtr<string>("NULL");
 	}
 }
 
-std::string * DBHistogram::getHSVData() const {
+Ptr<string> DBHistogram::getHSVData() const {
 	if (this->mode & Constants::HSV) {
 		return this->hsvData;
 	} else {
-		return new string("NULL");
+		return makePtr<string>("NULL");
 	}
 }
 

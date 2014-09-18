@@ -45,9 +45,11 @@ BOOST_AUTO_TEST_CASE(outputMatchGood) {
 	expectedResult = L"{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"keypoints\":[{\"angle\":95.0999984741211,\"pos\":{\"x\":2.79999995231628,\"y\":3.5},\"response\":1.10000002384186,\"size\":9.5}],\"label\":\"This is a test label\"}";
 }
 #endif //LIGTH_RESULTS
-	wstring* result = cfm->outputMatch(center, label, matchedKeypoints);
+	Ptr<wstring> result = cfm->outputMatch(center, label, matchedKeypoints);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cfm;
 }
 
 //____________________________________________________________________________//
@@ -57,14 +59,16 @@ BOOST_AUTO_TEST_CASE(outputMatchesGood) {
 	CommunicationFormatterMatchingJSON* cfm =
 			new CommunicationFormatterMatchingJSON();
 	string label = "This is a test label";
-	vector<wstring*> values = vector<wstring*>(1);
-	values.at(0) =
-			new wstring(
+	Ptr<vector<Ptr<wstring>>> values = makePtr<vector<Ptr<wstring>>>(1);
+	values->at(0) =
+			makePtr<wstring>(
 					L"{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"text\":\"This is a test text\"}");
 	wstring expectedResult =
 			L"{\"label\":\"This is a test label\",\"values\":[{\"center\":{\"x\":2.79999995231628,\"y\":3.5},\"text\":\"This is a test text\"}]}";
-	wstring* result = cfm->outputMatches(label, values);
+	Ptr<wstring> result = cfm->outputMatches(label, values);
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cfm;
 
 }
 

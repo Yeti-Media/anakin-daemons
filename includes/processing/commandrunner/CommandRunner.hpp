@@ -5,7 +5,7 @@
 #include <opencv2/core.hpp>
 #include <boost/filesystem.hpp>
 #include <string>
-#include <iostream>               // for std::cout
+#include <iostream>               // for cout
 #include "opencv2/xfeatures2d.hpp"
 #include "opencv2/features2d.hpp"
 #include "opencv2/highgui.hpp"
@@ -19,6 +19,9 @@
 #include "matching/FlannMatchingProcessor.hpp"
 #include <processing/Flags.hpp>
 #include <utils/help/Help.hpp>
+
+using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
@@ -41,18 +44,19 @@ public:
 	 * Constructor (does steps 1, 2, 3)
 
 	 */
-	CommandRunner(string programName);
+	CommandRunner(const string & programName);
 
 	/**
 	 * Setup the flags, the output and the cache (if used).
 	 * out   : used to send responses
 	 */
-	virtual void initializeCommandRunner(DataOutput* out, SFBMCache* cache);
+	virtual void initializeCommandRunner(const Ptr<DataOutput> & out,
+			const Ptr<SFBMCache> & cache);
 
 	/**
 	 * This do the step 1
 	 */
-	virtual void validateRequest(std::vector<std::string> *input) = 0;
+	virtual void validateRequest(const Ptr<vector<string>> & input) = 0;
 
 	/**
 	 * run the command runner (does steps 4 and 5)
@@ -74,20 +78,19 @@ public:
 	virtual ~CommandRunner();
 
 protected:
-	bool checkDuplicatedIndexes(std::vector<std::string> indexes,
-			std::string * duplicated);
+	bool checkDuplicatedIndexes(const vector<string> & indexes, string & duplicated);
 	int mma = 8;
 	float mr = 1.f / 1.5f;
 	int sceneID;
-	std::vector<std::string> indexes;
-	std::string reqID;
-	std::string lastError;
+	vector<string> indexes;
+	string reqID;
+	string lastError;
 	bool inputError = false;
-	DataOutput* out;
-	FlannMatchingProcessor* processor = NULL;
-	BasicFlannDetector* detector = NULL;
-	Flags* flags;
-	SFBMCache* cache;
+	Ptr<DataOutput> out;
+	Ptr<FlannMatchingProcessor> processor;
+	Ptr<BasicFlannDetector> detector;
+	Ptr<Flags> flags;
+	Ptr<SFBMCache> cache;
 	string tempDir;
 private:
 	string programName;

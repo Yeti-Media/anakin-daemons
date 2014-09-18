@@ -8,6 +8,7 @@
 #ifndef FILES_HPP_
 #define FILES_HPP_
 
+#include <opencv2/opencv.hpp>
 #include <boost/filesystem/path.hpp>
 #include <stddef.h>
 #include <list>
@@ -16,6 +17,7 @@
 class QuickLZ;
 
 using namespace std;
+using namespace cv;
 namespace fs = boost::filesystem;
 
 namespace Anakin {
@@ -33,7 +35,7 @@ list<fs::path> * get_file_list_from(const string & dirpath);
 /**
  * Retrive file content as a string
  */
-string * get_file_contents(const string & filename);
+Ptr<string> get_file_contents(const string & filename);
 
 /**
  * write a string content into a File
@@ -66,7 +68,7 @@ void compress_to_file(const string & data, const string & filename,
  * decompress a file into a string (data)
  */
 void decompress_from_file(const string & filename, QuickLZ* quickLZstate,
-		string * data);
+		string & outputData);
 }
 ;
 

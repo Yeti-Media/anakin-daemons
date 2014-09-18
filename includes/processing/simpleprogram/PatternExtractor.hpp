@@ -14,6 +14,9 @@
 #include <utils/files/QuickLZ.hpp>
 #include <vector>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 class PatternExtractor: public Program {
@@ -32,7 +35,7 @@ public:
 	const static char MINMAX = 8;
 	const static char AVG = 16;
 protected:
-	int run(vector<string> *input);
+	int run(const Ptr<vector<string>> &input);
 	void initProgramFlags();
 	QuickLZ * quickLZState;
 };

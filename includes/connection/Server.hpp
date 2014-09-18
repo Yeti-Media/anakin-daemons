@@ -39,7 +39,7 @@ public:
 	 * this will start the skeleton algorithm shown above
 	 * output : this is used to output the processing results
 	 */
-	void start(DataOutput* output);
+	void start(const Ptr<DataOutput> & output);
 	static const char CONSOLE = 1;
 	static const char TCP = 2;
 	static const char UDP = 4;
@@ -50,7 +50,7 @@ public:
 	 * socket created by the server is the same used to
 	 * respond.
 	 */
-	HTTPSocket* getHttpSocket();
+	Ptr<HTTPSocket> getHttpSocket();
 
 	virtual ~Server();
 protected:
@@ -63,17 +63,17 @@ protected:
 	 * the only mode that supports this is DTCP, all others will send
 	 * one request per message
 	 */
-	vector<vector<string>*>* getInputs(string rawInput,
-			bool * stopReceivedInsideInput);
+	Ptr<vector<Ptr<vector<string>>> > getInputs(const string & rawInput,
+			bool & stopReceivedInsideInput);
 	/**
 	 * because the input is validated as a vector of strings, the original message
 	 * must be transformed from one string to a vector
 	 */
-	vector<string>* rawToInput(string rawInput);
+	Ptr<vector<string>> rawToInput(const string & rawInput);
 	/**
 	 * this will process an input
 	 */
-	virtual void execute(vector<string>* input);
+	virtual void execute(const Ptr<vector<string>> & input);
 	/**
 	 * this will execute when receiving a stop message
 	 * this is the last function to be called by stopReceived
@@ -82,7 +82,7 @@ protected:
 	/**
 	 * will return true if rawMsg is a stop message
 	 */
-	virtual bool stopMessageReceived(string rawMsg);
+	virtual bool stopMessageReceived(const string & rawMsg);
 
 	/**
 	 * this is used to execute anything needed before starting to receiving messages
@@ -98,11 +98,11 @@ protected:
 	void stopReceived();
 	unsigned short port;
 	bool verbose;
-	HTTPSocket* httpSocket;
+	Ptr<HTTPSocket> httpSocket;
 	char mode;
-	DataOutput* output;
-	SFBMCache* cache;
-	DBDriver* dbdriver;
+	Ptr<DataOutput> output;
+	Ptr<SFBMCache> cache;
+	Ptr<DBDriver> dbdriver;
 
 	bool initialization = false;
 	string initializationError;
@@ -117,11 +117,9 @@ Server<SpecificCommandRunner>::Server(const CacheConfig & cacheConfig,
 		const string & dbName, const string & login, const string & pwd,
 		unsigned int httpPort, bool verbose, const string & tempDir,
 		TempDirCleaner * tempDirCleaner) {
-	this->output = NULL;
-	this->cache = NULL;
 	this->port = httpPort;
 	this->mode = mode;
-	this->dbdriver = new DBDriver(tempDirCleaner);
+	this->dbdriver = makePtr<DBDriver>(tempDirCleaner);
 
 	if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
 		this->initialization = true;
@@ -135,11 +133,11 @@ Server<SpecificCommandRunner>::Server(const CacheConfig & cacheConfig,
 		exit(EXIT_FAILURE);
 	}
 	if (this->initialization) {
-		this->cache = new SFBMCache(this->dbdriver, cacheConfig, tempDir,
+		this->cache = makePtr<SFBMCache>(this->dbdriver, cacheConfig, tempDir,
 				tempDirCleaner);
 		this->cacheInitializationError = false;
 		wstring cacheError = *this->cache->getLastOperationResult(
-				&this->cacheInitializationError);
+				this->cacheInitializationError);
 		if (this->cacheInitializationError) {
 			this->cacheInitializationErrorMsj = cacheError;
 			LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
@@ -147,14 +145,14 @@ Server<SpecificCommandRunner>::Server(const CacheConfig & cacheConfig,
 	}
 	if (mode & HTTP) {
 		string sport = to_string(port);
-		this->httpSocket = new HTTPSocket(sport, 15);
+		this->httpSocket = makePtr<HTTPSocket>(sport, 15);
 		this->httpSocket->setShowComs(verbose);
 	}
 	this->verbose = verbose;
 }
 
 template<class SpecificCommandRunner>
-void Server<SpecificCommandRunner>::start(DataOutput* output) {
+void Server<SpecificCommandRunner>::start(const Ptr<DataOutput> & output) {
 	this->output = output;
 	startServer();
 	string msg;
@@ -165,8 +163,8 @@ void Server<SpecificCommandRunner>::start(DataOutput* output) {
 		msg = read();
 		if (!stopMessageReceived(msg)) {
 			cout << "MESSAGE RECEIVED:" << endl << msg << endl;
-			vector<vector<string>*>* inputs = getInputs(msg,
-					&stopReceivedInsideInput);
+			Ptr<vector<Ptr<vector<string>>> > inputs = getInputs(msg,
+					stopReceivedInsideInput);
 			if (stopReceivedInsideInput) {
 				stopReceived();
 				run = false;
@@ -175,7 +173,6 @@ void Server<SpecificCommandRunner>::start(DataOutput* output) {
 					execute(inputs->at(i));
 				}
 			}
-			delete inputs;
 		} else {
 			stopReceived();
 			run = false;
@@ -188,7 +185,7 @@ void Server<SpecificCommandRunner>::start(DataOutput* output) {
 }
 
 template<class SpecificCommandRunner>
-HTTPSocket* Server<SpecificCommandRunner>::getHttpSocket() {
+Ptr<HTTPSocket> Server<SpecificCommandRunner>::getHttpSocket() {
 	return this->httpSocket;
 }
 
@@ -210,13 +207,13 @@ string Server<SpecificCommandRunner>::read() {
 }
 
 template<class SpecificCommandRunner>
-vector<vector<string>*>* Server<SpecificCommandRunner>::getInputs(
-		string rawInput, bool * stopReceivedInsideInput) {
-	vector<vector<string>*>* inputs = new vector<vector<string>*>(0);
+Ptr<vector<Ptr<vector<string>>> > Server<SpecificCommandRunner>::getInputs(
+		const string & rawInput, bool & stopReceivedInsideInput) {
+	Ptr<vector<Ptr<vector<string>>>> inputs = makePtr<vector<Ptr<vector<string>>>>();
 	string msg = rawInput;
 
 	if (Server::stopMessageReceived(rawInput)) {
-		*stopReceivedInsideInput = true;
+		stopReceivedInsideInput = true;
 	}
 	inputs->push_back(rawToInput(rawInput));
 
@@ -224,22 +221,20 @@ vector<vector<string>*>* Server<SpecificCommandRunner>::getInputs(
 }
 
 template<class SpecificCommandRunner>
-vector<string>* Server<SpecificCommandRunner>::rawToInput(string rawInput) {
-	vector<string> *input = new vector<string>(0);
+Ptr<vector<string>> Server<SpecificCommandRunner>::rawToInput(
+		const string & rawInput) {
+	Ptr<vector<string>> input = makePtr<vector<string>>();
 	stringutils::tokenizeWordsIgnoringQuoted(rawInput, *input);
 	return input;
 }
 
 template<class SpecificCommandRunner>
-void Server<SpecificCommandRunner>::execute(vector<string>* input) {
-//  use for non request servers
-//	CommandRunner* runner = new CommandRunner(this->aflags->getFlags(),
-//			this->output, this->cache, input);
-//	runner->run();
+void Server<SpecificCommandRunner>::execute(const Ptr<vector<string>> & input) {
+	//placeholder. Extension needed
 }
 
 template<class SpecificCommandRunner>
-bool Server<SpecificCommandRunner>::stopMessageReceived(string rawMsg) {
+bool Server<SpecificCommandRunner>::stopMessageReceived(const string & rawMsg) {
 	return (rawMsg.find("-stop") != string::npos)
 			|| (rawMsg.find("\"action\":\"stop\"") != string::npos);
 }
@@ -273,13 +268,6 @@ void Server<SpecificCommandRunner>::stopReceived() {
 
 template<class SpecificCommandRunner>
 Server<SpecificCommandRunner>::~Server() {
-	delete dbdriver;
-	if (this->cache != NULL) {
-		delete this->cache;
-	}
-	if (this->cache != NULL) {
-		delete this->httpSocket;
-	}
 }
 
 }

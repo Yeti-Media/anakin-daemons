@@ -42,10 +42,10 @@ list<fs::path> * Anakin::get_file_list_from(const fs::path & dirpath) {
 	return result_set;
 }
 
-string * Anakin::get_file_contents(const string & filename) {
+Ptr<string> Anakin::get_file_contents(const string & filename) {
 	ifstream in(filename, ios::in | ios::binary);
 	if (in) {
-		string * contents = new string();
+		Ptr<string> contents = makePtr<string>();
 		in.seekg(0, ios::end);
 		contents->resize(in.tellg());
 		in.seekg(0, ios::beg);
@@ -72,20 +72,18 @@ void Anakin::write_to_file(const char * data, const string & filename,
 }
 
 void Anakin::compress_file(const string & filename, QuickLZ* quickLZstate) {
-	string * data = get_file_contents(filename);
+	Ptr<string> data = get_file_contents(filename);
 	size_t size;
 	char * compressedData = quickLZstate->compressText(*data, size);
 	write_to_file(compressedData, filename, size);
-	delete data;
 	delete compressedData;
 }
 
 void Anakin::decompress_file(const string & filename, QuickLZ* quickLZstate) {
-	string * data = get_file_contents(filename);
+	Ptr<string> data = get_file_contents(filename);
 	size_t size;
 	char * decompressedData = quickLZstate->decompressText(*data, size);
 	write_to_file(decompressedData, filename, size);
-	delete data;
 	delete decompressedData;
 
 }
@@ -97,13 +95,11 @@ void Anakin::compress_to_file(const string & data, const string & filename,
 	delete compressedData;
 }
 void Anakin::decompress_from_file(const string & filename,
-		QuickLZ* quickLZstate, string * data) {
-	string * compressedData = get_file_contents(filename);
+		QuickLZ* quickLZstate, string & outputData) {
+	Ptr<string> compressedData = get_file_contents(filename);
 	size_t size;
 	char * decompressedData = quickLZstate->decompressText(*compressedData,
 			size);
-	delete compressedData;
-	//delete data;
-	*data = string(decompressedData, size);
+	outputData = string(decompressedData, size);
 	delete decompressedData;
 }

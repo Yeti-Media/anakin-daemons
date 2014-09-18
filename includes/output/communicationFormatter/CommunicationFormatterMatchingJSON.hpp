@@ -13,6 +13,9 @@
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 #include <output/communicationFormatter/ICommunicationFormatterMatching.hpp>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 class CommunicationFormatterMatchingJSON: virtual public I_CommunicationFormatterMatching,
@@ -27,17 +30,17 @@ public:
 	CommunicationFormatterMatchingJSON();
 
 	/**
-	 * returns a wstring* representation of a JSONValue of a match (center, pattern label, matched keypoints)
+	 * returns a Ptr<wstring> representation of a JSONValue of a match (center, pattern label, matched keypoints)
 	 */
-	virtual wstring* outputMatch(const Point2f & center, const string & label,
+	virtual Ptr<wstring> outputMatch(const Point2f & center, const string & label,
 			const vector<KeyPoint> & matchedKeypoints);
 
 	/**
-	 * returns a wstring* representation of a JSONValue of patterns matches in a scene
+	 * returns a Ptr<wstring> representation of a JSONValue of patterns matches in a scene
 	 * (scene label, [match1,...,matchN])
 	 */
-	virtual wstring* outputMatches(const string & label,
-			const vector<wstring *> & values);
+	virtual Ptr<wstring> outputMatches(const string & label,
+			const Ptr<vector<Ptr<wstring>>> & values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
 

@@ -1,19 +1,21 @@
 #include "data/RichImg.hpp"
 
 using namespace Anakin;
+using namespace std;
+using namespace cv;
 
-RichImg::RichImg(Img *img, cv::Ptr<cv::FeatureDetector>& detector,
-		cv::Ptr<cv::DescriptorExtractor>& extractor) {
-	keypoints = new std::vector<cv::KeyPoint>();
-	descriptors = new cv::Mat();
+RichImg::RichImg(const Ptr<Img> & img, const Ptr<FeatureDetector>& detector,
+		const Ptr<DescriptorExtractor>& extractor) {
+	keypoints = makePtr<vector<KeyPoint>>();
+	descriptors = makePtr<Mat>();
 	this->aimg = img;
 	this->detector = detector;
 	this->extractor = extractor;
 }
 
-RichImg::RichImg(ImageInfo* imgInfo) {
-	cv::Mat img = cv::Mat();
-	this->aimg = new Img(img, imgInfo->getLabel());
+RichImg::RichImg(const Ptr<ImageInfo> & imgInfo) {
+	Ptr<Mat> img = makePtr<Mat>();
+	this->aimg = makePtr<Img>(img, imgInfo->getLabel());
 	this->keypoints = imgInfo->getKeypoints();
 	this->descriptors = imgInfo->getDescriptors();
 	this->constructedWithImageInfo = true;
@@ -21,34 +23,35 @@ RichImg::RichImg(ImageInfo* imgInfo) {
 	this->keypointsCalculated = true;
 }
 
-RichImg::RichImg(const RichImg& other) {
-	this->aimg = new Img(*(other.aimg));
-	if (other.constructedWithImageInfo) {
+RichImg::RichImg(const Ptr<RichImg> & other) {
+	if (other->constructedWithImageInfo) {
 		this->constructedWithImageInfo = true;
-		this->aimg = other.aimg;
-		this->keypoints = other.keypoints;
-		this->descriptors = other.descriptors;
+		this->aimg = other->aimg;
+		this->keypoints = other->keypoints;
+		this->descriptors = other->descriptors;
 	} else {
-		this->detector = other.detector;
-		this->extractor = other.extractor;
+		this->aimg = makePtr<Img>(other->aimg); //TODO check if this line must be the first
+		this->detector = other->detector;
+		this->extractor = other->extractor;
 	}
 }
 
-RichImg* RichImg::makeNew(Img* img) {
-	return new RichImg(img, this->detector, this->extractor);
+Ptr<RichImg> RichImg::makeNew(const Ptr<Img> & img) {
+	return makePtr<RichImg>(img, this->detector, this->extractor);
 }
 
-std::vector<cv::KeyPoint> * RichImg::getKeypoints() {
+Ptr<vector<KeyPoint>> RichImg::getKeypoints() {
 	if (this->keypointsCalculated) {
 		return this->keypoints;
 	}
 	return this->getFreshKeypoints();
 }
 
-void RichImg::recalculateFeatures(std::vector<int> mask) {
+void RichImg::recalculateFeatures(const vector<int> &  mask) {
 	if (this->constructedWithImageInfo)
 		return;
-	std::vector<cv::KeyPoint> * newKeypoints = new std::vector<cv::KeyPoint>();
+	//TODO optimize... KeyPoint or pointer KeyPoint?
+	Ptr<vector<KeyPoint>> newKeypoints = makePtr<vector<KeyPoint>>();
 	int removedKeypoints = 0;
 	for (uint i = 0; i < this->keypoints->size(); i++) {
 		if (mask[i] != 1) {
@@ -61,20 +64,20 @@ void RichImg::recalculateFeatures(std::vector<int> mask) {
 	for (uint k = 0; k < newKeypoints->size(); k++) {
 		this->keypoints->push_back(newKeypoints->at(k));
 	}
-	this->extractor->compute(this->aimg->getGrayImg(), *this->keypoints,
+	this->extractor->compute(*this->aimg->getGrayImg(), *this->keypoints,
 			*this->descriptors);
 	this->descriptorsCalculated = true;
 }
 
-std::vector<cv::KeyPoint> * RichImg::getFreshKeypoints() {
+Ptr<vector<KeyPoint>> RichImg::getFreshKeypoints() {
 	if (!this->constructedWithImageInfo) {
-		this->detector->detect(this->aimg->getGrayImg(), *(this->keypoints));
+		this->detector->detect(*this->aimg->getGrayImg(), *this->keypoints);
 		this->keypointsCalculated = true;
 	}
 	return this->keypoints;
 }
 
-cv::Mat * RichImg::getDescriptors() {
+Ptr<Mat> RichImg::getDescriptors() {
 	if (!this->keypointsCalculated) {
 		this->getFreshKeypoints();
 	}
@@ -84,28 +87,26 @@ cv::Mat * RichImg::getDescriptors() {
 	return this->getFreshDescriptors();
 }
 
-cv::Mat * RichImg::getFreshDescriptors() {
+Ptr<Mat> RichImg::getFreshDescriptors() {
 	if (!this->constructedWithImageInfo) {
 		if (!this->keypointsCalculated) {
 			this->getFreshKeypoints();
 		}
-		this->extractor->compute(this->aimg->getGrayImg(), *this->keypoints,
+		this->extractor->compute(*this->aimg->getGrayImg(), *this->keypoints,
 				*this->descriptors);
 		this->descriptorsCalculated = true;
 	}
 	return this->descriptors;
 }
 
-ImageInfo* RichImg::getImageInfo() {
-	ImageInfo* ii = new ImageInfo(this->aimg->getLabel(), getFreshKeypoints(),
+Ptr<ImageInfo> RichImg::getImageInfo() {
+	return makePtr<ImageInfo>(this->aimg->getLabel(), getFreshKeypoints(),
 			getFreshDescriptors());
-	return ii;
 }
 
-Img* RichImg::getImage() {
+Ptr<Img> RichImg::getImage() {
 	return this->aimg;
 }
 
 RichImg::~RichImg() {
-	delete this->aimg;
 }

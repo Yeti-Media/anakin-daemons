@@ -14,44 +14,44 @@ namespace fs = boost::filesystem;
 
 using namespace Anakin;
 using namespace std;
+using namespace cv;
 
-XMLoader::XMLoader(string path) {
+XMLoader::XMLoader(const string & path) {
 	this->path = path;
 	unsigned lastSeparator = path.find_last_of("/\\");
 	this->inputAsFolder = lastSeparator != string::npos
 			&& lastSeparator == (path.size() - 1);
 }
 
-vector<DBPattern*>* XMLoader::loadAsPattern(bool filePatterns) {
-	vector<string>* files = getFilePaths();
-	vector<DBPattern*>* patterns = new vector<DBPattern*>(0);
+Ptr<vector<Ptr<DBPattern>>> XMLoader::loadAsPattern(bool filePatterns) {
+	Ptr<vector<string>> files = getFilePaths();
+	Ptr<vector<Ptr<DBPattern>>> patterns = makePtr<vector<Ptr<DBPattern>>>();
 	for (uint f = 0; f < files->size(); f++) {
 		string filepath = files->at(f);
-		DBPattern* pattern;
+		Ptr<DBPattern> pattern;
 		if (filePatterns) {
-			pattern = new DBPattern(true, new string(filepath));
+			pattern = makePtr<DBPattern>(true, makePtr<string>(filepath));
 		} else {
-			pattern = new DBPattern(false, get_file_contents(filepath));
+			pattern = makePtr<DBPattern>(false, get_file_contents(filepath));
 		}
 		patterns->push_back(pattern);
 	}
 	//FIXME do not delete this static var. REFACTOR!
-	//delete files;
 	return patterns;
 }
 
-vector<DBHistogram*>* XMLoader::loadAsHistogram(bool filePatterns) {
+Ptr<vector<Ptr<DBHistogram>>> XMLoader::loadAsHistogram(bool filePatterns) {
 	return loadAsHORL(false, filePatterns);
 }
 
-vector<DBHistogram*>* XMLoader::loadAsLandscape(bool filePatterns) {
+Ptr<vector<Ptr<DBHistogram>>> XMLoader::loadAsLandscape(bool filePatterns) {
 	return loadAsHORL(true, filePatterns);
 }
 
-ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
+Ptr<ImageInfo> XMLoader::dbpatternToImageInfo(const Ptr<DBPattern> & dbp) {
 	string xmlData = "";
 	xmlData.append(*dbp->getData());
-	ImageInfo *ii = new ImageInfo();
+	Ptr<ImageInfo> ii = makePtr<ImageInfo>();
 	string label = to_string(dbp->getID());
 	cv::FileStorage fstorage(xmlData.c_str(),
 			cv::FileStorage::READ | cv::FileStorage::MEMORY);
@@ -64,45 +64,45 @@ ImageInfo* XMLoader::dbpatternToImageInfo(DBPattern* dbp) {
 
 //PRIVATE
 
-vector<DBHistogram*>* XMLoader::loadAsHORL(bool isLandscape,
+Ptr<vector<Ptr<DBHistogram>>> XMLoader::loadAsHORL(bool isLandscape,
 		bool filePatterns) {
 	if (!this->inputAsFolder) {
 		cerr << "path must lead to a folder to load landscapes or histograms"
-				<< endl;
+		<< endl;
 		exit(EXIT_FAILURE);
 	}
 	char mode = isLandscape ? Constants::LANDSCAPE : Constants::HISTOGRAM;
-	vector<string>* cfiles = getFilePaths(mode | Constants::COLOR);
-	vector<string>* gfiles = getFilePaths(mode | Constants::GRAY);
-	vector<string>* hfiles = getFilePaths(mode | Constants::HSV);
-	vector<DBHistogram*>* horls = new vector<DBHistogram*>(0);
+	Ptr<vector<string>> cfiles = getFilePaths(mode | Constants::COLOR);
+	Ptr<vector<string>> gfiles = getFilePaths(mode | Constants::GRAY);
+	Ptr<vector<string>> hfiles = getFilePaths(mode | Constants::HSV);
+	Ptr<vector<Ptr<DBHistogram>>> horls = makePtr<vector<Ptr<DBHistogram>>>(0);
 	for (uint f = 0; f < cfiles->size(); f++) {
 		string cfilepath = cfiles->at(f);
 		string gfilepath = gfiles->at(f);
 		string hfilepath = hfiles->at(f);
-		DBHistogram* horl;
+		Ptr<DBHistogram> horl;
 		if (filePatterns) {
-			horl = new DBHistogram(true, isLandscape);
-			horl->setColorData(new string(cfilepath));
-			horl->setGrayData(new string(gfilepath));
-			horl->setHSVData(new string(hfilepath));
+			horl = makePtr<DBHistogram>(true, isLandscape);
+			horl->setColorData(cfilepath);
+			horl->setGrayData(gfilepath);
+			horl->setHSVData(hfilepath);
 		} else {
-			horl = new DBHistogram(false, isLandscape);
-			horl->setColorData(get_file_contents(cfilepath));
-			horl->setGrayData(get_file_contents(gfilepath));
-			horl->setHSVData(get_file_contents(hfilepath));
+			horl = makePtr<DBHistogram>(false, isLandscape);
+			horl->setColorData(*get_file_contents(cfilepath));
+			horl->setGrayData(*get_file_contents(gfilepath));
+			horl->setHSVData(*get_file_contents(hfilepath));
 		}
 		horls->push_back(horl);
 	}
 	return horls;
 }
 
-vector<string>* XMLoader::getFilePaths(char mode, bool reload) {
+Ptr<vector<string>> XMLoader::getFilePaths(char mode, bool reload) {
 	//FIXME MEMORY LEAKS
-	static vector<string>* ppaths = new vector<string>(0);
-	static vector<string>* cpaths = new vector<string>(0);
-	static vector<string>* gpaths = new vector<string>(0);
-	static vector<string>* hpaths = new vector<string>(0);
+	static Ptr<vector<string>> ppaths = makePtr<vector<string>>();
+	static Ptr<vector<string>> cpaths = makePtr<vector<string>>();
+	static Ptr<vector<string>> gpaths = makePtr<vector<string>>();
+	static Ptr<vector<string>> hpaths = makePtr<vector<string>>();
 	static char loaded = 0;
 	//cout << "loaded : " << (loaded + 0) << endl;
 	//cout << "mode : " << (mode + 0) << endl;

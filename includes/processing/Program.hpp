@@ -14,6 +14,7 @@
 #include <vector>
 
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
@@ -43,13 +44,13 @@ namespace Anakin {
  */
 class Program {
 public:
-	Program(string programName);
+	Program(const string & programName);
 	virtual ~Program();
 
 	/**
 	 * Start the program. It initialize common vars and flags. User shoul delete the input.
 	 */
-	int start(vector<string> *input);
+	int start(const Ptr<vector<string>> & input);
 
 	/**
 	 * Get a full text manual for the concrete program
@@ -72,7 +73,7 @@ protected:
 	/**
 	 * Run the concrete program.
 	 */
-	virtual int run(vector<string> *input) = 0;
+	virtual int run(const Ptr<vector<string>> & input) = 0;
 
 	/**
 	 * Return a full help instance. Must be deleted after use.

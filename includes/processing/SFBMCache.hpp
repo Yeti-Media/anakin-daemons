@@ -70,7 +70,7 @@ public:
 	 *
 	 * dbdriver              : used to make requests to the db
 	 */
-	SFBMCache(DBDriver* dbdriver, const CacheConfig & cacheConfig,
+	SFBMCache(const Ptr<DBDriver> & dbdriver, const CacheConfig & cacheConfig,
 			const string & tmpDir, TempDirCleaner * tempDirCleaner);
 
 	virtual ~SFBMCache();
@@ -81,8 +81,8 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	SerializableFlannBasedMatcher* loadMatcher(QuickLZ* quickLZstate,
-			int smatcher_id, bool * error);
+	Ptr<SerializableFlannBasedMatcher> loadMatcher(QuickLZ* quickLZstate,
+			int smatcher_id, bool & error);
 	/**
 	 * unload a matcher from cache
 	 *
@@ -98,11 +98,11 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	void updateMatcher(QuickLZ* quickLZstate, int smatcher_id, bool * error);
+	void updateMatcher(QuickLZ* quickLZstate, int smatcher_id, bool & error);
 	/**
 	 * returns a wstring* representing the actual CommunicationFormatter with the trainers and the free space in the cache
 	 */
-	wstring* indexCacheStatus();
+	Ptr<wstring> indexCacheStatus();
 	/**
 	 * load a scene
 	 *
@@ -110,7 +110,7 @@ public:
 	 * error     : will hold true if an error was encountered
 	 *
 	 */
-	ImageInfo* loadScene(QuickLZ* quickLZstate, int sceneID, bool * error);
+	Ptr<ImageInfo> loadScene(QuickLZ* quickLZstate, int sceneID, bool & error);
 	/**
 	 * load a pattern
 	 *
@@ -119,8 +119,8 @@ public:
 	 * error         : will hold true if an error was encountered
 	 *
 	 */
-	ImageInfo* loadPattern(QuickLZ* quickLZstate, int smatcherID, int pidx,
-			bool * error);
+	Ptr<ImageInfo> loadPattern(QuickLZ* quickLZstate, int smatcherID, int pidx,
+			bool & error);
 	/**
 	 * returns the ratio between requests that resulted in loading a trainer from the cache and the total requests
 	 */
@@ -146,14 +146,14 @@ public:
 	 * @see ICommunicationFormatter.hpp
 	 * @see SFBMCache.cpp
 	 */
-	wstring* getLastOperationResult(bool * error = NULL);
+	Ptr<wstring> getLastOperationResult(bool & error);
 protected:
 private:
 
 	TempDirCleaner* tempDirCleaner;
 
 	//FIELDS
-	DBDriver* dbdriver;
+	Ptr<DBDriver> dbdriver;
 	string tmpDir;
 	I_CommunicationFormatterCache* cfc;
 	int lastInsertedIndex = -1;
@@ -163,14 +163,14 @@ private:
 	static const char UPDATEOP = 3;
 	static const char ERROR = 4;
 	char operation = 0;
-	std::string errorMessage;
+	string errorMessage;
 	I_CommunicationFormatterCache::e_error errorType;
-	std::string origin;
+	string origin;
 
 	//MATCHERS
-	std::map<int, SerializableFlannBasedMatcher*>* cache;
-	std::map<int, int>* matchersLife;
-	std::map<int, int>* loadingCount;
+	Ptr<map<int, Ptr<SerializableFlannBasedMatcher>>> cache;
+	Ptr<map<int, int>> matchersLife;
+	Ptr<map<int, int>> loadingCount;
 	int loadingTimeWeight = 1;
 	int life;
 	int cacheSize;
@@ -182,8 +182,8 @@ private:
 	bool discardLessValuable = false;
 
 	//SCENES
-	std::map<int, ImageInfo*>* scache;
-	std::map<int, int>* scenesLife;
+	Ptr<map<int, Ptr<ImageInfo>>> scache;
+	Ptr<map<int, int>> scenesLife;
 	int slife;
 	int scenesCacheSize;
 	int scenesCacheMaxSize;
@@ -193,7 +193,7 @@ private:
 	int lowestLifeSceneKey;
 
 	//PATTERNS
-	std::map<int, std::map<int, ImageInfo*>*>* pcache;
+	Ptr<map<int, Ptr<map<int, Ptr<ImageInfo>>>>> pcache;
 
 	//FUNCTIONS
 	static boost::mutex& GetMutex() {
@@ -202,16 +202,16 @@ private:
 	}
 	void tic(int ignore, bool matchersCache = true);
 	void freeCacheSlot(bool matchersCache = true);
-	void storeMatcher(int smatcher_id, SerializableFlannBasedMatcher* matcher);
-	void storeScene(int sceneID, ImageInfo* scene);
-	bool keyExist(std::map<int, int>* m, int key);
-	void getKeys(std::map<int, SerializableFlannBasedMatcher*>* m,
-			std::vector<int>* keys);
-	void getKeys(std::map<int, int>* m, std::vector<int>* keys);
-	SerializableFlannBasedMatcher* loadMatcherFromDB(QuickLZ* quickLZstate,
-			int smatcher_id, float* loadingTime, bool * error);
-	ImageInfo* loadSceneFromDB(QuickLZ* quickLZstate, int sceneID,
-			bool * error);
+	void storeMatcher(int smatcher_id, const Ptr<SerializableFlannBasedMatcher> & matcher);
+	void storeScene(int sceneID, const Ptr<ImageInfo> & scene);
+	bool keyExist(const Ptr<map<int, int>> & m, int key);
+	void getKeys(const Ptr<map<int, Ptr<SerializableFlannBasedMatcher>>>& m,
+			const Ptr<vector<int>> & keys);
+	void getKeys(const Ptr<map<int, int>> & m, const Ptr<vector<int>> & keys);
+	Ptr<SerializableFlannBasedMatcher> loadMatcherFromDB(QuickLZ* quickLZstate,
+			int smatcher_id, float & loadingTime, bool & error);
+	Ptr<ImageInfo> loadSceneFromDB(QuickLZ* quickLZstate, int sceneID,
+			bool & error);
 	void incLife(int smatcher_id, bool matchersCache = true);
 	int decLife(int smatcher_id, bool matchersCache = true);
 	int updateLife(int smatcher_id, int life, bool bounded = true,

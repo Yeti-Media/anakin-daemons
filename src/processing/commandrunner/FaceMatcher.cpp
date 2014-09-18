@@ -17,11 +17,12 @@ FaceMatcher::FaceMatcher() :
 FaceMatcher::~FaceMatcher() {
 }
 
-void FaceMatcher::validateRequest(std::vector<std::string> *input) {
+void FaceMatcher::validateRequest(const Ptr<vector<string>> & input) {
 
 }
 
-void FaceMatcher::initializeCommandRunner(DataOutput* out, SFBMCache* cache) {
+void FaceMatcher::initializeCommandRunner(const Ptr<DataOutput> & out,
+		const Ptr<SFBMCache> & cache) {
 	CommandRunner::initializeCommandRunner(out, cache);
 }
 

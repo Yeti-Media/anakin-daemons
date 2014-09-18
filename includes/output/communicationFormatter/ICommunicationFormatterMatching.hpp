@@ -26,9 +26,9 @@ public:
 	 *
 	 * returns a wstring* representing the actual CommunicationFormatter of a match
 	 */
-	virtual wstring* outputMatch(const Point2f & center, const string & label,
+	virtual Ptr<wstring> outputMatch(const Point2f & center, const string & label,
 			const vector<KeyPoint> & matchedKeypoints) {
-		return NULL;
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -39,9 +39,9 @@ public:
 	 *
 	 * returns a wstring* representing the actual CommunicationFormatter of patterns matches in a scene
 	 */
-	virtual wstring* outputMatches(const string & label,
-			const vector<wstring *> & values) {
-		return NULL;
+	virtual Ptr<wstring> outputMatches(const string & label,
+			const Ptr<vector<Ptr<wstring>>> & values) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 

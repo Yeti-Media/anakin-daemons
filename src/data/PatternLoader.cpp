@@ -3,70 +3,62 @@
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>
 
 using namespace Anakin;
+using namespace std;
 using namespace cv;
 
-PatternLoader::PatternLoader(Anakin::DataInput* input,
-		std::vector<Anakin::RichImg*>& patterns,
-		cv::Ptr<cv::FeatureDetector>& detector,
-		cv::Ptr<cv::DescriptorExtractor>& extractor) {
+PatternLoader::PatternLoader(const Ptr<DataInput> & input,
+		const Ptr<vector<Ptr<RichImg>>>& patterns,
+const Ptr<FeatureDetector> & detector,
+const Ptr<DescriptorExtractor> & extractor) {
 	this->input = input;
-	this->sinput = NULL;
-	this->patterns = &patterns;
+	this->patterns = patterns;
 	this->detector = detector;
 	this->extractor = extractor;
 	this->usingSerializedDataInput = false;
 }
 
-PatternLoader::PatternLoader(SerializedPatternDataInput* input,
-		std::vector<RichImg*>& patterns) {
+PatternLoader::PatternLoader(const Ptr<SerializedPatternDataInput> & input,
+		const Ptr<vector<Ptr<RichImg>>>& patterns) {
 	this->sinput = input;
-	this->input = NULL;
-	this->patterns = &patterns;
+	this->patterns = patterns;
 	this->usingSerializedDataInput = true;
 }
 
 void PatternLoader::load(QuickLZ* quickLZstate) {
 
 	if (!this->usingSerializedDataInput) {
-		Img* image;
-		while (this->input->nextInput(&image)) {
-			RichImg* richImage = new RichImg(image, this->detector,
+		Ptr<Img> image;
+		while (this->input->nextInput(image)) {
+			Ptr<RichImg> richImage = makePtr<RichImg>(image, this->detector,
 					this->extractor);
 			this->patterns->push_back(richImage);
 		}
 	} else {
-		ImageInfo* ii;
-		while (this->sinput->nextInput(quickLZstate, &ii)) {
-			RichImg* richImg = new RichImg(ii);
+		Ptr<ImageInfo> ii;
+		while (this->sinput->nextInput(quickLZstate, ii)) {
+			Ptr<RichImg> richImg = makePtr<RichImg>(ii);
 			this->patterns->push_back(richImg);
 		}
 	}
 
 }
 
-void PatternLoader::write(FileStorage& fs, const std::string&,
-		const ImageInfo& x) {
+void PatternLoader::write(FileStorage& fs, const string&, const ImageInfo& x) {
 	x.write(fs);
 }
 
-void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
+void PatternLoader::load_and_save(const string & outputfolder, bool saveToFile,
 		char mode) {
-	Img* image;
-//int processedFiles = 0;
+	Ptr<Img> image;
 	int filesToLoad = this->input->imagesToLoad();
-//std::cout << "images to process : " << filesToLoad << std::endl;
 	if (filesToLoad > 0) {
 		this->patterns->resize(filesToLoad);
-		//FIXME memory leak? verify all this->patterns ussage!
 	}
 	int idx = 0;
-	while (this->input->nextInput(&image)) {
-//        if (processedFiles > 0 && (processedFiles % 1000 == 0)) {
-//            std::cout << "1k files processed, total processed files : " << processedFiles << std::endl;
-//        }
-		RichImg* richImage = new RichImg(image, this->detector,
+	while (this->input->nextInput(image)) {
+		Ptr<RichImg> richImage = makePtr<RichImg>(image, this->detector,
 				this->extractor);
-		ImageInfo* ii = richImage->getImageInfo();
+		Ptr<ImageInfo> ii = richImage->getImageInfo();
 		string extension = mode & YAML ? ".yml" : ".xml";
 		string filename =
 				saveToFile ?
@@ -82,10 +74,10 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 		} else {
 			I_CommunicationFormatter* cf = new CommunicationFormatterJSON();
 			string data = fs.releaseAndGetString();
-			std::wcout
+			wcout
 					<< cf->format(I_CommunicationFormatter::e_mode::CF_PATTERNS,
 							data, I_CommunicationFormatter::e_color::CF_NONE)
-					<< std::endl;
+					<< endl;
 			delete cf;
 		}
 		if (filesToLoad > 0) {
@@ -94,10 +86,7 @@ void PatternLoader::load_and_save(string outputfolder, bool saveToFile,
 		} else {
 			this->patterns->push_back(richImage);
 		}
-		delete ii;
-//processedFiles += 1;
 	}
-//std::cout << "total processed files : " << processedFiles << std::endl;
 }
 
 PatternLoader::~PatternLoader() {

@@ -12,9 +12,9 @@ namespace Anakin {
 CommunicationFormatterCacheJSON::CommunicationFormatterCacheJSON() {
 }
 
-wstring* CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
+Ptr<wstring> CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 		int cacheFreeSpace, int smatcher_id_removed) {
-	/*   Result as wstring* representing a JSONObject
+	/*   Result as Ptr<wstring> representing a JSONObject
 
 	 root    -> index_added (int)
 
@@ -30,29 +30,29 @@ wstring* CommunicationFormatterCacheJSON::trainerAdd(int smatcher_id_added,
 
 	root[L"index_removed"] = new JSONValue((double) smatcher_id_removed);
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterCacheJSON::trainerDel(int smatcher_id_deleted,
+Ptr<wstring> CommunicationFormatterCacheJSON::trainerDel(int smatcher_id_deleted,
 		int cacheFreeSpace) {
 
 	return trainerAdd(-1, cacheFreeSpace, smatcher_id_deleted);
 }
 
-wstring* CommunicationFormatterCacheJSON::trainerUPD(int smatcher_id_updated) {
-	/*   Result as wstring* representing a JSONObject
+Ptr<wstring> CommunicationFormatterCacheJSON::trainerUPD(int smatcher_id_updated) {
+	/*   Result as Ptr<wstring> representing a JSONObject
 
 	 root    -> index_updated (int)
 	 */
 
 	JSONObject root;
 	root[L"index_updated"] = new JSONValue((double) smatcher_id_updated);
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
-wstring* CommunicationFormatterCacheJSON::cacheStatus(
-		vector<int> smatchers_in_cache, int cacheFreeSpace) {
-	/*   Result as wstring* representing a JSONObject
+Ptr<wstring> CommunicationFormatterCacheJSON::cacheStatus(
+		const Ptr<vector<int>> & smatchers_in_cache, int cacheFreeSpace) {
+	/*   Result as Ptr<wstring> representing a JSONObject
 
 	 root       -> cache_free_space (int)
 
@@ -63,14 +63,14 @@ wstring* CommunicationFormatterCacheJSON::cacheStatus(
 	root[L"cache_free_space"] = new JSONValue((double) cacheFreeSpace);
 	JSONArray values;
 
-	for (uint v = 0; v < smatchers_in_cache.size(); v++) {
-		int smatcher = smatchers_in_cache.at(v);
+	for (uint v = 0; v < smatchers_in_cache->size(); v++) {
+		int smatcher = smatchers_in_cache->at(v);
 		values.push_back(new JSONValue((double) smatcher));
 	}
 
 	root[L"indexes"] = new JSONValue(values);
 
-	return new wstring(JSONValue(root).Stringify());
+	return makePtr<wstring>(JSONValue(root).Stringify());
 }
 
 CommunicationFormatterCacheJSON::~CommunicationFormatterCacheJSON() {

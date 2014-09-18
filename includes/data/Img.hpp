@@ -3,6 +3,9 @@
 
 #include <opencv2/opencv.hpp>
 
+using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 /**
@@ -18,45 +21,45 @@ class Img {
 public:
 	/**
 	 * Initializer
-	 * param: cv::Mat& : the image used to construct this object
-	 * param: std::string label : a label asociated with the image, if this is a path then the filename will be used
+	 * param: Mat& : the image used to construct this object
+	 * param: string label : a label asociated with the image, if this is a path then the filename will be used
 	 * param: bool : if the image used will be cloned
 	 * ---
-	 * note : if bool param is false any changes this object makes to cv::Mat& will reflect on the original Mat
+	 * note : if bool param is false any changes this object makes to Mat& will reflect on the original Mat
 	 */
-	Img(cv::Mat& image, std::string label, bool clone = false);
+	Img(const Ptr<Mat> & image, const string & label, bool clone = false);
 
 	/**
 	 copy constructor
 	 */
-	Img(Img& other);
+	Img(const Ptr<Img> &  other);
 
 	/**
-	 * result: this will return the image asociated to this object : cv::Mat
+	 * result: this will return the image asociated to this object : Mat
 	 * ---
 	 * note : the image is returned without cloning so any chances made to it will reflect on the one used in this object
 	 */
-	cv::Mat getImage();
+	Ptr<Mat> getImage();
 	/**
-	 * result: a clone of the image asociated to this object : cv::Mat
+	 * result: a clone of the image asociated to this object : Mat
 	 */
-	cv::Mat safeGetImage();
+	Ptr<Mat> safeGetImage();
 
 	/**
-	 * result: this will return the grey version of the image asociated to this object : cv::Mat
+	 * result: this will return the grey version of the image asociated to this object : Mat
 	 * ---
 	 * note : the image is returned without cloning so any chances made to it will reflect on the one used in this object
 	 */
-	cv::Mat getGrayImg();
+	Ptr<Mat> getGrayImg();
 	/**
-	 * result: a clone of the grey version of the image asociated to this object : cv::Mat
+	 * result: a clone of the grey version of the image asociated to this object : Mat
 	 */
-	cv::Mat safeGetGrayImg();
+	Ptr<Mat> safeGetGrayImg();
 
 	/**
-	 * result: the image size : cv::Size
+	 * result: the image size : Size
 	 */
-	cv::Size getSize();
+	Size getSize();
 
 	/**
 	 * result: the type of the image : int
@@ -64,24 +67,24 @@ public:
 	int getType();
 
 	/**
-	 * result: the label asociated with the image : std::string
+	 * result: the label asociated with the image : string
 	 */
-	std::string getLabel();
+	string getLabel();
 
 protected:
-	cv::Mat image;      //main image
-	cv::Mat grayImg;    //gray version of the image
+	Ptr<Mat> image;      //main image
+	Ptr<Mat> grayImg;    //gray version of the image
 	int type;           //main image type
-	cv::Size imageSize; //main image type
-	void transformToGray(const cv::Mat& image, cv::Mat& gray);
-	std::string label;  //asociated label
+	Size imageSize; //main image type
+	void transformToGray(const Ptr<Mat> & image, Ptr<Mat> & gray);
+	string label;  //asociated label
 
 private:
 	/**
 	 *   if str is [path/]filename.extension this will return filename
 	 *   else this will return str
 	 */
-	std::string getFilename(const std::string& str);
+	string getFilename(const string& str);
 
 };
 

@@ -1,6 +1,7 @@
 #ifndef DATAOUTPUT_HPP
 #define DATAOUTPUT_HPP
 
+#include <opencv2/opencv.hpp>
 #include <output/DataEnumerates.hpp>
 #include <output/Msj.hpp>
 #include <pthread.h>
@@ -9,6 +10,7 @@
 #include <string>
 #include <connection/HTTPSocket.hpp>
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
@@ -29,7 +31,7 @@ public:
 	 * -------------------------------------------
 	 * note: read HTTPSocket and HTTPListener documentation
 	 */
-	DataOutput(HTTPSocket* httpSocket);
+	DataOutput(const Ptr<HTTPSocket> & httpSocket);
 	/**
 	 * Constructor (use console only to output data)
 	 */
@@ -45,9 +47,9 @@ public:
 	 * --------------------------------
 	 * note : if using HTTPSocket then reqID must be set
 	 */
-	void output(wstring* data, int reqID = 0);
+	void output(const Ptr<wstring> & data, int reqID = 0);
 
-	void error(wstring* data);
+	void error(const Ptr<wstring> & data);
 
 	/**
 	 * On some cases the internal mechanism used to output data
@@ -78,9 +80,9 @@ private:
 	 */
 	struct WorkerArgs {
 		E_DataOutputType outputType;
-		HTTPSocket* httpSocket;
+		Ptr<HTTPSocket> httpSocket;
 		BlockingQueue<Msj*>* workingQueue;
-		WorkerArgs(E_DataOutputType outputType, HTTPSocket* httpSocket,
+		WorkerArgs(E_DataOutputType outputType, const Ptr<HTTPSocket> & httpSocket,
 				BlockingQueue<Msj*>* workingQueue) :
 				outputType(outputType), httpSocket(httpSocket), workingQueue(
 						workingQueue) {

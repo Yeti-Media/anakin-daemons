@@ -25,6 +25,7 @@ void* TempDirCleaner::startWorker(void *ptr) {
 	DirCleanerWorker* worker = new DirCleanerWorker(wargs->workingQueue, wargs->delayedSeconds);
 	worker->start();
 	delete worker;
+	delete wargs;
 }
 
 TempDirCleaner::~TempDirCleaner() {

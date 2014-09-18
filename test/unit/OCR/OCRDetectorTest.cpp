@@ -53,9 +53,9 @@ struct PathFixtureOCRDetectorTest {
 			}
 		}
 
-		testDir = dir;
+		testDir = boost::filesystem::path(dir);
 		BOOST_REQUIRE_MESSAGE(fs::is_directory(testDir),
-				"Test directory " << testDir << " not found");
+				"Test directory " + testDir.string() + " not found");
 	}
 	~PathFixtureOCRDetectorTest() {
 		BOOST_TEST_MESSAGE("teardown fixture");
@@ -78,19 +78,20 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 
 	string lastError;
 
-	DataOutput* output = new DataOutput();
+	Ptr<DataOutput> output = makePtr<DataOutput>();
 
 	OCR* ocr = new OCR();
-	ocr->initializeCommandRunner(output, NULL);
+	Ptr<SFBMCache> nullCache;
+	ocr->initializeCommandRunner(output, nullCache);
 
-	vector<string> * inputs = new vector<string>();
+	Ptr<vector<string>> inputs = makePtr<vector<string>>();
 	inputs->push_back("-ocr");
 	inputs->push_back(img_3.string());
 
 	ocr->validateRequest(inputs);
-	vector<string>* results = ocr->detect(lastError);
+	Ptr<vector<string>> results = ocr->detect(lastError);
 
-	if (results == NULL) {
+	if (results.get() == NULL) {
 		BOOST_FAIL("OCR fail: " + lastError);
 	}
 

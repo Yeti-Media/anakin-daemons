@@ -12,6 +12,7 @@
 #include <utils/files/Files.hpp>
 
 using namespace Anakin;
+using namespace cv;
 using namespace std;
 
 DBDriver::DBDriver(TempDirCleaner * tempDirCleaner) {
@@ -31,8 +32,8 @@ bool DBDriver::connect() {
 	return DBDriver::connect("", "", "", "", "");
 }
 
-bool DBDriver::connect(const string & pghost, const string & pgport, const string & dbName,
-		const string & login, const string & pwd) {
+bool DBDriver::connect(const string & pghost, const string & pgport,
+		const string & dbName, const string & login, const string & pwd) {
 	conn = PQsetdbLogin(pghost.c_str(), pgport.c_str(), NULL, NULL,
 			dbName.c_str(), login.c_str(), pwd.c_str());
 
@@ -56,7 +57,7 @@ bool DBDriver::disconnect() {
 	}
 }
 
-bool DBDriver::saveUser(DBUser* u) {
+bool DBDriver::saveUser(const Ptr<DBUser> & u) {
 	if (checkConn()) {
 		PGresult *res;
 		string user_id = to_string(u->getID());
@@ -84,9 +85,10 @@ bool DBDriver::saveUser(DBUser* u) {
 	}
 }
 
-bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
-		bool full, const string & tmpDir, QuickLZ* quickLZstate) {
-	//internal function, do not init *error=false
+bool DBDriver::retrieveUser(int id, bool & error, bool load,
+		Ptr<DBUser> & result, bool full, const string & tmpDir,
+		QuickLZ* quickLZstate) {
+	//internal function, do not init error=false
 	if (checkConn()) {
 		PGresult *res;
 		string user_id = to_string(id);
@@ -107,7 +109,7 @@ bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
-			*error = true;
+			error = true;
 			return false;
 		}
 		if (PQntuples(res) == 0) {
@@ -117,28 +119,23 @@ bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
 			return false;
 		}
 		if (load) {
-			if (result != NULL) {
-				DBUser* u = new DBUser(id);
-				*result = u;
+			if (result.get() != NULL) {
+				result = makePtr<DBUser>(id);
 				if (full) {
 					vector<int> pattern_ids = getUserPatterns(id, error);
-					if (*error) {
+					if (error) {
 						return false;
 					}
 					for (uint p = 0; p < pattern_ids.size(); p++) {
 						int pid = pattern_ids.at(p);
-						DBPattern* pattern;
-						if (!retrievePattern(pid, error, true, &pattern, tmpDir,
+						Ptr<DBPattern> pattern;
+						if (!retrievePattern(pid, error, true, pattern, tmpDir,
 								quickLZstate)) {
 							return false;
 						}
-						u->addPattern(pattern);
+						result->addPattern(pattern);
 					}
 				}
-			} else {
-				logMessage("User** param is NULL");
-				*error = true;
-				return false;
 			}
 		}
 		string msg;
@@ -148,19 +145,19 @@ bool DBDriver::retrieveUser(int id, bool * error, bool load, DBUser** result,
 		PQclear(res);
 		return true;
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
 
-vector<int> DBDriver::getUserPatterns(int id, bool* error) {
+vector<int> DBDriver::getUserPatterns(int id, bool & error) {
 	vector<int> pids(0);
 	PGresult *res;
 	if (checkConn()) {
 		bool cerror;
-		int category = getCategoryID(Constants::CATEGORIES_MATCHING, &cerror);
+		int category = getCategoryID(Constants::CATEGORIES_MATCHING, cerror);
 		if (cerror) {
-			*error = true;
+			error = true;
 		} else {
 			string userId = to_string(id);
 			string scategory = to_string(category);
@@ -186,32 +183,34 @@ vector<int> DBDriver::getUserPatterns(int id, bool* error) {
 					//	const char* value = PQgetvalue(res, t, 0);
 					pids.push_back(stoi(PQgetvalue(res, t, 0)));
 				}
-				*error = false;
+				error = false;
 			} else {
 				logMessage(PQerrorMessage(conn));
-				*error = true;
+				error = true;
 			}
 		}
 	} else {
-		*error = true;
+		error = true;
 	}
 	PQclear(res);
-	*error = false;
+	error = false;
 	return pids;
 }
 
-bool DBDriver::saveUserPatterns(DBUser* u, const string & tmpDir,
+bool DBDriver::saveUserPatterns(const Ptr<DBUser> & u, const string & tmpDir,
 		QuickLZ* quickLZstate, bool saveNeededObjectsFirst) {
-	vector<DBPattern*>* patterns = u->getPatterns();
+	Ptr<vector<Ptr<DBPattern>>> patterns = u->getPatterns();
 	string spatterns = "";
 	bool error = false;
-	bool userExist = retrieveUser(u->getID(), &error, false, NULL, false,
+	Ptr<DBUser> nullUser;
+	bool userExist = DBDriver::retrieveUser(u->getID(), error, false,nullUser, false,
 			tmpDir, quickLZstate);
+
 	if (!userExist && !error) {
 		if (saveNeededObjectsFirst) {
 			if (!userExist) {
 				if (!saveUser(u))
-					return false;
+				return false;
 			}
 		} else {
 			string error_user_doesnt_exist;
@@ -224,7 +223,7 @@ bool DBDriver::saveUserPatterns(DBUser* u, const string & tmpDir,
 		return false;
 	}
 	for (uint p = 0; p < patterns->size(); p++) {
-		DBPattern* pattern = patterns->at(p);
+		Ptr<DBPattern> pattern = patterns->at(p);
 		if (!savePattern(pattern, quickLZstate)) {
 			return false;
 		}
@@ -238,15 +237,15 @@ bool DBDriver::saveUserPatterns(DBUser* u, const string & tmpDir,
 	return true;
 }
 
-vector<int> DBDriver::getUserHistograms(int id, bool* error) {
+vector<int> DBDriver::getUserHistograms(int id, bool & error) {
 	return getUserHORLS(id, Constants::HISTOGRAM, error);
 }
 
-vector<int> DBDriver::getUserLandscapes(int id, bool* error) {
+vector<int> DBDriver::getUserLandscapes(int id, bool & error) {
 	return getUserHORLS(id, Constants::LANDSCAPE, error);
 }
 
-bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
+bool DBDriver::saveHORL(const Ptr<DBHistogram> & h, const string & tmpDir,
 		QuickLZ* quickLZstate, bool saveNeededObjectsFirst) {
 	if (!h->hasFileData()) {
 		logMessage(
@@ -258,12 +257,13 @@ bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
 				(h->getMode() & Constants::HISTOGRAM) ?
 						"histogram" : "landscape";
 		bool error = false;
-		bool userExist = retrieveUser(h->getUserID(), &error, false, NULL,
+		Ptr<DBUser> nullUser;
+		bool userExist = retrieveUser(h->getUserID(), error, false, nullUser,
 				false, tmpDir, quickLZstate);
 		if (!userExist && !error) {
 			if (saveNeededObjectsFirst) {
 				if (!userExist) {
-					DBUser* u = new DBUser(h->getUserID());
+					Ptr<DBUser> u = makePtr<DBUser>(h->getUserID());
 					if (!saveUser(u))
 						return false;
 				}
@@ -281,12 +281,12 @@ bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
 				(h->getMode() & Constants::HISTOGRAM) ?
 						Constants::CATEGORIES_COMPARISON :
 						Constants::CATEGORIES_LANDSCAPES;
-		int category = getCategoryID(categoryName, &error);
+		int category = getCategoryID(categoryName, error);
 		if (error) {
 			return false;
 		}
 		int pattern_id;
-		if (!savePatternBasicInfo(h->getUserID(), category, &pattern_id)) {
+		if (!savePatternBasicInfo(h->getUserID(), category, pattern_id)) {
 			return false;
 		}
 		string sspid = to_string(pattern_id);
@@ -299,14 +299,14 @@ bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
 
 		int colorDataFile_id_value;
 		compress_file(colorDataFile, quickLZstate);
-		if (!saveFileToDB(colorDataFile, &colorDataFile_id_value)) {
+		if (!saveFileToDB(colorDataFile, colorDataFile_id_value)) {
 			return false;
 		}
 		string s_colorDataFile_id_value = to_string(colorDataFile_id_value);
 
 		int grayDataFile_id_value;
 		compress_file(grayDataFile, quickLZstate);
-		if (!saveFileToDB(grayDataFile, &grayDataFile_id_value)) {
+		if (!saveFileToDB(grayDataFile, grayDataFile_id_value)) {
 			return false;
 		}
 
@@ -314,7 +314,7 @@ bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
 
 		int hsvDataFile_id_value;
 		compress_file(hsvDataFile, quickLZstate);
-		if (!saveFileToDB(hsvDataFile, &hsvDataFile_id_value)) {
+		if (!saveFileToDB(hsvDataFile, hsvDataFile_id_value)) {
 			return false;
 		}
 
@@ -355,13 +355,13 @@ bool DBDriver::saveHORL(DBHistogram* h, const string & tmpDir,
 	}
 }
 
-bool DBDriver::saveUserHistograms(DBUser* u, const string & tmpDir,
+bool DBDriver::saveUserHistograms(const Ptr<DBUser> & u, const string & tmpDir,
 		QuickLZ* quickLZstate, bool saveNeededObjectsFirst) {
 	return saveUserHORLS(u, Constants::HISTOGRAM, tmpDir, quickLZstate,
 			saveNeededObjectsFirst);
 }
 
-bool DBDriver::saveUserLandscapes(DBUser* u, const string & tmpDir,
+bool DBDriver::saveUserLandscapes(const Ptr<DBUser> & u, const string & tmpDir,
 		QuickLZ* quickLZstate, bool saveNeededObjectsFirst) {
 	return saveUserHORLS(u, Constants::LANDSCAPE, tmpDir, quickLZstate,
 			saveNeededObjectsFirst);
@@ -369,16 +369,16 @@ bool DBDriver::saveUserLandscapes(DBUser* u, const string & tmpDir,
 
 //PATTERN
 
-bool DBDriver::savePattern(DBPattern* p, QuickLZ* quickLZstate) {
+bool DBDriver::savePattern(Ptr<DBPattern> & p, QuickLZ* quickLZstate) {
 	if (checkConn()) {
 		bool error;
-		int category = getCategoryID(Constants::CATEGORIES_MATCHING, &error);
+		int category = getCategoryID(Constants::CATEGORIES_MATCHING, error);
 		if (error) {
 			return false;
 		}
 		string savePattenBI;
 		int pid;
-		if (!savePatternBasicInfo(p->getUserID(), category, &pid)) {
+		if (!savePatternBasicInfo(p->getUserID(), category, pid)) {
 			return false;
 		}
 		p->changeID(pid);
@@ -396,13 +396,13 @@ bool DBDriver::savePattern(DBPattern* p, QuickLZ* quickLZstate) {
 	}
 }
 
-bool DBDriver::retrievePattern(int id, bool * error, bool load,
-		DBPattern** result, const string & tmpDir, QuickLZ* quickLZstate) {
-	//internal function, do not init *error=false
+bool DBDriver::retrievePattern(int id, bool & error, bool load,
+		Ptr<DBPattern> & result, const string & tmpDir, QuickLZ* quickLZstate) {
+	//internal function, do not init error=false
 	if (checkConn()) {
 		int user_id;
-		string * data = new string();
-		if (!getPatternBasicInfo(id, &user_id, error)) {
+		string data;
+		if (!getPatternBasicInfo(id, user_id, error)) {
 			return false;
 		}
 		string basicInfo = getMessage();
@@ -412,8 +412,7 @@ bool DBDriver::retrievePattern(int id, bool * error, bool load,
 				return false;
 			}
 			descInfo = getMessage();
-			DBPattern* p = new DBPattern(id, user_id, false, data);
-			*result = p;
+			result = makePtr<DBPattern>(id, user_id, false, makePtr<string>(data));
 		}
 		string msg;
 		msg.append(basicInfo).append(
@@ -421,33 +420,36 @@ bool DBDriver::retrievePattern(int id, bool * error, bool load,
 		logMessage(msg);
 		return true;
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
 
 //HISTOGRAMS and LANDSCAPES
 
-bool DBDriver::retrieveHistogram(int id, bool * error, bool load,
-		DBHistogram** result, const string & tmpDir, QuickLZ* quickLZstate) {
+bool DBDriver::retrieveHistogram(int id, bool & error, bool load,
+		Ptr<DBHistogram> & result, const string & tmpDir,
+		QuickLZ* quickLZstate) {
 	return retrieveHORL(id, Constants::HISTOGRAM, error, load, result, tmpDir,
 			quickLZstate);
 }
 
-bool DBDriver::retrieveLandscape(int id, bool * error, bool load,
-		DBHistogram** result, const string & tmpDir, QuickLZ* quickLZstate) {
+bool DBDriver::retrieveLandscape(int id, bool & error, bool load,
+		Ptr<DBHistogram> & result, const string & tmpDir,
+		QuickLZ* quickLZstate) {
 	return retrieveHORL(id, Constants::LANDSCAPE, error, load, result, tmpDir,
 			quickLZstate);
 }
 
 //SERIALIZED FLANN BASED MATCHER
-bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
+bool DBDriver::storeSFBM(const string & filename, int & smatcher_id, int userID,
 		const string & tmpDir, QuickLZ* quickLZstate, bool checkExistence) {
 	bool error = false;
+	Ptr<DBUser> nullUser;
 	if (checkExistence
-			&& !retrieveUser(userID, &error, false, NULL, false, tmpDir,
+			&& !retrieveUser(userID, error, false, nullUser, false, tmpDir,
 					quickLZstate)) {
-		DBUser* u = new DBUser(userID);
+		Ptr<DBUser> u = makePtr<DBUser>(userID);
 		if (!saveUser(u))
 			return false;
 	} else if (error) {
@@ -458,10 +460,10 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 	if (checkConn()) {
 		int index_id_value;
 		int matcher_id_value;
-		if (!saveFileToDB(index_filename, &index_id_value)) {
+		if (!saveFileToDB(index_filename, index_id_value)) {
 			return false;
 		}
-		if (!saveFileToDB(matcher_filename, &matcher_id_value)) {
+		if (!saveFileToDB(matcher_filename, matcher_id_value)) {
 			return false;
 		}
 		PGresult *res;
@@ -491,7 +493,7 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 		}
 		//const char* tid = ;
 		string stid(PQgetvalue(res, 0, 0));
-		*smatcher_id = stoi(stid);
+		smatcher_id = stoi(stid);
 		PQclear(res);
 		string msg;
 		msg.append("succesfully uploaded ").append(matcher_filename).append(
@@ -501,9 +503,9 @@ bool DBDriver::storeSFBM(string filename, int * smatcher_id, int userID,
 	return true;
 }
 
-bool DBDriver::retrieveSFBM(int smatcher_id, bool * error,
+bool DBDriver::retrieveSFBM(int smatcher_id, bool & error,
 		const string & tmpDir) {
-	//internal function, do not init *error=false
+	//internal function, do not init error=false
 	if (checkConn()) {
 		PGresult *res;
 		string sid = to_string(smatcher_id);
@@ -523,7 +525,7 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error,
 		if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
-			*error = true;
+			error = true;
 			return false;
 		}
 		if (PQntuples(res) < 1) {
@@ -551,17 +553,17 @@ bool DBDriver::retrieveSFBM(int smatcher_id, bool * error,
 			logMessage(msg);
 			return true;
 		} else {
-			*error = true;
+			error = true;
 			return false;
 		}
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
 
-bool DBDriver::sfbmExists(int smatcher_id, bool * error) {
-	*error = false; //FIXME check this init
+bool DBDriver::sfbmExists(int smatcher_id, bool & error) {
+	error = false; //FIXME check this init
 	if (checkConn()) {
 		PGresult *res;
 		string sid = to_string(smatcher_id);
@@ -580,7 +582,7 @@ bool DBDriver::sfbmExists(int smatcher_id, bool * error) {
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
-			*error = true;
+			error = true;
 			return false;
 		}
 		bool exists = (PQntuples(res) > 0);
@@ -591,7 +593,7 @@ bool DBDriver::sfbmExists(int smatcher_id, bool * error) {
 		logMessage(msg);
 		return true;
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
@@ -605,8 +607,8 @@ bool DBDriver::storeNthPattern(int smatcher_id, int pidx, int patternID) {
 	return false;
 }
 
-bool DBDriver::storeNthPattern(int smatcher_id, int pidx, DBPattern* p,
-		QuickLZ* quickLZstate) {
+bool DBDriver::storeNthPattern(int smatcher_id, int pidx,
+		Ptr<DBPattern> & p, QuickLZ* quickLZstate) {
 	if (checkConn()) {
 		if (!savePattern(p, quickLZstate)) {
 			return false;
@@ -618,15 +620,15 @@ bool DBDriver::storeNthPattern(int smatcher_id, int pidx, DBPattern* p,
 }
 
 bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
-		ImageInfo** pattern, bool * error, const string & tmpDir,
+		Ptr<ImageInfo> & pattern, bool & error, const string & tmpDir,
 		QuickLZ* quickLZstate) {
-	//internal function, do not init *error=false
+	//internal function, do not init error=false
 	if (checkConn()) {
 		PGresult *res;
 		string sid = to_string(smatcher_id);
 		string spidx = to_string(pidx);
 		int category = getCategoryID(Constants::CATEGORIES_MATCHING, error);
-		if (*error) {
+		if (error) {
 			return false;
 		}
 		const int numParam = 3;
@@ -650,7 +652,7 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
-			*error = true;
+			error = true;
 			return false;
 		}
 		if (PQntuples(res) == 0) {
@@ -663,36 +665,36 @@ bool DBDriver::retrieveNthPattern(int smatcher_id, int pidx,
 		//const char* retrieved_pid = PQgetvalue(res, 0, 0);
 		string retrieved_spid(PQgetvalue(res, 0, 0));
 		PQclear(res);
-		DBPattern* dbp;
-		if (!retrievePattern(stoi(retrieved_spid), error, true, &dbp, tmpDir,
+		Ptr<DBPattern> dbp;
+		if (!retrievePattern(stoi(retrieved_spid), error, true, dbp, tmpDir,
 				quickLZstate)) {
 			return false;
 		}
 
 		//string xmlData = "<?xml version=\"1.0\"?>";
 		//xmlData.append(*dbp->getData());
-		ImageInfo *ii = new ImageInfo();
+		Ptr<ImageInfo> ii = makePtr<ImageInfo>();
 		cv::FileStorage fstorage((*dbp->getData()).c_str(),
 				cv::FileStorage::READ | cv::FileStorage::MEMORY);
 		cv::FileNode n = fstorage.root();
 		ii->read(n);
 		fstorage.release();
 		ii->setLabel(retrieved_spid);
-		*pattern = ii;
+		pattern = ii;
 		string msg;
 		msg.append(spidx).append("-th Pattern of smatcher ").append(sid).append(
 				" loaded");
 		logMessage(msg);
 		return true;
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
 
 //SCENE
 
-bool DBDriver::storeScene(DBPattern* scene, QuickLZ* quickLZstate) {
+bool DBDriver::storeScene(const Ptr<DBPattern> & scene, QuickLZ* quickLZstate) {
 	if (!scene->hasFileData()) {
 		logMessage(
 				"The DBPattern can't be saved as a data. File must be provided.");
@@ -702,7 +704,7 @@ bool DBDriver::storeScene(DBPattern* scene, QuickLZ* quickLZstate) {
 		string scene_filename = *(scene->getData());
 		int scene_id_value;
 		compress_file(scene_filename, quickLZstate);
-		if (!saveFileToDB(scene_filename, &scene_id_value)) {
+		if (!saveFileToDB(scene_filename, scene_id_value)) {
 			return false;
 		}
 
@@ -741,9 +743,9 @@ bool DBDriver::storeScene(DBPattern* scene, QuickLZ* quickLZstate) {
 	}
 }
 
-bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error,
+bool DBDriver::retrieveScene(Ptr<ImageInfo> & scene, int sceneID, bool & error,
 		const string & tmpDir, QuickLZ* quickLZstate) {
-	//internal function, do not init *error=false
+	//internal function, do not init error=false
 	if (checkConn()) {
 		PGresult *res;
 		string sid = to_string(sceneID);
@@ -761,7 +763,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error,
 		if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
-			*error = true;
+			error = true;
 			return false;
 		}
 		if (PQntuples(res) == 0) {
@@ -776,14 +778,14 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error,
 		string file = sid + ".xml";
 		if (loadFileFromDB(stoi(file_sid), file, tmpDir)) {
 			string completePath = tmpDir + file;
-			string * uncompressedData = new string();
+			string uncompressedData;
 			decompress_from_file(completePath, quickLZstate, uncompressedData);
 			tempCleaner->deleteFile(fs::path(completePath));
-			DBPattern* pscene = new DBPattern(false, uncompressedData);
+			Ptr<DBPattern> pscene = makePtr<DBPattern>(false, makePtr<string>(uncompressedData));
 			pscene->changeID(sceneID);
-			ImageInfo* s = XMLoader::dbpatternToImageInfo(pscene);
+			Ptr<ImageInfo> s = XMLoader::dbpatternToImageInfo(pscene);
 			s->setLabel(sid);
-			*scene = s;
+			scene = s;
 		} else {
 			return false;
 		}
@@ -793,7 +795,7 @@ bool DBDriver::retrieveScene(ImageInfo** scene, int sceneID, bool * error,
 		logMessage(msg);
 		return true;
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
@@ -817,7 +819,8 @@ int DBDriver::getLogSize() {
 
 //PRIVATE
 
-bool DBDriver::savePatternDescriptors(DBPattern* p, QuickLZ* quickLZstate) {
+bool DBDriver::savePatternDescriptors(const Ptr<DBPattern> & p,
+		QuickLZ* quickLZstate) {
 	if (!p->hasFileData()) {
 		logMessage(
 				"The DBPattern can't be saved as a data. File must be provided.");
@@ -828,7 +831,7 @@ bool DBDriver::savePatternDescriptors(DBPattern* p, QuickLZ* quickLZstate) {
 	if (checkConn()) {
 		int file_id_value;
 		compress_file(filename, quickLZstate);
-		if (!saveFileToDB(filename, &file_id_value)) {
+		if (!saveFileToDB(filename, file_id_value)) {
 			return false;
 		}
 		string file_id_value_value = to_string(file_id_value);
@@ -865,9 +868,9 @@ bool DBDriver::savePatternDescriptors(DBPattern* p, QuickLZ* quickLZstate) {
 	return false;
 }
 
-bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
+bool DBDriver::getPatternDescriptors(int id, string & dataOutput, bool & error,
 		const string & tmpDir, QuickLZ* quickLZstate) {
-	//internal function, do not init *error=false
+	//internal function, do not init error=false
 	PGresult *res;
 	string sid = to_string(id);
 	const int numParam = 1;
@@ -886,7 +889,7 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
 			&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 		logMessage(PQerrorMessage(conn));
 		PQclear(res);
-		*error = true;
+		error = true;
 		return false;
 	}
 	if (PQntuples(res) == 0) {
@@ -902,7 +905,7 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
 	string file = sid + ".xml";
 	if (loadFileFromDB(stoi(file_sid), file, tmpDir)) {
 		string completePath = tmpDir + file;
-		decompress_from_file(completePath, quickLZstate, data);
+		decompress_from_file(completePath, quickLZstate, dataOutput);
 		tempCleaner->deleteFile(fs::path(completePath));
 		//TODO BORRAR!
 	} else {
@@ -914,7 +917,7 @@ bool DBDriver::getPatternDescriptors(int id, string * data, bool * error,
 	return true;
 }
 
-bool DBDriver::savePatternBasicInfo(int user_id, int category_id, int * pid) {
+bool DBDriver::savePatternBasicInfo(int user_id, int category_id, int & pid) {
 	PGresult *res;
 	string suid = to_string(user_id);
 	string scategory = to_string(category_id);
@@ -938,16 +941,16 @@ bool DBDriver::savePatternBasicInfo(int user_id, int category_id, int * pid) {
 	}
 	//const char* retrieved_pid = PQgetvalue(res, 0, 0);
 	//string spid(PQgetvalue(res, 0, 0));
-	*pid = stoi(PQgetvalue(res, 0, 0));
+	pid = stoi(PQgetvalue(res, 0, 0));
 	string msg;
-	msg.append("Saved basic information for pattern ").append(to_string(*pid));
+	msg.append("Saved basic information for pattern ").append(to_string(pid));
 	logMessage(msg);
 	PQclear(res);
 	return true;
 }
 
-bool DBDriver::getPatternBasicInfo(int id, int * user_id, bool * error) {
-	//internal function, do not init *error=false
+bool DBDriver::getPatternBasicInfo(int id, int & user_id, bool & error) {
+	//internal function, do not init error=false
 	PGresult *res;
 	string sid = to_string(id);
 	const int numParam = 1;
@@ -965,7 +968,7 @@ bool DBDriver::getPatternBasicInfo(int id, int * user_id, bool * error) {
 			&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 		logMessage(PQerrorMessage(conn));
 		PQclear(res);
-		*error = true;
+		error = true;
 		return false;
 	}
 	if (PQntuples(res) == 0) {
@@ -976,7 +979,7 @@ bool DBDriver::getPatternBasicInfo(int id, int * user_id, bool * error) {
 	}
 //	const char* uid = PQgetvalue(res, 0, 0);
 	string suid(PQgetvalue(res, 0, 0));
-	*user_id = stoi(suid);
+	user_id = stoi(suid);
 	string msg;
 	msg.append("Basic information for pattern ").append(sid).append(" loaded");
 	logMessage(msg);
@@ -1014,8 +1017,8 @@ bool DBDriver::updatePatternTrainerInfo(int id, int trainer_id, int position) {
 	return true;
 }
 
-int DBDriver::getCategoryID(string name, bool * error) {
-	//internal function, do not init *error=false
+int DBDriver::getCategoryID(string name, bool & error) {
+	//internal function, do not init error=false
 	PGresult *res;
 	const int numParam = 1;
 	const char *paramValues[numParam] = { name.c_str() };
@@ -1033,14 +1036,14 @@ int DBDriver::getCategoryID(string name, bool * error) {
 			&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 		logMessage(PQerrorMessage(conn));
 		PQclear(res);
-		*error = true;
+		error = true;
 		return -1;
 	}
 	if (PQntuples(res) == 0) {
 		string category_not_found;
 		category_not_found.append("No category found with name: ").append(name);
 		logMessage(category_not_found);
-		*error = true;
+		error = true;
 		return -1;
 	}
 	//const char* id = PQgetvalue(res, 0, 0);
@@ -1050,7 +1053,7 @@ int DBDriver::getCategoryID(string name, bool * error) {
 	msg.append("Category ").append(name).append(" found with id ").append(sid);
 	logMessage(msg);
 	PQclear(res);
-	*error = false;
+	error = false;
 	return cid;
 }
 
@@ -1063,11 +1066,13 @@ bool DBDriver::checkConn() {
 	return true;
 }
 
-bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
-		DBHistogram** result, const string & tmpDir, QuickLZ* quickLZstate) {
-	*error = false;
+bool DBDriver::retrieveHORL(int id, char mode, bool & error, bool load,
+		Ptr<DBHistogram> & result, const string & tmpDir,
+		QuickLZ* quickLZstate) {
+	error = false;
 	if (checkConn()) {
-		if (!retrievePattern(id, error, load, NULL, tmpDir, quickLZstate)) {
+		Ptr<DBPattern> nulluser;
+		if (!retrievePattern(id, error, load, nulluser, tmpDir, quickLZstate)) {
 			return false;
 		}
 		PGresult *res;
@@ -1092,7 +1097,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				&& PQresultStatus(res) != PGRES_TUPLES_OK) {
 			logMessage(PQerrorMessage(conn));
 			PQclear(res);
-			*error = false;
+			error = false;
 			return false;
 		}
 		string object =
@@ -1105,14 +1110,14 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 			return false;
 		}
 		if (load) {
-			if (result != NULL) {
-				DBHistogram* horl = new DBHistogram(false, id,
+			if (result.get() != NULL) {
+				Ptr<DBHistogram> horl = makePtr<DBHistogram>(false, id,
 						(mode & Constants::LANDSCAPE));
 
 				string sid(PQgetvalue(res, 0, 0));
 				string file = sid + ".xml";
 				if (loadFileFromDB(stoi(sid), file, tmpDir)) {
-					string * uncompressedData = new string();
+					string uncompressedData;
 					decompress_from_file(tmpDir + file, quickLZstate,
 							uncompressedData);
 					tempCleaner->deleteFile(fs::path(tmpDir + file));
@@ -1124,7 +1129,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				sid = string(PQgetvalue(res, 0, 1));
 				file = sid + ".xml";
 				if (loadFileFromDB(stoi(sid), file, tmpDir)) {
-					string * uncompressedData = new string();
+					string uncompressedData;
 					decompress_from_file(tmpDir + file, quickLZstate,
 							uncompressedData);
 					tempCleaner->deleteFile(fs::path(tmpDir + file));
@@ -1136,7 +1141,7 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				sid = string(PQgetvalue(res, 0, 2));
 				file = sid + ".xml";
 				if (loadFileFromDB(stoi(sid), file, tmpDir)) {
-					string * uncompressedData = new string();
+					string uncompressedData;
 					decompress_from_file(tmpDir + file, quickLZstate,
 							uncompressedData);
 					tempCleaner->deleteFile(fs::path(tmpDir + file));
@@ -1144,10 +1149,10 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 				} else {
 					return false;
 				}
-				*result = horl;
+				result = horl;
 			} else {
 				logMessage("DBHistogram** param is NULL");
-				*error = true;
+				error = true;
 				return false;
 			}
 		}
@@ -1158,12 +1163,12 @@ bool DBDriver::retrieveHORL(int id, char mode, bool * error, bool load,
 		PQclear(res);
 		return true;
 	} else {
-		*error = true;
+		error = true;
 		return false;
 	}
 }
 
-vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
+vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool & error) {
 	vector<int> pids(0);
 	PGresult *res;
 	if (checkConn()) {
@@ -1172,9 +1177,9 @@ vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 						Constants::CATEGORIES_COMPARISON :
 						Constants::CATEGORIES_LANDSCAPES;
 		bool cerror;
-		int category = getCategoryID(cat_name, &cerror);
+		int category = getCategoryID(cat_name, cerror);
 		if (cerror) {
-			*error = cerror;
+			error = cerror;
 		} else {
 			string scategory = to_string(category);
 			const int numParam = 2;
@@ -1199,28 +1204,29 @@ vector<int> DBDriver::getUserHORLS(int user_id, char mode, bool* error) {
 					//		const char* value = PQgetvalue(res, t, 0);
 					pids.push_back(stoi(PQgetvalue(res, t, 0)));
 				}
-				*error = false;
+				error = false;
 			} else {
 				logMessage(PQerrorMessage(conn));
-				*error = true;
+				error = true;
 			}
 		}
 	} else {
-		*error = true;
+		error = true;
 	}
 	PQclear(res);
 	return pids;
 }
 
-bool DBDriver::saveUserHORLS(DBUser* u, char mode, const string & tmpDir,
-		QuickLZ* quickLZstate, bool saveNeededObjectsFirst) {
-	vector<DBHistogram*>* horls =
-			(mode & Constants::HISTOGRAM) ?
-					u->getHistograms() : u->getLandscapes();
+bool DBDriver::saveUserHORLS(const Ptr<DBUser> & u, char mode,
+		const string & tmpDir, QuickLZ* quickLZstate,
+		bool saveNeededObjectsFirst) {
+	Ptr<vector<Ptr<DBHistogram>>> horls =
+	(mode & Constants::HISTOGRAM) ?
+	u->getHistograms() : u->getLandscapes();
 	string object = (mode & Constants::HISTOGRAM) ? "histograms" : "landscapes";
 	string shorls = "";
 	for (uint h = 0; h < horls->size(); h++) {
-		DBHistogram* horl = horls->at(h);
+		Ptr<DBHistogram> horl = horls->at(h);
 		if (!saveHORL(horl, tmpDir, quickLZstate, saveNeededObjectsFirst)) {
 			return false;
 		}
@@ -1234,7 +1240,7 @@ bool DBDriver::saveUserHORLS(DBUser* u, char mode, const string & tmpDir,
 	return true;
 }
 
-bool DBDriver::saveFileToDB(const std::string & filename, int * fid) {
+bool DBDriver::saveFileToDB(const string & filename, int & fid) {
 	PGresult * pqres;
 	pqres = PQexec(conn, "BEGIN");
 	if (PQresultStatus(pqres) != PGRES_COMMAND_OK) {
@@ -1253,7 +1259,7 @@ bool DBDriver::saveFileToDB(const std::string & filename, int * fid) {
 		msg.append("File ").append(filename).append(" imported to db with oid ").append(
 				to_string(oid));
 		logMessage(msg);
-		*fid = oid;
+		fid = oid;
 		return true;
 	} else {
 		string errorImporting;
@@ -1295,20 +1301,6 @@ bool DBDriver::loadFileFromDB(int fid, const string & filename,
 		logMessage(errorExporting);
 		return false;
 	}
-}
-
-bool DBDriver::deleteFile(string filename) {
-	int res = remove(filename.c_str());
-	if (res != 0) {
-		string errorDeleting;
-		errorDeleting.append("error deleting ").append(filename);
-		logMessage(errorDeleting);
-		return false;
-	}
-	string msg;
-	msg.append("file ").append(filename).append(" successfully deleted");
-	logMessage(msg);
-	return false;
 }
 
 void DBDriver::logMessage(string message) {

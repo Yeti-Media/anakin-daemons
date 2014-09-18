@@ -19,7 +19,6 @@
 
 #include <processing/Flags.hpp>
 #include <processing/simpleprogram/PatternExtractor.hpp>
-#include <utils/ClearVector.hpp>
 #include <utils/help/HelpPatternExtractor.hpp>
 #include <algorithm>
 #include <cstdlib>
@@ -58,30 +57,30 @@ void PatternExtractor::initProgramFlags() {
 	this->programFlags.setOptionalFlag("iFolder");
 	this->programFlags.setIncompatibility("iFile", "iFolder");
 	this->programFlags.setOptionalFlag("oPath");
-	vector<string> oPathLooseDeps(0);
-	oPathLooseDeps.push_back("iFile");
-	oPathLooseDeps.push_back("iFolder");
-	this->programFlags.setLooseDependencies("oPath", &oPathLooseDeps);
+	Ptr<vector<string>> oPathLooseDeps = makePtr<vector<string>>();
+	oPathLooseDeps->push_back("iFile");
+	oPathLooseDeps->push_back("iFolder");
+	this->programFlags.setLooseDependencies("oPath", oPathLooseDeps);
 	this->programFlags.setIncompatibility("landscape", "iFile");
 	this->programFlags.setNoValuesFlag("toJson");
 	this->programFlags.setIncompatibility("toJson", "oPath");
-	vector<string> imodesLooseDeps(0);
-	imodesLooseDeps.push_back("oPath");
-	imodesLooseDeps.push_back("toJson");
-	this->programFlags.setLooseDependencies("landscape", &imodesLooseDeps);
-	this->programFlags.setLooseDependencies("histograms", &imodesLooseDeps);
-	this->programFlags.setLooseDependencies("matching", &imodesLooseDeps);
+	Ptr<vector<string>> imodesLooseDeps = makePtr<vector<string>>();
+	imodesLooseDeps->push_back("oPath");
+	imodesLooseDeps->push_back("toJson");
+	this->programFlags.setLooseDependencies("landscape", imodesLooseDeps);
+	this->programFlags.setLooseDependencies("histograms", imodesLooseDeps);
+	this->programFlags.setLooseDependencies("matching", imodesLooseDeps);
 
 	//HISTOGRAMS/LANDSCAPE MODE
 	this->programFlags.setNoValuesFlag("color");
 	this->programFlags.setNoValuesFlag("hsv");
 	this->programFlags.setNoValuesFlag("gray");
-	vector<string> modesLooseDeps(0);
-	modesLooseDeps.push_back("color");
-	modesLooseDeps.push_back("hsv");
-	modesLooseDeps.push_back("gray");
-	this->programFlags.setLooseDependencies("landscape", &modesLooseDeps);
-	this->programFlags.setLooseDependencies("histograms", &modesLooseDeps);
+	Ptr<vector<string>> modesLooseDeps = makePtr<vector<string>>();
+	modesLooseDeps->push_back("color");
+	modesLooseDeps->push_back("hsv");
+	modesLooseDeps->push_back("gray");
+	this->programFlags.setLooseDependencies("landscape", modesLooseDeps);
+	this->programFlags.setLooseDependencies("histograms", modesLooseDeps);
 	this->programFlags.setIncompatibility("color", "matching");
 	this->programFlags.setIncompatibility("gray", "matching");
 	this->programFlags.setIncompatibility("hsv", "matching");
@@ -103,7 +102,7 @@ void PatternExtractor::initProgramFlags() {
 	this->programFlags.setVerbose(true);
 }
 
-int PatternExtractor::run(vector<string> *input) {
+int PatternExtractor::run(const Ptr<vector<string>> & input) {
 	bool useInputPathAsDir = false;
 	char mode = 0;
 	char inputMode = 0;
@@ -114,7 +113,7 @@ int PatternExtractor::run(vector<string> *input) {
 	bool useYaml = true;
 	bool loadOnDemand = false;
 
-	vector<string>* values = NULL;
+	Ptr<vector<string>> values;
 
 	if (this->programFlags.flagFound("landscape")) {
 		inputMode = LANDSCAPE;
@@ -188,37 +187,32 @@ int PatternExtractor::run(vector<string> *input) {
 	Ptr<FeatureDetector> fdetector;
 	Ptr<DescriptorExtractor> dextractor;
 
-	vector<RichImg*> patterns;
-	DataInput* patternsDataInput = NULL;
-	PatternLoader* patternsLoader = NULL;
+	Ptr<vector<Ptr<RichImg>>> patterns = makePtr<vector<Ptr<RichImg>>>();
+	Ptr<DataInput> patternsDataInput;
+	Ptr<PatternLoader> patternsLoader;
 
 	if (!useInputPathAsDir) {
-		patternsDataInput = new SingleImageDataInput(inputDir);
+		patternsDataInput = makePtr<SingleImageDataInput>(inputDir);
 	} else {
-		patternsDataInput = new ImageDataInput(inputDir, loadOnDemand);
+		patternsDataInput = makePtr<ImageDataInput>(inputDir, loadOnDemand);
 	}
 
 	if (inputMode & PATTERNS) {
 		fdetector = makePtr<SurfFeatureDetector>(400);
 		dextractor = makePtr<SurfDescriptorExtractor>();
-		patternsLoader = new PatternLoader(patternsDataInput, patterns,
+		patternsLoader = makePtr<PatternLoader>(patternsDataInput, patterns,
 				fdetector, dextractor);
 		char mode = useYaml ? PatternLoader::YAML : PatternLoader::XML;
 		patternsLoader->load_and_save(outputDir, saveToFile, mode);
-
-		delete patternsLoader;
-		for_each(patterns.begin(), patterns.end(),
-				delete_pointer_element<RichImg*>());
-		delete patternsDataInput;
 		return EXIT_SUCCESS;
 	} else {
-		patternsLoader = new PatternLoader(patternsDataInput, patterns,
+		patternsLoader = makePtr<PatternLoader>(patternsDataInput, patterns,
 				fdetector, dextractor);
 		patternsLoader->load(quickLZState);
 	}
 
-	HistogramsIO io(outputDir);
-	HistogramComparator hComparator(patterns, &io);
+	Ptr<HistogramsIO> io = makePtr<HistogramsIO>(outputDir);
+	HistogramComparator hComparator(patterns, io);
 	if (useYaml) {
 		mode = mode | HistogramComparator::YAML;
 	} else {
@@ -230,10 +224,6 @@ int PatternExtractor::run(vector<string> *input) {
 		hComparator.makeAndSaveLandscape(mode, label, saveToFile);
 	}
 
-	delete patternsLoader;
-	for_each(patterns.begin(), patterns.end(),
-			delete_pointer_element<RichImg*>());
-	delete patternsDataInput;
 	return EXIT_SUCCESS;
 }
 

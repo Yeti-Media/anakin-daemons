@@ -7,7 +7,7 @@ using namespace Anakin;
 using namespace std;
 
 Worker::Worker(int id,
-		tbb::concurrent_bounded_queue<vector<string>*>* workingQueue,
+		tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue,
 		CommandRunner* command) {
 	this->id = id;
 	this->workingQueue = workingQueue;
@@ -17,14 +17,13 @@ Worker::Worker(int id,
 void Worker::start() {
 	bool run = true;
 	while (run) {
-		vector<string>* input;
+		Ptr<vector<string>> input;
 		this->workingQueue->pop(input);
-		if (input != NULL) {
+		if (input.get() != NULL) {
 			runner->validateRequest(input);
 			runner->run();
 		} else {
 			run = false;
 		}
-		delete input;
 	}
 }

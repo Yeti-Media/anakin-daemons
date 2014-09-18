@@ -11,7 +11,7 @@ using namespace Anakin;
 using namespace std;
 using namespace cv;
 
-SingleImageDataInput::SingleImageDataInput(string pathToImage) {
+SingleImageDataInput::SingleImageDataInput(const string & pathToImage) {
 	this->pathToImage = pathToImage;
 }
 
@@ -19,16 +19,16 @@ void SingleImageDataInput::reload() {
 	loaded = false;
 }
 
-bool SingleImageDataInput::nextInput(Img** output) {
+bool SingleImageDataInput::nextInput(Ptr<Img> & output) {
 	if (!loaded) {
-		Mat nextMat = imread(this->pathToImage);
-		if (!nextMat.data) {
+		Ptr<Mat> nextMat = makePtr<Mat>(imread(this->pathToImage));
+		if (!nextMat->data) {
 			std::cerr << "error reading image: " << this->pathToImage << endl;
 			LOG_F("ERROR")<< "error reading image: " << this->pathToImage;
 			exit(EXIT_FAILURE);
 		}
-		Img* nextImg = new Img(nextMat, this->pathToImage);
-		*output = nextImg;
+		Ptr<Img> nextImg = makePtr<Img>(nextMat, this->pathToImage);
+		output = nextImg;
 		loaded = true;
 		return true;
 	}

@@ -34,10 +34,12 @@ BOOST_AUTO_TEST_CASE(trainerAddGood) {
 	int smatcher_id_removed = -1;
 	wstring expectedResult =
 			L"{\"cache_free_space\":595871,\"index_added\":1,\"index_removed\":-1}";
-	wstring* result = cfc->trainerAdd(smatcher_id_added, cacheFreeSpace,
+	Ptr<wstring> result = cfc->trainerAdd(smatcher_id_added, cacheFreeSpace,
 			smatcher_id_removed);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cfc;
 
 }
 
@@ -51,9 +53,11 @@ BOOST_AUTO_TEST_CASE(trainerDelGood) {
 	int smatcher_id_removed = 5;
 	wstring expectedResult =
 			L"{\"cache_free_space\":595871,\"index_removed\":5}";
-	wstring* result = cfc->trainerDel(smatcher_id_removed, cacheFreeSpace);
+	Ptr<wstring> result = cfc->trainerDel(smatcher_id_removed, cacheFreeSpace);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cfc;
 
 }
 
@@ -65,10 +69,11 @@ BOOST_AUTO_TEST_CASE(trainerUPDGood) {
 			new CommunicationFormatterCacheJSON();
 	int smatcher_id_updated = 1;
 	wstring expectedResult = L"{\"index_updated\":1}";
-	wstring* result = cfc->trainerUPD(smatcher_id_updated);
+	Ptr<wstring> result = cfc->trainerUPD(smatcher_id_updated);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
 
+	delete cfc;
 }
 
 //____________________________________________________________________________//
@@ -78,13 +83,15 @@ BOOST_AUTO_TEST_CASE(cacheStatusGood) {
 	CommunicationFormatterCacheJSON* cfc =
 			new CommunicationFormatterCacheJSON();
 	int cacheFreeSpace = 595871;
-	vector<int> smatchers_in_cache = vector<int>(5);
+	Ptr<vector<int>> smatchers_in_cache = makePtr<vector<int>>(5);
 	for (int i = 0; i < 5; i++)
-		smatchers_in_cache.at(i) = i + 1;
+		smatchers_in_cache->at(i) = i + 1;
 	wstring expectedResult =
 			L"{\"cache_free_space\":595871,\"indexes\":\[1,2,3,4,5]}";
-	wstring* result = cfc->cacheStatus(smatchers_in_cache, cacheFreeSpace);
+	Ptr<wstring> result = cfc->cacheStatus(smatchers_in_cache, cacheFreeSpace);
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cfc;
 
 }
 

@@ -31,7 +31,6 @@ using namespace std;
 PatternMatcher::PatternMatcher() :
 		CommandRunner("PatternMatcher") {
 	this->cfm = new CommunicationFormatterMatchingJSON();
-	this->cache = NULL;
 	this->quickLZstate = new QuickLZ();
 }
 
@@ -44,8 +43,8 @@ Help* PatternMatcher::getHelp() {
 	return new HelpPatternMatcher();
 }
 
-void PatternMatcher::initializeCommandRunner(DataOutput* out,
-		SFBMCache* cache) {
+void PatternMatcher::initializeCommandRunner(const Ptr<DataOutput> & out,
+		const Ptr<SFBMCache> & cache) {
 	CommandRunner::initializeCommandRunner(out, cache);
 	this->cache = cache;
 
@@ -74,14 +73,14 @@ void PatternMatcher::initializeCommandRunner(DataOutput* out,
 	flags->setIncompatibility(Constants::ACTION_STATUSIDX,
 			Constants::PARAM_IDXS);
 
-	vector<string>* indexesLooseDependences = new vector<string>();
+	Ptr<vector<string>> indexesLooseDependences = makePtr<vector<string>>();
 	indexesLooseDependences->push_back(Constants::ACTION_ADDIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_DELIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_UPDIDX);
 	indexesLooseDependences->push_back(Constants::ACTION_MATCH);
 	flags->setLooseDependencies(Constants::PARAM_IDXS, indexesLooseDependences);
 
-	vector<string>* pmatchLooseDependences = new vector<string>();
+	Ptr<vector<string>> pmatchLooseDependences = makePtr<vector<string>>();
 	pmatchLooseDependences->push_back(Constants::PARAM_SCENEID);
 	flags->setLooseDependencies(Constants::ACTION_MATCH,
 			pmatchLooseDependences);
@@ -96,7 +95,7 @@ void PatternMatcher::initializeCommandRunner(DataOutput* out,
 	flags->setIncompatibility(Constants::ACTION_STATUSIDX,
 			Constants::ACTION_MATCH);
 
-	vector<string>* reqIDLooseDependences = new vector<string>();
+	Ptr<vector<string>> reqIDLooseDependences = makePtr<vector<string>>();
 	reqIDLooseDependences->push_back(Constants::ACTION_MATCH);
 	reqIDLooseDependences->push_back(Constants::ACTION_ADDIDX);
 	reqIDLooseDependences->push_back(Constants::ACTION_DELIDX);
@@ -113,7 +112,7 @@ void PatternMatcher::initializeCommandRunner(DataOutput* out,
 	flags->setVerbose(true);
 }
 
-void PatternMatcher::validateRequest(vector<string> *input) {
+void PatternMatcher::validateRequest(const Ptr<vector<string>> & input) {
 	inputError = false;
 	action = NONE;
 	mma = 8;
@@ -124,7 +123,7 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 	lastError = "";
 
 	if (flags->validateInput(input)) {
-		vector<string>* values = NULL;
+		Ptr<vector<string>> values;
 		if (flags->flagFound(Constants::ACTION_MATCH)) {
 			action = E_PatternMatchingAction::MATCH;
 		}
@@ -193,8 +192,6 @@ void PatternMatcher::validateRequest(vector<string> *input) {
 			}
 			indexes.insert(indexes.begin(), values->begin(), values->end());
 		}
-		// DO NOT DELETE VALUES! there are alias to flags content!
-		//delete values;
 	} else {
 		lastError = "input error!";
 		inputError = true;
@@ -220,9 +217,9 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
-		vector<wstring*> inserts;
+		Ptr<vector<Ptr<wstring>>> inserts = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
-		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
@@ -232,24 +229,23 @@ void PatternMatcher::run() {
 		for (uint i = 0; i < this->indexes.size(); i++) {
 			int idxID = stoi(this->indexes.at(i));
 			bool error = false;
-			this->cache->loadMatcher(quickLZstate,idxID, &error);
+			this->cache->loadMatcher(quickLZstate,idxID, error);
 			if (error) {
 				this->out->error(
-						this->cache->getLastOperationResult());
+						this->cache->getLastOperationResult(error));
 				return;
 			}
-			inserts.push_back(this->cache->getLastOperationResult());
+			inserts->push_back(this->cache->getLastOperationResult(error));
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_ADD,
 						inserts), ireqID);
-		std::for_each( inserts.begin(), inserts.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
-		vector<wstring*> deletes;
+		Ptr<vector<Ptr<wstring>>> deletes = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
-		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
@@ -260,27 +256,26 @@ void PatternMatcher::run() {
 			string smatcherID = this->indexes.at(i);
 			int idxID = stoi(smatcherID);
 			this->cache->unloadMatcher(idxID);
-			deletes.push_back(this->cache->getLastOperationResult());
+			bool error;
+			deletes->push_back(this->cache->getLastOperationResult(error));
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_DEL,
 						deletes), ireqID);
-		std::for_each( deletes.begin(), deletes.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
-		vector<wstring*> status;
-		status.push_back(this->cache->indexCacheStatus());
+		Ptr<vector<Ptr<wstring>>> status = makePtr<vector<Ptr<wstring>>>();
+		status->push_back(this->cache->indexCacheStatus());
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_CACHE_IDX_STATUS, status), ireqID);
-		std::for_each( status.begin(), status.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
-		vector<wstring*> updates;
+		Ptr<vector<Ptr<wstring>>> updates = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
-		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
@@ -291,24 +286,23 @@ void PatternMatcher::run() {
 			string smatcherID = this->indexes.at(i);
 			int idxID = stoi(smatcherID);
 			bool error = false;
-			this->cache->updateMatcher(quickLZstate,idxID, &error);
+			this->cache->updateMatcher(quickLZstate,idxID, error);
 			if (error) {
 				this->out->error(
-						this->cache->getLastOperationResult());
+						this->cache->getLastOperationResult(error));
 				return;
 			}
-			updates.push_back(this->cache->getLastOperationResult());
+			updates->push_back(this->cache->getLastOperationResult(error));
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_UPD,
 						updates), ireqID);
-		std::for_each( updates.begin(), updates.end(), delete_pointer_element<wstring*>());
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
-		vector<wstring*> matches;
+		Ptr<vector<Ptr<wstring>>> matches = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
-		if (!checkDuplicatedIndexes(this->indexes, &duplicated)) {
+		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
 					this->cfm->outputError(CommunicationFormatterMatchingJSON::CF_ERROR_TYPE_WARNING,
 							"duplicated indexes on request: " + duplicated,
@@ -316,46 +310,44 @@ void PatternMatcher::run() {
 			return;
 		}
 		bool loadSceneError = false;
-		ImageInfo* scene = this->cache->loadScene(this->quickLZstate,sceneID, &loadSceneError);
+		Ptr<ImageInfo> scene = this->cache->loadScene(this->quickLZstate,
+				sceneID, loadSceneError);
 		if (loadSceneError) {
 			this->out->error(
-					this->cache->getLastOperationResult());
+					this->cache->getLastOperationResult(loadSceneError));
 			return;
 		}
-		RichImg* rscene = new RichImg(scene);
+		Ptr<RichImg> rscene = makePtr<RichImg>(scene);
 		for (uint i = 0; i < this->indexes.size(); i++) {
 			string smatcherID = this->indexes.at(i);
 			int idxID = stoi(smatcherID);
 			bool matcherError = false;
-			SerializableFlannBasedMatcher* matcher = this->cache->loadMatcher(quickLZstate,
-					idxID, &matcherError);
+			Ptr<SerializableFlannBasedMatcher> matcher = this->cache->loadMatcher(quickLZstate,
+					idxID, matcherError);
 			if (matcherError) {
 				this->out->error(
-						this->cache->getLastOperationResult());
+						this->cache->getLastOperationResult(matcherError));
 				return;
 			}
-			//FIXME memory leaks!!??? matcher!!!
-			this->detector = new BasicFlannDetector(matcher, this->cache,
+			this->detector = makePtr<BasicFlannDetector>(matcher, this->cache,
 					this->mr, this->mma);
-			this->processor = new FlannMatchingProcessor(this->detector);
+			this->processor = makePtr< FlannMatchingProcessor>(this->detector);
 			bool processingError = false;
-			vector<wstring*>* cmatches = this->processor->process(this->quickLZstate,rscene,
-					&processingError);
+			Ptr<vector<Ptr<wstring>>> cmatches = this->processor->process(this->quickLZstate,rscene,
+					processingError);
 			if (processingError) {
 				this->out->error(
-						this->cache->getLastOperationResult());
+						this->cache->getLastOperationResult(processingError));
 				return;
 			}
-			matches.insert(matches.end(), cmatches->begin(), cmatches->end());
+			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
 		}
-		vector<wstring*> sceneMatches;
-		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), matches));
+		Ptr<vector<Ptr<wstring>>> sceneMatches = makePtr<vector<Ptr<wstring>>>();
+		sceneMatches->push_back(this->cfm->outputMatches(scene->getLabel(), matches));
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_PATTERN_MATCHING, sceneMatches),
 				ireqID);
-		for_each( matches.begin(), matches.end(), delete_pointer_element<wstring*>());
-		delete rscene;
 		break;
 	}
 }

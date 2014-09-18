@@ -11,18 +11,19 @@
 #include <utils/files/TempDirCleaner.hpp>
 
 using namespace std;
+using namespace cv;
 
 namespace Anakin {
 
 /**
- * This is an extension of the class cv::FlannBasedMatcher that implements
+ * This is an extension of the class FlannBasedMatcher that implements
  * serialization.
  *
  * The matcher is serialized in two files
  * a <name>.xml file and a <name>.if file
  * the two files are needed to de-serialize
  */
-class SerializableFlannBasedMatcher: public cv::FlannBasedMatcher {
+class SerializableFlannBasedMatcher: public FlannBasedMatcher {
 public:
 
 	virtual ~SerializableFlannBasedMatcher();
@@ -32,9 +33,8 @@ public:
 	 * the constructor from FlannBasedMatcher
 	 * used when creating a matcher for the first time (e.g.: training)
 	 */
-	SerializableFlannBasedMatcher(
-			const cv::Ptr<cv::flann::IndexParams>& indexParams,
-			const cv::Ptr<cv::flann::SearchParams>& searchParams,
+	SerializableFlannBasedMatcher(const Ptr<flann::IndexParams>& indexParams,
+			const Ptr<flann::SearchParams>& searchParams,
 			TempDirCleaner * tempDirCleaner);
 
 	/**
@@ -44,8 +44,9 @@ public:
 	 * filename : refers to the name of the two files that define a SFBM
 	 * removeFileAfterLoad : if true then the xml and if files will be deleted after the SFBM is loaded
 	 */
-	SerializableFlannBasedMatcher(QuickLZ* quickLZstate, string filename,
-			const string & tmpDir, TempDirCleaner * tempDirCleaner);
+	SerializableFlannBasedMatcher(QuickLZ* quickLZstate,
+			const string & filename, const string & tmpDir,
+			TempDirCleaner * tempDirCleaner);
 
 	/**
 	 * serialize the SFBM
@@ -54,14 +55,15 @@ public:
 	 * filename  :   the name for the xml and if files (<filename>.xml, <filename>.xml)
 	 * xmlData   :   the data of the xml file (if NULL then the <filename>.xml file will be used)
 	 */
-	void save(QuickLZ* quickLZstate, string filename, string * xmlData = NULL);
+	void save(QuickLZ* quickLZstate, const string & filename,
+			const Ptr<string> & xmlData);
 
 	/**
 	 * trains the matcher
 	 *
 	 * descriptors   : the descriptors of the patterns used to train the matcher
 	 */
-	void train(vector<cv::Mat> * descriptors);
+	void train(const vector<Mat> & descriptors);
 
 	/**
 	 * if the SFBM was de-serialized this will return false, else will return FlannBasedMatcher empty()
@@ -71,7 +73,7 @@ public:
 	/**
 	 * sets an identifier for this matcher
 	 */
-	void setID(string id);
+	void setID(const string & id);
 
 	/**
 	 * returns the identifier of this matcher
@@ -97,7 +99,7 @@ private:
 	 * load the if file and creates a new index with it
 	 * data : a matrix used by the index and stored in the xml file
 	 */
-	void loadIndex(cv::Mat * data, const string & tmpDir);
+	void loadIndex(const Mat & data, const string & tmpDir);
 
 	string smatcher_id;
 

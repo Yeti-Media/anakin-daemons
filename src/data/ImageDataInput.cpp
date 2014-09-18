@@ -10,7 +10,7 @@ using namespace Anakin;
 using namespace std;
 using namespace cv;
 
-ImageDataInput::ImageDataInput(string imagesFolder, bool loadOnDemand) {
+ImageDataInput::ImageDataInput(const string & imagesFolder, bool loadOnDemand) {
 	this->imagesFolder = imagesFolder;
 	this->loadOnDemand = loadOnDemand;
 	if (this->loadOnDemand) {
@@ -21,22 +21,18 @@ ImageDataInput::ImageDataInput(string imagesFolder, bool loadOnDemand) {
 }
 
 ImageDataInput::~ImageDataInput() {
-	if (this->fileItr != NULL) {
-		delete fileItr;
-	}
 }
 
-bool ImageDataInput::nextInput(Anakin::Img** output) {
+bool ImageDataInput::nextInput(Ptr<Anakin::Img> & output) {
 	static int loadedFiles = 0;
-	cv::Mat nextMat;
-	string label;
+	Ptr<Mat> nextMat;
+	Ptr<string> label;
 	if (this->loadOnDemand) {
 //        if (loadedFiles > 0 && (loadedFiles % 1000 == 0)) {
 //            cout << "\n1k files loaded, total loaded files : " << loadedFiles << endl;
 //        }
-		if (nextFile(&nextMat, &label)) {
-			Img* nextImg = new Img(nextMat, label);
-			*output = nextImg;
+		if (nextFile(nextMat, label)) {
+			output = makePtr<Img>(nextMat, *label.get());
 			loadedFiles += 1;
 			return true;
 		}
@@ -46,8 +42,7 @@ bool ImageDataInput::nextInput(Anakin::Img** output) {
 			label = this->labels.back();
 			this->images.pop_back();
 			this->labels.pop_back();
-			Img* nextImg = new Img(nextMat, label);
-			*output = nextImg;
+			output = makePtr<Img>(nextMat, *label.get());
 			return true;
 		}
 	}
@@ -79,15 +74,15 @@ void ImageDataInput::loadImages() {
 //            }
 			if (!fs::is_directory(itr->status())) {
 				//cout << "Loading image : " << itr->path().c_str() << "\n";
-				cv::Mat img = cv::imread(itr->path().c_str());
-				if (!img.data) {
+				Ptr<Mat> img = makePtr<Mat>(imread(itr->path().c_str()));
+				if (!img->data) {
 					cerr << "Error loading image : " << itr->path().c_str()
 							<< endl;
 					LOG_F("ERROR")<< "Error loading image : " << itr->path().c_str();
 					exit(EXIT_FAILURE);
 				}
 				this->images.at(idx) = img;
-				string label(itr->path().string());
+				Ptr<string> label = makePtr<string>(itr->path().string());
 				this->labels.at(idx) = label;
 				loadedFiles++;
 				idx++;
@@ -113,20 +108,20 @@ void ImageDataInput::initializeIterator() {
 	}
 }
 
-bool ImageDataInput::nextFile(cv::Mat* imat, string * label) {
+bool ImageDataInput::nextFile(Ptr<Mat> & imat, Ptr<string> & label) {
 	vector<fs::path>::const_iterator di = *this->fileItr;
 	vector<fs::path>::const_iterator end_itr(filePaths.end());
 	if (di != end_itr) {
 		if (!fs::is_directory(*di)) {
 			//cout << "reading " << *di << endl;
-			cv::Mat img = cv::imread((*di).string().c_str());
-			if (!img.data) {
+			Ptr<Mat> img = makePtr<Mat>(imread((*di).string().c_str()));
+			if (!img->data) {
 				cerr << "Error loading image : " << *di << endl;
 				LOG_F("ERROR")<< "Error loading image : " << *di;
 				exit(EXIT_FAILURE);
 			}
-			*imat = img;
-			*label = (*di).string();
+			imat = img;
+			label = makePtr<string>((*di).string());
 			(*this->fileItr)++;
 		} else {
 			//cout << "directory found" << endl;
@@ -156,5 +151,5 @@ void ImageDataInput::orderFiles() {
 	copy(fs::directory_iterator(imagesFolder), fs::directory_iterator(),
 			back_inserter(filePaths));
 	sort(filePaths.begin(), filePaths.end());
-	fileItr = new vector<fs::path>::const_iterator(filePaths.begin());
+	fileItr = makePtr<vector<fs::path>::const_iterator>(filePaths.begin());
 }

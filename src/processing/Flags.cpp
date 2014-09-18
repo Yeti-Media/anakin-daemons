@@ -18,7 +18,7 @@ void Flags::setIgnoreUnknownFlags(bool b) {
 	this->ignoreUnknownFlags = b;
 }
 
-bool findKey(map<string, vector<string>*> m, string key) {
+bool findKey(const map<string, Ptr<vector<string>>>& m, string key) {
 	if (m.find(key) == m.end()) {
 		return false;
 	} else {
@@ -26,57 +26,48 @@ bool findKey(map<string, vector<string>*> m, string key) {
 	}
 }
 
-bool findInVector(vector<string> v, string value) {
+bool findInVector(const vector<string> & v, const string & value) {
 	return find(v.begin(), v.end(), value) != v.end();
 }
 
-bool Flags::isRequired(string flag) {
+bool Flags::isRequired(const string & flag) {
 	return findKey(requiredFlags, flag);
 }
 
-bool Flags::isOptional(string flag) {
+bool Flags::isOptional(const string & flag) {
 	return findKey(optionalFlags, flag);
 }
 
-bool Flags::isNoValueFlag(string flag) {
+bool Flags::isNoValueFlag(const string & flag) {
 	return findInVector(noValuesFlags, flag);
 }
 
-bool Flags::isOverridingFlag(string flag) {
+bool Flags::isOverridingFlag(const string & flag) {
 	return findInVector(overridingFlags, flag);
 }
 
-bool Flags::flagExist(string flag) {
+bool Flags::flagExist(const string & flag) {
 	return isRequired(flag) || isOptional(flag) || isNoValueFlag(flag)
 			|| isOverridingFlag(flag);
 }
 
-bool Flags::setRequiredFlag(string flag) {
+bool Flags::setRequiredFlag(const string & flag) {
 	if (flagExist(flag)) {
 		return false;
 	}
-	//TODO verify this
-	if (requiredFlags[flag] != NULL) {
-		delete requiredFlags[flag];
-	}
-	requiredFlags[flag] = new vector<string>(0);
+	requiredFlags[flag] = makePtr<vector<string>>();
 	return true;
 }
 
-bool Flags::setOptionalFlag(string flag) {
+bool Flags::setOptionalFlag(const string & flag) {
 	if (flagExist(flag)) {
 		return false;
 	}
-	//TODO verify this
-	if (optionalFlags[flag] != NULL) {
-		delete optionalFlags[flag];
-	}
-	//optionalFlags.erase(flag);
-	optionalFlags[flag] = new vector<string>(0);
+	optionalFlags[flag] = makePtr<vector<string>>();
 	return true;
 }
 
-bool Flags::setOverridingFlag(string flag) {
+bool Flags::setOverridingFlag(const string & flag) {
 	if (flagExist(flag)) {
 		return false;
 	}
@@ -84,7 +75,7 @@ bool Flags::setOverridingFlag(string flag) {
 	return true;
 }
 
-bool Flags::setNoValuesFlag(string flag) {
+bool Flags::setNoValuesFlag(const string & flag) {
 	if (flagExist(flag)) {
 		return false;
 	}
@@ -92,18 +83,13 @@ bool Flags::setNoValuesFlag(string flag) {
 	return true;
 }
 
-bool Flags::setDependence(string dependent, string dependence) {
+bool Flags::setDependence(const string & dependent, const string & dependence) {
 	if (flagExist(dependent) && flagExist(dependence)) {
-		vector<string>* dependences;
+		Ptr<vector<string>> dependences;
 		if (findKey(this->flagsDependencies, dependent)) {
-			//FIXME this line do nothing?
 			dependences = this->flagsDependencies.find(dependent)->second;
 		} else {
-			dependences = new vector<string>(0);
-			//TODO verify this
-			if (flagsDependencies[dependent] != NULL) {
-				delete flagsDependencies[dependent];
-			}
+			dependences = makePtr<vector<string>>();
 			this->flagsDependencies[dependent] = dependences;
 		}
 		if (findInVector(*dependences, dependence)) {
@@ -115,25 +101,20 @@ bool Flags::setDependence(string dependent, string dependence) {
 	return false;
 }
 
-bool Flags::setLooseDependencies(string dependent,
-		vector<string>* dependencies) {
+bool Flags::setLooseDependencies(const string & dependent,
+		const Ptr<vector<string>> & dependencies) {
 	if (flagExist(dependent)) {
 		if (findKey(this->flagsLooseDependencies, dependent)) {
 			return false;
 		}
-		vector<string>* dependencies_ = new vector<string>(0);
+		Ptr<vector<string>> dependencies_ = makePtr<vector<string>>();
 		for (uint d = 0; d < dependencies->size(); d++) {
 			string current = dependencies->at(d);
 			if (!flagExist(current)) {
-				free(dependencies_);
 				return false;
 			} else {
 				dependencies_->push_back(current);
 			}
-		}
-		//TODO verify this
-		if (flagsLooseDependencies[dependent] != NULL) {
-			delete flagsLooseDependencies[dependent];
 		}
 		this->flagsLooseDependencies[dependent] = dependencies_;
 		return true;
@@ -141,33 +122,28 @@ bool Flags::setLooseDependencies(string dependent,
 	return false;
 }
 
-bool Flags::setIncompatibility(string flag1, string flag2) {
+bool Flags::setIncompatibility(const string & flag1, const string & flag2) {
 	if (flagExist(flag1) && flagExist(flag2)) {
-		vector<string>* incompatibilities;
+		Ptr<vector<string>> incompatibilities;
 		if (findKey(this->incompatibleFlags, flag1)) {
 			incompatibilities = this->incompatibleFlags.find(flag1)->second;
 		} else {
-			incompatibilities = new vector<string>(0);
-			//TODO verify this
-			if (incompatibleFlags[flag1] != NULL) {
-				delete incompatibleFlags[flag1];
-			}
+			incompatibilities = makePtr<vector<string>>();
 			this->incompatibleFlags[flag1] = incompatibilities;
 		}
 		if (findInVector(*incompatibilities, flag2)) {
 			return false;
 		}
-		//FIXME review this lines...
 		incompatibilities->push_back(flag2);
 		return true;
 	}
 	return false;
 }
 
-bool Flags::checkDependencies(vector<string> flags) {
+bool Flags::checkDependencies(const vector<string> & flags) {
 	for (uint f = 0; f < flags.size(); f++) {
 		if (findKey(this->flagsDependencies, flags[f])) {
-			vector<string> *dependencies = this->flagsDependencies.find(
+			Ptr<vector<string>> dependencies = this->flagsDependencies.find(
 					flags[f])->second;
 			for (uint d = 0; d < dependencies->size(); d++) {
 				if (!findInVector(flags, dependencies->at(d))) {
@@ -183,11 +159,11 @@ bool Flags::checkDependencies(vector<string> flags) {
 	return true;
 }
 
-bool Flags::checkLooseDependencies(vector<string> flags) {
+bool Flags::checkLooseDependencies(const vector<string> & flags) {
 	for (uint f = 0; f < flags.size(); f++) {
 		if (findKey(this->flagsLooseDependencies, flags[f])) {
-			vector<string> *dependencies = this->flagsLooseDependencies.find(
-					flags[f])->second;
+			Ptr<vector<string>> dependencies =
+					this->flagsLooseDependencies.find(flags[f])->second;
 			bool found = dependencies->empty();
 			for (uint d = 0; d < dependencies->size(); d++) {
 				if (findInVector(flags, dependencies->at(d))) {
@@ -214,11 +190,11 @@ bool Flags::checkLooseDependencies(vector<string> flags) {
 	return true;
 }
 
-bool Flags::checkIncompatibilities(vector<string> flags) {
+bool Flags::checkIncompatibilities(const vector<string> & flags) {
 	for (uint f = 0; f < flags.size(); f++) {
 		if (findKey(this->incompatibleFlags, flags[f])) {
-			vector<string> *incompatibilities = this->incompatibleFlags.find(
-					flags[f])->second;
+			Ptr<vector<string>> incompatibilities =
+					this->incompatibleFlags.find(flags[f])->second;
 			for (uint d = 0; d < incompatibilities->size(); d++) {
 				if (findInVector(flags, incompatibilities->at(d))) {
 					if (verbose)
@@ -233,40 +209,40 @@ bool Flags::checkIncompatibilities(vector<string> flags) {
 	return true;
 }
 
-void getKeys(map<string, vector<string>*> m, vector<string>* keys) {
+void getKeys(const map<string, Ptr<vector<string>>> & m, Ptr<vector<string>> keys) {
 	pair<string, vector<string>*> me; // what a map<int, int> is made of
 	BOOST_FOREACH(me, m){
 	keys->push_back(me.first);
 }
 }
 
-vector<string>* Flags::getRequiredFlags() {
-	vector<string>* result = new vector<string>(0);
+Ptr<vector<string>> Flags::getRequiredFlags() {
+	Ptr<vector<string>> result = makePtr<vector<string>>();
 	getKeys(this->requiredFlags, result);
 	return result;
 }
 
-vector<string>* Flags::getOptionalFlags() {
-	vector<string>* result = new vector<string>(0);
+Ptr<vector<string>> Flags::getOptionalFlags() {
+	Ptr<vector<string>> result = makePtr<vector<string>>();
 	getKeys(this->optionalFlags, result);
 	return result;
 }
 
-vector<string>* Flags::getOverridingFlags() {
-	return &(this->overridingFlags);
+Ptr<vector<string>> Flags::getOverridingFlags() {
+	return makePtr<vector<string>>(this->overridingFlags);
 }
 
-vector<string>* Flags::getNoValuesFlags() {
-	return &(this->noValuesFlags);
+Ptr<vector<string>> Flags::getNoValuesFlags() {
+	return makePtr<vector<string>>(this->noValuesFlags);
 }
 
-vector<string>* Flags::getFlagValues(string flag) {
+Ptr<vector<string>> Flags::getFlagValues(const string & flag) {
 	if (isRequired(flag)) {
 		return this->requiredFlags.find(flag)->second;
 	} else if (isOptional(flag)) {
 		return this->optionalFlags.find(flag)->second;
 	} else {
-		return NULL; //TODO check null in the code before use.
+		return Ptr<vector<string>>(); //TODO check null in the code before use.
 	}
 }
 
@@ -280,22 +256,16 @@ uint Flags::getMinCount() {
 
 void Flags::clean() {
 	this->overridingFlagFound = false;
-	map<string, vector<string>*>::const_iterator itr;
+	map<string, Ptr<vector<string>>>::const_iterator itr;
 
 	for (itr = optionalFlags.begin(); itr != optionalFlags.end(); ++itr) {
-		//vector<string>* vector = (*itr).second;
-		//cout << "** " <<(*itr).first << " size() = " << vector->size() << endl;
-		(*itr).second->clear();
-	}
-
-	for (itr = requiredFlags.begin(); itr != requiredFlags.end(); ++itr) {
 		(*itr).second->clear();
 	}
 
 	this->foundFlags.clear();
 }
 
-bool Flags::validateInput(vector<string> *input) {
+bool Flags::validateInput(const Ptr<vector<string>> & input) {
 	bool expectingFlag = true;
 	bool valuesFound = false;
 	bool flagWasFound = false;
@@ -380,14 +350,13 @@ bool Flags::validateInput(vector<string> *input) {
 	if (!this->isOverridingFlagFound()
 			&& requiredFlagsFound < this->getRequiredFlags()->size()) {
 		cout << "missing required flags" << endl << "required flags are ";
-		vector<string> *requiredFlags = this->getRequiredFlags();
+		Ptr<vector<string>> requiredFlags = this->getRequiredFlags();
 		for (uint f = 0; f < requiredFlags->size(); f++) {
 			cout << requiredFlags->at(f);
 			if (f + 1 < requiredFlags->size())
 				cout << ", ";
 		}
 		cout << endl;
-		delete requiredFlags;
 		return false;
 	}
 	if (flagWasFound && !valuesFound
@@ -404,6 +373,6 @@ bool Flags::isOverridingFlagFound() {
 	return this->overridingFlagFound;
 }
 
-bool Flags::flagFound(string flag) {
+bool Flags::flagFound(const string & flag) {
 	return findInVector(this->foundFlags, flag);
 }

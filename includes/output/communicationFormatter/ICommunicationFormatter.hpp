@@ -8,10 +8,13 @@
 #ifndef ICOMMUNICATIONFORMATTER_HPP_
 #define ICOMMUNICATIONFORMATTER_HPP_
 
+#include <opencv2/core/core.hpp>
 #include <string>
 #include <vector>
 
 using namespace std;
+using namespace cv;
+
 namespace Anakin {
 
 class I_CommunicationFormatter {
@@ -48,9 +51,9 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter of a response
 	 */
 
-	virtual wstring* outputResponse(const string & requestID,
-			e_category category, const vector<wstring *> & values) {
-		return NULL;
+	virtual Ptr<wstring> outputResponse(const string & requestID,
+			e_category category, const Ptr<vector<Ptr<wstring>>> & values) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -61,9 +64,9 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter of an error
 	 */
 
-	virtual wstring* outputError(e_error errorType, const string & message,
+	virtual Ptr<wstring> outputError(e_error errorType, const string & message,
 			const string & origin) {
-		return NULL;
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -74,8 +77,8 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter
 	 */
 
-	virtual wstring* format(const char * data) {
-		return NULL;
+	virtual Ptr<wstring> format(const char * data) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -86,8 +89,8 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter
 	 */
 
-	virtual wstring* format(e_mode mode, string data, e_color colors) {
-		return NULL;
+	virtual Ptr<wstring> format(e_mode mode, const string & data, e_color colors) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -98,8 +101,8 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter
 	 */
 
-	virtual wstring* format(vector<string>* text) {
-		return NULL;
+	virtual Ptr<wstring> format(const Ptr<vector<string>> & text) {
+		return Ptr<wstring>();
 	}
 	; // = 0;
 
@@ -110,8 +113,8 @@ public:
 	 * returns a string* representing the actual CommunicationFormatter of a request
 	 */
 
-	virtual string* formatRequest(const char * data) {
-		return NULL;
+	virtual Ptr<string> formatRequest(const char * data) {
+		return Ptr<string>();
 	}
 	; // = 0;
 

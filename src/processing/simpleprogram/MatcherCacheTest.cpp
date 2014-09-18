@@ -35,18 +35,18 @@ void MatcherCacheTest::initProgramFlags() {
 
 }
 
-int MatcherCacheTest::run(vector<string> *input) {
+int MatcherCacheTest::run(const Ptr<vector<string>> & input) {
 	TempDirCleaner tempDirCleaner(0);
-	DBDriver dbdriver(&tempDirCleaner);
+	Ptr<DBDriver> dbdriver = makePtr<DBDriver>(&tempDirCleaner);
 	QuickLZ* quickLZstate = new QuickLZ();
-	if (!dbdriver.connect("", "", "", "", "")) {
-		cerr << dbdriver.getMessage() << endl;
+	if (!dbdriver->connect("", "", "", "", "")) {
+		cerr << dbdriver->getMessage() << endl;
 		return EXIT_FAILURE;
 	}
-	cout << dbdriver.getMessage() << endl;
+	cout << dbdriver->getMessage() << endl;
 	CacheConfig cacheConfig;
 	cacheConfig.cacheLoadingTimeWeight = 9;
-	SFBMCache cache(&dbdriver, cacheConfig, "/tmp/ram/", &tempDirCleaner);
+	Ptr<SFBMCache> cache = makePtr<SFBMCache>(dbdriver, cacheConfig, "/tmp/ram/", &tempDirCleaner);
 	SerializableFlannBasedMatcher* sfbm;
 	vector<int> patternsID;
 	patternsID.push_back(5);
@@ -56,15 +56,15 @@ int MatcherCacheTest::run(vector<string> *input) {
 	for (uint r = 0; r < requests; r++) {
 		int id = rand() % 2;
 		bool matcherError = false;
-		sfbm = cache.loadMatcher(quickLZstate, patternsID.at(id),
-				&matcherError);
+		sfbm = cache->loadMatcher(quickLZstate, patternsID.at(id),
+				matcherError);
 		cout << "loaded matcher(" << patternsID.at(id) << "), matcher is "
 				<< (sfbm->empty() ? "empty" : "not empty") << endl;
-		cout << "current hit ratio: " << cache.getHitRatio()
-				<< " | current miss ratio: " << cache.getMissRatio() << endl;
+		cout << "current hit ratio: " << cache->getHitRatio()
+				<< " | current miss ratio: " << cache->getMissRatio() << endl;
 	}
-	cache.printLoadCount();
-	dbdriver.disconnect();
+	cache->printLoadCount();
+	dbdriver->disconnect();
 	return EXIT_SUCCESS;
 }
 
