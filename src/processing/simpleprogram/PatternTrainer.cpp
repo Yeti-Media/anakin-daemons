@@ -99,7 +99,7 @@ int PatternTrainer::run(const Ptr<vector<string>> &input) {
 			SerializableFlannBasedMatcher>(indexParams, searchParams,
 			&tempDirCleaner);
 	matcher->clear();
-	Ptr<vector<Ptr<RichImg>>> patterns;
+	Ptr<vector<Ptr<RichImg>>> patterns = makePtr<vector<Ptr<RichImg>>>();
 	Ptr<SerializedPatternDataInput> sinput;
 	if (user) {
 		sinput = makePtr<SerializedPatternDataInput>(userID, "", "", "", "", "",

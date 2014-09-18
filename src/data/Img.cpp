@@ -21,6 +21,7 @@ Img::Img(const Ptr<Mat> & img, const string & label, bool clone) {
 	}
 	this->label = getFilename(label);
 	this->imageSize = Size(image->cols, image->rows);
+	this->grayImg = makePtr<Mat>();
 	transformToGray(this->image, this->grayImg);
 }
 
@@ -30,7 +31,6 @@ Img::Img(const Ptr<Img> & other) :
 
 void Img::transformToGray(const Ptr<Mat> & image, Ptr<Mat> & gray) {
 	if (image->channels() == 3)
-		//FIXME memory leaks on *grey?
 		cvtColor(*image, *gray, COLOR_BGR2GRAY);
 	else if (image->channels() == 4)
 		cvtColor(*image, *gray, COLOR_BGRA2GRAY);

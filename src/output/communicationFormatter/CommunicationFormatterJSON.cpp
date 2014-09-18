@@ -19,7 +19,7 @@ CommunicationFormatterJSON::CommunicationFormatterJSON() {
 
 Ptr<wstring> CommunicationFormatterJSON::outputResponse(
 		const string & requestID, e_category category,
-		const vector<Ptr<wstring>> & values) {
+		const Ptr<vector<Ptr<wstring>>> & values) {
 
 	/*  Result as wstring representing a JSONObject
 
@@ -64,8 +64,8 @@ Ptr<wstring> CommunicationFormatterJSON::outputResponse(
 	}
 	}
 	JSONArray valuesJSON;
-	for (uint v = 0; v < values.size(); v++) {
-		JSONValue *auxValue = JSON::Parse(values.at(v)->c_str());
+	for (uint v = 0; v < values->size(); v++) {
+		JSONValue *auxValue = JSON::Parse(values->at(v)->c_str());
 		valuesJSON.push_back(auxValue);
 	}
 

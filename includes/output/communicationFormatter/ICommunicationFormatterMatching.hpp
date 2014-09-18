@@ -40,7 +40,7 @@ public:
 	 * returns a wstring* representing the actual CommunicationFormatter of patterns matches in a scene
 	 */
 	virtual Ptr<wstring> outputMatches(const string & label,
-			const vector<Ptr<wstring>> & values) {
+			const Ptr<vector<Ptr<wstring>>> & values) {
 		return Ptr<wstring>();
 	}
 	; // = 0;

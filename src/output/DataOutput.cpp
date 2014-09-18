@@ -64,8 +64,6 @@ void DataOutput::output(const Ptr<wstring> &data, int reqID) {
 	Msj* msj = new Msj(boost::locale::conv::utf_to_utf<char>(*data),
 			E_DataOutputMsjType::common, reqID);
 	workingQueue->push(msj);
-	//assert(workingQueue->size() <= 0);
-	delete data;
 }
 
 void DataOutput::error(const Ptr<wstring> & data) {
@@ -73,7 +71,6 @@ void DataOutput::error(const Ptr<wstring> & data) {
 	Msj* msj = new Msj(boost::locale::conv::utf_to_utf<char>(*data),
 			E_DataOutputMsjType::error);
 	workingQueue->push(msj);
-	delete data;
 }
 
 void DataOutput::close() {

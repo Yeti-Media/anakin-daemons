@@ -187,7 +187,7 @@ int PatternExtractor::run(const Ptr<vector<string>> & input) {
 	Ptr<FeatureDetector> fdetector;
 	Ptr<DescriptorExtractor> dextractor;
 
-	Ptr<vector<Ptr<RichImg>>> patterns;
+	Ptr<vector<Ptr<RichImg>>> patterns = makePtr<vector<Ptr<RichImg>>>();
 	Ptr<DataInput> patternsDataInput;
 	Ptr<PatternLoader> patternsLoader;
 

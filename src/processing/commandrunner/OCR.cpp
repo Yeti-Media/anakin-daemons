@@ -222,7 +222,7 @@ void OCR::run() {
 	string lastError;
 
 	Ptr<vector<string>> results = detect(lastError);
-	vector<Ptr<wstring>> jsonresults;
+	Ptr<vector<Ptr<wstring>>> jsonresults = makePtr<vector<Ptr<wstring>>>();
 
 	if (results == NULL) {
 		this->out->error(
@@ -232,7 +232,7 @@ void OCR::run() {
 		return;
 	}
 
-	jsonresults.push_back(this->cf->format(results));
+	jsonresults->push_back(this->cf->format(results));
 
 	this->out->output(
 			this->cf->outputResponse(reqID, I_CommunicationFormatter::CF_OCR,

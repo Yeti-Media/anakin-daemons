@@ -217,7 +217,7 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::ADDIDXS: {
-		vector<Ptr<wstring>> inserts;
+		Ptr<vector<Ptr<wstring>>> inserts = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
@@ -235,7 +235,7 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult(error));
 				return;
 			}
-			inserts.push_back(this->cache->getLastOperationResult(error));
+			inserts->push_back(this->cache->getLastOperationResult(error));
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_ADD,
@@ -243,7 +243,7 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::DELIDXS: {
-		vector<Ptr<wstring>> deletes;
+		Ptr<vector<Ptr<wstring>>> deletes = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
@@ -257,7 +257,7 @@ void PatternMatcher::run() {
 			int idxID = stoi(smatcherID);
 			this->cache->unloadMatcher(idxID);
 			bool error;
-			deletes.push_back(this->cache->getLastOperationResult(error));
+			deletes->push_back(this->cache->getLastOperationResult(error));
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_DEL,
@@ -265,15 +265,15 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::IDXSTATUS: {
-		vector<Ptr<wstring>> status;
-		status.push_back(this->cache->indexCacheStatus());
+		Ptr<vector<Ptr<wstring>>> status = makePtr<vector<Ptr<wstring>>>();
+		status->push_back(this->cache->indexCacheStatus());
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_CACHE_IDX_STATUS, status), ireqID);
 		break;
 	}
 	case E_PatternMatchingAction::UPDIDXS: {
-		vector<Ptr<wstring>> updates;
+		Ptr<vector<Ptr<wstring>>> updates = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
@@ -292,7 +292,7 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult(error));
 				return;
 			}
-			updates.push_back(this->cache->getLastOperationResult(error));
+			updates->push_back(this->cache->getLastOperationResult(error));
 		}
 		this->out->output(
 				this->cfm->outputResponse(reqID, CommunicationFormatterMatchingJSON::CF_CACHE_IDX_UPD,
@@ -300,7 +300,7 @@ void PatternMatcher::run() {
 		break;
 	}
 	case E_PatternMatchingAction::MATCH: {
-		vector<Ptr<wstring>> matches;
+		Ptr<vector<Ptr<wstring>>> matches = makePtr<vector<Ptr<wstring>>>();
 		string duplicated;
 		if (!checkDuplicatedIndexes(this->indexes, duplicated)) {
 			this->out->error(
@@ -340,10 +340,10 @@ void PatternMatcher::run() {
 						this->cache->getLastOperationResult(processingError));
 				return;
 			}
-			matches.insert(matches.end(), cmatches->begin(), cmatches->end());
+			matches->insert(matches->end(), cmatches->begin(), cmatches->end());
 		}
-		vector<Ptr<wstring>> sceneMatches;
-		sceneMatches.push_back(this->cfm->outputMatches(scene->getLabel(), matches));
+		Ptr<vector<Ptr<wstring>>> sceneMatches = makePtr<vector<Ptr<wstring>>>();
+		sceneMatches->push_back(this->cfm->outputMatches(scene->getLabel(), matches));
 		this->out->output(
 				this->cfm->outputResponse(reqID,
 						CommunicationFormatterMatchingJSON::CF_PATTERN_MATCHING, sceneMatches),

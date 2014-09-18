@@ -29,18 +29,19 @@ BOOST_AUTO_TEST_CASE(outputResponseGood) {
 
 	CommunicationFormatterJSON* cf = new CommunicationFormatterJSON();
 	string requestID = "595871";
-	wstring* value0 =
-			new wstring(
+	Ptr<wstring> value0 =
+			makePtr<wstring>(
 					L"{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}");
-	vector<wstring *> values;
-	values.push_back(value0);
+	Ptr<vector<Ptr<wstring>>> values = makePtr<vector<Ptr<wstring>>>();
+	values->push_back(value0);
 	wstring expectedResult =
 			L"{\"category\":\"PATTERN\",\"requestID\":\"595871\",\"values\":[{\"label\":\"1\",\"values\":[{\"center\":{\"x\":100.817237854004,\"y\":68.1070556640625},\"label\":\"5\"},{\"center\":{\"x\":95.6366119384766,\"y\":231.299835205078},\"label\":\"8\"},{\"center\":{\"x\":229.527465820312,\"y\":151.533798217773},\"label\":\"9\"}]}]}";
-	wstring* result = cf->outputResponse(requestID,
+	Ptr<wstring> result = cf->outputResponse(requestID,
 			CommunicationFormatterJSON::CF_PATTERN_MATCHING, values);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
 
+	delete cf;
 }
 
 //____________________________________________________________________________//
@@ -52,10 +53,12 @@ BOOST_AUTO_TEST_CASE(outputErrorGood) {
 	string origin = "The origin is a test case";
 	wstring expectedResult =
 			L"{\"error_type\":\"WARNING\",\"message\":\"A message of warning\",\"origin\":\"The origin is a test case\"}";
-	wstring* result = cf->outputError(
+	Ptr<wstring> result = cf->outputError(
 			CommunicationFormatterJSON::CF_ERROR_TYPE_WARNING, message, origin);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cf;
 
 }
 
@@ -68,9 +71,11 @@ BOOST_AUTO_TEST_CASE(format1Good) {
 			"{\"error_type\":\"WARNING\",\"message\":\"A message of warning\",\"origin\":\"The origin is a test case\"}";
 	wstring expectedResult =
 			L"{\"error_type\":\"WARNING\",\"message\":\"A message of warning\",\"origin\":\"The origin is a test case\"}";
-	wstring* result = cf->format(data);
+	Ptr<wstring> result = cf->format(data);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cf;
 
 }
 
@@ -82,10 +87,12 @@ BOOST_AUTO_TEST_CASE(format2Good) {
 	string data = "This is the data";
 	wstring expectedResult =
 			L"{\"data\":\"This is the data\",\"dataType\":\"YML\",\"type\":\"pattern\"}";
-	wstring* result = cf->format(CommunicationFormatterJSON::CF_PATTERNS, data,
+	Ptr<wstring> result = cf->format(CommunicationFormatterJSON::CF_PATTERNS, data,
 			CommunicationFormatterJSON::CF_NONE);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cf;
 
 }
 
@@ -97,9 +104,11 @@ BOOST_AUTO_TEST_CASE(formatRequestGood) {
 	const char * data =
 			"{\"indexes\":[1], \"action\":\"matching\", \"scenario\":1}";
 	string expectedResult = "-matching -indexes 1 -scenario 1 ";
-	string* result = cf->formatRequest(data);
+	Ptr<string> result = cf->formatRequest(data);
 
 	BOOST_CHECK_EQUAL(expectedResult.compare(*result), 0);
+
+	delete cf;
 
 }
 

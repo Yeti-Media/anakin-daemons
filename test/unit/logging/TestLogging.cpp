@@ -29,47 +29,11 @@ using namespace Anakin;
 
 namespace Testing {
 
-/**
- * Used for test case common initialization (Test directory).
- */
-struct PathFixture {
-
-	boost::filesystem::path testDir;
-
-	PathFixture() {
-		BOOST_TEST_MESSAGE("fixture setup");
-
-		int argc = boost::unit_test::framework::master_test_suite().argc;
-		char** argv = boost::unit_test::framework::master_test_suite().argv;
-
-		if (argc < 2) {
-			BOOST_FAIL("First param must be a testing directory.\n");
-		}
-
-		string dir;
-		//BOOST bug fixing about space and dirs
-		for (int i = 1; i < argc; i++) {
-			dir.append(argv[i]);
-			if (i < argc - 1) {
-				dir.append(" ");
-			}
-		}
-
-		testDir = dir;
-		BOOST_REQUIRE_MESSAGE(fs::is_directory(testDir),
-				"Test directory " << testDir << " not found");
-	}
-	~PathFixture() {
-		BOOST_TEST_MESSAGE("teardown fixture");
-	}
-
-};
-
 //____________________________________________________________________________//
 
-BOOST_FIXTURE_TEST_SUITE( LoggingSuite , PathFixture)
+BOOST_AUTO_TEST_SUITE( LoggingSuite )
 
-BOOST_FIXTURE_TEST_CASE( file_output, PathFixture ) {
+BOOST_AUTO_TEST_CASE( file_output ) {
 
 	boost::filesystem::path dirOutput("/tmp/ram/Anakin/UnitTesting/Logging");
 
@@ -94,7 +58,7 @@ BOOST_FIXTURE_TEST_CASE( file_output, PathFixture ) {
 
 	//TODO make a pattern for time
 	std::regex regexLOG(".*- Info: \ttest - 12345\n 1239\n\n\n");
-	std::string * capture = get_file_contents(logFile.string());
+	Ptr<std::string> capture = get_file_contents(logFile.string());
 	if (!std::regex_match(*capture, regexLOG)) {
 		BOOST_FAIL("Wrong console output.");
 	}

@@ -52,7 +52,7 @@ public:
 	 */
 
 	virtual Ptr<wstring> outputResponse(const string & requestID,
-			e_category category, const vector<Ptr<wstring>> & values) {
+			e_category category, const Ptr<vector<Ptr<wstring>>> & values) {
 		return Ptr<wstring>();
 	}
 	; // = 0;

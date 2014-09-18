@@ -64,7 +64,7 @@ Ptr<wstring> CommunicationFormatterMatchingJSON::outputMatch(const Point2f & cen
 }
 
 Ptr<wstring> CommunicationFormatterMatchingJSON::outputMatches(const string & label,
-		const vector<Ptr<wstring>> & values) {
+		const Ptr<vector<Ptr<wstring>>> & values) {
 	/*   Result as wstring representing a JSONObject
 
 	 root    -> scene label (string)
@@ -77,9 +77,10 @@ Ptr<wstring> CommunicationFormatterMatchingJSON::outputMatches(const string & la
 			boost::locale::conv::utf_to_utf<wchar_t>(label));
 	JSONArray valuesJSON;
 
-	for (uint v = 0; v < values.size(); v++) {
+	for (uint v = 0; v < values->size(); v++) {
+		//FIXME UTF-8 problems?
 		JSONValue *auxValue = JSON::Parse(
-				(const wchar_t *) values.at(v)->c_str());
+				(const wchar_t *) values->at(v)->c_str());
 		valuesJSON.push_back(auxValue);
 	}
 

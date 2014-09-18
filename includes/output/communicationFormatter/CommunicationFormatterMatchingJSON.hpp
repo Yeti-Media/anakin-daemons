@@ -40,7 +40,7 @@ public:
 	 * (scene label, [match1,...,matchN])
 	 */
 	virtual Ptr<wstring> outputMatches(const string & label,
-			const vector<Ptr<wstring>> & values);
+			const Ptr<vector<Ptr<wstring>>> & values);
 
 	virtual ~CommunicationFormatterMatchingJSON();
 

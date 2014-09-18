@@ -38,7 +38,7 @@ SerializableFlannBasedMatcher::SerializableFlannBasedMatcher(
 void SerializableFlannBasedMatcher::save(QuickLZ* quickLZstate,
 		const string & filename, const Ptr<string> & xmlData) {
 	this->filename = filename;
-	bool saveXMLtoFile = *xmlData == NULL; //TODO review this possible problem
+	bool saveXMLtoFile = xmlData.get() == NULL; //TODO review this possible problem
 
 	string fbmData;
 	cv::FileStorage fs(fbmData,

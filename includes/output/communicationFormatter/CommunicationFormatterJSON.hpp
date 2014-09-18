@@ -27,7 +27,7 @@ public:
 	 * returns a Ptr<wstring> representation of a JSONValue of a response
 	 */
 	virtual Ptr<wstring> outputResponse(const string & requestID,
-			e_category category, const vector<Ptr<wstring>> & values);
+			e_category category, const Ptr<vector<Ptr<wstring>>> & values);
 
 	/**
 	 * returns a Ptr<wstring> representation of a JSONValue of an error
