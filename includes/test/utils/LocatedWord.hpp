@@ -8,7 +8,7 @@
 #ifndef LOCATEDWORD_HPP_
 #define LOCATEDWORD_HPP_
 
-#include <CompileConfigurations.hpp>
+#include "../CompileConfigurations.hpp"
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING  || COMPILE_MODULE == ALLMODULES
 

@@ -5,7 +5,7 @@
  *      Author: Franco Pellegrini
  */
 
-#include <CompileConfigurations.hpp>
+#include "../CompileConfigurations.hpp"
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 

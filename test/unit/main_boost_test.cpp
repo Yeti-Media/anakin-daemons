@@ -8,7 +8,7 @@
 #ifndef MAIN_BOOST_TEST_CPP_
 #define MAIN_BOOST_TEST_CPP_
 
-#include <CompileConfigurations.hpp>
+#include "../CompileConfigurations.hpp"
 
 #if COMPILE_MODE == COMPILE_FOR_UNIT_TESTING
 #define BOOST_TEST_DYN_LINK

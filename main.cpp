@@ -2,9 +2,9 @@
 // PLEASE configure the project in CompileConfigurations.hpp file before
 // compile.
 //================================================================
+#include "CompileConfigurations.hpp"
 
 #include <connection/Daemon.hpp>
-#include <CompileConfigurations.hpp>
 #include <processing/Flags.hpp>
 #include <processing/Program.hpp>
 #include <cstdlib>

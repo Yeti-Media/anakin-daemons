@@ -5,7 +5,7 @@
  *      Author: Renzo Bianchini
  */
 
-#include <CompileConfigurations.hpp>
+#include "../CompileConfigurations.hpp"
 
 #if COMPILE_MODE == COMPILE_FOR_UNIT_TESTING
 #include <output/communicationFormatter/CommunicationFormatterJSON.hpp>

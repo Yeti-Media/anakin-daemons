@@ -4,7 +4,7 @@
  *  Created on: 26/8/2014
  *      Author: Franco Pellegrini
  */
-#include <CompileConfigurations.hpp>
+#include "../CompileConfigurations.hpp"
 
 #if COMPILE_MODE == COMPILE_FOR_BIN_ACCEPTANCE_TESTING  || COMPILE_MODULE == ALLMODULES
 
