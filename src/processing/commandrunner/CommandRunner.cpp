@@ -10,9 +10,10 @@ using namespace cv;
 
 namespace fs = boost::filesystem;
 
-CommandRunner::CommandRunner(const string &  programName) {
+CommandRunner::CommandRunner(const string &  programName, const string & threadName) {
 	this->sceneID = -1;
 	setProgramName(programName);
+	this->threadName = threadName;
 }
 
 void CommandRunner::setProgramName(const string & name) {
@@ -41,11 +42,12 @@ Help* CommandRunner::getHelp() {
 	return NULL;
 }
 
-/**
- * Placeholder for inheritance.
- */
 string CommandRunner::getProgramName() {
 	return programName;
+}
+
+string CommandRunner::getThreadName() {
+	return threadName;
 }
 
 /**

@@ -49,7 +49,7 @@ protected:
 template<class SpecificCommandRunner>
 Daemon<SpecificCommandRunner>::Daemon() :
 		Program("Daemon") {
-	SpecificCommandRunner commandRunner;
+	SpecificCommandRunner commandRunner("Daemon");
 	this->setProgramName(commandRunner.getProgramName());
 }
 
@@ -118,7 +118,7 @@ void Daemon<SpecificCommandRunner>::initProgramFlags() {
 
 template<class SpecificCommandRunner>
 Help* Daemon<SpecificCommandRunner>::getHelp() {
-	SpecificCommandRunner commandRunner;
+	SpecificCommandRunner commandRunner("help");
 	return commandRunner.getHelp();
 }
 

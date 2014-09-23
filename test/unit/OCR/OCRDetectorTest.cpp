@@ -80,7 +80,7 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 
 	Ptr<DataOutput> output = makePtr<DataOutput>();
 
-	OCR* ocr = new OCR();
+	OCR* ocr = new OCR("OCR thread");
 	Ptr<SFBMCache> nullCache;
 	ocr->initializeCommandRunner(output, nullCache);
 
@@ -89,7 +89,7 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 	inputs->push_back(img_3.string());
 
 	ocr->validateRequest(inputs);
-	Ptr<vector<string>> results = ocr->detect(lastError);
+	Ptr<vector<string>> results = ocr->detect2(lastError);
 
 	if (results.get() == NULL) {
 		BOOST_FAIL("OCR fail: " + lastError);

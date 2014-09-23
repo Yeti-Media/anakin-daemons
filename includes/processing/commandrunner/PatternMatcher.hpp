@@ -24,7 +24,7 @@ enum E_PatternMatchingAction {
 
 class PatternMatcher: public CommandRunner {
 public:
-	PatternMatcher();
+	PatternMatcher(const string & threadName);
 	virtual ~PatternMatcher();
 
 	void validateRequest(const Ptr<vector<string>> & input);

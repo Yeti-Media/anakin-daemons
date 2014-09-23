@@ -209,7 +209,7 @@ void * startDaemon(void *ptr);
  */
 template<class SpecificDaemon>
 pthread_t * runDaemonProgram(string currentCommand) {
-	SpecificDaemon commandRunner;
+	SpecificDaemon commandRunner("test");
 	Program* program = new Daemon<SpecificDaemon>();
 	cout
 			<< "______________________________________________________________________"
