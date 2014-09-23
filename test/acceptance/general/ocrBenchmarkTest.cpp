@@ -101,7 +101,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCR>(
 			"-oLogFile " + pathToAnakinPath(logsOCR_Demo)
-					+ " -iHTTP 8080 -oHTTP -threads 8 -verbose");
+					+ " -iHTTP 8080 -oHTTP -threads 2 -verbose");
 
 	//check if the server start
 	bool serverStarted = false;

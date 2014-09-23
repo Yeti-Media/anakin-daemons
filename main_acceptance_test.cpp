@@ -15,9 +15,9 @@
 int main(int argc, const char * argv[]) {
 	testingDirCheck(argc, argv);
 
-	patternSimpleTest(argc, argv);
-	patternBenchmarkTest(argc, argv);
-	//ocrBenchmarkTest(argc, argv);
+	//patternSimpleTest(argc, argv);
+	//patternBenchmarkTest(argc, argv);
+	ocrBenchmarkTest(argc, argv);
 
 	exitWithSucces();
 }

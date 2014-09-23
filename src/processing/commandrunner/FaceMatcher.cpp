@@ -10,8 +10,8 @@
 
 namespace Anakin {
 
-FaceMatcher::FaceMatcher() :
-		CommandRunner("FaceMatcher") {
+FaceMatcher::FaceMatcher(const string & threadName) :
+		CommandRunner("FaceMatcher",threadName) {
 }
 
 FaceMatcher::~FaceMatcher() {

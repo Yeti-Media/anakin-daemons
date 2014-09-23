@@ -44,7 +44,7 @@ public:
 	 * Constructor (does steps 1, 2, 3)
 
 	 */
-	CommandRunner(const string & programName);
+	CommandRunner(const string & programName, const string & threadName);
 
 	/**
 	 * Setup the flags, the output and the cache (if used).
@@ -73,6 +73,11 @@ public:
 	 */
 	string getProgramName();
 
+	/**
+	 * Return the name of the program.
+	 */
+	string getThreadName();
+
 	void setProgramName(const string & name);
 
 	virtual ~CommandRunner();
@@ -94,6 +99,7 @@ protected:
 	string tempDir;
 private:
 	string programName;
+	string threadName;
 };
 
 } /* namespace Anakin */

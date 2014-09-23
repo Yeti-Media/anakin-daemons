@@ -77,12 +77,13 @@ private:
 	 */
 	struct WorkerArgs {
 		int id;
+		string threadName;
 		Ptr<DataOutput> output;
 		Ptr<SFBMCache> cache;
 		tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue;
-		WorkerArgs(int id, const Ptr<DataOutput> & output, const Ptr<SFBMCache> & cache,
+		WorkerArgs(int id, const string & threadName, const Ptr<DataOutput> & output, const Ptr<SFBMCache> & cache,
 				tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue) :
-		id(id), output(output), cache(cache), workingQueue(workingQueue) {
+		id(id), threadName(threadName), output(output), cache(cache), workingQueue(workingQueue) {
 		}
 	};
 	vector<pthread_t> * workerThreads;
@@ -99,8 +100,7 @@ RequestServer<SpecificCommandRunner>::RequestServer(
 	this->threads = threads;
 	this->workerThreads = new vector<pthread_t>(threads);
 	this->qcap = cap;
-	this->workingQueue = new tbb::concurrent_bounded_queue<
-			Ptr<vector<string>>>();
+	this->workingQueue = new tbb::concurrent_bounded_queue<Ptr<vector<string>>>();
 	this->workingQueue->set_capacity(cap);
 }
 
@@ -135,7 +135,8 @@ template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::startWorkers(
 		const Ptr<DataOutput> & output) {
 	for (int w = 0; w < this->threads; w++) {
-		WorkerArgs* wargs = new WorkerArgs(w + 1, output, this->cache,
+		string threadName = to_string(w+1);
+		WorkerArgs* wargs = new WorkerArgs(w + 1, threadName, output, this->cache,
 				this->workingQueue);
 		pthread_create(&this->workerThreads->at(w), NULL, startWorker,
 				(void*) wargs);
@@ -145,7 +146,8 @@ void RequestServer<SpecificCommandRunner>::startWorkers(
 template<class SpecificCommandRunner>
 void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	WorkerArgs* wargs = (WorkerArgs*) ptr;
-	SpecificCommandRunner* commandRunner = new SpecificCommandRunner();
+	SpecificCommandRunner* commandRunner = new SpecificCommandRunner(
+			wargs->threadName);
 	commandRunner->initializeCommandRunner(wargs->output, wargs->cache);
 	Worker* worker = new Worker(wargs->id, wargs->workingQueue, commandRunner);
 	worker->start();

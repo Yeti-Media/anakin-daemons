@@ -28,8 +28,8 @@
 using namespace Anakin;
 using namespace std;
 
-PatternMatcher::PatternMatcher() :
-		CommandRunner("PatternMatcher") {
+PatternMatcher::PatternMatcher(const string & threadName) :
+		CommandRunner("PatternMatcher",threadName) {
 	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->quickLZstate = new QuickLZ();
 }

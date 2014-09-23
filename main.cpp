@@ -56,7 +56,7 @@ using namespace Anakin;
 
 // *** OCR ****
 
-#if COMPILE_MODULE == OCRDEMO || COMPILE_MODULE == ALLMODULES
+#if COMPILE_MODULE == OCRFULL || COMPILE_MODULE == ALLMODULES
 #include <processing/commandrunner/OCR.hpp>
 #endif
 
@@ -73,9 +73,9 @@ using namespace Anakin;
 
 int main(int argc, const char * argv[]) {
 
-	vector<string> input(0);
+	Ptr<vector<string>> input = makePtr<vector<string>>();
 	for (int i = 1; i < argc; i++) {
-		input.push_back(argv[i]);
+		input->push_back(argv[i]);
 	}
 
 	int signal = EXIT_SUCCESS;
@@ -118,13 +118,13 @@ int main(int argc, const char * argv[]) {
 
 	// *** OCR ****
 
-#if COMPILE_MODULE == OCRDEMO
+#if COMPILE_MODULE == OCRFULL
 	Program* program = new Daemon<OCR>();
 #endif
 
 	// common startup
 
-	signal = program->start(&input);
+	signal = program->start(input);
 	delete program;
 
 	exit(signal);

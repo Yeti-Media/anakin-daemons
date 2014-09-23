@@ -16,7 +16,7 @@ namespace Anakin {
 
 class FaceMatcher: public CommandRunner {
 public:
-	FaceMatcher();
+	FaceMatcher(const string & threadName);
 	virtual ~FaceMatcher();
 
 	void validateRequest(const Ptr<vector<string>> & input);

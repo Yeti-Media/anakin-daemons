@@ -13,7 +13,7 @@ HelpOCR::HelpOCR() {
 
 	intro = "OCR demo to test.";
 	usage =
-			"  ./OCRDemo -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]\n"
+			"  ./OCR -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]\n"
 					"  * NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])\n";
 	flags =
 			"-mode <0-3> :  sets which engine to use\n"
