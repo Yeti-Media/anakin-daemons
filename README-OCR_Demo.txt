@@ -28,7 +28,7 @@ Summary:
 OCR demo to test.
 Usage:
 
-  ./OCRDemo -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]
+  ./OCR -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]
   * NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])
 
 Flags:

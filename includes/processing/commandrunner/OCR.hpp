@@ -92,6 +92,12 @@ public:
 	void run();
 
 	Help* getHelp();
+
+	// simple version
+	Ptr<vector<string>> detect(string & lastError);
+
+	// complex version, but very precise
+	Ptr<vector<string>> detect2(string & lastError);
 private:
 	I_CommunicationFormatter* cf;
 	bool showWords = false;
@@ -117,11 +123,6 @@ private:
 	int num_ocrs = 10;
 	//--- methods for OCR ---
 
-	// simple version
-	Ptr<vector<string>> detect(string & lastError);
-
-	// complex version, but very precise
-	Ptr<vector<string>> detect2(string & lastError);
 	bool isRepetitive(const string& s);
 
 	void er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions, vector<Vec2i> group, Mat& segmentation);

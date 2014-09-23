@@ -458,7 +458,14 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 							&& (confidences[i][j] < min_confidence2))
 					|| isRepetitive(words[i][j]))
 				continue;
-
+			if (showWords) {
+				stringstream s;
+				s << "word: \"" << words[i][j] << "\" \tconf: "
+						<< confidences[i][j] << " \tBoundingBox: x = "
+						<< boxes[i][j].x << ", y = " << boxes[i][j].x << ", width = "
+						<< boxes[i][j].width << ", height = " << boxes[i][j].height << ";";
+				words_detection->push_back(s.str());
+			}
 			text << words[i][j] << " ";
 		}
 
