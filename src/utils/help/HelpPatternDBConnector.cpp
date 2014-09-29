@@ -64,3 +64,4 @@ HelpPatternDBConnector::HelpPatternDBConnector() {
 HelpPatternDBConnector::~HelpPatternDBConnector() {
 
 }
+

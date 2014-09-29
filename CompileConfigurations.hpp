@@ -66,10 +66,10 @@
  *
  *  ======================================================================
  */
-#define COMPILE_MODE COMPILE_FOR_PRODUCTION
+//#define COMPILE_MODE COMPILE_FOR_PRODUCTION
 //#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
 //#define COMPILE_MODE COMPILE_FOR_BIN_ACCEPTANCE_TESTING
-//#define COMPILE_MODE COMPILE_FOR_README_UPDATE
+#define COMPILE_MODE COMPILE_FOR_README_UPDATE
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
 /** ======================================================================

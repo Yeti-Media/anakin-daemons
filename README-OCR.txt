@@ -1,5 +1,5 @@
 
-OCR_Demo Manual
+OCR Manual
 
 Daemon arguments:
 [cacheLoadingTimeWeight <int>|cacheDiscardLessValuable <bool>|cacheSize <int>|cacheLife <int>|cacheScenesSize <int>|cacheScenesLife <int>|-oLogFile <path>|-threads <int>|-queueCapacity <int>|(pghost <name> pgport <port> dbName <name> login <user> pwd <password>)] (-iConsole|(-iHTTP <port>)) (-oConsole|-oHTTP)
@@ -22,6 +22,17 @@ Flags:
 -cacheScenesLife <int>			: (default 10) scenes starting life
 -threads <int>				: (default 4) threads to use at processing requests
 -queueCapacity <int>			: (default 10) processing queue max capacity
+
+OCR Daemon arguments:
+-classifierNM1 <path> -classifierNM2 <path> -OCRHMMtransitions <path> -OCRHMMknn <path> [-numocrs <int>]
+
+Flags:
+
+-numocrs <int>				: number of OCR instances per thread
+-classifierNM1 <path>			: path to trained_classifierNM1.xml file.
+-classifierNM2 <path>			: path to trained_classifierNM2.xml file.
+-OCRHMMtransitions <path>		: path to OCRHMM_transitions_table.xml file.
+-OCRHMMknn <path>			: path to OCRHMM_knn_model_data.xml.gz file.
 
 Summary:
 

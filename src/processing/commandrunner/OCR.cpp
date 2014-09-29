@@ -26,7 +26,7 @@ using namespace cv::text;
 namespace Anakin {
 
 OCR::OCR(const string & threadName) :
-		CommandRunner("OCR_Demo", threadName) {
+		CommandRunner("OCR", threadName) {
 	this->cf = new CommunicationFormatterJSON();
 }
 

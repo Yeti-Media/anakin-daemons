@@ -56,12 +56,15 @@ public:
 	 * return usage examples
 	 */
 	string getExamples();
+
+
 protected:
 	string daemonIntro;
 	string intro;
 	string usage;
 	string flags;
 	string examples;
+	string extendedDaemonFlags;
 };
 
 } /* namespace Anakin */

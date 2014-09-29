@@ -12,6 +12,16 @@ namespace Anakin {
 HelpOCR::HelpOCR() {
 
 	intro = "OCR demo to test.";
+	extendedDaemonFlags =
+			"OCR Daemon arguments:\n"
+			"-classifierNM1 <path> -classifierNM2 <path> -OCRHMMtransitions <path> -OCRHMMknn <path> [-numocrs <int>]\n\n"
+			"Flags:\n\n"
+					"-numocrs <int>				: number of OCR instances per thread\n"
+					"-classifierNM1 <path>			: path to trained_classifierNM1.xml file.\n"
+					"-classifierNM2 <path>			: path to trained_classifierNM2.xml file.\n"
+					"-OCRHMMtransitions <path>		: path to OCRHMM_transitions_table.xml file.\n"
+					"-OCRHMMknn <path>			: path to OCRHMM_knn_model_data.xml.gz file.\n"
+			"\n";
 	usage =
 			"  ./OCR -ocr <path to image> [-mode <0-3> | -words | -datapath <path> | -lang <[~]<lang_value>[+[~]<lang_value>]*>]\n"
 					"  * NOTE: the order of the arguments doesn't matter (it only matters the order -flag [<values>])\n";
