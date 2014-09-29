@@ -34,14 +34,14 @@ PatternTrainer::~PatternTrainer() {
 	delete quickLZstate;
 }
 
-Help* PatternTrainer::getHelp() {
-	return new HelpPatternTrainer();
+Ptr<Help> PatternTrainer::getHelp() {
+	return makePtr<HelpPatternTrainer>();
 }
 
 void PatternTrainer::initProgramFlags() {
-	this->programFlags.setOptionalFlag("user");
-	this->programFlags.setOptionalFlag("patternsId");
-	this->programFlags.setOptionalFlag("saveToFile");
+	this->programFlags->setOptionalFlag("user");
+	this->programFlags->setOptionalFlag("patternsId");
+	this->programFlags->setOptionalFlag("saveToFile");
 }
 
 int PatternTrainer::run(const Ptr<vector<string>> &input) {
@@ -54,8 +54,8 @@ int PatternTrainer::run(const Ptr<vector<string>> &input) {
 
 	Ptr<vector<string>> values;
 
-	if (this->programFlags.flagFound("user")) {
-		values = this->programFlags.getFlagValues("user");
+	if (this->programFlags->flagFound("user")) {
+		values = this->programFlags->getFlagValues("user");
 		user = true;
 		if (values->size() == 1) {
 			userID = values->at(0);
@@ -64,8 +64,8 @@ int PatternTrainer::run(const Ptr<vector<string>> &input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags.flagFound("patternsId")) {
-		values = this->programFlags.getFlagValues("patternsId");
+	if (this->programFlags->flagFound("patternsId")) {
+		values = this->programFlags->getFlagValues("patternsId");
 		if (!values->empty()) {
 			patternsId = makePtr<vector<int>>();
 			for (unsigned int i = 0; i < values->size(); i++) {
@@ -76,8 +76,8 @@ int PatternTrainer::run(const Ptr<vector<string>> &input) {
 			return EXIT_FAILURE;
 		}
 	}
-	if (this->programFlags.flagFound("saveToFile")) {
-		values = this->programFlags.getFlagValues("saveToFile");
+	if (this->programFlags->flagFound("saveToFile")) {
+		values = this->programFlags->getFlagValues("saveToFile");
 		if (values->size() == 1) {
 			folder = "";
 			fileName = values->at(0);

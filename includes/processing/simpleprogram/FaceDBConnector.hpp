@@ -19,7 +19,7 @@ class FaceDBConnector: public Program {
 public:
 	FaceDBConnector();
 	virtual ~FaceDBConnector();
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 protected:
 	int run(const Ptr<vector<string>> & input);

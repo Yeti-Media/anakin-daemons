@@ -231,7 +231,7 @@ Ptr<string> CommunicationFormatterJSON::formatRequest(const char * data) {
 			request->append(mma);
 		}
 	}
-	delete req; //TODO review problems with this
+	delete req;
 	return request;
 }
 

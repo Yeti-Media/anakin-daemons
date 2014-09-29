@@ -42,9 +42,14 @@ class CommandRunner {
 public:
 	/**
 	 * Constructor (does steps 1, 2, 3)
-
 	 */
 	CommandRunner(const string & programName, const string & threadName);
+
+	/**
+	 * This command should be implemented if you need to extend the server commands with flags
+	 * and to initialize some variables on your CommandRunner implementation.
+	 */
+	virtual void extendServerCommandsWith(const Ptr<Flags> & flags);
 
 	/**
 	 * Setup the flags, the output and the cache (if used).
@@ -66,7 +71,7 @@ public:
 	/**
 	 * Return a full help instance. Must be deleted after use.
 	 */
-	virtual Help* getHelp() = 0;
+	virtual Ptr<Help> getHelp() = 0;
 
 	/**
 	 * Return the name of the program.

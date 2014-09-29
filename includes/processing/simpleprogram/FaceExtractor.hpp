@@ -18,7 +18,7 @@ class FaceExtractor: public Program {
 public:
 	FaceExtractor();
 	virtual ~FaceExtractor();
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 protected:
 	int run(const Ptr<vector<string>> & input);

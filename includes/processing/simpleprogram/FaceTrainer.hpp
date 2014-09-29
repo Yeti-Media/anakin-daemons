@@ -18,7 +18,7 @@ class FaceTrainer: public Program {
 public:
 	FaceTrainer();
 	virtual ~FaceTrainer();
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 protected:
 	int run(const Ptr<vector<string>> & input);

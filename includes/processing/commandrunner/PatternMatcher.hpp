@@ -32,9 +32,11 @@ public:
 	void initializeCommandRunner(const Ptr<DataOutput> & out,
 			const Ptr<SFBMCache> & cache);
 
+	void extendServerCommandsWith(const Ptr<Flags> &  flags);
+
 	void run();
 
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 protected:
 	E_PatternMatchingAction action = NONE;

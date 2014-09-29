@@ -21,6 +21,7 @@ namespace Anakin {
 
 Program::Program(const string & programName) {
 	verbose = false;
+	programFlags = makePtr<Flags>();
 	setProgramName(programName);
 }
 
@@ -42,9 +43,9 @@ void Program::initProgramFlags() {
 
 int Program::start(const Ptr<vector<string>> & input) {
 
-	programFlags.setOverridingFlag("help");
-	programFlags.setNoValuesFlag("verbose");
-	programFlags.setOptionalFlag("oLogFile");
+	programFlags->setOverridingFlag("help");
+	programFlags->setNoValuesFlag("verbose");
+	programFlags->setOptionalFlag("oLogFile");
 
 	initProgramFlags();
 
@@ -52,19 +53,19 @@ int Program::start(const Ptr<vector<string>> & input) {
 	//                         FLAGS PARSING                                //
 	//______________________________________________________________________//
 
-	if (programFlags.validateInput(input)) {
+	if (programFlags->validateInput(input)) {
 		Ptr<vector<string>> values;
 
-		if (programFlags.flagFound("help")) {
+		if (programFlags->flagFound("help")) {
 			cout << this->getFullTextHelp();
 			return EXIT_SUCCESS;
 		}
-		if (programFlags.flagFound("verbose")) {
+		if (programFlags->flagFound("verbose")) {
 			verbose = true;
 		}
 
-		if (programFlags.flagFound("oLogFile")) {
-			values = programFlags.getFlagValues("oLogFile");
+		if (programFlags->flagFound("oLogFile")) {
+			values = programFlags->getFlagValues("oLogFile");
 			if (values->size() == 1) {
 				logFile = values->at(0);
 			} else {
@@ -113,15 +114,14 @@ int Program::run(const Ptr<vector<string>> & input) {
 /**
  * Placeholder for inheritance.
  */
-Help* Program::getHelp() {
-	return NULL;
+Ptr<Help> Program::getHelp() {
+	return Ptr<Help>();
 }
 
 string Program::getFullTextHelp() {
-	Help* help = getHelp();
+	Ptr<Help> help = getHelp();
 	string output = "\n" + getProgramName() + " Manual\n\n"
 			+ help->getFullHelp();
-	delete help;
 	return output;
 }
 

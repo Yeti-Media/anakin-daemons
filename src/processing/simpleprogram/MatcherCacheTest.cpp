@@ -27,8 +27,8 @@ MatcherCacheTest::MatcherCacheTest() :
 MatcherCacheTest::~MatcherCacheTest() {
 }
 
-Help* MatcherCacheTest::getHelp() {
-	return new HelpMatcherCacheTest();
+Ptr<Help> MatcherCacheTest::getHelp() {
+	return makePtr<HelpMatcherCacheTest>();
 }
 
 void MatcherCacheTest::initProgramFlags() {

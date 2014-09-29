@@ -23,7 +23,7 @@ class PatternExtractor: public Program {
 public:
 	PatternExtractor();
 	virtual ~PatternExtractor();
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 	const static char PATTERNS = 1;
 	const static char HISTOGRAMS = 1;

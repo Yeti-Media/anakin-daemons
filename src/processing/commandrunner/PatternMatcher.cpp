@@ -29,7 +29,7 @@ using namespace Anakin;
 using namespace std;
 
 PatternMatcher::PatternMatcher(const string & threadName) :
-		CommandRunner("PatternMatcher",threadName) {
+		CommandRunner("PatternMatcher", threadName) {
 	this->cfm = new CommunicationFormatterMatchingJSON();
 	this->quickLZstate = new QuickLZ();
 }
@@ -39,8 +39,12 @@ PatternMatcher::~PatternMatcher() {
 	delete this->cfm;
 }
 
-Help* PatternMatcher::getHelp() {
-	return new HelpPatternMatcher();
+Ptr<Help> PatternMatcher::getHelp() {
+	return makePtr<HelpPatternMatcher>();
+}
+
+void PatternMatcher::extendServerCommandsWith(const Ptr<Flags> & flags) {
+
 }
 
 void PatternMatcher::initializeCommandRunner(const Ptr<DataOutput> & out,

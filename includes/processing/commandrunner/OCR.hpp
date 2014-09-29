@@ -86,12 +86,14 @@ public:
 
 	void validateRequest(const Ptr<vector<string>> & input);
 
+	void extendServerCommandsWith(const Ptr<Flags> & flags);
+
 	void initializeCommandRunner(const Ptr<DataOutput> & out,
 			const Ptr<SFBMCache> & cache);
 
 	void run();
 
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 	// simple version
 	Ptr<vector<string>> detect(string & lastError);
@@ -125,7 +127,8 @@ private:
 
 	bool isRepetitive(const string& s);
 
-	void er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions, vector<Vec2i> group, Mat& segmentation);
+	void er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions,
+			vector<Vec2i> group, Mat& segmentation);
 
 };
 

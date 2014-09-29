@@ -19,7 +19,7 @@ class PatternTrainer: public Program {
 public:
 	PatternTrainer();
 	virtual ~PatternTrainer();
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 protected:
 	int run(const Ptr<vector<string>> &input);

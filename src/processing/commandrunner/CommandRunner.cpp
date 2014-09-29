@@ -10,7 +10,8 @@ using namespace cv;
 
 namespace fs = boost::filesystem;
 
-CommandRunner::CommandRunner(const string &  programName, const string & threadName) {
+CommandRunner::CommandRunner(const string & programName,
+		const string & threadName) {
 	this->sceneID = -1;
 	setProgramName(programName);
 	this->threadName = threadName;
@@ -29,7 +30,8 @@ void CommandRunner::setProgramName(const string & name) {
 /**
  * Should initializate all used variables
  */
-void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out, const Ptr<SFBMCache> & cache) {
+void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out,
+		const Ptr<SFBMCache> & cache) {
 	this->flags = makePtr<Flags>();
 	this->out = out;
 	this->cache = cache;
@@ -38,8 +40,14 @@ void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out, const P
 /**
  * Placeholder for inheritance.
  */
-Help* CommandRunner::getHelp() {
-	return NULL;
+void CommandRunner::extendServerCommandsWith(const Ptr<Flags> & flags) {
+}
+
+/**
+ * Placeholder for inheritance.
+ */
+Ptr<Help> CommandRunner::getHelp() {
+	return Ptr<Help>();
 }
 
 string CommandRunner::getProgramName() {

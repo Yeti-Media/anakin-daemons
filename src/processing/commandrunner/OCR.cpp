@@ -34,8 +34,12 @@ OCR::~OCR() {
 	delete cf;
 }
 
-Help* OCR::getHelp() {
-	return new HelpOCR();
+Ptr<Help> OCR::getHelp() {
+	return makePtr<HelpOCR>();
+}
+
+void OCR::extendServerCommandsWith(const Ptr<Flags> &  flags) {
+
 }
 
 void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
@@ -61,7 +65,7 @@ void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
 			<< "..." << endl;
 
 	downsize = false;
-	REGION_TYPE = 1;
+	REGION_TYPE = 0;
 	GROUPING_ALGORITHM = 0;
 	RECOGNITION = 0;
 
@@ -104,7 +108,8 @@ void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
 	}
 
 	Mat transition_p;
-	string filename = "OCRHMM_transitions_table.xml";
+	string filename =
+			"/home/franco/Librerias/opencv_contrib/modules/text/samples/OCRHMM_transitions_table.xml";
 	FileStorage fs(filename, FileStorage::READ);
 	fs["transition_probabilities"] >> transition_p;
 	fs.release();
@@ -462,8 +467,9 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 				stringstream s;
 				s << "word: \"" << words[i][j] << "\" \tconf: "
 						<< confidences[i][j] << " \tBoundingBox: x = "
-						<< boxes[i][j].x << ", y = " << boxes[i][j].x << ", width = "
-						<< boxes[i][j].width << ", height = " << boxes[i][j].height << ";";
+						<< boxes[i][j].x << ", y = " << boxes[i][j].x
+						<< ", width = " << boxes[i][j].width << ", height = "
+						<< boxes[i][j].height << ";";
 				words_detection->push_back(s.str());
 			}
 			text << words[i][j] << " ";

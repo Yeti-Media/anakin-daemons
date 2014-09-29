@@ -29,10 +29,11 @@ public:
 	 * a blocking queue with a capacity of <cap>
 	 * a vector of threads of size <threads>
 	 */
-	RequestServer(const CacheConfig & cacheConfig, char mode,
-			const string & pghost, const string & pgport, const string & dbName,
-			const string & login, const string & pwd, unsigned int httpPort,
-			int cap, int threads, bool verbose, const string & tempDir,
+	RequestServer(const Ptr<Flags> & serverFlags,
+			const CacheConfig & cacheConfig, char mode, const string & pghost,
+			const string & pgport, const string & dbName, const string & login,
+			const string & pwd, unsigned int httpPort, int cap, int threads,
+			bool verbose, const string & tempDir,
 			TempDirCleaner * tempDirCleaner);
 
 	virtual ~RequestServer();
@@ -91,11 +92,12 @@ private:
 
 template<class SpecificCommandRunner>
 RequestServer<SpecificCommandRunner>::RequestServer(
-		const CacheConfig & cacheConfig, char mode, const string & pghost,
-		const string & pgport, const string & dbName, const string & login,
-		const string & pwd, unsigned int httpPort, int cap, int threads,
-		bool verbose, const string & tempDir, TempDirCleaner * tempDirCleaner) :
-		Server<SpecificCommandRunner>(cacheConfig, mode, pghost, pgport, dbName,
+		const Ptr<Flags> & serverFlags, const CacheConfig & cacheConfig,
+		char mode, const string & pghost, const string & pgport,
+		const string & dbName, const string & login, const string & pwd,
+		unsigned int httpPort, int cap, int threads, bool verbose,
+		const string & tempDir, TempDirCleaner * tempDirCleaner) :
+		Server<SpecificCommandRunner>(serverFlags, cacheConfig, mode, pghost, pgport, dbName,
 				login, pwd, httpPort, verbose, tempDir, tempDirCleaner) {
 	this->threads = threads;
 	this->workerThreads = new vector<pthread_t>(threads);
@@ -135,9 +137,9 @@ template<class SpecificCommandRunner>
 void RequestServer<SpecificCommandRunner>::startWorkers(
 		const Ptr<DataOutput> & output) {
 	for (int w = 0; w < this->threads; w++) {
-		string threadName = to_string(w+1);
-		WorkerArgs* wargs = new WorkerArgs(w + 1, threadName, output, this->cache,
-				this->workingQueue);
+		string threadName = to_string(w + 1);
+		WorkerArgs* wargs = new WorkerArgs(w + 1, threadName, output,
+				this->cache, this->workingQueue);
 		pthread_create(&this->workerThreads->at(w), NULL, startWorker,
 				(void*) wargs);
 	}
@@ -153,6 +155,7 @@ void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	worker->start();
 	delete worker;
 	delete wargs;
+	delete commandRunner;
 }
 
 template<class SpecificCommandRunner>

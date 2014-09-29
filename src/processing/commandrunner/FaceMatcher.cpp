@@ -11,13 +11,17 @@
 namespace Anakin {
 
 FaceMatcher::FaceMatcher(const string & threadName) :
-		CommandRunner("FaceMatcher",threadName) {
+		CommandRunner("FaceMatcher", threadName) {
 }
 
 FaceMatcher::~FaceMatcher() {
 }
 
 void FaceMatcher::validateRequest(const Ptr<vector<string>> & input) {
+
+}
+
+void FaceMatcher::extendServerCommandsWith(const Ptr<Flags> & flags) {
 
 }
 
@@ -30,8 +34,8 @@ void FaceMatcher::run() {
 
 }
 
-Help* FaceMatcher::getHelp() {
-	return new HelpFaceMatcher();
+Ptr<Help> FaceMatcher::getHelp() {
+	return makePtr<HelpFaceMatcher>();
 }
 
 } /* namespace Anakin */
