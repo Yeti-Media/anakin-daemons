@@ -21,7 +21,11 @@ void FaceMatcher::validateRequest(const Ptr<vector<string>> & input) {
 
 }
 
-void FaceMatcher::extendServerCommandsWith(const Ptr<Flags> & flags) {
+void FaceMatcher::extendServerCommandsWith(const Ptr<Flags> & serverFlags) {
+
+}
+
+void FaceMatcher::parseServerFlags(const Ptr<Flags> & serverFlags) {
 
 }
 

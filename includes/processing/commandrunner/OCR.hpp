@@ -86,7 +86,9 @@ public:
 
 	void validateRequest(const Ptr<vector<string>> & input);
 
-	void extendServerCommandsWith(const Ptr<Flags> & flags);
+	void extendServerCommandsWith(const Ptr<Flags> & serverFlags);
+
+	void parseServerFlags(const Ptr<Flags> & serverFlags);
 
 	void initializeCommandRunner(const Ptr<DataOutput> & out,
 			const Ptr<SFBMCache> & cache);
@@ -109,9 +111,25 @@ private:
 	tesseract::OcrEngineMode mode = tesseract::OEM_TESSERACT_ONLY;
 
 	//--- ocr2 vars ---
+	string trained_classifierNM1;
+	string trained_classifierNM2;
+	string OCRHMM_transitions_table;
+	string OCRHMM_knn_model_data;
 	bool downsize = false;
+
+	/**
+	 * 0 = ERStats, 1 = MSER
+	 */
 	int REGION_TYPE = 1;
+
+	/**
+	 * 0 = exhaustive_search, 1 = multioriented
+	 */
 	int GROUPING_ALGORITHM = 0;
+
+	/**
+	 * 0 = Tesseract, 1 = NM_chain_features + KNN
+	 */
 	int RECOGNITION = 0;
 
 	vector<Mat> channels;

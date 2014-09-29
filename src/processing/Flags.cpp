@@ -237,6 +237,7 @@ Ptr<vector<string>> Flags::getNoValuesFlags() {
 }
 
 Ptr<vector<string>> Flags::getFlagValues(const string & flag) {
+	lock_guard<mutex> lck(mtx);
 	if (isRequired(flag)) {
 		return this->requiredFlags.find(flag)->second;
 	} else if (isOptional(flag)) {
@@ -374,5 +375,6 @@ bool Flags::isOverridingFlagFound() {
 }
 
 bool Flags::flagFound(const string & flag) {
+	lock_guard<mutex> lck(mtx);
 	return findInVector(this->foundFlags, flag);
 }

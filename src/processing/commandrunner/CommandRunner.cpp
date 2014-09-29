@@ -40,7 +40,13 @@ void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out,
 /**
  * Placeholder for inheritance.
  */
-void CommandRunner::extendServerCommandsWith(const Ptr<Flags> & flags) {
+void CommandRunner::parseServerFlags(const Ptr<Flags> & serverFlags) {
+}
+
+/**
+ * Placeholder for inheritance.
+ */
+void CommandRunner::extendServerCommandsWith(const Ptr<Flags> & serverFlags) {
 }
 
 /**

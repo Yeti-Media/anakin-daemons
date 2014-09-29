@@ -43,7 +43,11 @@ Ptr<Help> PatternMatcher::getHelp() {
 	return makePtr<HelpPatternMatcher>();
 }
 
-void PatternMatcher::extendServerCommandsWith(const Ptr<Flags> & flags) {
+void PatternMatcher::extendServerCommandsWith(const Ptr<Flags> & serverFlags) {
+
+}
+
+void PatternMatcher::parseServerFlags(const Ptr<Flags> & serverFlags) {
 
 }
 

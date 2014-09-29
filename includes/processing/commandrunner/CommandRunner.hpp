@@ -49,7 +49,12 @@ public:
 	 * This command should be implemented if you need to extend the server commands with flags
 	 * and to initialize some variables on your CommandRunner implementation.
 	 */
-	virtual void extendServerCommandsWith(const Ptr<Flags> & flags);
+	virtual void extendServerCommandsWith(const Ptr<Flags> & serverFlags);
+
+	/**
+	 * Parse the extended server flags, and pre-initializate the CommandRunner
+	 */
+	virtual void parseServerFlags(const Ptr<Flags> & serverFlags);
 
 	/**
 	 * Setup the flags, the output and the cache (if used).
@@ -88,7 +93,8 @@ public:
 	virtual ~CommandRunner();
 
 protected:
-	bool checkDuplicatedIndexes(const vector<string> & indexes, string & duplicated);
+	bool checkDuplicatedIndexes(const vector<string> & indexes,
+			string & duplicated);
 	int mma = 8;
 	float mr = 1.f / 1.5f;
 	int sceneID;

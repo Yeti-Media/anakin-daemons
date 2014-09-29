@@ -38,7 +38,73 @@ Ptr<Help> OCR::getHelp() {
 	return makePtr<HelpOCR>();
 }
 
-void OCR::extendServerCommandsWith(const Ptr<Flags> &  flags) {
+void OCR::extendServerCommandsWith(const Ptr<Flags> & serverFlags) {
+	serverFlags->setOptionalFlag("numocrs");
+	serverFlags->setRequiredFlag("classifierNM1");
+	serverFlags->setRequiredFlag("classifierNM2");
+	serverFlags->setRequiredFlag("OCRHMMtransitions");
+	serverFlags->setRequiredFlag("OCRHMMknn");
+}
+
+void OCR::parseServerFlags(const Ptr<Flags> & serverFlags) {
+	Ptr<vector<string>> values;
+
+	if (serverFlags->flagFound("numocrs")) {
+		values = serverFlags->getFlagValues("numocrs");
+		if (values->size() == 1) {
+			num_ocrs = stoi(values->at(0));
+		} else {
+			cout << "param numocrs needs only one value" << endl;
+			exit(EXIT_FAILURE);
+		}
+	} else {
+		//Initialize OCR engine (we initialize 10 instances in order to work several recognitions in parallel)
+		num_ocrs = 10;
+	}
+
+	//-classifierNM1 "/home/franco/Librerias/opencv_contrib/modules/text/samples/trained_classifierNM1.xml"
+	if (serverFlags->flagFound("classifierNM1")) {
+		values = serverFlags->getFlagValues("classifierNM1");
+		if (values->size() == 1) {
+			trained_classifierNM1 = values->at(0);
+		} else {
+			cout << "param classifierNM1 needs only one value" << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	//-classifierNM2 "/home/franco/Librerias/opencv_contrib/modules/text/samples/trained_classifierNM2.xml"
+	if (serverFlags->flagFound("classifierNM2")) {
+		values = serverFlags->getFlagValues("classifierNM2");
+		if (values->size() == 1) {
+			trained_classifierNM2 = values->at(0);
+		} else {
+			cout << "param classifierNM2 needs only one value" << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	//-OCRHMMtransitions "/home/franco/Librerias/opencv_contrib/modules/text/samples/OCRHMM_transitions_table.xml"
+	if (serverFlags->flagFound("OCRHMMtransitions")) {
+		values = serverFlags->getFlagValues("OCRHMMtransitions");
+		if (values->size() == 1) {
+			OCRHMM_transitions_table = values->at(0);
+		} else {
+			cout << "param OCRHMMtransitions needs only one value" << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	//-OCRHMMknn "/home/franco/Librerias/opencv_contrib/modules/text/samples/OCRHMM_knn_model_data.xml.gz"
+	if (serverFlags->flagFound("OCRHMMknn")) {
+		values = serverFlags->getFlagValues("OCRHMMknn");
+		if (values->size() == 1) {
+			OCRHMM_knn_model_data = values->at(0);
+		} else {
+			cout << "param OCRHMM_knn_model_data needs only one value" << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
 
 }
 
@@ -47,16 +113,16 @@ void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
 	CommandRunner::initializeCommandRunner(out, cache);
 
 	//OCR flags
-	flags->setOptionalFlag("ocr");
+	flags->setRequiredFlag("ocr");
 	flags->setOptionalFlag("reqID");
 	flags->setOptionalFlag("lang");
 	flags->setOptionalFlag("datapath");
 	flags->setOptionalFlag("mode");
 	flags->setOptionalFlag("words");
-	flags->setDependence("words", "ocr");
-	flags->setDependence("lang", "ocr");
-	flags->setDependence("datapath", "ocr");
-	flags->setDependence("mode", "ocr");
+
+	flags->setOptionalFlag("regiontype");
+	flags->setOptionalFlag("groupingalgorithm");
+	flags->setOptionalFlag("recognition");
 
 	flags->setVerbose(true);
 
@@ -64,53 +130,31 @@ void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
 	cout << "Initializing OCR engines on thread " << this->getThreadName()
 			<< "..." << endl;
 
-	downsize = false;
-	REGION_TYPE = 0;
-	GROUPING_ALGORITHM = 0;
-	RECOGNITION = 0;
-
 	regions = vector<vector<ERStat> >(2);
-
-//	char *region_types_str[2] = { const_cast<char *>("ERStats"),
-//			const_cast<char *>("MSER") };
-//	char *grouping_algorithms_str[2] = {
-//			const_cast<char *>("exhaustive_search"),
-//			const_cast<char *>("multioriented") };
-//	char *recognitions_str[2] = { const_cast<char *>("Tesseract"),
-//			const_cast<char *>("NM_chain_features + KNN") };
 
 // Create ERFilter objects with the 1st and 2nd stage default classifiers
 // since er algorithm is not reentrant we need one filter for channel
 
 	for (int i = 0; i < 2; i++) {
-		Ptr<ERFilter> er_filter1 =
-				createERFilterNM1(
-						loadClassifierNM1(
-								"/home/franco/Librerias/opencv_contrib/modules/text/samples/trained_classifierNM1.xml"),
-						8, 0.00015f, 0.13f, 0.2f, true, 0.1f);
-		Ptr<ERFilter> er_filter2 =
-				createERFilterNM2(
-						loadClassifierNM2(
-								"/home/franco/Librerias/opencv_contrib/modules/text/samples/trained_classifierNM2.xml"),
-						0.5);
+		Ptr<ERFilter> er_filter1 = createERFilterNM1(
+				loadClassifierNM1(trained_classifierNM1), 8, 0.00015f, 0.13f,
+				0.2f, true, 0.1f);
+		Ptr<ERFilter> er_filter2 = createERFilterNM2(
+				loadClassifierNM2(trained_classifierNM2), 0.5);
 		er_filters1.push_back(er_filter1);
 		er_filters2.push_back(er_filter2);
 	}
 
 	//double t_r = getTickCount();
 
-	//Initialize OCR engine (we initialize 10 instances in order to work several recognitions in parallel)
 	//cout << "Initializing OCR engines ..." << endl;
-	num_ocrs = 10;
 
 	for (int o = 0; o < num_ocrs; o++) {
 		ocrs.push_back(OCRTesseract::create());
 	}
 
 	Mat transition_p;
-	string filename =
-			"/home/franco/Librerias/opencv_contrib/modules/text/samples/OCRHMM_transitions_table.xml";
-	FileStorage fs(filename, FileStorage::READ);
+	FileStorage fs(OCRHMM_transitions_table, FileStorage::READ);
 	fs["transition_probabilities"] >> transition_p;
 	fs.release();
 	Mat emission_p = Mat::eye(62, 62, CV_64FC1);
@@ -120,9 +164,8 @@ void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
 	for (int o = 0; o < num_ocrs; o++) {
 		decoders.push_back(
 				OCRHMMDecoder::create(
-						loadOCRHMMClassifierNM(
-								"/home/franco/Librerias/opencv_contrib/modules/text/samples/OCRHMM_knn_model_data.xml.gz"),
-						voc, transition_p, emission_p));
+						loadOCRHMMClassifierNM(OCRHMM_knn_model_data), voc,
+						transition_p, emission_p));
 	}
 
 	cout << "Thread " << this->getThreadName() << " Done!" << endl;
@@ -132,6 +175,51 @@ void OCR::validateRequest(const Ptr<vector<string>> & input) {
 	reqID = "";
 	if (flags->validateInput(input)) {
 		Ptr<vector<string>> values;
+
+		if (flags->flagFound("regiontype")) {
+			values = flags->getFlagValues("regiontype");
+			if (values->size() == 1) {
+				REGION_TYPE = stoi(values->at(0));
+			} else {
+				lastError = "flag regiontype expects only one value";
+				inputError = true;
+				return;
+			}
+		} else {
+			REGION_TYPE = 0;
+		}
+
+		if (flags->flagFound("groupingalgorithm")) {
+			values = flags->getFlagValues("groupingalgorithm");
+			if (values->size() == 1) {
+				GROUPING_ALGORITHM = stoi(values->at(0));
+			} else {
+				lastError = "flag groupingalgorithm expects only one value";
+				inputError = true;
+				return;
+			}
+		} else {
+			GROUPING_ALGORITHM = 0;
+		}
+
+		if (flags->flagFound("recognition")) {
+			values = flags->getFlagValues("recognition");
+			if (values->size() == 1) {
+				RECOGNITION = stoi(values->at(0));
+			} else {
+				lastError = "flag recognition expects only one value";
+				inputError = true;
+				return;
+			}
+		} else {
+			RECOGNITION = 0;
+		}
+
+		if (flags->flagFound("downsize")) {
+			downsize = true;
+		} else {
+			downsize = false;
+		}
 
 		if (flags->flagFound(Constants::PARAM_REQID)) {
 			values = flags->getFlagValues(Constants::PARAM_REQID);

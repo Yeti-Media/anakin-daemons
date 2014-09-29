@@ -81,10 +81,11 @@ private:
 		string threadName;
 		Ptr<DataOutput> output;
 		Ptr<SFBMCache> cache;
+		Ptr<Flags> serverFlags;
 		tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue;
-		WorkerArgs(int id, const string & threadName, const Ptr<DataOutput> & output, const Ptr<SFBMCache> & cache,
+		WorkerArgs(int id, const string & threadName, const Ptr<Flags> & serverFlags, const Ptr<DataOutput> & output, const Ptr<SFBMCache> & cache,
 				tbb::concurrent_bounded_queue<Ptr<vector<string>>>* workingQueue) :
-		id(id), threadName(threadName), output(output), cache(cache), workingQueue(workingQueue) {
+		id(id), threadName(threadName), serverFlags(serverFlags), output(output), cache(cache), workingQueue(workingQueue) {
 		}
 	};
 	vector<pthread_t> * workerThreads;
@@ -138,7 +139,7 @@ void RequestServer<SpecificCommandRunner>::startWorkers(
 		const Ptr<DataOutput> & output) {
 	for (int w = 0; w < this->threads; w++) {
 		string threadName = to_string(w + 1);
-		WorkerArgs* wargs = new WorkerArgs(w + 1, threadName, output,
+		WorkerArgs* wargs = new WorkerArgs(w + 1, threadName, this->serverFlags,output,
 				this->cache, this->workingQueue);
 		pthread_create(&this->workerThreads->at(w), NULL, startWorker,
 				(void*) wargs);
@@ -150,6 +151,7 @@ void * RequestServer<SpecificCommandRunner>::startWorker(void *ptr) {
 	WorkerArgs* wargs = (WorkerArgs*) ptr;
 	SpecificCommandRunner* commandRunner = new SpecificCommandRunner(
 			wargs->threadName);
+	commandRunner->parseServerFlags(wargs->serverFlags);
 	commandRunner->initializeCommandRunner(wargs->output, wargs->cache);
 	Worker* worker = new Worker(wargs->id, wargs->workingQueue, commandRunner);
 	worker->start();
