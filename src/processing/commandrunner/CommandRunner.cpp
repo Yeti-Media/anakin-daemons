@@ -15,6 +15,7 @@ CommandRunner::CommandRunner(const string & programName,
 	this->sceneID = -1;
 	setProgramName(programName);
 	this->threadName = threadName;
+	this->flags = makePtr<Flags>();
 }
 
 void CommandRunner::setProgramName(const string & name) {
@@ -27,12 +28,15 @@ void CommandRunner::setProgramName(const string & name) {
 	this->programName = name;
 }
 
+Ptr<Flags> CommandRunner::getProgramFlags() {
+	return flags;
+}
+
 /**
  * Should initializate all used variables
  */
 void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out,
 		const Ptr<SFBMCache> & cache) {
-	this->flags = makePtr<Flags>();
 	this->out = out;
 	this->cache = cache;
 }

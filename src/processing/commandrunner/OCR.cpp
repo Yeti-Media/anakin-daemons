@@ -18,6 +18,7 @@
 #include <utils/help/HelpOCR.hpp>
 #include <sstream>
 #include <utils/ClearVector.hpp>
+#include <sstream>
 
 using namespace std;
 using namespace cv;
@@ -44,6 +45,8 @@ void OCR::extendServerCommandsWith(const Ptr<Flags> & serverFlags) {
 	serverFlags->setRequiredFlag("classifierNM2");
 	serverFlags->setRequiredFlag("OCRHMMtransitions");
 	serverFlags->setRequiredFlag("OCRHMMknn");
+	serverFlags->setRequiredFlag("classifier_erGrouping");
+
 }
 
 void OCR::parseServerFlags(const Ptr<Flags> & serverFlags) {
@@ -102,6 +105,17 @@ void OCR::parseServerFlags(const Ptr<Flags> & serverFlags) {
 			OCRHMM_knn_model_data = values->at(0);
 		} else {
 			cout << "param OCRHMM_knn_model_data needs only one value" << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	//-classifier_erGrouping "/home/franco/Librerias/opencv_contrib/modules/text/samples/trained_classifier_erGrouping.xml"
+	if (serverFlags->flagFound("classifier_erGrouping")) {
+		values = serverFlags->getFlagValues("classifier_erGrouping");
+		if (values->size() == 1) {
+			trained_classifier_erGrouping = values->at(0);
+		} else {
+			cout << "param classifier_erGrouping needs only one value" << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -234,7 +248,16 @@ void OCR::validateRequest(const Ptr<vector<string>> & input) {
 		if (flags->flagFound("ocr")) {
 			values = flags->getFlagValues("ocr");
 			if (values->size() != 1) {
-				lastError = "flag ocr expects only one value";
+				stringstream f;
+				int i = 0;
+				for (vector<string>::iterator it = values->begin();
+						it != values->end(); ++it) {
+					i++;
+					f << i << ") " << *it << " ";
+				}
+				lastError =
+						"flag ocr expects only one value, and the input was: "
+								+ f.str();
 				inputError = true;
 				return;
 			}
@@ -313,59 +336,59 @@ void OCR::validateRequest(const Ptr<vector<string>> & input) {
 		inputError = true;
 	}
 }
-
-Ptr<vector<string>> OCR::detect(string & lastError) {
-	//TODO change location??
-	tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-
-	if (api->Init(this->datapath.c_str(), this->lang.c_str(), this->mode)) {
-		lastError = "Could not initialize tesseract";
-		return Ptr<vector<string>>();
-	}
-
-	cv::Mat img = cv::imread(scenesDir);
-
-	if (!img.data) {
-		lastError = "Error loading image";
-		return Ptr<vector<string>>();
-	}
-
-	api->SetImage((uchar*) img.data, img.size().width, img.size().height,
-			img.channels(), img.step1());
-	api->Recognize(0);
-	Ptr<vector<string>> result = makePtr<vector<string>>();
-
-	tesseract::ResultIterator* ri = api->GetIterator();
-	tesseract::PageIteratorLevel level = tesseract::RIL_WORD;
-
-	if (ri != 0) {
-		stringstream text;
-		do {
-			const char* word = ri->GetUTF8Text(level);
-			float conf = ri->Confidence(level);
-			int x1, y1, x2, y2;
-			ri->BoundingBox(level, &x1, &y1, &x2, &y2);
-			if (showWords) {
-				stringstream s;
-				s << "word: \"" << word << "\" \tconf: " << conf
-						<< " \tBoundingBox: " << x1 << "," << y1 << "," << x2
-						<< "," << y2 << ";";
-				result->push_back(s.str());
-			}
-			text << word << " ";
-			delete[] word;
-		} while (ri->Next(level));
-		string fullText = text.str();
-		if (!fullText.empty())
-			fullText.pop_back();
-		result->push_back(fullText);
-	}
-
-	api->Clear();
-	api->End();
-	delete api;
-	return result;
-}
+//
+//Ptr<vector<string>> OCR::detect(string & lastError) {
+//	//TODO change location??
+//	tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
+//
+//	if (api->Init(this->datapath.c_str(), this->lang.c_str(), this->mode)) {
+//		lastError = "Could not initialize tesseract";
+//		return Ptr<vector<string>>();
+//	}
+//
+//	cv::Mat img = cv::imread(scenesDir);
+//
+//	if (!img.data) {
+//		lastError = "Error loading image";
+//		return Ptr<vector<string>>();
+//	}
+//
+//	api->SetImage((uchar*) img.data, img.size().width, img.size().height,
+//			img.channels(), img.step1());
+//	api->Recognize(0);
+//	Ptr<vector<string>> result = makePtr<vector<string>>();
+//
+//	tesseract::ResultIterator* ri = api->GetIterator();
+//	tesseract::PageIteratorLevel level = tesseract::RIL_WORD;
+//
+//	if (ri != 0) {
+//		stringstream text;
+//		do {
+//			const char* word = ri->GetUTF8Text(level);
+//			float conf = ri->Confidence(level);
+//			int x1, y1, x2, y2;
+//			ri->BoundingBox(level, &x1, &y1, &x2, &y2);
+//			if (showWords) {
+//				stringstream s;
+//				s << "word: \"" << word << "\" \tconf: " << conf
+//						<< " \tBoundingBox: " << x1 << "," << y1 << "," << x2
+//						<< "," << y2 << ";";
+//				result->push_back(s.str());
+//			}
+//			text << word << " ";
+//			delete[] word;
+//		} while (ri->Next(level));
+//		string fullText = text.str();
+//		if (!fullText.empty())
+//			fullText.pop_back();
+//		result->push_back(fullText);
+//	}
+//
+//	api->Clear();
+//	api->End();
+//	delete api;
+//	return result;
+//}
 
 bool OCR::isRepetitive(const string& s) {
 	int count = 0;
@@ -472,9 +495,7 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 	}
 	case 1: {
 		erGrouping(frame, channels, regions, nm_region_groups, nm_boxes,
-				ERGROUPING_ORIENTATION_ANY,
-				"/home/franco/Librerias/opencv_contrib/modules/text/samples/trained_classifier_erGrouping.xml",
-				0.5);
+				ERGROUPING_ORIENTATION_ANY, trained_classifier_erGrouping, 0.5);
 		break;
 	}
 	}

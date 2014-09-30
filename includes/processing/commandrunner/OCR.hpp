@@ -98,7 +98,7 @@ public:
 	Ptr<Help> getHelp();
 
 	// simple version
-	Ptr<vector<string>> detect(string & lastError);
+	//Ptr<vector<string>> detect(string & lastError);
 
 	// complex version, but very precise
 	Ptr<vector<string>> detect2(string & lastError);
@@ -115,6 +115,7 @@ private:
 	string trained_classifierNM2;
 	string OCRHMM_transitions_table;
 	string OCRHMM_knn_model_data;
+	string trained_classifier_erGrouping;
 	bool downsize = false;
 
 	/**

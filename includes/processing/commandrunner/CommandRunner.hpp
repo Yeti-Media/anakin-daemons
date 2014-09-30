@@ -86,6 +86,11 @@ public:
 	/**
 	 * Return the name of the program.
 	 */
+	Ptr<Flags> getProgramFlags();
+
+	/**
+	 * Return the name of the program.
+	 */
 	string getThreadName();
 
 	void setProgramName(const string & name);

@@ -195,11 +195,25 @@ void testingDirCheck(int argc, const char * argv[]) {
 	validateDir(OCRDemoBenchmark / "word_recognition",
 			"OCR Image dataset word recognition");
 
+	fs::path classifier = testDir / "examples" / "ocr" / "classifier";
+
+	validateDir(classifier, "OCR Classifiers dir");
+
 	//--------------------------------------------------------------
 	//  Files validation
 	//--------------------------------------------------------------
 
 	validateFile(simpleTest / "several.jpg", "Several logos .jpg");
+	validateFile(classifier / "trained_classifierNM1.xml",
+			"Classifier trained_classifierNM1");
+	validateFile(classifier / "trained_classifierNM2.xml",
+			"Classifier trained_classifierNM2");
+	validateFile(classifier / "OCRHMM_transitions_table.xml",
+			"Classifier OCRHMM_transitions_table");
+	validateFile(classifier / "OCRHMM_knn_model_data.xml.gz",
+			"Classifier OCRHMM_knn_model_data.xml.gz");
+	validateFile(classifier / "trained_classifier_erGrouping.xml",
+			"Classifier trained_classifier_erGrouping.xml");
 
 	// ====== SQL script File =======
 

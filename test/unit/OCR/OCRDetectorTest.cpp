@@ -69,11 +69,56 @@ BOOST_FIXTURE_TEST_SUITE( OCRDetectorSuite, PathFixtureOCRDetectorTest)
 
 BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 
-	boost::filesystem::path img_3 = testDir / "examples" / "ocr"
-			/ "dataset_images" / "img_3.png";
+	boost::filesystem::path image = testDir / "examples" / "ocr"
+			/ "dataset_images" / "img_88.png";
 
-	if (!fs::exists(img_3)) {
-		BOOST_FAIL("Image: \"" + img_3.string() + "\" does not exists");
+	boost::filesystem::path classifier = testDir / "examples" / "ocr"
+			/ "classifier";
+
+	boost::filesystem::path trained_classifierNM1 = classifier
+			/ "trained_classifierNM1.xml";
+	boost::filesystem::path trained_classifierNM2 = classifier
+			/ "trained_classifierNM1.xml";
+	boost::filesystem::path OCRHMM_transitions_table = classifier
+			/ "OCRHMM_transitions_table.xml";
+	boost::filesystem::path OCRHMM_knn_model_data = classifier
+			/ "OCRHMM_knn_model_data.xml.gz";
+	boost::filesystem::path classifier_erGrouping = classifier
+			/ "trained_classifier_erGrouping.xml";
+
+
+	if (!fs::exists(image)) {
+		BOOST_FAIL("Image: \"" + image.string() + "\" does not exists");
+	}
+
+	if (!fs::exists(trained_classifierNM1)) {
+		BOOST_FAIL(
+				"Classifier: \"" + trained_classifierNM1.string()
+						+ "\" does not exists");
+	}
+
+	if (!fs::exists(trained_classifierNM2)) {
+		BOOST_FAIL(
+				"Classifier: \"" + trained_classifierNM2.string()
+						+ "\" does not exists");
+	}
+
+	if (!fs::exists(OCRHMM_transitions_table)) {
+		BOOST_FAIL(
+				"Classifier: \"" + OCRHMM_transitions_table.string()
+						+ "\" does not exists");
+	}
+
+	if (!fs::exists(OCRHMM_knn_model_data)) {
+		BOOST_FAIL(
+				"Classifier: \"" + OCRHMM_knn_model_data.string()
+						+ "\" does not exists");
+	}
+
+	if (!fs::exists(classifier_erGrouping)) {
+		BOOST_FAIL(
+				"Classifier: \"" + classifier_erGrouping.string()
+						+ "\" does not exists");
 	}
 
 	string lastError;
@@ -82,13 +127,27 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 
 	OCR* ocr = new OCR("OCR thread");
 	Ptr<SFBMCache> nullCache;
-	ocr->initializeCommandRunner(output, nullCache);
 
 	Ptr<vector<string>> inputs = makePtr<vector<string>>();
-	inputs->push_back("-ocr");
-	inputs->push_back(img_3.string());
+	inputs->push_back("-classifierNM1");
+	inputs->push_back(trained_classifierNM1.string());
+	inputs->push_back("-classifierNM2");
+	inputs->push_back(trained_classifierNM2.string());
+	inputs->push_back("-OCRHMMtransitions");
+	inputs->push_back(OCRHMM_transitions_table.string());
+	inputs->push_back("-OCRHMMknn");
+	inputs->push_back(OCRHMM_knn_model_data.string());
+	inputs->push_back("-classifier_erGrouping");
+	inputs->push_back(classifier_erGrouping.string());
 
+	ocr->extendServerCommandsWith(ocr->getProgramFlags());
 	ocr->validateRequest(inputs);
+	ocr->parseServerFlags(ocr->getProgramFlags());
+	ocr->initializeCommandRunner(output, nullCache);
+	inputs->push_back("-ocr");
+	inputs->push_back(image.string());
+	ocr->validateRequest(inputs);
+
 	Ptr<vector<string>> results = ocr->detect2(lastError);
 
 	if (results.get() == NULL) {
@@ -99,24 +158,25 @@ BOOST_FIXTURE_TEST_CASE( basicTest, PathFixtureOCRDetectorTest ) {
 		BOOST_FAIL("No results found");
 	}
 
-	bool specialFound = false;
-	bool specialTShirt = false;
+	bool PREMIER = false;
+	bool APARTMENTS = false;
 	for (vector<string>::iterator word = results->begin();
 			word != results->end(); ++word) {
 		//Analyzing output
-		if (word->find("Special") != string::npos) {
-			specialFound = true;
+		BOOST_MESSAGE(*word);
+		if (word->find("PREMIER") != string::npos) {
+			PREMIER = true;
 		}
-		if (word->find("T-Shirt") != string::npos) {
-			specialTShirt = true;
+		if (word->find("APARTMENTS") != string::npos) {
+			APARTMENTS = true;
 		}
 	}
 
-	if (!specialFound) {
-		BOOST_FAIL("Word \"Special\" not found");
+	if (!PREMIER) {
+		BOOST_FAIL("Word \"PREMIER\" not found");
 	}
-	if (!specialTShirt) {
-		BOOST_FAIL("Word \"T-Shirt\" not found");
+	if (!APARTMENTS) {
+		BOOST_FAIL("Word \"APARTMENTS\" not found");
 	}
 }
 
