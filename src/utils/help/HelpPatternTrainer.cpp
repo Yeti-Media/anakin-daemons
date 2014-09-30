@@ -29,4 +29,5 @@ HelpPatternTrainer::~HelpPatternTrainer() {
 	// TODO Auto-generated destructor stub
 }
 
+
 } /* namespace Anakin */

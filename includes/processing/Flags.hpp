@@ -4,6 +4,7 @@
 #include <opencv2/core.hpp>
 #include <map>
 #include <vector>
+#include <mutex>
 
 using namespace std;
 using namespace cv;
@@ -121,6 +122,7 @@ private:
 
 	//FIELDS
 	vector<string> input;
+	mutex mtx;
 	map<string, Ptr<vector<string>>> optionalFlags;
 	map<string, Ptr<vector<string>>> requiredFlags;
 	map<string, Ptr<vector<string>>> flagsDependencies;

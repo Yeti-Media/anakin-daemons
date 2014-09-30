@@ -10,10 +10,12 @@ using namespace cv;
 
 namespace fs = boost::filesystem;
 
-CommandRunner::CommandRunner(const string &  programName, const string & threadName) {
+CommandRunner::CommandRunner(const string & programName,
+		const string & threadName) {
 	this->sceneID = -1;
 	setProgramName(programName);
 	this->threadName = threadName;
+	this->flags = makePtr<Flags>();
 }
 
 void CommandRunner::setProgramName(const string & name) {
@@ -26,11 +28,15 @@ void CommandRunner::setProgramName(const string & name) {
 	this->programName = name;
 }
 
+Ptr<Flags> CommandRunner::getProgramFlags() {
+	return flags;
+}
+
 /**
  * Should initializate all used variables
  */
-void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out, const Ptr<SFBMCache> & cache) {
-	this->flags = makePtr<Flags>();
+void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out,
+		const Ptr<SFBMCache> & cache) {
 	this->out = out;
 	this->cache = cache;
 }
@@ -38,8 +44,20 @@ void CommandRunner::initializeCommandRunner(const Ptr<DataOutput> & out, const P
 /**
  * Placeholder for inheritance.
  */
-Help* CommandRunner::getHelp() {
-	return NULL;
+void CommandRunner::parseServerFlags(const Ptr<Flags> & serverFlags) {
+}
+
+/**
+ * Placeholder for inheritance.
+ */
+void CommandRunner::extendServerCommandsWith(const Ptr<Flags> & serverFlags) {
+}
+
+/**
+ * Placeholder for inheritance.
+ */
+Ptr<Help> CommandRunner::getHelp() {
+	return Ptr<Help>();
 }
 
 string CommandRunner::getProgramName() {

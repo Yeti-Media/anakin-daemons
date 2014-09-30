@@ -47,8 +47,8 @@ bool Help::showDaemonHelp() {
 
 string Help::getFullHelp() {
 	if (showDaemonHelp()) {
-		return daemonIntro + getIntro() + getUsage() + getFlags()
-				+ getExamples();
+		return daemonIntro + extendedDaemonFlags + getIntro() + getUsage()
+				+ getFlags() + getExamples();
 	} else {
 		return getIntro() + getUsage() + getFlags() + getExamples();
 	}

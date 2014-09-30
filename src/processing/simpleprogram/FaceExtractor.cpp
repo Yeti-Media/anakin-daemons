@@ -20,8 +20,8 @@ FaceExtractor::~FaceExtractor() {
 	// TODO Auto-generated destructor stub
 }
 
-Help* FaceExtractor::getHelp() {
-	return new HelpFaceExtractor();
+Ptr<Help> FaceExtractor::getHelp() {
+	return makePtr<HelpFaceExtractor>();
 }
 
 void FaceExtractor::initProgramFlags() {

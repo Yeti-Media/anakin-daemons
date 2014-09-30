@@ -54,6 +54,20 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	fs::path testLocalization = ocrTest / "text_localization";
 	fs::path wordRecognition = ocrTest / "word_recognition";
 
+	boost::filesystem::path classifier = testDir / "examples" / "ocr"
+			/ "classifier";
+
+	boost::filesystem::path trained_classifierNM1 = classifier
+			/ "trained_classifierNM1.xml";
+	boost::filesystem::path trained_classifierNM2 = classifier
+			/ "trained_classifierNM1.xml";
+	boost::filesystem::path OCRHMM_transitions_table = classifier
+			/ "OCRHMM_transitions_table.xml";
+	boost::filesystem::path OCRHMM_knn_model_data = classifier
+			/ "OCRHMM_knn_model_data.xml.gz";
+	boost::filesystem::path classifier_erGrouping = classifier
+			/ "trained_classifier_erGrouping.xml";
+
 	// OUTPUTS
 	fs::path outputs = ramDir / "outputs";
 	fs::path logsDir = ramDir / "logs";
@@ -76,8 +90,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 
 	ofstream oFileStreamPrecisionResults;
 
-	oFileStreamPrecisionResults.open(precisionResults.string(),
-			ios::out);
+	oFileStreamPrecisionResults.open(precisionResults.string(), ios::out);
 	if (!oFileStreamPrecisionResults.is_open()) {
 		cerr << "File can't be opened: " << precisionResults.string() << endl;
 		exitWithError();
@@ -101,7 +114,14 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	pthread_t * thread = NULL;
 	thread = runDaemonProgram<OCR>(
 			"-oLogFile " + pathToAnakinPath(logsOCR_Demo)
-					+ " -iHTTP 8080 -oHTTP -threads 2 -verbose");
+					+ " -iHTTP 8080 -oHTTP -threads 2 -verbose -numocrs 10 "
+							"-classifierNM1 \"" + trained_classifierNM1.string()
+					+ "\" -classifierNM2 \"" + trained_classifierNM2.string()
+					+ "\" -OCRHMMtransitions \""
+					+ OCRHMM_transitions_table.string() + "\" -OCRHMMknn \""
+					+ OCRHMM_knn_model_data.string()
+					+ "\" -classifier_erGrouping \""
+					+ classifier_erGrouping.string() + "\"");
 
 	//check if the server start
 	bool serverStarted = false;
@@ -206,6 +226,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 					oFileStreamPrecisionResults << "* Error = " << error << "%"
 							<< endl;
 					totalError += error;
+					delete realText;
 				}
 				oFileStreamPrecisionResults.flush();
 			} //if (testRepetition == 1)

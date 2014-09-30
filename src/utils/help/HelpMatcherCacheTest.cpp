@@ -22,4 +22,5 @@ bool HelpMatcherCacheTest::showDaemonHelp() {
 	return false;
 }
 
+
 } /* namespace Anakin */

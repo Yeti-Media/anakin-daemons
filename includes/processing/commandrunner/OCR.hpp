@@ -86,15 +86,19 @@ public:
 
 	void validateRequest(const Ptr<vector<string>> & input);
 
+	void extendServerCommandsWith(const Ptr<Flags> & serverFlags);
+
+	void parseServerFlags(const Ptr<Flags> & serverFlags);
+
 	void initializeCommandRunner(const Ptr<DataOutput> & out,
 			const Ptr<SFBMCache> & cache);
 
 	void run();
 
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 	// simple version
-	Ptr<vector<string>> detect(string & lastError);
+	//Ptr<vector<string>> detect(string & lastError);
 
 	// complex version, but very precise
 	Ptr<vector<string>> detect2(string & lastError);
@@ -107,9 +111,26 @@ private:
 	tesseract::OcrEngineMode mode = tesseract::OEM_TESSERACT_ONLY;
 
 	//--- ocr2 vars ---
+	string trained_classifierNM1;
+	string trained_classifierNM2;
+	string OCRHMM_transitions_table;
+	string OCRHMM_knn_model_data;
+	string trained_classifier_erGrouping;
 	bool downsize = false;
+
+	/**
+	 * 0 = ERStats, 1 = MSER
+	 */
 	int REGION_TYPE = 1;
+
+	/**
+	 * 0 = exhaustive_search, 1 = multioriented
+	 */
 	int GROUPING_ALGORITHM = 0;
+
+	/**
+	 * 0 = Tesseract, 1 = NM_chain_features + KNN
+	 */
 	int RECOGNITION = 0;
 
 	vector<Mat> channels;
@@ -125,7 +146,8 @@ private:
 
 	bool isRepetitive(const string& s);
 
-	void er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions, vector<Vec2i> group, Mat& segmentation);
+	void er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions,
+			vector<Vec2i> group, Mat& segmentation);
 
 };
 

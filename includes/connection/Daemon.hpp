@@ -39,9 +39,10 @@ public:
 	Daemon();
 	virtual ~Daemon();
 
-	Help* getHelp();
+	Ptr<Help> getHelp();
 
 protected:
+	Ptr<Help> help;
 	int run(const Ptr<vector<string>> & input);
 	void initProgramFlags();
 };
@@ -51,75 +52,77 @@ Daemon<SpecificCommandRunner>::Daemon() :
 		Program("Daemon") {
 	SpecificCommandRunner commandRunner("Daemon");
 	this->setProgramName(commandRunner.getProgramName());
+	this->help = commandRunner.getHelp();
+	commandRunner.extendServerCommandsWith(programFlags);
 }
 
 template<class SpecificCommandRunner>
 void Daemon<SpecificCommandRunner>::initProgramFlags() {
 	//SERVER CONFIGS
-	programFlags.setOptionalFlag("pghost");
-	programFlags.setOptionalFlag("pgport");
-	programFlags.setOptionalFlag("dbName");
-	programFlags.setOptionalFlag("login");
-	programFlags.setOptionalFlag("pwd");
+	programFlags->setOptionalFlag("pghost");
+	programFlags->setOptionalFlag("pgport");
+	programFlags->setOptionalFlag("dbName");
+	programFlags->setOptionalFlag("login");
+	programFlags->setOptionalFlag("pwd");
 
-	programFlags.setDependence("pghost", "pgport");
-	programFlags.setDependence("pghost", "dbName");
-	programFlags.setDependence("pghost", "login");
-	programFlags.setDependence("pghost", "pwd");
+	programFlags->setDependence("pghost", "pgport");
+	programFlags->setDependence("pghost", "dbName");
+	programFlags->setDependence("pghost", "login");
+	programFlags->setDependence("pghost", "pwd");
 
-	programFlags.setDependence("pgport", "pghost");
-	programFlags.setDependence("pgport", "dbName");
-	programFlags.setDependence("pgport", "login");
-	programFlags.setDependence("pgport", "pwd");
+	programFlags->setDependence("pgport", "pghost");
+	programFlags->setDependence("pgport", "dbName");
+	programFlags->setDependence("pgport", "login");
+	programFlags->setDependence("pgport", "pwd");
 
-	programFlags.setDependence("dbName", "pgport");
-	programFlags.setDependence("dbName", "pghost");
-	programFlags.setDependence("dbName", "login");
-	programFlags.setDependence("dbName", "pwd");
+	programFlags->setDependence("dbName", "pgport");
+	programFlags->setDependence("dbName", "pghost");
+	programFlags->setDependence("dbName", "login");
+	programFlags->setDependence("dbName", "pwd");
 
-	programFlags.setDependence("login", "pgport");
-	programFlags.setDependence("login", "pghost");
-	programFlags.setDependence("login", "dbName");
-	programFlags.setDependence("login", "pwd");
+	programFlags->setDependence("login", "pgport");
+	programFlags->setDependence("login", "pghost");
+	programFlags->setDependence("login", "dbName");
+	programFlags->setDependence("login", "pwd");
 
-	programFlags.setDependence("pwd", "pgport");
-	programFlags.setDependence("pwd", "pghost");
-	programFlags.setDependence("pwd", "dbName");
-	programFlags.setDependence("pwd", "login");
+	programFlags->setDependence("pwd", "pgport");
+	programFlags->setDependence("pwd", "pghost");
+	programFlags->setDependence("pwd", "dbName");
+	programFlags->setDependence("pwd", "login");
 
 	//GENERAL CACHE CONFIG
-	programFlags.setOptionalFlag("cacheLoadingTimeWeight");
-	programFlags.setNoValuesFlag("cacheDiscardLessValuable");
-	programFlags.setOptionalFlag("cacheSize");
-	programFlags.setOptionalFlag("cacheLife");
-	programFlags.setOptionalFlag("cacheScenesSize");
-	programFlags.setOptionalFlag("cacheScenesLife");
+	programFlags->setOptionalFlag("cacheLoadingTimeWeight");
+	programFlags->setNoValuesFlag("cacheDiscardLessValuable");
+	programFlags->setOptionalFlag("cacheSize");
+	programFlags->setOptionalFlag("cacheLife");
+	programFlags->setOptionalFlag("cacheScenesSize");
+	programFlags->setOptionalFlag("cacheScenesLife");
 
 	//GENERAL CONFIGS
-	programFlags.setOptionalFlag("threads");
-	programFlags.setOptionalFlag("queueCapacity");
+	programFlags->setOptionalFlag("threads");
+	programFlags->setOptionalFlag("queueCapacity");
 
 	//INPUT
-	programFlags.setNoValuesFlag("iConsole");
-	programFlags.setOptionalFlag("iHTTP");
-	programFlags.setIncompatibility("iConsole", "iHTTP");
+	programFlags->setNoValuesFlag("iConsole");
+	programFlags->setOptionalFlag("iHTTP");
+	programFlags->setIncompatibility("iConsole", "iHTTP");
 
 	//OUTPUT
-	programFlags.setNoValuesFlag("oConsole");
-	programFlags.setOptionalFlag("oLogFile");
-	programFlags.setNoValuesFlag("oHTTP");
-	programFlags.setIncompatibility("oHTTP", "oConsole");
-	programFlags.setDependence("iHTTP", "oHTTP");
-	programFlags.setDependence("oHTTP", "iHTTP");
+	programFlags->setNoValuesFlag("oConsole");
+	programFlags->setOptionalFlag("oLogFile");
+	programFlags->setNoValuesFlag("oHTTP");
+	programFlags->setIncompatibility("oHTTP", "oConsole");
+	programFlags->setDependence("iHTTP", "oHTTP");
+	programFlags->setDependence("oHTTP", "iHTTP");
 
-	programFlags.setMinCount(2);
-	programFlags.setVerbose(true);
+	programFlags->setMinCount(2);
+	programFlags->setVerbose(true);
+
 }
 
 template<class SpecificCommandRunner>
-Help* Daemon<SpecificCommandRunner>::getHelp() {
-	SpecificCommandRunner commandRunner("help");
-	return commandRunner.getHelp();
+Ptr<Help> Daemon<SpecificCommandRunner>::getHelp() {
+	return this->help;
 }
 
 template<class SpecificCommandRunner>
@@ -151,8 +154,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 
 	//POSTGRES config
 
-	if (programFlags.flagFound("pghost")) {
-		values = programFlags.getFlagValues("pghost");
+	if (programFlags->flagFound("pghost")) {
+		values = programFlags->getFlagValues("pghost");
 		if (values->size() == 1) {
 			pghost = values->at(0);
 		} else {
@@ -161,8 +164,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("pgport")) {
-		values = programFlags.getFlagValues("pgport");
+	if (programFlags->flagFound("pgport")) {
+		values = programFlags->getFlagValues("pgport");
 		if (values->size() == 1) {
 			pgport = values->at(0);
 		} else {
@@ -171,8 +174,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("dbName")) {
-		values = programFlags.getFlagValues("dbName");
+	if (programFlags->flagFound("dbName")) {
+		values = programFlags->getFlagValues("dbName");
 		if (values->size() == 1) {
 			dbName = values->at(0);
 		} else {
@@ -181,8 +184,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("login")) {
-		values = programFlags.getFlagValues("login");
+	if (programFlags->flagFound("login")) {
+		values = programFlags->getFlagValues("login");
 		if (values->size() == 1) {
 			login = values->at(0);
 		} else {
@@ -191,8 +194,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("pwd")) {
-		values = programFlags.getFlagValues("pwd");
+	if (programFlags->flagFound("pwd")) {
+		values = programFlags->getFlagValues("pwd");
 		if (values->size() == 1) {
 			pwd = values->at(0);
 		} else {
@@ -202,8 +205,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	}
 
 	//CACHE CONFIG
-	if (programFlags.flagFound("cacheLoadingTimeWeight")) {
-		values = programFlags.getFlagValues("cacheLoadingTimeWeight");
+	if (programFlags->flagFound("cacheLoadingTimeWeight")) {
+		values = programFlags->getFlagValues("cacheLoadingTimeWeight");
 		if (values->size() == 1) {
 			cacheConfig.cacheLoadingTimeWeight = stoi(values->at(0));
 		} else {
@@ -212,12 +215,12 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("cacheNoDiscardLessValuable")) {
+	if (programFlags->flagFound("cacheNoDiscardLessValuable")) {
 		cacheConfig.cacheNoDiscardLessValuable = true;
 	}
 
-	if (programFlags.flagFound("cacheSize")) {
-		values = programFlags.getFlagValues("cacheSize");
+	if (programFlags->flagFound("cacheSize")) {
+		values = programFlags->getFlagValues("cacheSize");
 		if (values->size() == 1) {
 			cacheConfig.cacheSize = stoi(values->at(0));
 		} else {
@@ -226,8 +229,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("cacheLife")) {
-		values = programFlags.getFlagValues("cacheLife");
+	if (programFlags->flagFound("cacheLife")) {
+		values = programFlags->getFlagValues("cacheLife");
 		if (values->size() == 1) {
 			cacheConfig.cacheLife = stoi(values->at(0));
 		} else {
@@ -236,8 +239,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("cacheScenesSize")) {
-		values = programFlags.getFlagValues("cacheScenesSize");
+	if (programFlags->flagFound("cacheScenesSize")) {
+		values = programFlags->getFlagValues("cacheScenesSize");
 		if (values->size() == 1) {
 			cacheConfig.cacheScenesSize = stoi(values->at(0));
 		} else {
@@ -246,8 +249,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 		}
 	}
 
-	if (programFlags.flagFound("cacheScenesLife")) {
-		values = programFlags.getFlagValues("cacheScenesLife");
+	if (programFlags->flagFound("cacheScenesLife")) {
+		values = programFlags->getFlagValues("cacheScenesLife");
 		if (values->size() == 1) {
 			cacheConfig.cacheScenesLife = stoi(values->at(0));
 		} else {
@@ -257,8 +260,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	}
 
 	//THREADS
-	if (programFlags.flagFound("threads")) {
-		values = programFlags.getFlagValues("threads");
+	if (programFlags->flagFound("threads")) {
+		values = programFlags->getFlagValues("threads");
 		if (values->size() == 1) {
 			threads = stoi(values->at(0));
 		} else {
@@ -268,8 +271,8 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	}
 
 	//BLOCKING CAPACITY QUEUE
-	if (programFlags.flagFound("queueCapacity")) {
-		values = programFlags.getFlagValues("queueCapacity");
+	if (programFlags->flagFound("queueCapacity")) {
+		values = programFlags->getFlagValues("queueCapacity");
 		if (values->size() == 1) {
 			queueCapacity = stoi(values->at(0));
 		} else {
@@ -279,13 +282,13 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	}
 
 	//INPUT
-	if (programFlags.flagFound("iConsole")) {
+	if (programFlags->flagFound("iConsole")) {
 		iMode = Server<SpecificCommandRunner>::CONSOLE;
 	}
 
-	if (programFlags.flagFound("iHTTP")) {
+	if (programFlags->flagFound("iHTTP")) {
 		iMode = Server<SpecificCommandRunner>::HTTP;
-		values = programFlags.getFlagValues("iHTTP");
+		values = programFlags->getFlagValues("iHTTP");
 		if (values->size() == 1) {
 			httpPort = stoi(values->at(0));
 		} else {
@@ -295,10 +298,10 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	}
 
 	//OUTPUT
-	if (programFlags.flagFound("oConsole")) {
+	if (programFlags->flagFound("oConsole")) {
 		oMode = Server<SpecificCommandRunner>::CONSOLE;
 	}
-	if (programFlags.flagFound("oHTTP")) {
+	if (programFlags->flagFound("oHTTP")) {
 		oMode = Server<SpecificCommandRunner>::HTTP;
 	}
 
@@ -312,7 +315,7 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	TempDirCleaner tempDirCleaner(0);
 
 	Server<SpecificCommandRunner>* server = new RequestServer<
-			SpecificCommandRunner>(cacheConfig, iMode, pghost, pgport, dbName,
+			SpecificCommandRunner>(programFlags, cacheConfig, iMode, pghost, pgport, dbName,
 			login, pwd, httpPort, queueCapacity, threads, verbose,
 			this->tempDir, &tempDirCleaner);
 

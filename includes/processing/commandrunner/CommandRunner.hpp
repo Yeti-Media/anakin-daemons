@@ -42,9 +42,19 @@ class CommandRunner {
 public:
 	/**
 	 * Constructor (does steps 1, 2, 3)
-
 	 */
 	CommandRunner(const string & programName, const string & threadName);
+
+	/**
+	 * This command should be implemented if you need to extend the server commands with flags
+	 * and to initialize some variables on your CommandRunner implementation.
+	 */
+	virtual void extendServerCommandsWith(const Ptr<Flags> & serverFlags);
+
+	/**
+	 * Parse the extended server flags, and pre-initializate the CommandRunner
+	 */
+	virtual void parseServerFlags(const Ptr<Flags> & serverFlags);
 
 	/**
 	 * Setup the flags, the output and the cache (if used).
@@ -66,12 +76,17 @@ public:
 	/**
 	 * Return a full help instance. Must be deleted after use.
 	 */
-	virtual Help* getHelp() = 0;
+	virtual Ptr<Help> getHelp() = 0;
 
 	/**
 	 * Return the name of the program.
 	 */
 	string getProgramName();
+
+	/**
+	 * Return the name of the program.
+	 */
+	Ptr<Flags> getProgramFlags();
 
 	/**
 	 * Return the name of the program.
@@ -83,7 +98,8 @@ public:
 	virtual ~CommandRunner();
 
 protected:
-	bool checkDuplicatedIndexes(const vector<string> & indexes, string & duplicated);
+	bool checkDuplicatedIndexes(const vector<string> & indexes,
+			string & duplicated);
 	int mma = 8;
 	float mr = 1.f / 1.5f;
 	int sceneID;

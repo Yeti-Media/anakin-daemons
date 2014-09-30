@@ -20,8 +20,8 @@ FaceTrainer::~FaceTrainer() {
 	// TODO Auto-generated destructor stub
 }
 
-Help* FaceTrainer::getHelp() {
-	return new HelpFaceTrainer();
+Ptr<Help> FaceTrainer::getHelp() {
+	return makePtr<HelpFaceTrainer>();
 }
 
 void FaceTrainer::initProgramFlags() {

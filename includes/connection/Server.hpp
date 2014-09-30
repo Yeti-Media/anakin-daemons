@@ -31,10 +31,11 @@ public:
 	 * verbose : if the server will output information to console or not
 	 * mode : how to listen to requests (CONSOLE, TCP, UDP, DTCP, HTTP)
 	 */
-	Server(const CacheConfig & cacheConfig, char mode, const string & pghost,
-			const string & pgport, const string & dbName, const string & login,
-			const string & pwd, unsigned int httpPort, bool verbose,
-			const string & tempDir, TempDirCleaner * tempDirCleaner);
+	Server(const Ptr<Flags> & serverFlags, const CacheConfig & cacheConfig,
+			char mode, const string & pghost, const string & pgport,
+			const string & dbName, const string & login, const string & pwd,
+			unsigned int httpPort, bool verbose, const string & tempDir,
+			TempDirCleaner * tempDirCleaner);
 	/**
 	 * this will start the skeleton algorithm shown above
 	 * output : this is used to output the processing results
@@ -103,6 +104,7 @@ protected:
 	Ptr<DataOutput> output;
 	Ptr<SFBMCache> cache;
 	Ptr<DBDriver> dbdriver;
+	Ptr<Flags> serverFlags;
 
 	bool initialization = false;
 	string initializationError;
@@ -112,11 +114,12 @@ private:
 };
 
 template<class SpecificCommandRunner>
-Server<SpecificCommandRunner>::Server(const CacheConfig & cacheConfig,
-		char mode, const string & pghost, const string & pgport,
-		const string & dbName, const string & login, const string & pwd,
-		unsigned int httpPort, bool verbose, const string & tempDir,
-		TempDirCleaner * tempDirCleaner) {
+Server<SpecificCommandRunner>::Server(const Ptr<Flags> & serverFlags,
+		const CacheConfig & cacheConfig, char mode, const string & pghost,
+		const string & pgport, const string & dbName, const string & login,
+		const string & pwd, unsigned int httpPort, bool verbose,
+		const string & tempDir, TempDirCleaner * tempDirCleaner) {
+	this->serverFlags = serverFlags;
 	this->port = httpPort;
 	this->mode = mode;
 	this->dbdriver = makePtr<DBDriver>(tempDirCleaner);

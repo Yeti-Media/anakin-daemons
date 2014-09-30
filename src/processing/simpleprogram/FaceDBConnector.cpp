@@ -20,8 +20,8 @@ FaceDBConnector::~FaceDBConnector() {
 	// TODO Auto-generated destructor stub
 }
 
-Help* FaceDBConnector::getHelp() {
-	return new HelpFaceDBConnector();
+Ptr<Help> FaceDBConnector::getHelp() {
+	return makePtr<HelpFaceDBConnector>();
 }
 
 void FaceDBConnector::initProgramFlags() {

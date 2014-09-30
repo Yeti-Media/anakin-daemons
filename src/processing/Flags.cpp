@@ -210,7 +210,7 @@ bool Flags::checkIncompatibilities(const vector<string> & flags) {
 }
 
 void getKeys(const map<string, Ptr<vector<string>>> & m, Ptr<vector<string>> keys) {
-	pair<string, vector<string>*> me; // what a map<int, int> is made of
+	pair<string, Ptr<vector<string>>> me; // what a map<int, int> is made of
 	BOOST_FOREACH(me, m){
 	keys->push_back(me.first);
 }
@@ -237,6 +237,7 @@ Ptr<vector<string>> Flags::getNoValuesFlags() {
 }
 
 Ptr<vector<string>> Flags::getFlagValues(const string & flag) {
+	lock_guard<mutex> lck(mtx);
 	if (isRequired(flag)) {
 		return this->requiredFlags.find(flag)->second;
 	} else if (isOptional(flag)) {
@@ -259,6 +260,10 @@ void Flags::clean() {
 	map<string, Ptr<vector<string>>>::const_iterator itr;
 
 	for (itr = optionalFlags.begin(); itr != optionalFlags.end(); ++itr) {
+		(*itr).second->clear();
+	}
+
+	for (itr = requiredFlags.begin(); itr != requiredFlags.end(); ++itr) {
 		(*itr).second->clear();
 	}
 
@@ -321,11 +326,11 @@ bool Flags::validateInput(const Ptr<vector<string>> & input) {
 				return false;
 			}
 			if (isRequired(flag)) {
-				vector<string>* values = this->requiredFlags.find(flag)->second;
+				Ptr<vector<string>> values = this->requiredFlags.find(flag)->second;
 				values->push_back(current);
 			}
 			if (isOptional(flag)) {
-				vector<string>* values = this->optionalFlags.find(flag)->second;
+				Ptr<vector<string>> values = this->optionalFlags.find(flag)->second;
 				values->push_back(current);
 			}
 			if (isOverridingFlag(flag)) {
@@ -374,5 +379,6 @@ bool Flags::isOverridingFlagFound() {
 }
 
 bool Flags::flagFound(const string & flag) {
+	lock_guard<mutex> lck(mtx);
 	return findInVector(this->foundFlags, flag);
 }

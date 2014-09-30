@@ -21,12 +21,16 @@ public:
 
 	void validateRequest(const Ptr<vector<string>> & input);
 
+	void extendServerCommandsWith(const Ptr<Flags> & serverFlags);
+
+	void parseServerFlags(const Ptr<Flags> & serverFlags);
+
 	void initializeCommandRunner(const Ptr<DataOutput> & out,
 			const Ptr<SFBMCache> & cache);
 
 	void run();
 
-	Help* getHelp();
+	Ptr<Help> getHelp();
 };
 
 } /* namespace Anakin */

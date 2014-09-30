@@ -19,7 +19,7 @@ class MatcherCacheTest: public Program {
 public:
 	MatcherCacheTest();
 	virtual ~MatcherCacheTest();
-	Help* getHelp();
+	Ptr<Help> getHelp();
 protected:
 	int run(const Ptr<vector<string>> & input);
 	void initProgramFlags();

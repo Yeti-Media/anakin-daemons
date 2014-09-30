@@ -22,4 +22,5 @@ bool HelpFaceTrainer::showDaemonHelp() {
 	return false;
 }
 
+
 } /* namespace Anakin */

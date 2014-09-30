@@ -71,4 +71,5 @@ HelpPatternMatcher::~HelpPatternMatcher() {
 	// TODO Auto-generated destructor stub
 }
 
+
 } /* namespace Anakin */

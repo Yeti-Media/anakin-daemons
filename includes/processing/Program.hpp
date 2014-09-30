@@ -8,8 +8,9 @@
 #ifndef PROGRAM_HPP_
 #define PROGRAM_HPP_
 
-#include <utils/help/Help.hpp>
+#include <opencv2/core/cvstd.hpp>
 #include <processing/Flags.hpp>
+#include <utils/help/Help.hpp>
 #include <string>
 #include <vector>
 
@@ -78,9 +79,9 @@ protected:
 	/**
 	 * Return a full help instance. Must be deleted after use.
 	 */
-	virtual Help* getHelp() = 0;
+	virtual Ptr<Help> getHelp() = 0;
 
-	Flags programFlags;
+	Ptr<Flags> programFlags;
 	bool verbose;
 	string logFile;
 	string tempDir;
