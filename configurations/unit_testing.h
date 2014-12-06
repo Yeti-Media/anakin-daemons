@@ -1,45 +1,3 @@
-/*
- * CompileConfigurations.hpp
- *
- *  Created on: 24/04/2014
- *      Author: Franco Pellegrini
- */
-#ifndef COMPILECONFIGURATIONS_HPP_
-#define COMPILECONFIGURATIONS_HPP_
-
-#include "processing/Flags.hpp"
-#include <boost/filesystem/path.hpp>
-
-/**
- * Constants for compiling options (do not modify)
- */
-#define COMPILE_FOR_PRODUCTION 0
-#define COMPILE_FOR_UNIT_TESTING 1
-#define COMPILE_FOR_BIN_ACCEPTANCE_TESTING 2
-#define COMPILE_FOR_README_UPDATE 99999
-
-#define PATTERNMATCHER 1
-#define PATTERNDBCONNECTOR 2
-#define PATTERNEXTRACTOR 3
-#define PATTERNTRAINER 4
-
-#define FACEMATCHER 101
-#define FACEDBCONNECTOR 102
-#define FACEEXTRACTOR 103
-#define FACETRAINER 104
-
-#define OCRFULL 200
-
-#define MATCHERCACHETEST 5000
-
-#define ALLMODULES 1000000
-
-
-// If building with CMake, bypass the rest of this file
-#ifdef ANAKIN_CMAKE_BUILD
-#include "configurations/index.h"
-#else
-
 /** ======================================================================
  *  ======================================================================
  *  +++++++++++  CUSTOMIZE YOUR COMPILE OPTIONS FROM HERE  +++++++++++++++
@@ -73,8 +31,8 @@
  *  ======================================================================
  */
 //#define COMPILE_MODE COMPILE_FOR_PRODUCTION
-//#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
-#define COMPILE_MODE COMPILE_FOR_BIN_ACCEPTANCE_TESTING
+#define COMPILE_MODE COMPILE_FOR_UNIT_TESTING
+//#define COMPILE_MODE COMPILE_FOR_BIN_ACCEPTANCE_TESTING
 //#define COMPILE_MODE COMPILE_FOR_README_UPDATE
 
 #if COMPILE_MODE == COMPILE_FOR_PRODUCTION
@@ -104,7 +62,3 @@
 #else
 #define COMPILE_MODULE ALLMODULES
 #endif //COMPILE_MODE == COMPILE_FOR_PRODUCTION
-
-#endif //ANAKIN_CMAKE_BUILD
-
-#endif /* COMPILECONFIGURATIONS_HPP_ */
