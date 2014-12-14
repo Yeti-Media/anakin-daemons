@@ -460,7 +460,7 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 
 	switch (REGION_TYPE) {
 	case 0: {
-		parallel_for_(cv::Range(0, (int) channels.size() - 1),
+		parallel_for_(cv::Range(0, (int) channels.size()),
 				Parallel_extractCSER(channels, regions, er_filters1,
 						er_filters2));
 		break;
