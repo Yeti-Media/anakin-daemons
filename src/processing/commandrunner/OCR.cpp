@@ -19,6 +19,7 @@
 #include <sstream>
 #include <utils/ClearVector.hpp>
 #include <sstream>
+#include <utils/vision/WordBox.hpp>
 
 using namespace std;
 using namespace cv;
@@ -551,6 +552,7 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 	}
 
 	stringstream text;
+	vector<WordBox> selected_words;
 	for (int i = 0; i < (int) detections.size(); i++) {
 
 		outputs[i].erase(remove(outputs[i].begin(), outputs[i].end(), '\n'),
@@ -572,6 +574,14 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 							&& (confidences[i][j] < min_confidence2))
 					|| isRepetitive(words[i][j]))
 				continue;
+			Rect& rect = boxes[i][j];
+			double x = rect.x + rect.width/2;
+			double y = rect.y + rect.height/2;
+			WordBox box(words[i][j],
+				    i, j,
+				    x, y,
+				    rect.width, rect.height);
+			selected_words.push_back(box);
 			if (showWords) {
 				stringstream s;
 				s << "word: \"" << words[i][j] << "\" \tconf: "
@@ -585,9 +595,15 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 		}
 
 	}
-	string fullText = text.str();
-	if (!fullText.empty())
-		fullText.pop_back();
+	string fullText = "";
+	WordBox::Order ordering;
+	std::sort(selected_words.begin(),selected_words.end(),ordering);
+	for (auto it : selected_words) {
+	  if (fullText.length()>0) {
+	    fullText += " ";
+	  }
+	  fullText += it.text;
+	}
 	words_detection->push_back(fullText);
 
 	//cout << "TIME_OCR_ALT = " << ((double)getTickCount() - t_r)*1000/getTickFrequency() << endl;
