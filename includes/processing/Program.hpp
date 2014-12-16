@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 /*
  * Program.hpp
  *
@@ -52,6 +53,17 @@ public:
 	 * Start the program. It initialize common vars and flags. User shoul delete the input.
 	 */
 	int start(const Ptr<vector<string>> & input);
+
+	/**
+	 * Start the program directly from command line arguments.
+	 */
+	int start(int argc, char *argv[]) {
+		Ptr<vector<string>> input = makePtr<vector<string>>();
+		for (int i = 1; i < argc; i++) {
+			input->push_back(argv[i]);
+		}
+		return start(input);
+	}
 
 	/**
 	 * Get a full text manual for the concrete program
