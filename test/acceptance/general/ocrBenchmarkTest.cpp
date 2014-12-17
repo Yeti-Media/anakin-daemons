@@ -60,7 +60,7 @@ void ocrBenchmarkTest(int argc, const char * argv[]) {
 	boost::filesystem::path trained_classifierNM1 = classifier
 			/ "trained_classifierNM1.xml";
 	boost::filesystem::path trained_classifierNM2 = classifier
-			/ "trained_classifierNM1.xml";
+			/ "trained_classifierNM2.xml";
 	boost::filesystem::path OCRHMM_transitions_table = classifier
 			/ "OCRHMM_transitions_table.xml";
 	boost::filesystem::path OCRHMM_knn_model_data = classifier
