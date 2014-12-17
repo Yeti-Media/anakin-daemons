@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 /*
  * OCR.cpp
  *
@@ -237,6 +238,12 @@ void OCR::validateRequest(const Ptr<vector<string>> & input) {
 			downsize = false;
 		}
 
+		if (flags->flagFound("keepskew")) {
+			keepskew = true;
+		} else {
+			keepskew = false;
+		}
+
 		if (flags->flagFound(Constants::PARAM_REQID)) {
 			values = flags->getFlagValues(Constants::PARAM_REQID);
 			if (values->size() != 1) {
@@ -431,6 +438,30 @@ void OCR::er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions,
 	}
 }
 
+void OCR::normalizeAngle(Mat& src, Mat& dest) {
+    std::vector<cv::Point> pts;
+    for (cv::Mat_<uchar>::iterator it = src.begin<uchar>(); 
+		 it != src.end<uchar>(); it++) {
+		if (*it) pts.push_back(it.pos());
+    }
+    cv::RotatedRect box = cv::minAreaRect(cv::Mat(pts));
+    if (box.angle < -45.0 && box.size.width<box.size.height) {
+		std::swap(box.size.width, box.size.height);
+		box.angle += 90;
+    }
+    double bigger = std::max(box.size.width,box.size.height);
+    double smaller = std::min(box.size.width,box.size.height);
+    if (bigger<20 || bigger<smaller+20 || bigger<smaller*3.0) {
+		// don't try to normalize if the difference in scale is
+		// not significant, or there aren't enough pixels
+		dest = src;
+		return;
+    }
+    cv::Mat rotation = cv::getRotationMatrix2D(box.center, box.angle, 1);
+    cv::warpAffine(src, dest, rotation, src.size(), cv::INTER_LANCZOS4);
+}
+
+
 Ptr<vector<string>> OCR::detect2(string & lastError) {
 
 	Mat frame, grey;
@@ -523,7 +554,14 @@ Ptr<vector<string>> OCR::detect2(string & lastError) {
 		group_img(nm_boxes[i]).copyTo(group_img);
 		copyMakeBorder(group_img, group_img, 15, 15, 15, 15, BORDER_CONSTANT,
 				Scalar(0));
-		detections.push_back(group_img);
+
+		if (keepskew) {
+			detections.push_back(group_img);
+		} else {
+			Mat counter_rotated_image;
+			normalizeAngle(group_img,counter_rotated_image);
+			detections.push_back(counter_rotated_image);
+		}
 	}
 	vector<string> outputs((int) detections.size());
 	vector<vector<Rect> > boxes((int) detections.size());
