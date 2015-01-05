@@ -188,6 +188,7 @@ void OCR::initializeCommandRunner(const Ptr<DataOutput> & out,
 
 void OCR::validateRequest(const Ptr<vector<string>> & input) {
 	reqID = "";
+	inputError = false;
 	if (flags->validateInput(input)) {
 		Ptr<vector<string>> values;
 
