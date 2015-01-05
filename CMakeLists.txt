@@ -167,3 +167,7 @@ foreach(test
   add_test(NAME ${test} COMMAND anakin_unit_testing "${CMAKE_BINARY_DIR}/test_data/Test Dir" --run_test=${test})
 endforeach()
 
+# Approximate an OCR demo that is documented and needed for rubix but that I 
+# haven't found an exact main() for.
+add_executable(anakin_ocr src/main/ocr.cpp)
+target_link_libraries(anakin_ocr anakin_tests anakin_core)
