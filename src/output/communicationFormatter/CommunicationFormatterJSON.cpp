@@ -176,6 +176,7 @@ Ptr<string> CommunicationFormatterJSON::formatRequest(const char * data) {
 
 	JSONValue* req = JSON::Parse(data);
 	Ptr<string> request = makePtr<string>();
+	if (!req) return request;
 	if (req->HasChild(L"action")) {
 		wstring waction = req->Child(L"action")->AsString();
 		string saction(waction.begin(), waction.end());
