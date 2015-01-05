@@ -171,3 +171,5 @@ endforeach()
 # haven't found an exact main() for.
 add_executable(anakin_ocr src/main/ocr.cpp)
 target_link_libraries(anakin_ocr anakin_tests anakin_core)
+
+add_subdirectory(test)
