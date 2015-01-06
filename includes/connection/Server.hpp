@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -122,28 +123,30 @@ Server<SpecificCommandRunner>::Server(const Ptr<Flags> & serverFlags,
 	this->serverFlags = serverFlags;
 	this->port = httpPort;
 	this->mode = mode;
-	this->dbdriver = makePtr<DBDriver>(tempDirCleaner);
+	if (pgport!="") {
+		this->dbdriver = makePtr<DBDriver>(tempDirCleaner);
 
-	if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
-		this->initialization = true;
-		cout << this->dbdriver->getMessage() << endl;
-		LOG_F("INFO")<< this->dbdriver->getMessage();
-	} else {
-		this->initialization = false;
-		this->initializationError = this->dbdriver->getMessage();
-		LOG_F("ERROR") << this->dbdriver->getMessage();
-		cout << this->dbdriver->getMessage() << endl;
-		exit(EXIT_FAILURE);
-	}
-	if (this->initialization) {
-		this->cache = makePtr<SFBMCache>(this->dbdriver, cacheConfig, tempDir,
-				tempDirCleaner);
-		this->cacheInitializationError = false;
-		wstring cacheError = *this->cache->getLastOperationResult(
-				this->cacheInitializationError);
-		if (this->cacheInitializationError) {
-			this->cacheInitializationErrorMsj = cacheError;
-			LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
+		if (this->dbdriver->connect(pghost, pgport, dbName, login, pwd)) {
+			this->initialization = true;
+			cout << this->dbdriver->getMessage() << endl;
+			LOG_F("INFO")<< this->dbdriver->getMessage();
+		} else {
+			this->initialization = false;
+			this->initializationError = this->dbdriver->getMessage();
+			LOG_F("ERROR") << this->dbdriver->getMessage();
+			cout << this->dbdriver->getMessage() << endl;
+			exit(EXIT_FAILURE);
+		}
+		if (this->initialization) {
+			this->cache = makePtr<SFBMCache>(this->dbdriver, cacheConfig, tempDir,
+											 tempDirCleaner);
+			this->cacheInitializationError = false;
+			wstring cacheError = *this->cache->getLastOperationResult(
+																	  this->cacheInitializationError);
+			if (this->cacheInitializationError) {
+				this->cacheInitializationErrorMsj = cacheError;
+				LOG_F("ERROR")<< this->cacheInitializationErrorMsj.c_str();
+			}
 		}
 	}
 	if (mode & HTTP) {

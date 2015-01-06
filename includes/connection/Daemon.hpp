@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 /*
  * Daemon.h
  *
@@ -41,7 +42,20 @@ public:
 
 	Ptr<Help> getHelp();
 
+	/**
+	 *
+	 * Daemons will by default try to use the database.
+	 * Call this method if that is unnecessary.
+	 *
+	 * @param use true if database needed, false otherwise
+	 *
+	 */
+	void useDatabase(bool use) {
+		needDatabase = use;
+	}
+
 protected:
+	bool needDatabase;
 	Ptr<Help> help;
 	int run(const Ptr<vector<string>> & input);
 	void initProgramFlags();
@@ -54,6 +68,7 @@ Daemon<SpecificCommandRunner>::Daemon() :
 	this->setProgramName(commandRunner.getProgramName());
 	this->help = commandRunner.getHelp();
 	commandRunner.extendServerCommandsWith(programFlags);
+	needDatabase = true;
 }
 
 template<class SpecificCommandRunner>
@@ -314,6 +329,9 @@ int Daemon<SpecificCommandRunner>::run(const Ptr<vector<string>> & input) {
 	//delay file deletion for 0 second
 	TempDirCleaner tempDirCleaner(0);
 
+	if (!needDatabase) {
+		pgport = "";
+	}
 	Server<SpecificCommandRunner>* server = new RequestServer<
 			SpecificCommandRunner>(programFlags, cacheConfig, iMode, pghost, pgport, dbName,
 			login, pwd, httpPort, queueCapacity, threads, verbose,

@@ -138,9 +138,10 @@ int main(int argc, char *argv[]) {
 		inputs->push_back("-oHTTP");
 		inputs->push_back("-threads");
 		inputs->push_back("1");
-		Program* program = new Daemon<OCR>();
-		int result = program->start(inputs);
-		delete program;
+		Daemon<OCR> *daemon = new Daemon<OCR>();
+		daemon->useDatabase(false); // OCR does not need database
+		int result = daemon->start(inputs);
+		delete daemon;
 		return result;
 	}
 
