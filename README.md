@@ -1,14 +1,39 @@
 anakin-daemons
 ==============
 
-Anaking  detection/recognition deamons
+Anakin detection/recognition deamons
 
-How to compile with eclipse:
+### Libraries needed
 
-Needed libs:
-* sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev default-jdk ant libvtk5-qt4-dev libtesseract-dev libleptonica-dev
-* install OpenCV 3 http://opencv.org/downloads.html
-* install https://github.com/Itseez/opencv_contrib (ALL modules)
+```
+sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev \
+libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk \
+libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev \
+libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev \
+libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra libv4l-dev \
+libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev default-jdk \
+ant libvtk5-qt4-dev libtesseract-dev libleptonica-dev
+```
+
+[`opencv`](https://github.com/Itseez/opencv) and [`opencv_contrib`](https://github.com/Itseez/opencv_contrib) are also needed, specifically these versions:
+
+ * `opencv` with tag `3.0.0-alpha`
+ * `opencv_contrib` at commit `0898fb9`
+
+Please get the correct versions from github, and then follow the
+compilation instructions at
+https://github.com/Itseez/opencv_contrib#how-to-build-opencv-with-extra-modules
+
+### How to compile with cmake
+
+```
+mkdir build && cd build
+cmake -DOpenCV_DIR=/path/to/opencv/BUILD/directory ..
+make
+make test
+```
+
+### How to compile with eclipse
 
 Project properties:
 c/c++ buil -> Settings -> Gcc c++ linker -> libraries -> Libraries (-l)
