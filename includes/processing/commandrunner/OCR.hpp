@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 /*
  * OCR.hpp
  *
@@ -117,6 +118,7 @@ private:
 	string OCRHMM_knn_model_data;
 	string trained_classifier_erGrouping;
 	bool downsize = false;
+	bool keepskew = false;
 
 	/**
 	 * 0 = ERStats, 1 = MSER
@@ -149,6 +151,15 @@ private:
 	void er_draw(vector<Mat> &channels, vector<vector<ERStat> > &regions,
 			vector<Vec2i> group, Mat& segmentation);
 
+	/**
+	 *
+	 * Rotate an image containing a row of text so that the text is 
+	 * horizontal (all going well)
+	 * @param src original image
+	 * @param dest final, rotated version of image
+	 *
+	 */
+	void normalizeAngle(Mat& src, Mat& dest);
 };
 
 }
