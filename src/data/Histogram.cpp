@@ -1,4 +1,5 @@
 #include <data/Histogram.hpp>
+#include <opencv2/core.hpp>
 
 using namespace Anakin;
 using namespace cv;
