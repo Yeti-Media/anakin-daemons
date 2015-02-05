@@ -4,6 +4,8 @@
 
 BASE=/opt/yeti/anakin
 
+export TESSDATA_PREFIX=$BASE/tessdata
+
 DAEMON=anakin
 DAEMONOPTS="-iHTTP 8081 -oHTTP -threads 2 \
   -verbose -numocrs 10 \

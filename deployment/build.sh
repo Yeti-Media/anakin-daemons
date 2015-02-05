@@ -23,10 +23,55 @@ if [ ! -e opencv_contrib ]; then
     popd
 fi
 
+echo "Checking for tesseract"
+if [ ! -e tesseract-ocr ]; then
+    git clone https://code.google.com/p/tesseract-ocr/
+    pushd tesseract-ocr
+    git checkout 15d48361b4f5 # 3.03-rc1 plus fixes
+    popd
+fi
+
+echo "Building leptonica"
+if [ ! -e install/include/leptonica ]; then
+  if [ ! -e leptonica-1.71.tar.gz ]; then
+     wget http://leptonica.org/source/leptonica-1.71.tar.gz
+  fi
+  if [ ! -e leptonica-1.71 ]; then
+     tar xzf leptonica-1.71.tar.gz
+  fi
+  pushd leptonica-1.71
+  ./configure --prefix=$PWD/../install
+  make
+  make install
+  popd
+fi
+
+echo "Building tesseract"
+if [ ! -e install/bin/tesseract ]; then
+  pushd tesseract-ocr
+  export LIBLEPT_HEADERSDIR=$PWD/../install/include
+  ./autogen.sh
+  ./configure --prefix=$PWD/../install --with-extra-libraries=$PWD/../install/lib
+  make
+  make install
+  popd
+fi
+
+echo "Fetching english"
+if [ ! -e tesseract-ocr-3.02.eng.tar.gz ]; then
+  wget https://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz
+  tar xzf tesseract-ocr-3.02.eng.tar.gz
+fi
+
 echo "Building opencv+opencv_contrib"
 mkdir -p build_opencv
 pushd build_opencv
-cmake $cmake_flags -DBUILD_WITH_DEBUG_INFO=OFF -DOPENCV_EXTRA_MODULES_PATH=$PWD/../opencv_contrib/modules -DENABLE_PRECOMPILED_HEADERS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF $PWD/../opencv
+cmake $cmake_flags -DCMAKE_PREFIX_PATH=$PWD/../install/ \
+  -DBUILD_WITH_DEBUG_INFO=OFF \
+  -DOPENCV_EXTRA_MODULES_PATH=$PWD/../opencv_contrib/modules \
+  -DENABLE_PRECOMPILED_HEADERS=OFF \
+  -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF \
+  $PWD/../opencv
 make
 popd
 
