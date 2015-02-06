@@ -122,6 +122,7 @@ find_path(PostgreSQL_TYPE_INCLUDE_DIR
     postgresql
     pgsql/server
     postgresql/server
+    postgresql/9.3/server  # PAULFITZ - added path used in 9.3
     postgresql/9.4/server  # PAULFITZ - added path used in 9.4
     include/server
   # Help the user find it if we cannot.
