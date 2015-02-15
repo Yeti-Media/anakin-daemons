@@ -98,6 +98,8 @@ public:
 
 	Ptr<Help> getHelp();
 
+	string getFlagHint() { return "ocr"; }
+
 	// simple version
 	//Ptr<vector<string>> detect(string & lastError);
 

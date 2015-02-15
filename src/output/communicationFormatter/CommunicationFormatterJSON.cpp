@@ -58,6 +58,10 @@ Ptr<wstring> CommunicationFormatterJSON::outputResponse(
 		root[L"category"] = new JSONValue(L"OCR");
 		break;
 	}
+	case CF_DETECT_FACE: {
+		root[L"category"] = new JSONValue(L"detect_face");
+		break;
+	}
 	default: {
 		root[L"category"] = new JSONValue(L"NONE---ERROR");
 		break;
@@ -186,6 +190,11 @@ Ptr<string> CommunicationFormatterJSON::formatRequest(const char * data) {
 	}
 	if (req->HasChild(L"ocr")) {
 		wstring waction = req->Child(L"ocr")->AsString();
+		string saction(waction.begin(), waction.end());
+		request->append("\"" + saction + "\"");
+	}
+	if (req->HasChild(L"img")) {
+		wstring waction = req->Child(L"img")->AsString();
 		string saction(waction.begin(), waction.end());
 		request->append("\"" + saction + "\"");
 	}

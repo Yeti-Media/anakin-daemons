@@ -16,4 +16,4 @@ sudo apt-get install \
  libtbb-dev \
  libcurl4-openssl-dev \
  tesseract-ocr-eng \
- wdiff xsltproc
+ wdiff xsltproc realpath

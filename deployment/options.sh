@@ -14,4 +14,5 @@ DAEMONOPTS="-iHTTP 8081 -oHTTP -threads 2 \
   -OCRHMMtransitions $BASE/classifier/OCRHMM_transitions_table.xml \
   -OCRHMMknn $BASE/classifier/OCRHMM_knn_model_data.xml.gz \
   -classifier_erGrouping $BASE/classifier/trained_classifier_erGrouping.xml \
-  -oLogFile /tmp/anakin_ocr.txt"
+  -face_cascade $BASE/data/haarcascades/haarcascade_frontalface_alt.xml \
+  -oLogFile /tmp/anakin_common.txt"
