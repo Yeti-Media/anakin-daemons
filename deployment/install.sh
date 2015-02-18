@@ -14,6 +14,8 @@ if [ ! -e build_opencv ]; then
 	exit 1
 fi
 
+BUILD=`realpath current`
+
 BASE="/opt/yeti/anakin"
 
 echo "Making $BASE"
@@ -21,8 +23,9 @@ sudo mkdir -p $BASE
 sudo chown $USER $BASE
 
 rm -f $BASE/*
-ln -s -v $SCRIPT_DIR/options.sh $BASE
-ln -s -v $PWD/build/anakin_ocr_full $BASE/anakin
+cp -v $SCRIPT_DIR/options.sh $BASE
+ln -s -v $BUILD/anakin_common $BASE/anakin
 ln -s -v $PWD/tesseract-ocr/tessdata $BASE
-ln -s -v "$PWD/build/test_data/Test Dir/examples/ocr/classifier" $BASE
+ln -s -v "$BUILD/test_data/Test Dir/examples/ocr/classifier" $BASE
+ln -s -v "$PWD/opencv/data" $BASE
 sudo cp -v "$SCRIPT_DIR/init.sh" /etc/init.d/anakin

@@ -26,6 +26,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Shove the core anakin code into a library
 add_library(anakin_core 
+  src/processing/commandrunner/FaceDetector.cpp
   src/processing/commandrunner/FaceMatcher.cpp
   src/processing/commandrunner/OCR.cpp
   src/processing/commandrunner/PatternMatcher.cpp
@@ -124,7 +125,7 @@ set_property(TARGET anakin_readme_update PROPERTY COMPILE_FLAGS -DANAKIN_README_
 target_link_libraries(anakin_readme_update anakin_core)
 
 # Compile all utilities and daemons
-foreach(bin pattern_matcher pattern_db_connector pattern_extractor pattern_trainer face_matcher face_db_connector face_extractor face_trainer ocr_full)
+foreach(bin pattern_matcher pattern_db_connector pattern_extractor pattern_trainer face_matcher face_db_connector face_extractor face_trainer ocr_full face_detector common)
   add_executable(anakin_${bin} src/main/${bin}.cpp)
   target_link_libraries(anakin_${bin} anakin_core)
 endforeach()

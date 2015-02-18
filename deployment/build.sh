@@ -8,6 +8,12 @@ echo "Running this script will put lots of files in your current directory"
 echo "If you don't want this, hit ^C now, otherwise enter."
 read x
 
+tag=`date +"%Y%m%d"`
+
+if [[ ! "$1" = "" ]]; then
+    tag="$1"
+fi
+
 cmake_flags="-DCMAKE_BUILD_TYPE=Release"
 
 echo "Checking for opencv"
@@ -81,8 +87,11 @@ ANAKIN_DIR=$SCRIPT_DIR/..
 echo "Anakin should be in $ANAKIN_DIR"
 
 echo "Building anakin"
-mkdir -p build
-pushd build
+mkdir -p build_${tag}
+pushd build_${tag}
 cmake $cmake_flags -DOpenCV_DIR=$PWD/../build_opencv $ANAKIN_DIR
 make
 popd
+
+rm -f current
+ln -s build_${tag} current

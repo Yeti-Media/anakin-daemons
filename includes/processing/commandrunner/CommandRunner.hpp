@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 #ifndef COMMANDRUNNER_HPP
 #define COMMANDRUNNER_HPP
 
@@ -96,6 +97,22 @@ public:
 	void setProgramName(const string & name);
 
 	virtual ~CommandRunner();
+
+	/**
+	 *
+	 * @return true if an error occurred in the latest request.
+	 *
+	 */
+	bool isError() { return inputError; }
+
+	/**
+	 *
+	 * @return a flag that can be used to identify what service to provide,
+	 * when pooling multiple services. Returns a blank string if there is
+	 * no known flag for this purpose.
+	 *
+	 */
+	string getFlagHint() { return ""; }
 
 protected:
 	bool checkDuplicatedIndexes(const vector<string> & indexes,

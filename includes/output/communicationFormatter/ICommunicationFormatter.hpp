@@ -33,7 +33,8 @@ public:
 		CF_CACHE_IDX_DEL,
 		CF_CACHE_IDX_UPD,
 		CF_CACHE_IDX_STATUS,
-		CF_OCR
+		CF_OCR,
+		CF_DETECT_FACE
 	};
 
 	enum e_mode {
