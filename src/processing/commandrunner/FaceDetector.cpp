@@ -28,6 +28,8 @@ FaceDetector::~FaceDetector() {
 void FaceDetector::validateRequest(const Ptr<vector<string>> & input) {
 	reqID = "";
 	imgPath = "";
+	originalWidth = 0;
+	originalHeight = 0;
 	inputError = true;
 	if (flags->validateInput(input)) {
 		inputError = false;
@@ -41,6 +43,24 @@ void FaceDetector::validateRequest(const Ptr<vector<string>> & input) {
 				return;
 			}
 			reqID = values->at(0);
+		}
+		if (flags->flagFound("original_width")) {
+			values = flags->getFlagValues("original_width");
+			if (values->size() != 1) {
+				lastError = "flag original_width expects only one value";
+				inputError = true;
+				return;
+			}
+			originalWidth = atoi(values->at(0).c_str());
+		}
+		if (flags->flagFound("original_height")) {
+			values = flags->getFlagValues("original_height");
+			if (values->size() != 1) {
+				lastError = "flag original_height expects only one value";
+				inputError = true;
+				return;
+			}
+			originalHeight = atoi(values->at(0).c_str());
 		}
 		if (flags->flagFound("detect_face")) {
 			values = flags->getFlagValues("detect_face");
@@ -97,6 +117,8 @@ void FaceDetector::initializeCommandRunner(const Ptr<DataOutput> & out,
 	CommandRunner::initializeCommandRunner(out, cache);
 	flags->setOptionalFlag("reqID");
 	flags->setRequiredFlag("detect_face");
+	flags->setOptionalFlag("original_width");
+	flags->setOptionalFlag("original_height");
 
     if( !cascade->load(cascadePath)) {
 		cout << "could not load face_cascade from " << cascadePath << endl;
@@ -145,6 +167,10 @@ void FaceDetector::run() {
 		double dim = fmax(w,h);
 		if (dim>maxDim) scale = dim/maxDim;
 		faces = detect(img,scale);
+	}
+	if (originalWidth!=0&&w!=0) {
+		// report coordinates to user in the scale they expect
+		scale *= ((double)originalWidth)/w;
 	}
 	JSONObject root;
 	JSONArray array;

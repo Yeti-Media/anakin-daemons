@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t -*-
 /*
  * CommunicationFormatterJSON.cpp
  *
@@ -216,6 +217,16 @@ Ptr<string> CommunicationFormatterJSON::formatRequest(const char * data) {
 						(int) req->Child(Constants::WPARAM_SCENEID.c_str())->AsNumber());
 		scenario.append(" ");
 		request->append(scenario);
+	}
+	if (req->HasChild(L"original_width")) {
+		request->append(" -original_width ");
+		string sv = to_string((int) req->Child(L"original_width")->AsNumber());
+		request->append(sv);
+	}
+	if (req->HasChild(L"original_height")) {
+		request->append(" -original_height ");
+		string sv = to_string((int) req->Child(L"original_height")->AsNumber());
+		request->append(sv);
 	}
 	if (req->HasChild(Constants::WOPTIONAL_FLAGS.c_str())) {
 		JSONObject optionalFlags = req->Child(
