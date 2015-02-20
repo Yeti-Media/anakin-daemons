@@ -46,6 +46,8 @@ private:
 	I_CommunicationFormatter* cf;    ///< formatter to standardize output
 	cv::CascadeClassifier* cascade;  ///< haar cascade for face detection
 	string imgPath;                  ///< path to image to be scanned
+	int originalWidth;               ///< width of image at start of pipeline
+	int originalHeight;              ///< height of image at start of pipeline
 	string cascadePath;              ///< path to haar config file
 	int maxDim;                      ///< maximum width/height of image
 
